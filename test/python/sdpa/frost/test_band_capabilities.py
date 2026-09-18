@@ -209,7 +209,16 @@ def test_shipped_rows_express_both_a_full_and_a_restricted_claim():
     restricted = [name for name, claim in claims.items() if claim != band.BandSupport.full_masks()]
     assert restricted, "no restricted row left in the tree; the model's restricted path is no longer exercised"
     for name in restricted:
-        assert claims[name] == band.BandSupport.causal_and_unmasked(), name
+        expected = {
+            # The SM89 row is restricted on TWO axes: bottom-right anchor AND the
+            # right-band-widening / causal-family modes its lowering does not carry.
+            "sdpa_fwd_prefill_sm89": band.BandSupport(
+                right=frozenset({band.RIGHT_UNBOUNDED, band.RIGHT_CAUSAL}),
+                left=frozenset({band.LEFT_NONE, band.LEFT_WINDOW}),
+                anchors=frozenset({band.ANCHOR_TOP_LEFT}),
+            ),
+        }
+    assert claims[name] == expected.get(name, band.BandSupport.causal_and_unmasked()), name
 
 
 # ---------------------------------------------------------------------------
@@ -378,7 +387,14 @@ def test_negative_right_bound_is_still_refused_by_the_forward_probe():
         caps = spec.capabilities
         reason = _probe(kind)(caps, legal_facts(kind, caps, s_kv=128, **band_right(-1)))
         if kind == "fwd":
-            assert reason == "negative diagonal_band_right_bound (-1) is not supported", spec.name
+            # Which sentence comes first is a property of the ROW: a row that does
+            # not serve a finite right band at all declines the band itself, while
+            # a row that does claim it reports the negative value.  Either way the
+            # graph is refused -- that is what this test is for.
+            if band.RIGHT_FINITE not in caps.band.right:
+                assert reason == band.REASON_RIGHT[band.RIGHT_FINITE], spec.name
+            else:
+                assert reason == "negative diagonal_band_right_bound (-1) is not supported", spec.name
         else:
             # The backward probe has no such early value guard: the row's band
             # claim decides, so a row that serves widening still serves -1 (the
