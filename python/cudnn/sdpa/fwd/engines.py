@@ -1784,7 +1784,8 @@ def lower_dsl_prefill(
         _unknown = set(api_ctor_extra) - _ctor_params
         if _unknown:
             raise ValueError(
-                f"cudnn.sdpa: engine {spec.name} declares adapter construction extras " f"{sorted(_unknown)} that {api_cls.__name__}.__init__ does not accept"
+                f"cudnn.sdpa: engine {spec.name} declares adapter construction extras "
+                f"{sorted(_unknown)} that {api_cls.__name__}.__init__ does not accept"
             )
     api = api_cls(
         **api_ctor_extra,

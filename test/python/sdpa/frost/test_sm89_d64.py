@@ -87,21 +87,7 @@ def test_sm89_capability_box_is_the_validated_one():
     assert caps.layouts == frozenset({"bshd", "dense_flex"})
     # Features the L20 run did NOT qualify must stay declined — inheriting the
     # SM80 row's True values wholesale is the failure mode this asserts against.
-    for declined in (
-        "bias",
-        "padded",
-        "sink",
-        "thd",
-        "cu_seq_len",
-        "padded_stats",
-        "decode",
-        "single_wave_only",
-        "is_fp8",
-        "is_mxfp8",
-        "dropout",
-        "alibi",
-        "block_mask",
-    ):
+    for declined in ("bias", "padded", "sink", "thd", "cu_seq_len", "padded_stats", "decode", "single_wave_only", "is_fp8", "is_mxfp8", "dropout", "alibi", "block_mask"):
         assert getattr(caps, declined) is False, f"{declined} must not be claimed by the SM89 row"
     # The tile geometry is the row's validated box, not a user knob.
     assert caps.tile_ms == frozenset() and caps.tile_ns == frozenset()
@@ -113,7 +99,11 @@ def test_sm89_row_and_adapter_device_gate_agree():
     """The row's sm range and the adapter's admitted device set are two halves of
     one fact; a patch that widens either alone must fail here."""
     caps = _spec().capabilities
-    family = next(name for name, entry in api_dsl_mod._SM80_DEVICE_FAMILIES.items() if any(cc[0] * 10 + cc[1] == caps.sm_lo for cc in entry["cc"]))
+    family = next(
+        name
+        for name, entry in api_dsl_mod._SM80_DEVICE_FAMILIES.items()
+        if any(cc[0] * 10 + cc[1] == caps.sm_lo for cc in entry["cc"])
+    )
     ccs = api_dsl_mod._SM80_DEVICE_FAMILIES[family]["cc"]
     assert {maj * 10 + min_ for maj, min_ in ccs} == {caps.sm_lo}, "row range and adapter gate disagree"
     assert caps.sm_hi == caps.sm_lo, "the row must not claim a range the adapter cannot enumerate"
