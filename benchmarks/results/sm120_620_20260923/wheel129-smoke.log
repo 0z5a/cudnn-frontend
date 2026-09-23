@@ -1,0 +1,9 @@
+available_plans ['eng8_k24=3', 'eng11_k24=3']
+frost_opt_in True eligibility requires nvidia-cutlass-dsl >= 4.7.0; found 4.6.2 candidates ['sdpa_fwd_prefill_sm100', 'sdpa_fwd_prefill_sm100_mxfp8', 'sdpa_fwd_prefill_sm100_fp8', 'sdpa_fwd_prefill_sm107_fp8', 'sdpa_fwd_prefill_sm107', 'sdpa_fwd_prefill_sm107_mxfp8', 'sdpa_fwd_prefill_sm120', 'sdpa_fwd_prefill_sm120_fp8', 'sdpa_fwd_prefill_sm80']
+Traceback (most recent call last):
+  File "/home/gongji/0z5a-work/cudnn-620-wheel129-smoke.py", line 54, in <module>
+    run(d, dtype)
+  File "/home/gongji/0z5a-work/cudnn-620-wheel129-smoke.py", line 40, in run
+    index = next(i for i, plan in enumerate(plans) if plan == name or plan.startswith(name + "["))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+StopIteration
