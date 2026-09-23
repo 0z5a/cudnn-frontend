@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 0z5a
+# SPDX-License-Identifier: Apache-2.0
+
 import math
 import logging
 
