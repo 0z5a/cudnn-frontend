@@ -1796,6 +1796,25 @@ def test_dsl_sm120_padded():
 
 
 @pytest.mark.L0
+@pytest.mark.parametrize("head_dim_v", [120, 128])
+@torch_fork_set_rng(seed=620)
+def test_dsl_sm120_d128_padded_output(head_dim_v: int):
+    seq_q_lens = torch.tensor([95, 64], dtype=torch.int32, device="cuda")
+    seq_kv_lens = torch.tensor([111, 128], dtype=torch.int32, device="cuda")
+    _run_case(
+        batch=2,
+        h_q=8,
+        h_kv=8,
+        s_q=128,
+        s_kv=128,
+        head_dim=128,
+        head_dim_v=head_dim_v,
+        seq_q_lens=seq_q_lens,
+        seq_kv_lens=seq_kv_lens,
+    )
+
+
+@pytest.mark.L0
 @torch_fork_set_rng(seed=7)
 def test_dsl_sm120_bfloat16_and_tile_variants():
     _run_case(

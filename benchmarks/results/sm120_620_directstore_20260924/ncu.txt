@@ -1,0 +1,86 @@
+==PROF== Connected to process 1224177 (/home/gongji/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12)
+sdpa_fwd_prefill_sm120[PACK_GQA=0, SCHED_POLICY=0, SPLIT_KV=1, TILE_CGA_M=1, TILE_M=64, TILE_N=128]
+SdpaFwdDslSm120 is an experimental API
+==PROF== Profiling "cudnn_kernel_kernel_cudnnfros..." - 0 (1/1): 0%....50%....100% - 12 passes
+passed
+==PROF== Disconnected from process 1224177
+[1224177] python3.12@127.0.0.1
+  cudnn_kernel_kernel_cudnnfrost_templatessdpa_fwd_sm120_0SM120FusedMultiHeadAttentionForward_object_at__tensorptrf16gmemalign16o1128812813107210241281_tensorptrf16gmemalign16o11288128131_0 (2, 1, 8)x(256, 1, 1), Context 1, Stream 7, Device 0, CC 12.0
+    Section: Memory Workload Analysis
+    -------------------------------------- ----------- ------------
+    Metric Name                            Metric Unit Metric Value
+    -------------------------------------- ----------- ------------
+    Local Memory Spilling Requests                                0
+    Local Memory Spilling Request Overhead           %      no data
+    Memory Throughput                          Gbyte/s        79.85
+    Mem Busy                                         %         3.40
+    Max Bandwidth                                    %         4.53
+    L1/TEX Hit Rate                                  %        57.97
+    L2 Persisting Size                           Mbyte        18.87
+    L2 Compression Success Rate                      %            0
+    L2 Compression Ratio                                          0
+    L2 Compression Input Sectors                sector            0
+    L2 Hit Rate                                      %        54.39
+    Mem Pipes Busy                                   %         0.78
+    -------------------------------------- ----------- ------------
+
+    Section: Launch Statistics
+    -------------------------------- --------------- ---------------
+    Metric Name                          Metric Unit    Metric Value
+    -------------------------------- --------------- ---------------
+    Block Size                                                   256
+    Cluster Scheduling Policy                           PolicySpread
+    Cluster Size                                                   0
+    Function Cache Configuration                     CachePreferNone
+    Grid Size                                                     16
+    Preferred Cluster Size                                         0
+    Registers Per Thread             register/thread             255
+    Shared Memory Configuration Size           Kbyte          102.40
+    Driver Shared Memory Per Block       Kbyte/block            1.02
+    Dynamic Shared Memory Per Block      Kbyte/block           65.55
+    Static Shared Memory Per Block        byte/block               0
+    # SMs                                         SM             170
+    Stack Size                                                  1024
+    Threads                                   thread            4096
+    # TPCs                                                        85
+    Enabled TPC IDs                                              all
+    Uses Green Context                                             0
+    Waves Per SM                                                0.09
+    -------------------------------- --------------- ---------------
+
+    OPT   Est. Speedup: 90.59%
+          The grid for this launch is configured to execute only 16 blocks, which is less than the GPU's 170
+          multiprocessors. This can underutilize some multiprocessors. If you do not intend to execute this kernel
+          concurrently with other workloads, consider reducing the block size to have at least one block per
+          multiprocessor or increase the size of the grid to fully utilize the available hardware resources. See the
+          Hardware Model (https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#metrics-hw-model)
+          description for more details on launch configurations.
+
+    Section: Source Counters
+    ------------------------- ----------- ------------
+    Metric Name               Metric Unit Metric Value
+    ------------------------- ----------- ------------
+    Branch Instructions Ratio           %         0.01
+    Branch Instructions              inst         1008
+    Branch Efficiency                   %          100
+    Avg. Divergent Branches      branches            0
+    ------------------------- ----------- ------------
+
+    OPT   Est. Speedup: 6.855%
+          This kernel has uncoalesced global accesses resulting in a total of 8192 excessive sectors (33% of the total
+          24576 sectors). Check the L2 Theoretical Sectors Global Excessive table for the primary source locations.
+          The CUDA Programming Guide
+          (https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#device-memory-accesses) has additional
+          information on reducing uncoalesced device memory accesses.
+
+Traceback (most recent call last):
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176, in exec_module
+  File "<frozen site>", line 635, in <module>
+  File "<frozen site>", line 622, in main
+  File "<frozen site>", line 405, in addsitepackages
+  File "<frozen site>", line 247, in addsitedir
+  File "<frozen site>", line 190, in addpackage
+LookupError: unknown encoding: utf-8-sig
