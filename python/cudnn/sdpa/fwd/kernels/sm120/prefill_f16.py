@@ -1233,71 +1233,117 @@ class SM120FusedMultiHeadAttentionForward:
 
             prims.barrier_cta_sync(self.bar_compute_sync, thread_count=self.threads_compute)
 
-            # Epilogue: normalize O, stage it through an stmatrix-friendly SMEM
-            # layout, then store one contiguous 8-element vector per lane to GMEM.
-            sO = sKV
-            row_sum_inv_vec = cutlass.Vector.from_elements(
-                (
-                    row_sum_inv[0],
-                    row_sum_inv[0],
-                    row_sum_inv[1],
-                    row_sum_inv[1],
-                    row_sum_inv[0],
-                    row_sum_inv[0],
-                    row_sum_inv[1],
-                    row_sum_inv[1],
-                ),
-                cutlass.Float32,
-            )
-            for d_frag_pair in cutlass.range_constexpr(self.pv_d_frags // 2):
-                o_off = (d_frag_pair * 2) * 4
-                o_scaled = fmul2(o_regs[o_off:8], row_sum_inv_vec)
-                o_packed = o_scaled.to(o.dtype).bitcast(cutlass.Int32)
-                sO_ptr = sO.data_ptr() + (compute_warp_idx * (self.pv_d_frags // 2) + d_frag_pair) * (16 * 16) + lane * 8
-                prims.stmatrix(
-                    sO_ptr,
-                    o_packed,
-                    prims.MMALayout.ROW,
+            if cutlass.const_expr(self.head_tile_v == 128 and not self.pack_gqa and not self.thd_varlen):
+                # Each lane stores one 16-byte vector assembled from its four-lane MMA group.
+                row_sum_inv_vec = cutlass.Vector.from_elements(
+                    (row_sum_inv[0], row_sum_inv[0], row_sum_inv[1], row_sum_inv[1]) * 2,
+                    cutlass.Float32,
                 )
-
-            store_row = lane_mod8 + ((lane_div8) % 2) * 8
-            store_col = lane_div16 * 8
-            _store_row_in_cta = q_warp_row0 + store_row
-            store_q_seq_idx = q_seq_idx + (_store_row_in_cta if cutlass.const_expr(not self.pack_gqa) else _store_row_in_cta // self.qh_per_kh)
-            store_head_off = o_head_off
-            if cutlass.const_expr(self.pack_gqa and self.qh_per_kh != 1):
-                store_head_off = store_head_off + (_store_row_in_cta % self.qh_per_kh) * o_head_stride
-            for d_frag_pair in cutlass.range_constexpr(self.pv_d_frags // 2):
-                store_col_in_cta = d_frag_pair * 16 + store_col
-                if cutlass.const_expr(self.thd_varlen):
-                    # Packed storage: rows past this sequence's Q length are
-                    # the NEXT sequence's tokens — no store, and never the
-                    # dense path's zero-fill.
-                    if store_q_seq_idx < seqlen_q and store_col_in_cta < head_dim_v:
-                        gO_ptr = o_ptr + store_head_off + store_q_seq_idx * o_seq_stride + store_col_in_cta
-                        sO_ptr = sO.data_ptr() + (compute_warp_idx * (self.pv_d_frags // 2) + d_frag_pair) * (16 * 16) + lane * 8
-                        gO_ptr.store(sO_ptr.load(count=8, alignment=16), alignment=16)
-                else:
+                zero_vec = cutlass.Vector.from_elements((o.dtype(0.0),) * 8, o.dtype)
+                row_half = (lane % 4) % 2
+                col_half = (lane % 4) // 2
+                row_in_cta = q_warp_row0 + lane // 4 + row_half * 8
+                store_q_seq_idx = q_seq_idx + row_in_cta
+                bit0 = lane % 2
+                bit1 = (lane % 4) // 2
+                for d_frag_pair in cutlass.range_constexpr(self.pv_d_frags // 2):
+                    o_off = (d_frag_pair * 2) * 4
+                    o_packed = fmul2(o_regs[o_off:8], row_sum_inv_vec).to(o.dtype).bitcast(cutlass.Int32)
+                    send01 = o_packed[1] if bit0 == 0 else o_packed[0]
+                    send23 = o_packed[3] if bit0 == 0 else o_packed[2]
+                    swap01 = prims.shfl_sync(0xFFFFFFFF, send01, 1, 0x1F, prims.Shfl.BFLY)
+                    swap23 = prims.shfl_sync(0xFFFFFFFF, send23, 1, 0x1F, prims.Shfl.BFLY)
+                    c0 = o_packed[0] if bit0 == 0 else swap01
+                    c1 = swap01 if bit0 == 0 else o_packed[1]
+                    c2 = o_packed[2] if bit0 == 0 else swap23
+                    c3 = swap23 if bit0 == 0 else o_packed[3]
+                    send0 = c2 if bit1 == 0 else c0
+                    send1 = c3 if bit1 == 0 else c1
+                    swap0 = prims.shfl_sync(0xFFFFFFFF, send0, 2, 0x1F, prims.Shfl.BFLY)
+                    swap1 = prims.shfl_sync(0xFFFFFFFF, send1, 2, 0x1F, prims.Shfl.BFLY)
+                    words = (
+                        c0 if bit1 == 0 else swap0,
+                        c1 if bit1 == 0 else swap1,
+                        swap0 if bit1 == 0 else c2,
+                        swap1 if bit1 == 0 else c3,
+                    )
+                    vector = cutlass.Vector.from_elements(
+                        words,
+                        cutlass.Int32,
+                    ).bitcast(o.dtype)
+                    store_col_in_cta = d_frag_pair * 16 + col_half * 8
                     if store_q_seq_idx < q.shape[1] and store_col_in_cta < head_dim_v:
-                        gO_ptr = o_ptr + store_head_off + store_q_seq_idx * o_seq_stride + store_col_in_cta
+                        gO_ptr = o_ptr + o_head_off + store_q_seq_idx * o_seq_stride + store_col_in_cta
                         if store_q_seq_idx < seqlen_q:
+                            gO_ptr.store(vector, alignment=16)
+                        else:
+                            gO_ptr.store(zero_vec, alignment=16)
+            else:
+                # Epilogue: normalize O, stage it through an stmatrix-friendly SMEM
+                # layout, then store one contiguous 8-element vector per lane to GMEM.
+                sO = sKV
+                row_sum_inv_vec = cutlass.Vector.from_elements(
+                    (
+                        row_sum_inv[0],
+                        row_sum_inv[0],
+                        row_sum_inv[1],
+                        row_sum_inv[1],
+                        row_sum_inv[0],
+                        row_sum_inv[0],
+                        row_sum_inv[1],
+                        row_sum_inv[1],
+                    ),
+                    cutlass.Float32,
+                )
+                for d_frag_pair in cutlass.range_constexpr(self.pv_d_frags // 2):
+                    o_off = (d_frag_pair * 2) * 4
+                    o_scaled = fmul2(o_regs[o_off:8], row_sum_inv_vec)
+                    o_packed = o_scaled.to(o.dtype).bitcast(cutlass.Int32)
+                    sO_ptr = sO.data_ptr() + (compute_warp_idx * (self.pv_d_frags // 2) + d_frag_pair) * (16 * 16) + lane * 8
+                    prims.stmatrix(
+                        sO_ptr,
+                        o_packed,
+                        prims.MMALayout.ROW,
+                    )
+
+                store_row = lane_mod8 + ((lane_div8) % 2) * 8
+                store_col = lane_div16 * 8
+                _store_row_in_cta = q_warp_row0 + store_row
+                store_q_seq_idx = q_seq_idx + (_store_row_in_cta if cutlass.const_expr(not self.pack_gqa) else _store_row_in_cta // self.qh_per_kh)
+                store_head_off = o_head_off
+                if cutlass.const_expr(self.pack_gqa and self.qh_per_kh != 1):
+                    store_head_off = store_head_off + (_store_row_in_cta % self.qh_per_kh) * o_head_stride
+                for d_frag_pair in cutlass.range_constexpr(self.pv_d_frags // 2):
+                    store_col_in_cta = d_frag_pair * 16 + store_col
+                    if cutlass.const_expr(self.thd_varlen):
+                        # Packed storage: rows past this sequence's Q length are
+                        # the NEXT sequence's tokens — no store, and never the
+                        # dense path's zero-fill.
+                        if store_q_seq_idx < seqlen_q and store_col_in_cta < head_dim_v:
+                            gO_ptr = o_ptr + store_head_off + store_q_seq_idx * o_seq_stride + store_col_in_cta
                             sO_ptr = sO.data_ptr() + (compute_warp_idx * (self.pv_d_frags // 2) + d_frag_pair) * (16 * 16) + lane * 8
                             gO_ptr.store(sO_ptr.load(count=8, alignment=16), alignment=16)
-                        else:
-                            zero_vec = cutlass.Vector.from_elements(
-                                (
-                                    o.dtype(0.0),
-                                    o.dtype(0.0),
-                                    o.dtype(0.0),
-                                    o.dtype(0.0),
-                                    o.dtype(0.0),
-                                    o.dtype(0.0),
-                                    o.dtype(0.0),
-                                    o.dtype(0.0),
-                                ),
-                                o.dtype,
-                            )
-                            gO_ptr.store(zero_vec, alignment=16)
+                    else:
+                        if store_q_seq_idx < q.shape[1] and store_col_in_cta < head_dim_v:
+                            gO_ptr = o_ptr + store_head_off + store_q_seq_idx * o_seq_stride + store_col_in_cta
+                            if store_q_seq_idx < seqlen_q:
+                                sO_ptr = sO.data_ptr() + (compute_warp_idx * (self.pv_d_frags // 2) + d_frag_pair) * (16 * 16) + lane * 8
+                                gO_ptr.store(sO_ptr.load(count=8, alignment=16), alignment=16)
+                            else:
+                                zero_vec = cutlass.Vector.from_elements(
+                                    (
+                                        o.dtype(0.0),
+                                        o.dtype(0.0),
+                                        o.dtype(0.0),
+                                        o.dtype(0.0),
+                                        o.dtype(0.0),
+                                        o.dtype(0.0),
+                                        o.dtype(0.0),
+                                        o.dtype(0.0),
+                                    ),
+                                    o.dtype,
+                                )
+                                gO_ptr.store(zero_vec, alignment=16)
 
         # /////////////////////////////////////////////////////////////////////////////
         #  EMPTY

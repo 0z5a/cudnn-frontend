@@ -1,0 +1,22 @@
+===== cudnn-frontend conftest.py ====
+cuDNN Frontend Version: 1.31.0
+cuDNN Frontend Path: /home/gongji/0z5a-work/0z5a-ptx/directshuffle/cudnn/__init__.py
+cuDNN Backend Version: 92000
+PyTorch Version: 2.13.0+cu130
+PyTorch Path: /home/gongji/0z5a/lib/python3.12/site-packages/torch/__init__.py
+PyTorch GPU Name: NVIDIA GeForce RTX 5090
+PyTorch SM Arch Version: (12, 0)
+PyTorch CUDA Version: 13.0
+PyTorch cuDNN Version: 92000
+..                                                                       [100%]
+=============================== warnings summary ===============================
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_d128_padded_output[128]
+  /home/gongji/0z5a-work/0z5a-ptx/directshuffle/cudnn/sdpa/fwd/kernels/sm120/prefill_f16.py:1040: DSLOptimizationWarning: This static loop has 64 iterations, which may be very slow to compile, consider using `cutlass.range(..., unroll_full=True)` instead.
+    for i in cutlass.range_constexpr(self.pv_d_frags * 4):
+
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_d128_padded_output[128]
+  /home/gongji/0z5a-work/0z5a-ptx/directshuffle/cudnn/sdpa/fwd/kernels/sm120/prefill_f16.py:456: DSLOptimizationWarning: This static loop has 64 iterations, which may be very slow to compile, consider using `cutlass.range(..., unroll_full=True)` instead.
+    for i in cutlass.range_constexpr(self.qk_k_frags * 4):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+2 passed, 134 deselected, 2 warnings in 15.03s
