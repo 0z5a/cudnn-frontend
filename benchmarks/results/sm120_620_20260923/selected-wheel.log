@@ -1,0 +1,20 @@
+===== cudnn-frontend conftest.py ====
+cuDNN Frontend Version: 1.29.0
+cuDNN Frontend Path: /home/gongji/0z5a/lib/python3.12/site-packages/cudnn/__init__.py
+cuDNN Backend Version: 92000
+PyTorch Version: 2.13.0+cu130
+PyTorch Path: /home/gongji/0z5a/lib/python3.12/site-packages/torch/__init__.py
+PyTorch GPU Name: NVIDIA GeForce RTX 5090
+PyTorch SM Arch Version: (12, 0)
+PyTorch CUDA Version: 13.0
+PyTorch cuDNN Version: 92000
+s                                                                        [100%]
+=============================== warnings summary ===============================
+../../../0z5a/lib/python3.12/site-packages/torch/jit/_script.py:365: 14 warnings
+  /home/gongji/0z5a/lib/python3.12/site-packages/torch/jit/_script.py:365: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] test/python/sdpa/frost/test_sdpa_fwd_dsl_sm120.py:37: cutlass/dsl not installed
+1 skipped, 133 deselected, 14 warnings in 6.13s

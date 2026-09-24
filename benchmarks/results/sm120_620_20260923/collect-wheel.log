@@ -1,0 +1,125 @@
+===== cudnn-frontend conftest.py ====
+cuDNN Frontend Version: 1.29.0
+cuDNN Frontend Path: /home/gongji/0z5a/lib/python3.12/site-packages/cudnn/__init__.py
+cuDNN Backend Version: 92000
+PyTorch Version: 2.13.0+cu130
+PyTorch Path: /home/gongji/0z5a/lib/python3.12/site-packages/torch/__init__.py
+PyTorch GPU Name: NVIDIA GeForce RTX 5090
+PyTorch SM Arch Version: (12, 0)
+PyTorch CUDA Version: 13.0
+PyTorch cuDNN Version: 92000
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_representative_head_dimensions[256-None]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_pack_gqa_features[padded_qtrim]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_stats[ln-dense]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_pack_gqa_features[band_right]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_grouped_query_attention[gqa]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_sdpa_fwd_dsl_sm120_graph_api[causal-fp16]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_mixed_head_dims[cross_swizzle]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_flavor_routing
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_representative_head_dimensions[512-None]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_padded_stats_execute_checks_the_buffer
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_representative_head_dimensions[208-None]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_bottom_right
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_head_dim_envelope[mixed104x72]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_multi_unit_per_cta[d128]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_execute_never_syncs
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_cu_seq_len_stats[head_major]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_d512_features[band_right]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_pack_gqa_ratios[g4]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_nan_capacity_tail[d512]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_stats[ln-causal_swa]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_pack_gqa_tile64
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_right_band
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_stats[log2-causal_swa]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_d512_features[causal_br]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_d512_features[none]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_d512_pack_gqa_mqa
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_nan_capacity_tail[d128]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_representative_head_dimensions[112-None]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_mixed_head_dims_sink[head_major]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_sdpa_fwd_dsl_sm120_graph_api[dense-fp16]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_pack_gqa_tiles[tail]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_sink_dead_rows
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_multi_unit_per_cta[d512]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_nan_capacity_tail[d248]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_causal_swa
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_d512_features[sink_swa]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_d512_envelope_504[fp16]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_pack_gqa_ratios[g2]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_cross
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_mixed_head_dims_padded_stats
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_fully_masked_rows
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_d512_features[causal]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_grouped_query_attention[mha]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_pack_gqa_ratios[g8_mqa]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_pack_gqa_features[swa]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_d256_template_rejects_dims_outside_its_envelope
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_grouped_query_attention[mqa]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_mixed_head_dims[small_mixed]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_lens_never_reach_host
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_pack_gqa_features[sink_swa]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_stats[token_major]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_head_dim_envelope[d200x136]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_long_sequence_multi_wave
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_representative_head_dimensions[16-None]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_sdpa_fwd_dsl_sm120_graph_api[causal-bf16]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_representative_head_dimensions[192-None]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_stats[ln-causal]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_pack_gqa_tiles[subspan]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_representative_head_dimensions[224-None]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_representative_head_dimensions[248-None]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_padded
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_bfloat16_and_tile_variants
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_nan_capacity_tail[d64]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_head_dim_envelope[d8_min]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_dense_flex_bhsd_contiguous
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_sink
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_multi_unit_per_cta[d256]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_representative_head_dimensions[240-None]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_pack_gqa_tiles[exact_span]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_representative_head_dimensions[504-None]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_stats[ln-causal_br]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_pack_gqa_features[causal]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_mixed_head_dims[v_wider]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_nan_capacity_tail[d192x128]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_mixed_head_dims_sink[token_major]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_pack_gqa_features[causal_br]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_mixed_head_dims[mla192x128]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_cu_seq_len_stats[token_major]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_sdpa_fwd_dsl_sm120_graph_api[dense-bf16]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_compile_key_plan_time_only
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_d512_features[swa128]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_head_dim_envelope_features
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_d512_features[padded_qtrim]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_execute_cuda_graph_capture
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_sink_stats
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_pack_gqa_features[none]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_graph_api_padded_gqa
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_causal_bottom_right
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_representative_head_dimensions[160-None]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_head_dim_envelope[d72]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_stats[log2-causal]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_d512_envelope_504[bf16]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_stats_padded_trim
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_d512_template_rejects_dims_and_tiles_outside_its_table
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_stats[log2-dense]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_stats[head_major]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_thd_mixed_head_dims
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_representative_head_dimensions[256-64]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_mixed_head_dims_masks
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_pack_gqa_ratios[g16_mqa]
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_mixed_head_dims_causal_gqa_stats
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_ragged_skv_tail
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_strided_stats
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_mixed_head_dims_sink_bf16
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_execute_contract_mismatches
+sdpa/frost/test_sdpa_fwd_dsl_sm120.py::test_dsl_sm120_stats[log2-causal_br]
+
+=============================== warnings summary ===============================
+../../../0z5a/lib/python3.12/site-packages/torch/jit/_script.py:365: 14 warnings
+  /home/gongji/0z5a/lib/python3.12/site-packages/torch/jit/_script.py:365: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+107/134 tests collected (27 deselected) in 5.98s
