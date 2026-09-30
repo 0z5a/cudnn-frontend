@@ -723,6 +723,58 @@ class BlockScaledMoEGroupedGemmGluBiasKernel:
     helper_kernel.set_name_prefix("cudnn", remove_cutlass_symbol=True)
 
     @cute.jit
+    def _dense_swiglu(
+        self,
+        a: cute.Tensor,
+        b: cute.Tensor,
+        sfb: cute.Tensor,
+        workspace_ptr,
+        c: cute.Tensor,
+        d: cute.Tensor,
+        d_col: cute.Tensor,
+        sfa: cute.Tensor,
+        sfd_row_tensor: Optional[cute.Tensor],
+        sfd_col_tensor: Optional[cute.Tensor],
+        amax_tensor: Optional[cute.Tensor],
+        norm_const_tensor: Optional[cute.Tensor],
+        padded_offsets: cute.Tensor,
+        alpha: cute.Tensor,
+        prob: cute.Tensor,
+        bias: Optional[cute.Tensor],
+        max_active_clusters: cutlass.Constexpr,
+        stream: cuda.CUstream,
+        epilogue_op: cutlass.Constexpr = lambda x: x,
+        scheduler_counter: Optional[cute.Tensor] = None,
+    ):
+        """Compile dense SwiGLU without unused layout and activation launch scalars."""
+        self.__call__(
+            a=a,
+            b=b,
+            sfb=sfb,
+            n=Int32(0),
+            k=Int32(0),
+            b_stride_size=cutlass.Int64(0),
+            b_major_mode=OperandMajorMode.K,
+            workspace_ptr=workspace_ptr,
+            c=c,
+            d=d,
+            d_col=d_col,
+            sfa=sfa,
+            sfd_row_tensor=sfd_row_tensor,
+            sfd_col_tensor=sfd_col_tensor,
+            amax_tensor=amax_tensor,
+            norm_const_tensor=norm_const_tensor,
+            padded_offsets=padded_offsets,
+            alpha=alpha,
+            prob=prob,
+            bias=bias,
+            max_active_clusters=max_active_clusters,
+            stream=stream,
+            epilogue_op=epilogue_op,
+            scheduler_counter=scheduler_counter,
+        )
+
+    @cute.jit
     def __call__(
         self,
         a: cute.Tensor,
