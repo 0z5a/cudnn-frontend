@@ -988,7 +988,26 @@ class GroupedGemmGluBlockScaledAPI(APIBase):
                     "situ_beta2": cutlass.Float32(25.0),
                 }
             )
-        _compiled_kernel = cute.compile(gemm_glu, **compile_kwargs)
+        dense_swiglu = self.act_func == "swiglu" and not self._is_rubin_kernel
+        compile_entry = gemm_glu
+        if dense_swiglu:
+            # These scalars are unused by dense SwiGLU. Supply them inside the
+            # compiled host rather than converting them at each FFI launch.
+            for key in (
+                "n",
+                "k",
+                "b_stride_size",
+                "b_major_mode",
+                "linear_offset",
+                "geglu_alpha",
+                "glu_clamp_max",
+                "glu_clamp_min",
+                "situ_beta1",
+                "situ_beta2",
+            ):
+                del compile_kwargs[key]
+            compile_entry = gemm_glu._dense_swiglu
+        _compiled_kernel = cute.compile(compile_entry, **compile_kwargs)
 
         # Cache workspace pointer for the tensor_api closure
         cached_workspace_ptr = from_dlpack(self._workspace, assumed_align=128).iterator
@@ -1019,6 +1038,28 @@ class GroupedGemmGluBlockScaledAPI(APIBase):
             scheduler_counter_tensor: Optional[torch.Tensor] = None,
         ) -> None:
             norm_const_tensor = self._unpad_tensor_to_ndim(norm_const_tensor, 1, "norm_const")
+            if dense_swiglu:
+                _compiled_kernel(
+                    a_tensor,
+                    b_tensor,
+                    sfb_tensor,
+                    cached_workspace_ptr,
+                    c_tensor,
+                    d_tensor,
+                    d_col_tensor,
+                    sfa_tensor,
+                    sfd_row_tensor,
+                    sfd_col_tensor,
+                    amax_tensor,
+                    norm_const_tensor,
+                    padded_offsets,
+                    alpha_tensor,
+                    prob_tensor,
+                    bias_tensor,
+                    stream,
+                    scheduler_counter_tensor,
+                )
+                return
             kernel_args = (
                 a_tensor,
                 b_tensor,
