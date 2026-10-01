@@ -1,0 +1,98 @@
+{
+  "stage": "COMPLETED_FLAG_CONTROL_AUDITED_NOT_NATIVE_SUCCESS",
+  "tested_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "files": [
+    {
+      "path": "results/a3-bf16-flag-cpu-audit-20261001-r5-launch/run.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-flag-cpu-audit-20261001-r5-launch/run.json",
+      "size": 594,
+      "sha256": "5b67e26b0bf7efff8e4bdcda3059b003ba961713cc7aee14146256e9aa861cef"
+    },
+    {
+      "path": "results/a3-bf16-flag-cpu-audit-20261001-r5-launch/stderr.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-flag-cpu-audit-20261001-r5-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-bf16-flag-cpu-audit-20261001-r5-launch/stdout.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-flag-cpu-audit-20261001-r5-launch/stdout.log",
+      "size": 136,
+      "sha256": "6d29a3d0e1893adef216c796e31d5ca5c84bb64bbe187207ed210e1ee9044c0b"
+    },
+    {
+      "path": "results/a3-bf16-flag-cpu-audit-20261001-r5/result.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-flag-cpu-audit-20261001-r5/result.json",
+      "size": 2783,
+      "sha256": "bfc29627db9dd5c50b5c570c41b4489894dab7aeee76bfbf0ee4c79da920d2bb"
+    },
+    {
+      "path": "results/a3-bf16-reduction-flag-gpu-20261001-r5-launch/run.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-reduction-flag-gpu-20261001-r5-launch/run.json",
+      "size": 783,
+      "sha256": "0cc323a08eec0246bd9030b3bda55a96afbe090edba9dadc7ff288f29eab25ba"
+    },
+    {
+      "path": "results/a3-bf16-reduction-flag-gpu-20261001-r5-launch/stderr.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-reduction-flag-gpu-20261001-r5-launch/stderr.log",
+      "size": 147,
+      "sha256": "9e6c8e1b193d5e13c973982c3444108313cb0880687d52c7b18e265ed7f59c32"
+    },
+    {
+      "path": "results/a3-bf16-reduction-flag-gpu-20261001-r5-launch/stdout.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-reduction-flag-gpu-20261001-r5-launch/stdout.log",
+      "size": 799,
+      "sha256": "dba82dd56241b1823b3b2572e43e78b2944824286e03308c2ae18e84fd78a7a3"
+    },
+    {
+      "path": "results/a3-bf16-reduction-flag-gpu-20261001-r5/result.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-reduction-flag-gpu-20261001-r5/result.json",
+      "size": 11791,
+      "sha256": "3d732868f5e97ccc93d3c35f329359cfb4688bde55a38391da6c4be86d704e36"
+    },
+    {
+      "path": "tools/a3_model_e2e_mergefix_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_model_e2e_mergefix_20261001.py",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "path": "tools/archive_a3_bf16_flag_success_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/archive_a3_bf16_flag_success_20261001.py",
+      "size": 2926,
+      "sha256": "6a7340b391fa492b765d06e9e838280c5ae73c47d075735043abe6416485a6f6"
+    },
+    {
+      "path": "tools/audit_a3_bf16_reduction_flag_r5_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_bf16_reduction_flag_r5_20261001.py",
+      "size": 3484,
+      "sha256": "24bfbc46a4cfff4d86ce27b8682d876bf94b29e5eadbcf0f14c751e00afb9540"
+    },
+    {
+      "path": "tools/audit_a3_precision_followup_r2_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_precision_followup_r2_20261001.py",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "tools/diagnose_a3_bf16_reduction_flag_early_admission_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_bf16_reduction_flag_early_admission_20261001.py",
+      "size": 7111,
+      "sha256": "31e1b8011c0d53507b5238eead060c6495964659ca8d1a376825e90986a2309c"
+    },
+    {
+      "path": "tools/run_logged.py",
+      "origin": "/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    }
+  ],
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    ".pt outputs",
+    "native binaries"
+  ],
+  "scope": "Three exact original BF16 full-logit flag controls; no native A3 call or model gate success"
+}

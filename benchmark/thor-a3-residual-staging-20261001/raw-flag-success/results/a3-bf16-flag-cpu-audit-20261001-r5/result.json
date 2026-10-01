@@ -1,0 +1,90 @@
+{
+  "stage": "PASS_EVIDENCE_AUDIT_BF16_FLAG_CONTROL_NOT_NATIVE_SUCCESS",
+  "source_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest4/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_bf16_reduction_flag_early_admission_20261001.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-reduction-flag-gpu-20261001-r5",
+      "--expected-source",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4",
+      "--expected-head",
+      "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-01T10:34:05.499124+00:00",
+    "deadline_seconds": 180.0,
+    "status": "EXITED",
+    "selected_env": {},
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 16.187752944009844
+  },
+  "cuda_initialized": false,
+  "rows": [
+    {
+      "case": 0,
+      "byte_exact_original_bf16": true,
+      "vs_original_bf16_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      }
+    },
+    {
+      "case": 1,
+      "byte_exact_original_bf16": true,
+      "vs_original_bf16_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      }
+    },
+    {
+      "case": 2,
+      "byte_exact_original_bf16": true,
+      "vs_original_bf16_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      }
+    }
+  ],
+  "tensors": {
+    "strict_bf16/0": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d821f2ba2944f24a4bbd62604d4fdc0249efba46529f018f7ceed0b0faf25c03"
+    },
+    "strict_bf16/1": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "11ecfe7300f0a2e2c8d26b5983344bec3c14117d141f794d948bf7f8ef5a1129"
+    },
+    "strict_bf16/2": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "0c24431f760ca0958414a86f55d1b3c837ccc6bfbc6c5a49329e6a62302cb056"
+    }
+  },
+  "outputs_sha256": "37cd67e71f2573b1e3bacc2555dc9cbf798c434124c075565942c80da634dc08",
+  "metadata_sha256": "3d732868f5e97ccc93d3c35f329359cfb4688bde55a38391da6c4be86d704e36",
+  "harness_sha256": "24bfbc46a4cfff4d86ce27b8682d876bf94b29e5eadbcf0f14c751e00afb9540",
+  "audit_helper_sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944",
+  "native_calls": 0,
+  "formal_performance": "NOT_RUN",
+  "scope": "BF16 flag observability on three exact inputs; no claim for all shapes, kernels or architectures"
+}

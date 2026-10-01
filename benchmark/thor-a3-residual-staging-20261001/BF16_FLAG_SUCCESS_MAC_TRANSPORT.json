@@ -1,0 +1,14 @@
+{
+  "verified_utc": "2026-10-01T10:55:22.628421+00:00",
+  "verified": true,
+  "manifest_entries": 14,
+  "transport": {
+    "archive": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-flag-success-archive-20261001/a3-bf16-flag-success-evidence-20261001.tar.gz",
+    "sha256": "1c9a40cdb2f931d56fdeb1bc7bbb618a347c3b15be9701fa46692e01b8f977a9",
+    "size": 20564,
+    "files": 15
+  },
+  "mac_directory": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-bf16-flag-success-evidence-20261001",
+  "original_baseline_replaced": false,
+  "native_calls": 0
+}

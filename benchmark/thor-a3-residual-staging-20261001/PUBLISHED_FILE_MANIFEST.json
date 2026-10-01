@@ -4,7 +4,7 @@
   "production_changes": false,
   "all24_native_success": false,
   "native_calls_this_iteration": 0,
-  "gpu_flag": "NOT_RUN_SHARED_LOCK_BUSY_AFTER_INITIAL_TIMEOUT",
+  "gpu_flag": "EXECUTED_R5_BYTE_EXACT_ORIGINAL_BF16_ON_THREE_CASES",
   "files": [
     {
       "path": "BF16_FLAG_ADMISSION.md",
@@ -15,6 +15,16 @@
       "path": "BF16_FLAG_MAC_TRANSPORT.json",
       "size": 711,
       "sha256": "b447660084faec71f2dad31b37e5b2d45913039044c7463d554ece2bfa75f09f"
+    },
+    {
+      "path": "BF16_FLAG_SUCCESS.md",
+      "size": 2119,
+      "sha256": "6c94215d5f04e5eeac76cd5200ed5b8928bfbbbe82bbaa8afda82dfe26d040d2"
+    },
+    {
+      "path": "BF16_FLAG_SUCCESS_MAC_TRANSPORT.json",
+      "size": 577,
+      "sha256": "c81c087f9eda32dd2ba4a415c1f455f9826d41e1052cb2b7f555e91c2373a69b"
     },
     {
       "path": "MAC_TRANSPORT.json",
@@ -28,8 +38,8 @@
     },
     {
       "path": "RESULT.md",
-      "size": 8743,
-      "sha256": "cff391e93380a2ebd885bd59c0614557f242724b3379f1db413b6bb26b9d6a3f"
+      "size": 9244,
+      "sha256": "66a603d5ee51ad179a95c4eab066a34724b6fea1969def4c5df6fb85a784d40c"
     },
     {
       "path": "UPSTREAM_OBSERVATION.json",
@@ -295,6 +305,81 @@
       "path": "raw-flag-admission/tools/diagnose_a3_bf16_reduction_flag_gpu_20261001.py.txt",
       "size": 6308,
       "sha256": "3dfdaa60a335ef218895adb328d822372b28319eeda545ee3c5d3cbef192ef13"
+    },
+    {
+      "path": "raw-flag-success/manifest.json",
+      "size": 4725,
+      "sha256": "6411370e2dce5745e098aad45e8d1f852a59750eaef6b92820c5dc70a51a1d6b"
+    },
+    {
+      "path": "raw-flag-success/results/a3-bf16-flag-cpu-audit-20261001-r5/result.json",
+      "size": 2783,
+      "sha256": "bfc29627db9dd5c50b5c570c41b4489894dab7aeee76bfbf0ee4c79da920d2bb"
+    },
+    {
+      "path": "raw-flag-success/results/a3-bf16-flag-cpu-audit-20261001-r5-launch/run.json",
+      "size": 594,
+      "sha256": "5b67e26b0bf7efff8e4bdcda3059b003ba961713cc7aee14146256e9aa861cef"
+    },
+    {
+      "path": "raw-flag-success/results/a3-bf16-flag-cpu-audit-20261001-r5-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "raw-flag-success/results/a3-bf16-flag-cpu-audit-20261001-r5-launch/stdout.log",
+      "size": 136,
+      "sha256": "6d29a3d0e1893adef216c796e31d5ca5c84bb64bbe187207ed210e1ee9044c0b"
+    },
+    {
+      "path": "raw-flag-success/results/a3-bf16-reduction-flag-gpu-20261001-r5/result.json",
+      "size": 11791,
+      "sha256": "3d732868f5e97ccc93d3c35f329359cfb4688bde55a38391da6c4be86d704e36"
+    },
+    {
+      "path": "raw-flag-success/results/a3-bf16-reduction-flag-gpu-20261001-r5-launch/run.json",
+      "size": 783,
+      "sha256": "0cc323a08eec0246bd9030b3bda55a96afbe090edba9dadc7ff288f29eab25ba"
+    },
+    {
+      "path": "raw-flag-success/results/a3-bf16-reduction-flag-gpu-20261001-r5-launch/stderr.log",
+      "size": 147,
+      "sha256": "9e6c8e1b193d5e13c973982c3444108313cb0880687d52c7b18e265ed7f59c32"
+    },
+    {
+      "path": "raw-flag-success/results/a3-bf16-reduction-flag-gpu-20261001-r5-launch/stdout.log",
+      "size": 799,
+      "sha256": "dba82dd56241b1823b3b2572e43e78b2944824286e03308c2ae18e84fd78a7a3"
+    },
+    {
+      "path": "raw-flag-success/tools/a3_model_e2e_mergefix_20261001.py.txt",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "path": "raw-flag-success/tools/archive_a3_bf16_flag_success_20261001.py.txt",
+      "size": 2926,
+      "sha256": "6a7340b391fa492b765d06e9e838280c5ae73c47d075735043abe6416485a6f6"
+    },
+    {
+      "path": "raw-flag-success/tools/audit_a3_bf16_reduction_flag_r5_20261001.py.txt",
+      "size": 3484,
+      "sha256": "24bfbc46a4cfff4d86ce27b8682d876bf94b29e5eadbcf0f14c751e00afb9540"
+    },
+    {
+      "path": "raw-flag-success/tools/audit_a3_precision_followup_r2_20261001.py.txt",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "raw-flag-success/tools/diagnose_a3_bf16_reduction_flag_early_admission_20261001.py.txt",
+      "size": 7111,
+      "sha256": "31e1b8011c0d53507b5238eead060c6495964659ca8d1a376825e90986a2309c"
+    },
+    {
+      "path": "raw-flag-success/tools/run_logged.py.txt",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
     }
   ],
   "payload_filename_note": ".py.txt preserves frozen bytes; strip only final .txt for use"

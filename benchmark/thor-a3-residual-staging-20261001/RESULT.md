@@ -53,3 +53,7 @@ Mac `a3-residual-staging-evidence-20261001/` contains39 files/614971 payload byt
 ## Subsequent GPU admission attempts
 
 After a brief free-lock probe, the GPU-only r3 attempt returned75 because another task had acquired the lock before admission. A separate r4 source version acquires before heavy imports and waits at most45s; it also returned75, with Torch not imported and no model/GPU computation. Both frozen launch/status/log/source sets are preserved in [BF16_FLAG_ADMISSION.md](BF16_FLAG_ADMISSION.md). The flag effect remains **NOT_RUN_SHARED_LOCK_BUSY_AFTER_INITIAL_TIMEOUT**, no additional native calls or precision pass occurred, and no other task/service was interrupted. Final Mac admission archive13 files/all12 manifest entries verified, SHA256 afbb4cfc06f4ed8dd6b21a3f930b83f91ef40ecb4f0ff6439f755513a3327628. The previous39-file archive remains unchanged.
+
+## Completed flag control (supersedes historical admission-only status)
+
+The r5 GPU control and independent CPU audit both returned0. Turning off BF16 reduced-precision reduction preserves all three original BF16 complete-logit tensors byte-for-byte. Native A3 calls0; original baseline/precision gates unchanged; all24 MXFP8 remains open. See [BF16_FLAG_SUCCESS.md](BF16_FLAG_SUCCESS.md) and its immutable raw evidence. The earlier NOT_RUN statements above refer to the preserved r1/r3/r4 attempts.

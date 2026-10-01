@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest4/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_bf16_reduction_flag_r5_20261001.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-flag-cpu-audit-20261001-r5"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-01T10:43:25.501743+00:00",
+  "deadline_seconds": 180.0,
+  "status": "EXITED",
+  "selected_env": {},
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 6.18359353399137
+}

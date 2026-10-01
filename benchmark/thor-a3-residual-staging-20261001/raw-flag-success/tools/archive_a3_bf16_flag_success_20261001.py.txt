@@ -1,0 +1,62 @@
+"""Archive completed BF16 flag evidence, excluding models and tensor payloads."""
+
+import hashlib
+import io
+import json
+from pathlib import Path
+import tarfile
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+PREFIX = "a3-bf16-flag-success-evidence-20261001"
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    destination = ROOT / "results/a3-bf16-flag-success-archive-20261001"
+    destination.mkdir(exist_ok=False)
+    selected = {}
+    for name in ("a3-bf16-reduction-flag-gpu-20261001-r5", "a3-bf16-flag-cpu-audit-20261001-r5"):
+        launch = ROOT / "results" / (name + "-launch")
+        run = json.loads((launch / "run.json").read_text())
+        assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+        for directory in (launch, ROOT / "results" / name):
+            for path in sorted(directory.rglob("*")):
+                if path.is_file() and path.suffix in (".json", ".log"):
+                    selected[str(path.relative_to(ROOT))] = path
+    for name in (
+        "diagnose_a3_bf16_reduction_flag_early_admission_20261001.py",
+        "audit_a3_bf16_reduction_flag_r5_20261001.py",
+        "audit_a3_precision_followup_r2_20261001.py",
+        "a3_model_e2e_mergefix_20261001.py",
+        "archive_a3_bf16_flag_success_20261001.py",
+    ):
+        path = ROOT / "tools" / name
+        selected[str(path.relative_to(ROOT))] = path
+    selected["tools/run_logged.py"] = Path("/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py")
+    records = [{"path": name, "origin": str(path), "size": path.stat().st_size, "sha256": sha(path)} for name, path in sorted(selected.items())]
+    assert all(path.suffix in (".json", ".log", ".py") and not path.is_symlink() for path in selected.values())
+    manifest = {
+        "stage": "COMPLETED_FLAG_CONTROL_AUDITED_NOT_NATIVE_SUCCESS",
+        "tested_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+        "files": records,
+        "excluded": ["models", "cache", "engines", ".pt outputs", "native binaries"],
+        "scope": "Three exact original BF16 full-logit flag controls; no native A3 call or model gate success",
+    }
+    payload = (json.dumps(manifest, indent=2) + "\n").encode()
+    archive = destination / (PREFIX + ".tar.gz")
+    with tarfile.open(archive, "w:gz") as tar:
+        for name, path in selected.items():
+            tar.add(path, arcname=PREFIX + "/" + name, recursive=False)
+        info = tarfile.TarInfo(PREFIX + "/manifest.json")
+        info.size = len(payload)
+        tar.addfile(info, io.BytesIO(payload))
+    transport = {"archive": str(archive), "sha256": sha(archive), "size": archive.stat().st_size, "files": len(records) + 1}
+    (destination / "transport.json").write_text(json.dumps(transport, indent=2) + "\n")
+    print(json.dumps(transport), flush=True)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,74 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Independent CPU audit of complete GPU BF16 reduction-flag control logits."""
+
+import argparse
+import importlib.util
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+HELPER = Path(__file__).with_name("audit_a3_precision_followup_r2_20261001.py")
+spec = importlib.util.spec_from_file_location("a3_cpu_audit", HELPER)
+a = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(a)
+t = a.torch
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized()
+    directory = a.ROOT / "results/a3-bf16-reduction-flag-gpu-20261001-r5"
+    meta, run = a.provenance(directory, 0)
+    assert meta["lock_admission"] == "SUCCESS_BEFORE_HEAVY_IMPORTS" and meta["flag_restored"]
+    assert meta["allow_bf16_reduced_precision_reduction_original"] and not meta["all24_native_success"]
+    base_dir = a.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    assert a.sha_file(base_dir / "outputs.pt") == meta["baseline_outputs_sha256"]
+    cpu_dir = a.ROOT / "results/a3-bf16-rounding-cpu-audit-20261001-r2"
+    assert a.sha_file(cpu_dir / "result.json") == meta["cpu_audit_sha256"]
+    baseline = t.load(base_dir / "outputs.pt", weights_only=True, map_location="cpu")
+    values = t.load(directory / "outputs.pt", weights_only=True, map_location="cpu")
+    assert len(values) == len(meta["rows"]) == 3
+    rows = []
+    with t.inference_mode():
+        for row in meta["rows"]:
+            case = row["case"]
+            actual, stock = values[f"strict_bf16/{case}"], baseline[f"forward_{case}_stock"]
+            assert actual.shape == stock.shape == (1, [73, 70, 256][case], 49155)
+            assert not row["original_baseline_replaced"] and row["native_calls"] == 0
+            assert row["allow_bf16_reduced_precision_reduction"] is False
+            a.compare_metric(a.difference(actual, stock, t.float32), row["vs_original_stored_bf16"])
+            exact = t.equal(actual.view(t.uint8), stock.view(t.uint8))
+            assert exact == row["byte_exact_original_bf16"]
+            rows.append({"case": case, "byte_exact_original_bf16": exact, "vs_original_bf16_fp64": a.difference(actual, stock)})
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "PASS_EVIDENCE_AUDIT_BF16_FLAG_CONTROL_NOT_NATIVE_SUCCESS",
+        "source_head": a.HEAD,
+        "run": run,
+        "cuda_initialized": False,
+        "rows": rows,
+        "tensors": a.flatten_tensors(values),
+        "outputs_sha256": a.sha_file(directory / "outputs.pt"),
+        "metadata_sha256": a.sha_file(directory / "result.json"),
+        "harness_sha256": a.sha_file(__file__),
+        "audit_helper_sha256": a.sha_file(HELPER),
+        "native_calls": 0,
+        "formal_performance": "NOT_RUN",
+        "scope": "BF16 flag observability on three exact inputs; no claim for all shapes, kernels or architectures",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(
+        json.dumps({"stage": result["stage"], "byte_exact_original_all_three": all(x["byte_exact_original_bf16"] for x in rows), "cuda_initialized": False}),
+        flush=True,
+    )
+
+
+if __name__ == "__main__":
+    main()
