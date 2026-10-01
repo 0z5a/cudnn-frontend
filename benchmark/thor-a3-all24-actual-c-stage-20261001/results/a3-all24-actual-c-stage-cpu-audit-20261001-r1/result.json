@@ -1,0 +1,5482 @@
+{
+  "stage": "CPU_AUDITED_ALL24_FIXED_INPUT_EPILOGUE_ISOLATION_NOT_MODEL_SUCCESS",
+  "source_head": "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1",
+  "run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_all24_actual_c_stage_queued_r2_20261001.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-all24-actual-c-stage-20261001-r2",
+      "--expected-source",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+      "--expected-head",
+      "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+    "started_utc": "2026-10-01T12:55:36.920587+00:00",
+    "deadline_seconds": 5400.0,
+    "status": "EXITED",
+    "selected_env": {},
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 18.642515409000225
+  },
+  "preserved_r1_driver": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_all24_actual_c_stage_queued_20261001.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-all24-actual-c-stage-20261001-r1",
+      "--expected-source",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+      "--expected-head",
+      "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+    "started_utc": "2026-10-01T12:53:56.439931+00:00",
+    "deadline_seconds": 5400.0,
+    "status": "EXITED",
+    "selected_env": {},
+    "returncode": 1,
+    "signal": null,
+    "elapsed_seconds": 12.056812239000465
+  },
+  "native_calls_observed": 48,
+  "new_native_calls": 0,
+  "cuda_initialized": false,
+  "rows": [
+    {
+      "layer": 0,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 17,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 7.346839692639297e-40,
+        "relative_l2": 6.513791142920578e-43,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.125,
+        "relative_l2": 9.406337236038608e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 82,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 7.346839692639297e-40,
+        "relative_l2": 6.513791142920578e-43,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        36,
+        13,
+        7,
+        18,
+        7,
+        23,
+        17,
+        23,
+        13,
+        21,
+        12,
+        11,
+        25,
+        30,
+        18,
+        8,
+        13,
+        21,
+        18,
+        15,
+        6,
+        24,
+        17,
+        24,
+        19,
+        28,
+        15,
+        11,
+        11,
+        17,
+        18,
+        45
+      ]
+    },
+    {
+      "layer": 0,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.125,
+        "relative_l2": 9.406337266006251e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 82,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        36,
+        13,
+        7,
+        18,
+        7,
+        23,
+        17,
+        23,
+        13,
+        21,
+        12,
+        11,
+        25,
+        30,
+        18,
+        8,
+        13,
+        21,
+        18,
+        15,
+        6,
+        24,
+        17,
+        24,
+        19,
+        28,
+        15,
+        11,
+        11,
+        17,
+        18,
+        45
+      ]
+    },
+    {
+      "layer": 1,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 3.273021402852126e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 84,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        7,
+        26,
+        12,
+        24,
+        15,
+        1,
+        19,
+        4,
+        73,
+        0,
+        4,
+        1,
+        12,
+        73,
+        29,
+        2,
+        1,
+        0,
+        2,
+        73,
+        24,
+        10,
+        7,
+        15,
+        5,
+        36,
+        1,
+        5,
+        20,
+        32,
+        24,
+        27
+      ]
+    },
+    {
+      "layer": 1,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 3.273021431246763e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 84,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        7,
+        26,
+        12,
+        24,
+        15,
+        1,
+        19,
+        4,
+        73,
+        0,
+        4,
+        1,
+        12,
+        73,
+        29,
+        2,
+        1,
+        0,
+        2,
+        73,
+        24,
+        10,
+        7,
+        15,
+        5,
+        36,
+        1,
+        5,
+        20,
+        32,
+        24,
+        27
+      ]
+    },
+    {
+      "layer": 2,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 4.6241204649957394e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 73,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        11,
+        37,
+        3,
+        1,
+        15,
+        32,
+        0,
+        2,
+        9,
+        3,
+        0,
+        6,
+        11,
+        4,
+        3,
+        9,
+        10,
+        22,
+        39,
+        10,
+        14,
+        1,
+        40,
+        9,
+        73,
+        32,
+        73,
+        9,
+        49,
+        7,
+        29,
+        21
+      ]
+    },
+    {
+      "layer": 2,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 4.624120808235051e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 73,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        11,
+        37,
+        3,
+        1,
+        15,
+        32,
+        0,
+        2,
+        9,
+        3,
+        0,
+        6,
+        11,
+        4,
+        3,
+        9,
+        10,
+        22,
+        39,
+        10,
+        14,
+        1,
+        40,
+        9,
+        73,
+        32,
+        73,
+        9,
+        49,
+        7,
+        29,
+        21
+      ]
+    },
+    {
+      "layer": 3,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.001953125,
+        "relative_l2": 1.4742717365120694e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 72,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        27,
+        17,
+        63,
+        2,
+        25,
+        2,
+        23,
+        21,
+        1,
+        3,
+        9,
+        3,
+        16,
+        30,
+        3,
+        48,
+        23,
+        0,
+        28,
+        0,
+        4,
+        15,
+        10,
+        6,
+        36,
+        1,
+        45,
+        21,
+        13,
+        24,
+        45,
+        20
+      ]
+    },
+    {
+      "layer": 3,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.001953125,
+        "relative_l2": 1.474271743740788e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 72,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        27,
+        17,
+        63,
+        2,
+        25,
+        2,
+        23,
+        21,
+        1,
+        3,
+        9,
+        3,
+        16,
+        30,
+        3,
+        48,
+        23,
+        0,
+        28,
+        0,
+        4,
+        15,
+        10,
+        6,
+        36,
+        1,
+        45,
+        21,
+        13,
+        24,
+        45,
+        20
+      ]
+    },
+    {
+      "layer": 4,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.00390625,
+        "relative_l2": 1.8221376435951655e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 83,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        14,
+        22,
+        5,
+        15,
+        10,
+        25,
+        7,
+        23,
+        32,
+        5,
+        21,
+        24,
+        52,
+        2,
+        30,
+        13,
+        19,
+        15,
+        33,
+        4,
+        11,
+        12,
+        4,
+        37,
+        1,
+        15,
+        39,
+        20,
+        20,
+        5,
+        31,
+        18
+      ]
+    },
+    {
+      "layer": 4,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.00390625,
+        "relative_l2": 1.822137671470652e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 83,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        14,
+        22,
+        5,
+        15,
+        10,
+        25,
+        7,
+        23,
+        32,
+        5,
+        21,
+        24,
+        52,
+        2,
+        30,
+        13,
+        19,
+        15,
+        33,
+        4,
+        11,
+        12,
+        4,
+        37,
+        1,
+        15,
+        39,
+        20,
+        20,
+        5,
+        31,
+        18
+      ]
+    },
+    {
+      "layer": 5,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 5.8592613708021235e-06,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 102,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        6,
+        10,
+        6,
+        17,
+        16,
+        10,
+        11,
+        10,
+        65,
+        17,
+        22,
+        21,
+        9,
+        20,
+        16,
+        12,
+        17,
+        6,
+        6,
+        13,
+        36,
+        13,
+        32,
+        7,
+        72,
+        8,
+        16,
+        17,
+        8,
+        17,
+        40,
+        8
+      ]
+    },
+    {
+      "layer": 5,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 5.85934289295068e-06,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 102,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        6,
+        10,
+        6,
+        17,
+        16,
+        10,
+        11,
+        10,
+        65,
+        17,
+        22,
+        21,
+        9,
+        20,
+        16,
+        12,
+        17,
+        6,
+        6,
+        13,
+        36,
+        13,
+        32,
+        7,
+        72,
+        8,
+        16,
+        17,
+        8,
+        17,
+        40,
+        8
+      ]
+    },
+    {
+      "layer": 6,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 4.4981608277124134e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 75,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        21,
+        10,
+        27,
+        0,
+        11,
+        29,
+        17,
+        6,
+        5,
+        8,
+        32,
+        19,
+        48,
+        23,
+        36,
+        8,
+        20,
+        6,
+        5,
+        26,
+        33,
+        66,
+        3,
+        25,
+        5,
+        22,
+        11,
+        18,
+        15,
+        7,
+        17,
+        5
+      ]
+    },
+    {
+      "layer": 6,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 1,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 9.5367431640625e-07,
+        "relative_l2": 2.1595455486857877e-09,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 4.498160841487282e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 75,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 1,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 9.5367431640625e-07,
+        "relative_l2": 2.1595455486857877e-09,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        21,
+        10,
+        27,
+        0,
+        11,
+        29,
+        17,
+        6,
+        5,
+        8,
+        32,
+        19,
+        48,
+        23,
+        36,
+        8,
+        20,
+        6,
+        5,
+        26,
+        33,
+        66,
+        3,
+        25,
+        5,
+        22,
+        11,
+        18,
+        15,
+        7,
+        17,
+        5
+      ]
+    },
+    {
+      "layer": 7,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.03125,
+        "relative_l2": 7.260996367482883e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 70,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        14,
+        5,
+        2,
+        18,
+        61,
+        27,
+        4,
+        17,
+        4,
+        21,
+        17,
+        5,
+        4,
+        51,
+        34,
+        6,
+        41,
+        48,
+        15,
+        3,
+        6,
+        6,
+        8,
+        28,
+        19,
+        37,
+        4,
+        6,
+        27,
+        29,
+        3,
+        14
+      ]
+    },
+    {
+      "layer": 7,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.03125,
+        "relative_l2": 7.260996431794559e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 70,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        14,
+        5,
+        2,
+        18,
+        61,
+        27,
+        4,
+        17,
+        4,
+        21,
+        17,
+        5,
+        4,
+        51,
+        34,
+        6,
+        41,
+        48,
+        15,
+        3,
+        6,
+        6,
+        8,
+        28,
+        19,
+        37,
+        4,
+        6,
+        27,
+        29,
+        3,
+        14
+      ]
+    },
+    {
+      "layer": 8,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 4.105319899796946e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 65,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        53,
+        10,
+        3,
+        8,
+        16,
+        41,
+        9,
+        32,
+        61,
+        51,
+        4,
+        7,
+        7,
+        2,
+        4,
+        68,
+        3,
+        10,
+        4,
+        15,
+        20,
+        5,
+        7,
+        5,
+        1,
+        29,
+        16,
+        22,
+        6,
+        38,
+        22,
+        5
+      ]
+    },
+    {
+      "layer": 8,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 4.1053199231758276e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 65,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        53,
+        10,
+        3,
+        8,
+        16,
+        41,
+        9,
+        32,
+        61,
+        51,
+        4,
+        7,
+        7,
+        2,
+        4,
+        68,
+        3,
+        10,
+        4,
+        15,
+        20,
+        5,
+        7,
+        5,
+        1,
+        29,
+        16,
+        22,
+        6,
+        38,
+        22,
+        5
+      ]
+    },
+    {
+      "layer": 9,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.03125,
+        "relative_l2": 7.11509642654893e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 73,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        48,
+        8,
+        6,
+        6,
+        2,
+        53,
+        12,
+        17,
+        10,
+        28,
+        10,
+        17,
+        16,
+        12,
+        4,
+        10,
+        21,
+        42,
+        6,
+        21,
+        27,
+        41,
+        16,
+        3,
+        59,
+        2,
+        16,
+        22,
+        19,
+        8,
+        14,
+        8
+      ]
+    },
+    {
+      "layer": 9,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.03125,
+        "relative_l2": 7.115096436779375e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 73,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        48,
+        8,
+        6,
+        6,
+        2,
+        53,
+        12,
+        17,
+        10,
+        28,
+        10,
+        17,
+        16,
+        12,
+        4,
+        10,
+        21,
+        42,
+        6,
+        21,
+        27,
+        41,
+        16,
+        3,
+        59,
+        2,
+        16,
+        22,
+        19,
+        8,
+        14,
+        8
+      ]
+    },
+    {
+      "layer": 10,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.0078125,
+        "relative_l2": 2.1048801421822425e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 80,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        18,
+        12,
+        6,
+        26,
+        15,
+        22,
+        60,
+        0,
+        2,
+        6,
+        12,
+        26,
+        2,
+        15,
+        20,
+        9,
+        13,
+        17,
+        10,
+        12,
+        39,
+        29,
+        29,
+        33,
+        8,
+        35,
+        26,
+        25,
+        16,
+        6,
+        14,
+        21
+      ]
+    },
+    {
+      "layer": 10,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.0078125,
+        "relative_l2": 2.1048801559115485e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 80,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        18,
+        12,
+        6,
+        26,
+        15,
+        22,
+        60,
+        0,
+        2,
+        6,
+        12,
+        26,
+        2,
+        15,
+        20,
+        9,
+        13,
+        17,
+        10,
+        12,
+        39,
+        29,
+        29,
+        33,
+        8,
+        35,
+        26,
+        25,
+        16,
+        6,
+        14,
+        21
+      ]
+    },
+    {
+      "layer": 11,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.03125,
+        "relative_l2": 7.399533327975122e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 71,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        10,
+        7,
+        6,
+        6,
+        7,
+        17,
+        35,
+        29,
+        19,
+        39,
+        50,
+        15,
+        25,
+        17,
+        13,
+        26,
+        18,
+        32,
+        13,
+        24,
+        28,
+        3,
+        7,
+        15,
+        11,
+        19,
+        29,
+        18,
+        4,
+        17,
+        9,
+        16
+      ]
+    },
+    {
+      "layer": 11,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.03125,
+        "relative_l2": 7.399533337023083e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 71,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        10,
+        7,
+        6,
+        6,
+        7,
+        17,
+        35,
+        29,
+        19,
+        39,
+        50,
+        15,
+        25,
+        17,
+        13,
+        26,
+        18,
+        32,
+        13,
+        24,
+        28,
+        3,
+        7,
+        15,
+        11,
+        19,
+        29,
+        18,
+        4,
+        17,
+        9,
+        16
+      ]
+    },
+    {
+      "layer": 12,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.0078125,
+        "relative_l2": 2.3066095706746326e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 65,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        30,
+        31,
+        20,
+        10,
+        3,
+        4,
+        31,
+        20,
+        8,
+        8,
+        12,
+        22,
+        18,
+        40,
+        48,
+        14,
+        12,
+        21,
+        39,
+        37,
+        17,
+        5,
+        39,
+        8,
+        16,
+        3,
+        12,
+        4,
+        26,
+        1,
+        16,
+        9
+      ]
+    },
+    {
+      "layer": 12,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.0078125,
+        "relative_l2": 2.306609600943871e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 65,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        30,
+        31,
+        20,
+        10,
+        3,
+        4,
+        31,
+        20,
+        8,
+        8,
+        12,
+        22,
+        18,
+        40,
+        48,
+        14,
+        12,
+        21,
+        39,
+        37,
+        17,
+        5,
+        39,
+        8,
+        16,
+        3,
+        12,
+        4,
+        26,
+        1,
+        16,
+        9
+      ]
+    },
+    {
+      "layer": 13,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 2.967943873348674e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 78,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        29,
+        8,
+        27,
+        16,
+        11,
+        9,
+        9,
+        32,
+        21,
+        2,
+        11,
+        14,
+        25,
+        12,
+        1,
+        23,
+        40,
+        12,
+        6,
+        5,
+        23,
+        23,
+        47,
+        12,
+        3,
+        6,
+        14,
+        12,
+        61,
+        35,
+        11,
+        24
+      ]
+    },
+    {
+      "layer": 13,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 2.9679438926912135e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 78,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        29,
+        8,
+        27,
+        16,
+        11,
+        9,
+        9,
+        32,
+        21,
+        2,
+        11,
+        14,
+        25,
+        12,
+        1,
+        23,
+        40,
+        12,
+        6,
+        5,
+        23,
+        23,
+        47,
+        12,
+        3,
+        6,
+        14,
+        12,
+        61,
+        35,
+        11,
+        24
+      ]
+    },
+    {
+      "layer": 14,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.03125,
+        "relative_l2": 4.668366833376139e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 85,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        7,
+        35,
+        10,
+        14,
+        13,
+        12,
+        15,
+        13,
+        9,
+        14,
+        42,
+        21,
+        7,
+        10,
+        24,
+        42,
+        18,
+        16,
+        41,
+        4,
+        19,
+        5,
+        23,
+        11,
+        9,
+        50,
+        11,
+        16,
+        25,
+        25,
+        8,
+        15
+      ]
+    },
+    {
+      "layer": 14,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.03125,
+        "relative_l2": 4.668366838088285e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 85,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        7,
+        35,
+        10,
+        14,
+        13,
+        12,
+        15,
+        13,
+        9,
+        14,
+        42,
+        21,
+        7,
+        10,
+        24,
+        42,
+        18,
+        16,
+        41,
+        4,
+        19,
+        5,
+        23,
+        11,
+        9,
+        50,
+        11,
+        16,
+        25,
+        25,
+        8,
+        15
+      ]
+    },
+    {
+      "layer": 15,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 2.1750954598951457e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 76,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        9,
+        13,
+        23,
+        26,
+        13,
+        9,
+        4,
+        16,
+        29,
+        16,
+        45,
+        22,
+        11,
+        15,
+        10,
+        27,
+        17,
+        19,
+        30,
+        29,
+        15,
+        14,
+        28,
+        26,
+        6,
+        19,
+        5,
+        9,
+        26,
+        25,
+        14,
+        14
+      ]
+    },
+    {
+      "layer": 15,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 1,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 9.5367431640625e-07,
+        "relative_l2": 1.072698795575102e-09,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 2.175095487199445e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 76,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 1,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 9.5367431640625e-07,
+        "relative_l2": 1.072698795575102e-09,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        9,
+        13,
+        23,
+        26,
+        13,
+        9,
+        4,
+        16,
+        29,
+        16,
+        45,
+        22,
+        11,
+        15,
+        10,
+        27,
+        17,
+        19,
+        30,
+        29,
+        15,
+        14,
+        28,
+        26,
+        6,
+        19,
+        5,
+        9,
+        26,
+        25,
+        14,
+        14
+      ]
+    },
+    {
+      "layer": 16,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.0625,
+        "relative_l2": 6.314096612723417e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 78,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        26,
+        7,
+        16,
+        18,
+        27,
+        17,
+        20,
+        15,
+        30,
+        8,
+        40,
+        17,
+        9,
+        18,
+        24,
+        13,
+        14,
+        4,
+        20,
+        13,
+        26,
+        0,
+        6,
+        34,
+        33,
+        29,
+        28,
+        12,
+        9,
+        23,
+        10,
+        18
+      ]
+    },
+    {
+      "layer": 16,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.0625,
+        "relative_l2": 6.314096620261327e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 78,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        26,
+        7,
+        16,
+        18,
+        27,
+        17,
+        20,
+        15,
+        30,
+        8,
+        40,
+        17,
+        9,
+        18,
+        24,
+        13,
+        14,
+        4,
+        20,
+        13,
+        26,
+        0,
+        6,
+        34,
+        33,
+        29,
+        28,
+        12,
+        9,
+        23,
+        10,
+        18
+      ]
+    },
+    {
+      "layer": 17,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 1.6073627053816776e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 75,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        17,
+        11,
+        11,
+        12,
+        20,
+        19,
+        41,
+        17,
+        22,
+        7,
+        29,
+        14,
+        3,
+        26,
+        28,
+        35,
+        12,
+        7,
+        28,
+        9,
+        0,
+        26,
+        24,
+        22,
+        6,
+        7,
+        14,
+        29,
+        19,
+        11,
+        45,
+        13
+      ]
+    },
+    {
+      "layer": 17,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 1.6073627819189492e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 75,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        17,
+        11,
+        11,
+        12,
+        20,
+        19,
+        41,
+        17,
+        22,
+        7,
+        29,
+        14,
+        3,
+        26,
+        28,
+        35,
+        12,
+        7,
+        28,
+        9,
+        0,
+        26,
+        24,
+        22,
+        6,
+        7,
+        14,
+        29,
+        19,
+        11,
+        45,
+        13
+      ]
+    },
+    {
+      "layer": 18,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.03125,
+        "relative_l2": 3.2634644296056e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 78,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        53,
+        13,
+        22,
+        14,
+        19,
+        18,
+        32,
+        13,
+        17,
+        25,
+        5,
+        10,
+        13,
+        33,
+        8,
+        10,
+        31,
+        21,
+        12,
+        14,
+        8,
+        30,
+        25,
+        13,
+        17,
+        8,
+        5,
+        24,
+        17,
+        8,
+        9,
+        37
+      ]
+    },
+    {
+      "layer": 18,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.03125,
+        "relative_l2": 3.2634644397033665e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 78,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        53,
+        13,
+        22,
+        14,
+        19,
+        18,
+        32,
+        13,
+        17,
+        25,
+        5,
+        10,
+        13,
+        33,
+        8,
+        10,
+        31,
+        21,
+        12,
+        14,
+        8,
+        30,
+        25,
+        13,
+        17,
+        8,
+        5,
+        24,
+        17,
+        8,
+        9,
+        37
+      ]
+    },
+    {
+      "layer": 19,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 1.9986186828527825e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 73,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        5,
+        23,
+        12,
+        18,
+        9,
+        25,
+        13,
+        10,
+        36,
+        16,
+        9,
+        7,
+        33,
+        12,
+        10,
+        30,
+        9,
+        5,
+        26,
+        34,
+        23,
+        3,
+        19,
+        45,
+        24,
+        10,
+        7,
+        26,
+        20,
+        30,
+        15,
+        20
+      ]
+    },
+    {
+      "layer": 19,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 1,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 9.5367431640625e-07,
+        "relative_l2": 5.520718096401192e-10,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 1.998618756505076e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 73,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 1,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 9.5367431640625e-07,
+        "relative_l2": 5.520718096401192e-10,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        5,
+        23,
+        12,
+        18,
+        9,
+        25,
+        13,
+        10,
+        36,
+        16,
+        9,
+        7,
+        33,
+        12,
+        10,
+        30,
+        9,
+        5,
+        26,
+        34,
+        23,
+        3,
+        19,
+        45,
+        24,
+        10,
+        7,
+        26,
+        20,
+        30,
+        15,
+        20
+      ]
+    },
+    {
+      "layer": 20,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 1.104991158110729e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 91,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        26,
+        45,
+        39,
+        37,
+        8,
+        12,
+        40,
+        6,
+        18,
+        13,
+        6,
+        14,
+        8,
+        8,
+        3,
+        21,
+        23,
+        26,
+        5,
+        27,
+        14,
+        35,
+        10,
+        23,
+        7,
+        7,
+        23,
+        21,
+        28,
+        11,
+        12,
+        8
+      ]
+    },
+    {
+      "layer": 20,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.015625,
+        "relative_l2": 1.1049913816417881e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 91,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        26,
+        45,
+        39,
+        37,
+        8,
+        12,
+        40,
+        6,
+        18,
+        13,
+        6,
+        14,
+        8,
+        8,
+        3,
+        21,
+        23,
+        26,
+        5,
+        27,
+        14,
+        35,
+        10,
+        23,
+        7,
+        7,
+        23,
+        21,
+        28,
+        11,
+        12,
+        8
+      ]
+    },
+    {
+      "layer": 21,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.125,
+        "relative_l2": 6.430210959558999e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 96,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        8,
+        6,
+        23,
+        9,
+        24,
+        25,
+        7,
+        25,
+        24,
+        17,
+        3,
+        15,
+        37,
+        47,
+        22,
+        18,
+        8,
+        9,
+        2,
+        36,
+        5,
+        28,
+        32,
+        20,
+        7,
+        39,
+        10,
+        19,
+        16,
+        13,
+        8,
+        22
+      ]
+    },
+    {
+      "layer": 21,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 4,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 1.9073486328125e-06,
+        "relative_l2": 1.1374548549074088e-09,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.125,
+        "relative_l2": 6.430211023183073e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 96,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 4,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 1.9073486328125e-06,
+        "relative_l2": 1.1374548549074088e-09,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        8,
+        6,
+        23,
+        9,
+        24,
+        25,
+        7,
+        25,
+        24,
+        17,
+        3,
+        15,
+        37,
+        47,
+        22,
+        18,
+        8,
+        9,
+        2,
+        36,
+        5,
+        28,
+        32,
+        20,
+        7,
+        39,
+        10,
+        19,
+        16,
+        13,
+        8,
+        22
+      ]
+    },
+    {
+      "layer": 22,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.03125,
+        "relative_l2": 1.1854778399278694e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 66,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        6,
+        4,
+        0,
+        65,
+        34,
+        8,
+        17,
+        4,
+        18,
+        35,
+        33,
+        5,
+        59,
+        39,
+        3,
+        16,
+        4,
+        12,
+        0,
+        44,
+        13,
+        30,
+        10,
+        1,
+        20,
+        14,
+        22,
+        10,
+        7,
+        21,
+        3,
+        27
+      ]
+    },
+    {
+      "layer": 22,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 8,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 1.9073486328125e-06,
+        "relative_l2": 1.1463158566492007e-09,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 0.03125,
+        "relative_l2": 1.1854784848482614e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 66,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 8,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 1.9073486328125e-06,
+        "relative_l2": 1.1463158566492007e-09,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        6,
+        4,
+        0,
+        65,
+        34,
+        8,
+        17,
+        4,
+        18,
+        35,
+        33,
+        5,
+        59,
+        39,
+        3,
+        16,
+        4,
+        12,
+        0,
+        44,
+        13,
+        30,
+        10,
+        1,
+        20,
+        14,
+        22,
+        10,
+        7,
+        21,
+        3,
+        27
+      ]
+    },
+    {
+      "layer": 23,
+      "dtype": "torch.bfloat16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 0,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 1.0,
+        "relative_l2": 8.652836739502488e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 62,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 0,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        9,
+        21,
+        13,
+        9,
+        24,
+        15,
+        13,
+        47,
+        35,
+        24,
+        20,
+        5,
+        45,
+        4,
+        3,
+        4,
+        47,
+        5,
+        28,
+        24,
+        39,
+        7,
+        15,
+        7,
+        15,
+        3,
+        21,
+        37,
+        6,
+        4,
+        18,
+        17
+      ]
+    },
+    {
+      "layer": 23,
+      "dtype": "torch.float16",
+      "native_D_raw_decode_byte_exact": true,
+      "native_actual_C_GPU_stage_different_values": 44,
+      "native_actual_C_GPU_stage_fp64": {
+        "max_abs": 3.0517578125e-05,
+        "relative_l2": 5.469423195728193e-09,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_D_fp64": {
+        "max_abs": 1.0,
+        "relative_l2": 8.652839009749605e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "C_original_cast_different_values": 62,
+      "CPU_actual_C_stage_vs_saved_GPU_different_values": 44,
+      "CPU_actual_C_stage_vs_saved_GPU_fp64": {
+        "max_abs": 3.0517578125e-05,
+        "relative_l2": 5.469423195728193e-09,
+        "argmax_equal_fraction": 1.0
+      },
+      "CPU_actual_C_stage_native_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "route_counts": [
+        9,
+        21,
+        13,
+        9,
+        24,
+        15,
+        13,
+        47,
+        35,
+        24,
+        20,
+        5,
+        45,
+        4,
+        3,
+        4,
+        47,
+        5,
+        28,
+        24,
+        39,
+        7,
+        15,
+        7,
+        15,
+        3,
+        21,
+        37,
+        6,
+        4,
+        18,
+        17
+      ]
+    }
+  ],
+  "tensor_count": 288,
+  "tensors": {
+    "0/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "a78a8172d7aeb4115751d7ca26997cff998345996927837a3da85544c27a04e1"
+    },
+    "0/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "95d80de4aa78a7d9286048dbae7f8e4070813ea6488ec001d802cb27fcb18343"
+    },
+    "0/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "51472d8e3dee8ec31d553d13599c3cb946b0253d66328380660a48dbd2fd45c1"
+    },
+    "0/torch.bfloat16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "1ccc27d607fb9d5bc74f3fd00ac2ec1af79bb6e1adcd3d16e4c579358464ddc3"
+    },
+    "0/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "62a1fcabcd5a7307877c6a27242a8bcdb400c2f7fff63198f4421d6addf7cd83"
+    },
+    "0/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "538a915d0d0a6ffc24026a4b2e77105d6c38f0238f77b65bc296e08e0d919c8f"
+    },
+    "0/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "a78a8172d7aeb4115751d7ca26997cff998345996927837a3da85544c27a04e1"
+    },
+    "0/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "842663cec2424600cc94cde46cdba29254188cf258aeb8e135aaaac9a7d643eb"
+    },
+    "0/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "842663cec2424600cc94cde46cdba29254188cf258aeb8e135aaaac9a7d643eb"
+    },
+    "0/torch.float16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "98a3363955ddd308f6c2b286a118e914f60c9e2413a5bdb3997d8ffd00a20bdd"
+    },
+    "0/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "62a1fcabcd5a7307877c6a27242a8bcdb400c2f7fff63198f4421d6addf7cd83"
+    },
+    "0/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "538a915d0d0a6ffc24026a4b2e77105d6c38f0238f77b65bc296e08e0d919c8f"
+    },
+    "1/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "dcef54e92bf28ef7887d157ff08b11b283e8e9480eefa1206e36d689e28c5abc"
+    },
+    "1/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "1a8a8305fad6de7f42326a735b7658cb8362af4c9feffc26b99c85c72030c86b"
+    },
+    "1/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "1a8a8305fad6de7f42326a735b7658cb8362af4c9feffc26b99c85c72030c86b"
+    },
+    "1/torch.bfloat16/raw_d": {
+      "shape": [
+        7680,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "4551a83c88bc6eb98d94d3cedeffd1c7f0d7b09eecfa51e334448ed483caff15"
+    },
+    "1/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        60,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "b8f0128e21b650153fca103eb41adace19e877b9ee9fb4a6a02a64253631bdd2"
+    },
+    "1/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "aed0ad8dd6c1fb3129dd21e3331cea1311d6d9d1cdecc7ca329c474f9c26e9c7"
+    },
+    "1/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "dcef54e92bf28ef7887d157ff08b11b283e8e9480eefa1206e36d689e28c5abc"
+    },
+    "1/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "172aab4a5966ba6f5785290103e00937dd8f1668fa04affbed528188ec3998d1"
+    },
+    "1/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "172aab4a5966ba6f5785290103e00937dd8f1668fa04affbed528188ec3998d1"
+    },
+    "1/torch.float16/raw_d": {
+      "shape": [
+        7680,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "313a19d2ae1cc9b533286bd4b43e265bd83a3c6190b6ec2612ce1c8c05726444"
+    },
+    "1/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        60,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "b8f0128e21b650153fca103eb41adace19e877b9ee9fb4a6a02a64253631bdd2"
+    },
+    "1/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "aed0ad8dd6c1fb3129dd21e3331cea1311d6d9d1cdecc7ca329c474f9c26e9c7"
+    },
+    "2/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "d271e7963ef2b2eb30eb54d06086fcf4a2d9373fb8422745cf7ce94f7d2f4e03"
+    },
+    "2/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "45ec907a87da8b2fee0e5e25f39e846576e57369c46360ee064e5da9d21af55d"
+    },
+    "2/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "45ec907a87da8b2fee0e5e25f39e846576e57369c46360ee064e5da9d21af55d"
+    },
+    "2/torch.bfloat16/raw_d": {
+      "shape": [
+        7680,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "c087df24a5abfa9655027b8427fd0d2e388bab52ce3b2763c97a2036d6d0876d"
+    },
+    "2/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        60,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "965ade647577303fc1d21fc384ea0702d7389147c1a416a95e52c18579f2174c"
+    },
+    "2/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "918c147ac0298757747ccfd3ad2eba1758ef34722a5c4ab349353addf9ad72e2"
+    },
+    "2/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "d271e7963ef2b2eb30eb54d06086fcf4a2d9373fb8422745cf7ce94f7d2f4e03"
+    },
+    "2/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "2f31ab545b3fafc8210120d4b121844faf79ea2d4be3d598977fb2fffccd8ea7"
+    },
+    "2/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "2f31ab545b3fafc8210120d4b121844faf79ea2d4be3d598977fb2fffccd8ea7"
+    },
+    "2/torch.float16/raw_d": {
+      "shape": [
+        7680,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "02dd667e073deb4747721724c00f5304ad5c019fb715f6f232a600692d0020d7"
+    },
+    "2/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        60,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "965ade647577303fc1d21fc384ea0702d7389147c1a416a95e52c18579f2174c"
+    },
+    "2/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "918c147ac0298757747ccfd3ad2eba1758ef34722a5c4ab349353addf9ad72e2"
+    },
+    "3/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "cf8153f097197b184f901edc2ff75133a4ef71e6dde47faa74a188f84f3a50b9"
+    },
+    "3/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "94290854146891c1883c474423bb1890d42815eea243a6644d3b6cf28ce32998"
+    },
+    "3/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "94290854146891c1883c474423bb1890d42815eea243a6644d3b6cf28ce32998"
+    },
+    "3/torch.bfloat16/raw_d": {
+      "shape": [
+        7680,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "c9c8a788e8a7f7c4641a097811395749ef2df590812fa70238c7019547e9607b"
+    },
+    "3/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        60,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "bed9fc0020c8217fda673d3030ff6f5af892d5fce7eafaaf9be18c0c708bccd0"
+    },
+    "3/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "005485eb879e0dfcbe88084ad6e42e322075913d4579a28acd65fc4bf5c653e0"
+    },
+    "3/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "cf8153f097197b184f901edc2ff75133a4ef71e6dde47faa74a188f84f3a50b9"
+    },
+    "3/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "c44ab6b66eb64f78214467863805d1579c42aeb56db9bef38e74b128ab3425e7"
+    },
+    "3/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "c44ab6b66eb64f78214467863805d1579c42aeb56db9bef38e74b128ab3425e7"
+    },
+    "3/torch.float16/raw_d": {
+      "shape": [
+        7680,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "6d8606e2af6bea224450b595c775df93fc659153d08645463c5eab489807159a"
+    },
+    "3/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        60,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "bed9fc0020c8217fda673d3030ff6f5af892d5fce7eafaaf9be18c0c708bccd0"
+    },
+    "3/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "005485eb879e0dfcbe88084ad6e42e322075913d4579a28acd65fc4bf5c653e0"
+    },
+    "4/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "91c0c7c8d5daf01a0e83e363629d0e7b3d25bc796c7839a584b32d2fc363796c"
+    },
+    "4/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "fbfa7b01d79f3e2a6f3a6af220c61d9bfe63ad953b74a2775337c828e5666d6f"
+    },
+    "4/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "fbfa7b01d79f3e2a6f3a6af220c61d9bfe63ad953b74a2775337c828e5666d6f"
+    },
+    "4/torch.bfloat16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "617268f3efae051510636c8ced0a981c1cafd85917622b209ed422419c1430b1"
+    },
+    "4/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "197a5d22ee1a4609599dad4dcbfda8de34f8fffe33c8e358c7dbd9cb202a2477"
+    },
+    "4/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "633a3ec5aa96c637a6af4ea72d4dd44bdf4bbd0af4282f729003c43431f8a4bf"
+    },
+    "4/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "91c0c7c8d5daf01a0e83e363629d0e7b3d25bc796c7839a584b32d2fc363796c"
+    },
+    "4/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "40090fca68b614677b7ea517b3eccbc1782a07dcd0f016adcccfa666ce58c09a"
+    },
+    "4/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "40090fca68b614677b7ea517b3eccbc1782a07dcd0f016adcccfa666ce58c09a"
+    },
+    "4/torch.float16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "1a9358b58b012a0f25ab7b1f1d0a824b639fba13787e4a50843ddd369c7ccff0"
+    },
+    "4/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "197a5d22ee1a4609599dad4dcbfda8de34f8fffe33c8e358c7dbd9cb202a2477"
+    },
+    "4/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "633a3ec5aa96c637a6af4ea72d4dd44bdf4bbd0af4282f729003c43431f8a4bf"
+    },
+    "5/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "5d84736408e8cb3a5e4a284ae4ad86e8de7821a14a759b45ab8421595d45fec2"
+    },
+    "5/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "91fcaba0624e446f1d2769164660a260cfe6a7bf1d6624261653f9faefd7e864"
+    },
+    "5/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "91fcaba0624e446f1d2769164660a260cfe6a7bf1d6624261653f9faefd7e864"
+    },
+    "5/torch.bfloat16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "340a8e4b52dee869cb46afe57805f0d98257e0f325a5f5fe37c9a48a0fd3c9c8"
+    },
+    "5/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "2eb65e00a59e755791416e4b0ee4219909ca9e13ab679df02fa5d4756d482d76"
+    },
+    "5/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "a49eafa80fa280b1f85821f2e4ebe78783f015827c634fab1be3091a766e7ec1"
+    },
+    "5/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "5d84736408e8cb3a5e4a284ae4ad86e8de7821a14a759b45ab8421595d45fec2"
+    },
+    "5/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "9adb2ec1c5573ab8a80dd46b0019cd5daa5559c6cb3d28fc7a65a036832b7d56"
+    },
+    "5/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "9adb2ec1c5573ab8a80dd46b0019cd5daa5559c6cb3d28fc7a65a036832b7d56"
+    },
+    "5/torch.float16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "706babf40c936146a463e281ad9f69a1ec9e90bbc6f7fb109e0406773be8ed77"
+    },
+    "5/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "2eb65e00a59e755791416e4b0ee4219909ca9e13ab679df02fa5d4756d482d76"
+    },
+    "5/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "a49eafa80fa280b1f85821f2e4ebe78783f015827c634fab1be3091a766e7ec1"
+    },
+    "6/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "18e7a141ba5dfb3dc2a85390a4b1539532cae636c088bc628cce53f51ce646f9"
+    },
+    "6/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "d9cbdca8385b1c4352aee1c276131f6212cb5aec08f270c497a2046a0411ecdd"
+    },
+    "6/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "d9cbdca8385b1c4352aee1c276131f6212cb5aec08f270c497a2046a0411ecdd"
+    },
+    "6/torch.bfloat16/raw_d": {
+      "shape": [
+        7936,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "0933a7dc09784181c53fdbcbe84bbc160045714f630f5f9096a144566ad7f030"
+    },
+    "6/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        62,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "435ee5ea7aee3238f874687bb7f6630f21ec86ee631459be8eccb5ac61859963"
+    },
+    "6/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "20d3e6dad8364332b4021e546575414d805814410882766cc026be15a67331d7"
+    },
+    "6/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "18e7a141ba5dfb3dc2a85390a4b1539532cae636c088bc628cce53f51ce646f9"
+    },
+    "6/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "1cc924c3b8fc9a56b18b98fbb471e8b085c10c8df2aade1384144e559837d092"
+    },
+    "6/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "e34506020256e4aaea713b4ae18fa11033f532f47e39e64851b33308c48c76e4"
+    },
+    "6/torch.float16/raw_d": {
+      "shape": [
+        7936,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "a19f5f584f1c6c99e98db58092af7ffdaac0e61ea0f8690591833e327759a4f4"
+    },
+    "6/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        62,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "435ee5ea7aee3238f874687bb7f6630f21ec86ee631459be8eccb5ac61859963"
+    },
+    "6/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "20d3e6dad8364332b4021e546575414d805814410882766cc026be15a67331d7"
+    },
+    "7/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "52232a04b656f6a7a504528b971dda91a703f483035755c6167fcd4b8a264029"
+    },
+    "7/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "0b23e463291fc469fc238ca3db3330f0f006a75fa34e004c99bedabca626c92b"
+    },
+    "7/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "0b23e463291fc469fc238ca3db3330f0f006a75fa34e004c99bedabca626c92b"
+    },
+    "7/torch.bfloat16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "b298309ee309cf724228d1ffbf94b57f3833b7a35075d181b81c43697422ab08"
+    },
+    "7/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "5c9ddd8694ab8912f4b981fe5608f7cad892c84e34163c757d68861387d762aa"
+    },
+    "7/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "8a3295c6e470a126fd1db6722b7440aae96f0e9cc0fb64d096af48406e36ba08"
+    },
+    "7/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "52232a04b656f6a7a504528b971dda91a703f483035755c6167fcd4b8a264029"
+    },
+    "7/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "9938a40bb640eda9957ee288ec2740c34c07ace25fe82507cef6efbef63541cf"
+    },
+    "7/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "9938a40bb640eda9957ee288ec2740c34c07ace25fe82507cef6efbef63541cf"
+    },
+    "7/torch.float16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "f6e2aa15936958563bd558a55dc283691dff7e5389f119beb9e32ef7e4e17392"
+    },
+    "7/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "5c9ddd8694ab8912f4b981fe5608f7cad892c84e34163c757d68861387d762aa"
+    },
+    "7/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "8a3295c6e470a126fd1db6722b7440aae96f0e9cc0fb64d096af48406e36ba08"
+    },
+    "8/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "9266d12fc2e9daa367a3fff4e77b94bfecdf64cffce7db353cd65268edaca279"
+    },
+    "8/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "d36161fc637dcf0f63c6dce935d29fa89c25b21f1469b89b90a7ed084ce06cb4"
+    },
+    "8/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "d36161fc637dcf0f63c6dce935d29fa89c25b21f1469b89b90a7ed084ce06cb4"
+    },
+    "8/torch.bfloat16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "b3d7ee8c636d990d6b98b3a7b42721334cea4017e67709d54d968558cf25ed18"
+    },
+    "8/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "eeea863d0d383f7740b9e6ed63bee1574411b4a8d10f96ab38bad64348b355e9"
+    },
+    "8/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "f83af9e7d470e84fdc659733050ef6c2b03c73b71e7af5a63a079c9f91118d4b"
+    },
+    "8/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "9266d12fc2e9daa367a3fff4e77b94bfecdf64cffce7db353cd65268edaca279"
+    },
+    "8/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "d59d9521cac063552fad0958901d67fa9cdb7cc37cd430ab8a3bbcd8b84092df"
+    },
+    "8/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "d59d9521cac063552fad0958901d67fa9cdb7cc37cd430ab8a3bbcd8b84092df"
+    },
+    "8/torch.float16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "70e75b089b4d2c89a1727c01943f06307fbec21a8b76644ff4fe34a2879c8c1e"
+    },
+    "8/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "eeea863d0d383f7740b9e6ed63bee1574411b4a8d10f96ab38bad64348b355e9"
+    },
+    "8/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "f83af9e7d470e84fdc659733050ef6c2b03c73b71e7af5a63a079c9f91118d4b"
+    },
+    "9/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "28f40b2723a229e3eb0bb14d1e53b739de1f7234c344f1d9ef3f607d5cad4cde"
+    },
+    "9/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "d52e5b9f397998194c7102ff4843f93180ec2a3ec4889d9861d116cfbfa611a1"
+    },
+    "9/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "d52e5b9f397998194c7102ff4843f93180ec2a3ec4889d9861d116cfbfa611a1"
+    },
+    "9/torch.bfloat16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "562725a18cff5938989dc5ca918a9b62be6dc8d3256977eae307a871980093e5"
+    },
+    "9/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "e9b0f04b34ab04741420d9cd32ac57d5df215bcc2c9790d08a5db64e0b453806"
+    },
+    "9/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "3ea375f319512e6afd4c8add605732d4883d3b29e15f7dbfeea40734fc03696a"
+    },
+    "9/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "28f40b2723a229e3eb0bb14d1e53b739de1f7234c344f1d9ef3f607d5cad4cde"
+    },
+    "9/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "8287856363267c4a97a829c0d785b63b81c66bec78b0a2f7a83a8b9c5b3cc13c"
+    },
+    "9/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "8287856363267c4a97a829c0d785b63b81c66bec78b0a2f7a83a8b9c5b3cc13c"
+    },
+    "9/torch.float16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "95fa1c652e7b0e160c87641135b0cf305e9b194bcf8e5104eb735657ff89bf5c"
+    },
+    "9/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "e9b0f04b34ab04741420d9cd32ac57d5df215bcc2c9790d08a5db64e0b453806"
+    },
+    "9/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "3ea375f319512e6afd4c8add605732d4883d3b29e15f7dbfeea40734fc03696a"
+    },
+    "10/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "5df10a3d400c07365a391ecaabe3707609089e6ee56a98a4e2581ab5e622f2cb"
+    },
+    "10/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "3cf069e43751f4c54778e26b9a16ed4b69cb5ac437ad87297822843d129481db"
+    },
+    "10/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "3cf069e43751f4c54778e26b9a16ed4b69cb5ac437ad87297822843d129481db"
+    },
+    "10/torch.bfloat16/raw_d": {
+      "shape": [
+        7936,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "538f22f19632034297903c43a94e228a13c3692ddf2f00aba6bc87c62feb8b77"
+    },
+    "10/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        62,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "faf6b20b074dc8218957ca7e2778060491b38da26fe0bae83c7480cebff0a7e5"
+    },
+    "10/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "a85e6159385b82898bb28bf4a5f54fb35dbee56440d589467db043d1ff6517d8"
+    },
+    "10/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "5df10a3d400c07365a391ecaabe3707609089e6ee56a98a4e2581ab5e622f2cb"
+    },
+    "10/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "3b6b7fdf267553e8eeb384eff372bfac8a527ef087a336bee451e51fb71fbdcb"
+    },
+    "10/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "3b6b7fdf267553e8eeb384eff372bfac8a527ef087a336bee451e51fb71fbdcb"
+    },
+    "10/torch.float16/raw_d": {
+      "shape": [
+        7936,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "318d2ce3e5146e5c68d1bbafd7f7add2db359cbac83c27507b591ae66d1885b1"
+    },
+    "10/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        62,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "faf6b20b074dc8218957ca7e2778060491b38da26fe0bae83c7480cebff0a7e5"
+    },
+    "10/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "a85e6159385b82898bb28bf4a5f54fb35dbee56440d589467db043d1ff6517d8"
+    },
+    "11/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "2c5e0e736b3a30adac97afbd5cb23d2e043b5407c4f6334781a00e87ad57076c"
+    },
+    "11/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "8dac5253a9a9cf82db1f79e37de84db1ad09053bc4bf966171b13205f853d151"
+    },
+    "11/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "8dac5253a9a9cf82db1f79e37de84db1ad09053bc4bf966171b13205f853d151"
+    },
+    "11/torch.bfloat16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "f728a6130e73e4aa99592cd4d184f04d7e241228771fb97bfaa0265132f03c5e"
+    },
+    "11/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "667d39a94f6d3ed46387e95e0fc5c733432fbda0cf250b778abda8ec85a7e50f"
+    },
+    "11/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "771e7b9e015fa63fecff97e0ded3b20524e948af73af1957f1e1893b7f58ee97"
+    },
+    "11/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "2c5e0e736b3a30adac97afbd5cb23d2e043b5407c4f6334781a00e87ad57076c"
+    },
+    "11/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "0fa2335cc8b13d3480aa7a36d96cacbe20927d70ca52233ca0cb6a67ec045615"
+    },
+    "11/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "0fa2335cc8b13d3480aa7a36d96cacbe20927d70ca52233ca0cb6a67ec045615"
+    },
+    "11/torch.float16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "1737d40fd6e3ecbd041c9bf2e4b2533a21225733fc1922e16d7504cb74de9aec"
+    },
+    "11/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "667d39a94f6d3ed46387e95e0fc5c733432fbda0cf250b778abda8ec85a7e50f"
+    },
+    "11/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "771e7b9e015fa63fecff97e0ded3b20524e948af73af1957f1e1893b7f58ee97"
+    },
+    "12/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "7b33d35e316a09f367888eb60d177b62c9d09ad7efe7c10286b4427af99c861d"
+    },
+    "12/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "983a579fb80c264c8bd7e87c6463d9cb66e7c166628b0a361fadcd9fa7f9a0d4"
+    },
+    "12/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "983a579fb80c264c8bd7e87c6463d9cb66e7c166628b0a361fadcd9fa7f9a0d4"
+    },
+    "12/torch.bfloat16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d508cecf2247ebb4669bb57416a2717bbee1ee916c23652304465fdd5d397b84"
+    },
+    "12/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "f247267644fa31ffced679f3e6ad293f3540170e95bf81239265998fb2a7b85f"
+    },
+    "12/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "23e6341fcebdcd1bcd22093d15393ede50d77e07ac09d39c2757601f2351da63"
+    },
+    "12/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "7b33d35e316a09f367888eb60d177b62c9d09ad7efe7c10286b4427af99c861d"
+    },
+    "12/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "b9c0a2a68ae66439e2dc71c40b13801d6e31a696b8a2803a3b068d7b90f7c841"
+    },
+    "12/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "b9c0a2a68ae66439e2dc71c40b13801d6e31a696b8a2803a3b068d7b90f7c841"
+    },
+    "12/torch.float16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "fd94928d9d583f64fb8341620c28a7c3730c3081fd335a0747b60f7327b3a85f"
+    },
+    "12/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "f247267644fa31ffced679f3e6ad293f3540170e95bf81239265998fb2a7b85f"
+    },
+    "12/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "23e6341fcebdcd1bcd22093d15393ede50d77e07ac09d39c2757601f2351da63"
+    },
+    "13/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "868dd2fc479b5acf8a5b4012fd6c2d3a9679be563e1f7c6c0ab68195e333d6f6"
+    },
+    "13/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "b2bc3098976cc9399be34c3228557633f3c8f280d9e8629438a82386d432d6be"
+    },
+    "13/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "b2bc3098976cc9399be34c3228557633f3c8f280d9e8629438a82386d432d6be"
+    },
+    "13/torch.bfloat16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "af80b082c2c93e14240c8ab4ff901e49142612ddd99ab756df246dea6245a8d6"
+    },
+    "13/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "20bfb047e833bae45a355d379f7cd7c3b06112ca133a3b6dde64fc1ce2bd660a"
+    },
+    "13/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "414665fd2c70952e93aa5e57154c280a8c43014f9c70a465297df761bbabccf7"
+    },
+    "13/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "868dd2fc479b5acf8a5b4012fd6c2d3a9679be563e1f7c6c0ab68195e333d6f6"
+    },
+    "13/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "1234a59a13da80c5f1242bf527615bc289293147971450b306b3834c3b9e9be5"
+    },
+    "13/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "1234a59a13da80c5f1242bf527615bc289293147971450b306b3834c3b9e9be5"
+    },
+    "13/torch.float16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "fe0667097fbf7555436183160bfa2b0aa4eb7e666a68bcd32ac117a52d75f43c"
+    },
+    "13/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "20bfb047e833bae45a355d379f7cd7c3b06112ca133a3b6dde64fc1ce2bd660a"
+    },
+    "13/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "414665fd2c70952e93aa5e57154c280a8c43014f9c70a465297df761bbabccf7"
+    },
+    "14/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "9b175a6be608ce9cb0646534d219e961537a98a39af01a708fecbae857bac8f5"
+    },
+    "14/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "26214a82ad9618d7ed28752167cbd294ca1f8d1153a5f0448a8fcbf49ddbf842"
+    },
+    "14/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "26214a82ad9618d7ed28752167cbd294ca1f8d1153a5f0448a8fcbf49ddbf842"
+    },
+    "14/torch.bfloat16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "bf18a4b92c587023600babfaa25393c69d151b653be7894fa0b15846871bd028"
+    },
+    "14/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "550a39f92a0d2c7b81cb4d8f451354e20ed08d40cb3766441f1ddc2d2e6e557a"
+    },
+    "14/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "7246fac62f7538a5efe40b6f01932ec36973203d42f996e036d539eec218ad8c"
+    },
+    "14/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "9b175a6be608ce9cb0646534d219e961537a98a39af01a708fecbae857bac8f5"
+    },
+    "14/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "517c064e793c395555f368cffe7797a43a62c96ca266ff48d1ebe8be81c5b516"
+    },
+    "14/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "517c064e793c395555f368cffe7797a43a62c96ca266ff48d1ebe8be81c5b516"
+    },
+    "14/torch.float16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "a324b853a3754983ec5cf3544556469e7f3bd274faade85313274238741cd478"
+    },
+    "14/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "550a39f92a0d2c7b81cb4d8f451354e20ed08d40cb3766441f1ddc2d2e6e557a"
+    },
+    "14/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "7246fac62f7538a5efe40b6f01932ec36973203d42f996e036d539eec218ad8c"
+    },
+    "15/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "62dc84c4a8c473489cadac60719f6b6248fa9055c7e4df252b20cb42c31e09d1"
+    },
+    "15/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "efaad739211c4e4eca0aa0ef9fb84d189188aa79add0cd2579a5117313f9c296"
+    },
+    "15/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "efaad739211c4e4eca0aa0ef9fb84d189188aa79add0cd2579a5117313f9c296"
+    },
+    "15/torch.bfloat16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "cf9e404167e4b91c464b413a0eaf9307f9f7394d6dad3af32839103d72d64a80"
+    },
+    "15/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "c109cfccb92ddb263e660e7ac20e3b427b6a642df64106f2c4596683557cab54"
+    },
+    "15/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "9cad2ff99d6b534448601b81a85f8c45333d6ce2047076a90c3e45c890c74fec"
+    },
+    "15/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "62dc84c4a8c473489cadac60719f6b6248fa9055c7e4df252b20cb42c31e09d1"
+    },
+    "15/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "f6591b60d2918e4f2c207d2610c37133fe89f7c07600e71341552525affadbb6"
+    },
+    "15/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "7a158eea7c92790445c3689e3a9cf52933a2a2427e8b379fc8244555ebb2ea60"
+    },
+    "15/torch.float16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "409f947ca5c1bd8228cfb19b5510bd8f20ff57441a254cdc2df8e599c8167eb8"
+    },
+    "15/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "c109cfccb92ddb263e660e7ac20e3b427b6a642df64106f2c4596683557cab54"
+    },
+    "15/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "9cad2ff99d6b534448601b81a85f8c45333d6ce2047076a90c3e45c890c74fec"
+    },
+    "16/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "818fb14a9f4bd771165d34ae3ad6cd81d5c57e19debeda2a3131486cf5e6e9c8"
+    },
+    "16/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "577d90b7c3f450787946d958e2cacf297296766b0d8ed70ee7db2cafdc1bc3da"
+    },
+    "16/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "577d90b7c3f450787946d958e2cacf297296766b0d8ed70ee7db2cafdc1bc3da"
+    },
+    "16/torch.bfloat16/raw_d": {
+      "shape": [
+        7936,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "681f4df121a8a52094328865cc0ec5269760f56bc548f7d8ec329232009eb368"
+    },
+    "16/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        62,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "f65ac9ed01ef3b091e21df6feb1fb23d8204bc9825e0b2c3235757742d75ba94"
+    },
+    "16/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "0f2e6bfc8c5e71a57cfab2d14d753f1036c0da6caf0f4ed1aefff3680b0fcfa2"
+    },
+    "16/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "818fb14a9f4bd771165d34ae3ad6cd81d5c57e19debeda2a3131486cf5e6e9c8"
+    },
+    "16/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "e9d572993cc25c4d0b0e5dec0acd91447c84d06f39dbdb1649501c0dc5833fa6"
+    },
+    "16/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "e9d572993cc25c4d0b0e5dec0acd91447c84d06f39dbdb1649501c0dc5833fa6"
+    },
+    "16/torch.float16/raw_d": {
+      "shape": [
+        7936,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "1dec5cbcdd809ceeb74f63f66c964f077c02d2b8c91feba9b0b040a95e2df419"
+    },
+    "16/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        62,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "f65ac9ed01ef3b091e21df6feb1fb23d8204bc9825e0b2c3235757742d75ba94"
+    },
+    "16/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "0f2e6bfc8c5e71a57cfab2d14d753f1036c0da6caf0f4ed1aefff3680b0fcfa2"
+    },
+    "17/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "bee267b8d8fc68c2cbcef492426a8772f6f2135a6470870a855f70969f48c1a9"
+    },
+    "17/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "9056143cf189a6db71cdee707c57694217163615a2a20d790997bb791c1807ff"
+    },
+    "17/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "9056143cf189a6db71cdee707c57694217163615a2a20d790997bb791c1807ff"
+    },
+    "17/torch.bfloat16/raw_d": {
+      "shape": [
+        7936,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "87daabc491e16e8a62b94a0f1cf419d593925423089cd19dc44a054896af1b19"
+    },
+    "17/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        62,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "e40492c5bd6604fab5636de42ca7f0f6e47e40cfdd94e71d3dedb9827bf39988"
+    },
+    "17/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "2173e2e5df85df06d4f27a0aeefd0be99fde517d9b12b89996644322ad1746b4"
+    },
+    "17/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "bee267b8d8fc68c2cbcef492426a8772f6f2135a6470870a855f70969f48c1a9"
+    },
+    "17/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "6226188219abe5c8ca26b7c207485002faaaba4c9e3fe7b0542cf8e7c6956fa3"
+    },
+    "17/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "6226188219abe5c8ca26b7c207485002faaaba4c9e3fe7b0542cf8e7c6956fa3"
+    },
+    "17/torch.float16/raw_d": {
+      "shape": [
+        7936,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "67920164e955f4a0adf6b46461243901351b6f86d3d81ca8d74d5624250d4d0e"
+    },
+    "17/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        62,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "e40492c5bd6604fab5636de42ca7f0f6e47e40cfdd94e71d3dedb9827bf39988"
+    },
+    "17/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "2173e2e5df85df06d4f27a0aeefd0be99fde517d9b12b89996644322ad1746b4"
+    },
+    "18/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "d7d3d5afbd9ae0871f52eaaf402d4bd844a24c46c54f7869e0f483757a5e0b65"
+    },
+    "18/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "d344ca56a69509a7f4c72bd7ec8a4f6d094c50989147a864f6537d2e8aedc7e4"
+    },
+    "18/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "d344ca56a69509a7f4c72bd7ec8a4f6d094c50989147a864f6537d2e8aedc7e4"
+    },
+    "18/torch.bfloat16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "28299ea0c1edbf188a41b77de9c33d0ab1df44b4cca967deab9e9885e7b183ae"
+    },
+    "18/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "a86bb96ba3e12d12fe96fc0e5446fd3d2f09a408f80a69e7f7d99897ad758f8f"
+    },
+    "18/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "27835120de993d97f1d67f4e1df3348c66a24c39bf31740f3a85d174d0351c33"
+    },
+    "18/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "d7d3d5afbd9ae0871f52eaaf402d4bd844a24c46c54f7869e0f483757a5e0b65"
+    },
+    "18/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "cf058d54e13c6caf576c53f5859dbd1ddafe6db98d022068a98001e734f62791"
+    },
+    "18/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "cf058d54e13c6caf576c53f5859dbd1ddafe6db98d022068a98001e734f62791"
+    },
+    "18/torch.float16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "f2429d1a8fc152c7bc994cc069d798c328d0628a3433da618b678643da2fd1a8"
+    },
+    "18/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "a86bb96ba3e12d12fe96fc0e5446fd3d2f09a408f80a69e7f7d99897ad758f8f"
+    },
+    "18/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "27835120de993d97f1d67f4e1df3348c66a24c39bf31740f3a85d174d0351c33"
+    },
+    "19/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "9223b87bce4a9b7e5da061e215ab45801da9b68b21f938c7735786e1bce720b0"
+    },
+    "19/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "37addcd065b25574bca278faef5e1e31fe7d9af7621cc70e84d26354e49f1fa6"
+    },
+    "19/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "37addcd065b25574bca278faef5e1e31fe7d9af7621cc70e84d26354e49f1fa6"
+    },
+    "19/torch.bfloat16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "b4b21851dffde338dc781b458bbad85c0a1e67941ce01318a1fa0ed761d38335"
+    },
+    "19/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "a470320f35b64f2931d394c62d3fd15af92eff06e0f16dcc0c3bd44a9afd0860"
+    },
+    "19/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "8a94f73b759e6f9032b39a764c51a7d86cf84ab400f61c3690680aba482ea81b"
+    },
+    "19/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "9223b87bce4a9b7e5da061e215ab45801da9b68b21f938c7735786e1bce720b0"
+    },
+    "19/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "2d0c274dedf78a564c128c175526f2753477dfb0fd3b747ee629b7aedf962aa9"
+    },
+    "19/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "7b75c680371f81890c8f30e2b7ada34893c059fef0ebee2f5b9d4678570f3bfc"
+    },
+    "19/torch.float16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "6750d71aeec181f3f157497528b3bdebe9838d316b46a8ccad2d04629361af2e"
+    },
+    "19/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "a470320f35b64f2931d394c62d3fd15af92eff06e0f16dcc0c3bd44a9afd0860"
+    },
+    "19/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "8a94f73b759e6f9032b39a764c51a7d86cf84ab400f61c3690680aba482ea81b"
+    },
+    "20/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "366a7ad3fb9234efe48b7356e03aefbea32e816178a2b87062bc6b960efbc29e"
+    },
+    "20/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "406007a0d6a2bf597dd7f09e3aba5d92ae22616ce055cc3372f02fcfb072408a"
+    },
+    "20/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "406007a0d6a2bf597dd7f09e3aba5d92ae22616ce055cc3372f02fcfb072408a"
+    },
+    "20/torch.bfloat16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "781e68ee3ab16542dc520b825bac69f77c535c6b8a0de9be29fa46e2e4e1e5e9"
+    },
+    "20/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "1d175b5ce8b07f45f08a3c6e10cdc977c350ffa2dd45724b049a06bcaaf9c2a9"
+    },
+    "20/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "1e94f1723655d1547045d63519d61169de4b1c93e9054138154a9d545d754c55"
+    },
+    "20/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "366a7ad3fb9234efe48b7356e03aefbea32e816178a2b87062bc6b960efbc29e"
+    },
+    "20/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "951ba1b61f43a36f52111d83ba449a0561b7e87860111c7b7e39613e7c78f928"
+    },
+    "20/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "951ba1b61f43a36f52111d83ba449a0561b7e87860111c7b7e39613e7c78f928"
+    },
+    "20/torch.float16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "e7a96ce87502765bdb5a5903cb88bcf6f72e021b84c58951b6426401cd667de3"
+    },
+    "20/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "1d175b5ce8b07f45f08a3c6e10cdc977c350ffa2dd45724b049a06bcaaf9c2a9"
+    },
+    "20/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "1e94f1723655d1547045d63519d61169de4b1c93e9054138154a9d545d754c55"
+    },
+    "21/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "c7375107761a04d19495c19db4af284f75b75c02865e14fc05262abe0820e777"
+    },
+    "21/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "9e93ab758334ab779cc39166da6c3194c65ecb1f6d98ae45baed56b07513669e"
+    },
+    "21/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "9e93ab758334ab779cc39166da6c3194c65ecb1f6d98ae45baed56b07513669e"
+    },
+    "21/torch.bfloat16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "89e45948ab10bb81b6f022e424139773e43f9448802e306c407f4585cb7ae53a"
+    },
+    "21/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "ce614c8933690aabf74c586dfa2e440b88a6166980803c78af9d50066efade23"
+    },
+    "21/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "816254ab1e377cea62bdcfc9e4dde06703a61e0262f15b2e9905abdc7828d795"
+    },
+    "21/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "c7375107761a04d19495c19db4af284f75b75c02865e14fc05262abe0820e777"
+    },
+    "21/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "aeb49097d136f8d99f153976464d11d1874a2feb703391179d741a8446d32ae9"
+    },
+    "21/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "886742b7af9d161d5b6d6c87f92b146382b0235a567f2ef33eda324218a2c27c"
+    },
+    "21/torch.float16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "6b6125263725cea3002720ee9788425b89a620bddf291dc17b1db0be328b8932"
+    },
+    "21/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "ce614c8933690aabf74c586dfa2e440b88a6166980803c78af9d50066efade23"
+    },
+    "21/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "816254ab1e377cea62bdcfc9e4dde06703a61e0262f15b2e9905abdc7828d795"
+    },
+    "22/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "021841505657539343b5e5b661ef7b4552cf7848bd35e59766532d5dd1205e31"
+    },
+    "22/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "6b0be2a4831b28aaa29a9659fd5c21cbfb2b5427fab80f8d8741043bc799a63a"
+    },
+    "22/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "6b0be2a4831b28aaa29a9659fd5c21cbfb2b5427fab80f8d8741043bc799a63a"
+    },
+    "22/torch.bfloat16/raw_d": {
+      "shape": [
+        7680,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "27d356945c683226a32f87befbbc8c9389f8098c39ce5caa2f5eb21946aa98b2"
+    },
+    "22/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        60,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "db44cfb949453b0d248fdeed70211d9b88a76832e2e7410a2101acc293302a9e"
+    },
+    "22/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "fe3eabf772319ed35e7215dc50d43a189687f2e9159cd6db15e48b512c7b6b31"
+    },
+    "22/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "021841505657539343b5e5b661ef7b4552cf7848bd35e59766532d5dd1205e31"
+    },
+    "22/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "3aa147355c7f02c116d2a6bde3adc6f31126c79fd23e01228de6a0be2b102b54"
+    },
+    "22/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "9356a55ad68840327c1568df9fb0b910532ccae2450ed8d312a70d54cc5bc271"
+    },
+    "22/torch.float16/raw_d": {
+      "shape": [
+        7680,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "d23e86339950842d304d5d53e45a7ba12d1760631dc9d1391375c142cba52dad"
+    },
+    "22/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        60,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "db44cfb949453b0d248fdeed70211d9b88a76832e2e7410a2101acc293302a9e"
+    },
+    "22/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "fe3eabf772319ed35e7215dc50d43a189687f2e9159cd6db15e48b512c7b6b31"
+    },
+    "23/torch.bfloat16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "a97b2ea124c2d8b3c3520c26ee8381a06d879538b47d61afd657f9a32abffa3f"
+    },
+    "23/torch.bfloat16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "4ff8b5d1a2aecc6b40f6b0df379274a4c0e281938309de60f467205ee8cbd336"
+    },
+    "23/torch.bfloat16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "4ff8b5d1a2aecc6b40f6b0df379274a4c0e281938309de60f467205ee8cbd336"
+    },
+    "23/torch.bfloat16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "2aafc36ea616bdbdc8552871b991670595644aa687076c5e163f8189f846de56"
+    },
+    "23/torch.bfloat16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "ddd3c478d55ff0996c9a972c289311023c33087cd6487daa48e20fee5e79be5a"
+    },
+    "23/torch.bfloat16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "21f1a962104eb4f56825eaa85dfac5becf9d037ba406495712d0ca06f1fa28e8"
+    },
+    "23/torch.float16/c": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "a97b2ea124c2d8b3c3520c26ee8381a06d879538b47d61afd657f9a32abffa3f"
+    },
+    "23/torch.float16/d": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "fce308c525a106a184f32fa7ac4a8589b8ce709d798f22966e5354559eb00d8b"
+    },
+    "23/torch.float16/expected_actual_c_gpu_stage": {
+      "shape": [
+        584,
+        512
+      ],
+      "dtype": "torch.float32",
+      "sha256": "bcdd8ad642d69e05075957904e971c1fc7971b384be254016c66bd562eb6839c"
+    },
+    "23/torch.float16/raw_d": {
+      "shape": [
+        8192,
+        512
+      ],
+      "dtype": "torch.float16",
+      "sha256": "4227f0b4880c69331d300133d1fa15c05e0308b85fb60e6f6701dc897d210db5"
+    },
+    "23/torch.float16/raw_sfd": {
+      "shape": [
+        1,
+        64,
+        4,
+        32,
+        4,
+        4
+      ],
+      "dtype": "torch.float8_e8m0fnu",
+      "sha256": "ddd3c478d55ff0996c9a972c289311023c33087cd6487daa48e20fee5e79be5a"
+    },
+    "23/torch.float16/destinations": {
+      "shape": [
+        584
+      ],
+      "dtype": "torch.int64",
+      "sha256": "21f1a962104eb4f56825eaa85dfac5becf9d037ba406495712d0ca06f1fa28e8"
+    }
+  },
+  "producer_outputs_sha256": "846d6a3778850d9fde1fe8dfa3cc2329d5aec053a77f318f6f972507b2c96190",
+  "harness_sha256": "f22b389a9e04fd349432c89b0eed790bf4a5890809bdddf16e9d37b2701d909e",
+  "cpu_helper_sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944",
+  "formal_performance": "NOT_RUN",
+  "service_final": "inactive",
+  "limits": "24 fixed original input/route/weight trajectories, two native D storage modes; no full-model feedback/generation/KV/performance/accepted feature. CPU activation and GPU activation references separately compared, tiny normalized FP16 differences are recorded without being reclassified as a model pass. No independent new input-physical-pack capture or runtime compiled-plan identity proof."
+}

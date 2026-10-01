@@ -1,0 +1,96 @@
+{
+  "stage": "LOCAL_ACTUAL_C_BF16_EPILOGUE_ISOLATION_NOT_MODEL_SUCCESS",
+  "rows": [
+    {
+      "block": 0,
+      "native_calls": 1,
+      "native_d_vs_actual_c_gpu_stage": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_vs_actual_c_gpu_stage_different_values": 0,
+      "native_c_original_bf16_cast_mismatches": 285,
+      "reference_c_original_bf16_cast_mismatches": 263,
+      "native_c_reference": {
+        "max_abs": 0.000518798828125,
+        "relative_l2": 2.8039037260896293e-06,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_reference": {
+        "max_abs": 0.125,
+        "relative_l2": 0.00017901818500831723,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_original": {
+        "max_abs": 0.125,
+        "relative_l2": 0.0001359489979222417,
+        "argmax_equal_fraction": 1.0
+      }
+    },
+    {
+      "block": 32,
+      "native_calls": 1,
+      "native_d_vs_actual_c_gpu_stage": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_vs_actual_c_gpu_stage_different_values": 0,
+      "native_c_original_bf16_cast_mismatches": 82,
+      "reference_c_original_bf16_cast_mismatches": 279,
+      "native_c_reference": {
+        "max_abs": 0.0002899169921875,
+        "relative_l2": 1.5008633909019409e-06,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_reference": {
+        "max_abs": 0.125,
+        "relative_l2": 0.00013199854583945125,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_original": {
+        "max_abs": 0.125,
+        "relative_l2": 9.40658210311085e-05,
+        "argmax_equal_fraction": 1.0
+      }
+    }
+  ],
+  "native_calls": 2,
+  "source": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+  "source_head": "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1",
+  "prior_metadata_sha256": "4c0aba88779c34477528194cf185ecde9d30cece6c331023b1a8235822c0fb6f",
+  "prior_outputs_sha256": "87ecd871bfeecec3142f80c3ece78a02c9c941a62da43d27876f6b36a246ed75",
+  "outputs_sha256": "50b51f71c6dd91c677ab5cc4b0c334939a5757c63bf5731e80480e7ac7acc8ad",
+  "harness_sha256": "38a4eec98adab664ce4dda0b128bc55c9223a776679d455fbc4ee250b87e0983",
+  "helper_sha256": "fa63500b8a10122fc7bf16e52aaf10a0ceb64cc23816aeec28ccc55bd257fe7e",
+  "native_plans": {
+    "a3_local_bf16_staged_native.BlockScaledContiguousGroupedGemmKernel": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+      "sha256": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3"
+    }
+  },
+  "experimental_native_kernel": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+    "sha256": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3"
+  },
+  "production_source_modified": false,
+  "imports": {
+    "cudnn": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/python/cudnn/__init__.py",
+      "sha256": "ee53bcbde07f59b89ca9378184a7a54beb5d36d216df1f15d7e6d810d9b7f1f9"
+    },
+    "api": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+      "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+    },
+    "binding": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+      "sha256": "37e7c4e0d16bd0a952ade77ccd577ccadae1888f166a4c897c9e98a104606c2a"
+    }
+  },
+  "original_baseline_replaced": false,
+  "formal_performance": "NOT_RUN",
+  "service_final": "inactive",
+  "limits": "First-layer original73-token trajectory only, identity/K32. Actual native FP32 C is rounded/activated on GPU solely as independent epilogue reference, not a native D replacement. Actual staged native D consumed. Experimental native prototype; production frozen source unchanged. No model or performance claim."
+}

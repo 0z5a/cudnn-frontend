@@ -1,0 +1,178 @@
+{
+  "stage": "COMPLETED_AND_CPU_AUDITED_NOT_FULL24_SUCCESS",
+  "scope": "All24 fixed original-input trajectory native C epilogue isolation, BF16/FP16D,48actualnativecalls/288CPUauditedtensors; r1 FP16-only decoder assertion preserved; firstlayer2calls producer evidence included but not independently tensor-audited; no full-model feedback/performance success",
+  "files": [
+    {
+      "path": "results/a3-actual-c-bf16-epilogue-20261001-r1-launch/run.json",
+      "size": 791,
+      "sha256": "7bea18c493cce708f91c75f9754257ffa6ce69e5130c3a53ae2e643bd195e599"
+    },
+    {
+      "path": "results/a3-actual-c-bf16-epilogue-20261001-r1-launch/stderr.log",
+      "size": 46,
+      "sha256": "c0362da2d738fd8f26bcb4467800ed22c57dd7a61da33405a76421244f48fecb"
+    },
+    {
+      "path": "results/a3-actual-c-bf16-epilogue-20261001-r1-launch/stdout.log",
+      "size": 1256,
+      "sha256": "07bfa33c262a48997ea30263aec5fb10775edae299384296f91e30f4828c8b92"
+    },
+    {
+      "path": "results/a3-actual-c-bf16-epilogue-20261001-r1/admission_wait.json",
+      "size": 75,
+      "sha256": "5f588cff60c4d2e255fdae5ab4e92c8a2daec1abd8295729562f329a82c20f60"
+    },
+    {
+      "path": "results/a3-actual-c-bf16-epilogue-20261001-r1/result.json",
+      "size": 4081,
+      "sha256": "24ebd13f97edcc7b228eaf870efa7748cdc87d728fe185e4e44bcbe22e29344f"
+    },
+    {
+      "path": "results/a3-all24-actual-c-stage-20261001-r1-launch/run.json",
+      "size": 789,
+      "sha256": "3d8c03a989c90b75c43cf8383903d921e11c8c5c902407cd3d94a1c6171dd146"
+    },
+    {
+      "path": "results/a3-all24-actual-c-stage-20261001-r1-launch/stderr.log",
+      "size": 772,
+      "sha256": "18184ec0ed66e280482685855f3b38b745b43bba4e898046e7e23fce5868dd7f"
+    },
+    {
+      "path": "results/a3-all24-actual-c-stage-20261001-r1-launch/stdout.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-all24-actual-c-stage-20261001-r1/admission.json",
+      "size": 105,
+      "sha256": "295ed99949f3525940f4b794f45cd1db49aede2cb23109453c43adeef7468e19"
+    },
+    {
+      "path": "results/a3-all24-actual-c-stage-20261001-r1/admission_wait.json",
+      "size": 75,
+      "sha256": "f51cedcc372c5ed835050615b5d8fd4d73556f6bcf83456e4770c8684b10241c"
+    },
+    {
+      "path": "results/a3-all24-actual-c-stage-20261001-r2-launch/run.json",
+      "size": 792,
+      "sha256": "960161712e488c955c60e5b531d8037f41345e20c5bacc9822518281e4ab04af"
+    },
+    {
+      "path": "results/a3-all24-actual-c-stage-20261001-r2-launch/stderr.log",
+      "size": 46,
+      "sha256": "c0362da2d738fd8f26bcb4467800ed22c57dd7a61da33405a76421244f48fecb"
+    },
+    {
+      "path": "results/a3-all24-actual-c-stage-20261001-r2-launch/stdout.log",
+      "size": 26441,
+      "sha256": "59672baf1232a2d968858f393f7382537499cc9a273e88669835e1aaf5b31918"
+    },
+    {
+      "path": "results/a3-all24-actual-c-stage-20261001-r2/admission.json",
+      "size": 105,
+      "sha256": "a89eb0c63b6ea7a5755abd59e52b49245f88b53686bf5b7103c0c477bd5fa57b"
+    },
+    {
+      "path": "results/a3-all24-actual-c-stage-20261001-r2/admission_wait.json",
+      "size": 75,
+      "sha256": "50a5da08e7fde633dfb70998a77b5976280c2d9741d3617c5631b4cdfd745eb1"
+    },
+    {
+      "path": "results/a3-all24-actual-c-stage-20261001-r2/partial.json",
+      "size": 45661,
+      "sha256": "fa5ea172ae7e1fd9e992b66ab61176b2e17fffc4306c11534928bfaea381c574"
+    },
+    {
+      "path": "results/a3-all24-actual-c-stage-20261001-r2/result.json",
+      "size": 48508,
+      "sha256": "55be68ffc8dcdf7caf1f3504bacf7c8025164f16dfb6b4788949d4e12a9efe72"
+    },
+    {
+      "path": "results/a3-all24-actual-c-stage-cpu-audit-20261001-r1-launch/run.json",
+      "size": 605,
+      "sha256": "a9c03c45340df39f19a4ab7b92e3ff134d25683834e61cdb2a83f499029ccedb"
+    },
+    {
+      "path": "results/a3-all24-actual-c-stage-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-all24-actual-c-stage-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 170,
+      "sha256": "9bf1d904d4790f3aab065772341000351568b7239b4569f12d017b8bf109429e"
+    },
+    {
+      "path": "results/a3-all24-actual-c-stage-cpu-audit-20261001-r1/result.json",
+      "size": 125521,
+      "sha256": "d623b4e64459722e64399226ceee88868f706421762cc898739a6856e8ca52d7"
+    },
+    {
+      "path": "results/a3-latest-e2-native-provenance-20261001.json",
+      "size": 18959,
+      "sha256": "30ea6cd6a09d73b01d22215d98c2d7a5964d04d97489f64b876fa979013b3840"
+    },
+    {
+      "path": "tools/a3_all24_precision_probe_20261001.py",
+      "size": 12896,
+      "sha256": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5"
+    },
+    {
+      "path": "tools/a3_double_mxfp8_recipe_probe_20261001.py",
+      "size": 11740,
+      "sha256": "fa63500b8a10122fc7bf16e52aaf10a0ceb64cc23816aeec28ccc55bd257fe7e"
+    },
+    {
+      "path": "tools/a3_model_e2e_mergefix_20261001.py",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "path": "tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+      "size": 131629,
+      "sha256": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3"
+    },
+    {
+      "path": "tools/archive_a3_all24_actual_c_stage_20261001.py",
+      "size": 3849,
+      "sha256": "9dcee8fbd7f62b6daf96a2291ba4945725e2abc62edc2533277baac3a1fe70b1"
+    },
+    {
+      "path": "tools/audit_a3_all24_actual_c_stage_20261001.py",
+      "size": 8637,
+      "sha256": "f22b389a9e04fd349432c89b0eed790bf4a5890809bdddf16e9d37b2701d909e"
+    },
+    {
+      "path": "tools/audit_a3_precision_followup_r2_20261001.py",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "tools/diagnose_a3_actual_c_bf16_epilogue_queued_20261001.py",
+      "size": 9468,
+      "sha256": "38a4eec98adab664ce4dda0b128bc55c9223a776679d455fbc4ee250b87e0983"
+    },
+    {
+      "path": "tools/diagnose_a3_all24_actual_c_stage_queued_20261001.py",
+      "size": 10810,
+      "sha256": "6ed1387bcb2767f5a68cf5461f7dc861cfa9828ad7c20cd7e1e06cd52191aad0"
+    },
+    {
+      "path": "tools/diagnose_a3_all24_actual_c_stage_queued_r2_20261001.py",
+      "size": 11353,
+      "sha256": "1826db1ea8dab5dc9af792f7452bd84d3ea37400c6f3a25cba56e8c1542eb748"
+    },
+    {
+      "path": "tools/run_logged.py",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    }
+  ],
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    ".pt outputs",
+    "native binaries"
+  ]
+}

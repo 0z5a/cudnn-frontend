@@ -1,0 +1,194 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""All24 fixed-stock-input native epilogue isolation, never a full-model pass.
+
+K32 double-MXFP8 native dot and explicit BF16 C/SiLU/product prototype.
+Both BF16 and FP16 D storage are exercised for every saved original layer
+trajectory. Actual native C supplies an independent GPU activation reference;
+that reference is never substituted for actual native D. No feedback through
+other layers, generation/KV, performance or newly accepted production feature.
+"""
+
+import argparse
+import fcntl
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--expected-source", required=True)
+    parser.add_argument("--expected-head", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        start = time.monotonic()
+        (out / "admission_wait.json").write_text(json.dumps({"stage": "WAITING_FOR_SHARED_LOCK", "pid": os.getpid(), "torch_imported": False}))
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - start > 3600:
+                    return 75
+                time.sleep(1)
+        assert "torch" not in sys.modules
+        (out / "admission.json").write_text(
+            json.dumps({"stage": "LOCK_ADMITTED", "pid": os.getpid(), "torch_imported": False, "wait_seconds": time.monotonic() - start})
+        )
+        helper = Path(__file__).with_name("a3_double_mxfp8_recipe_probe_20261001.py")
+        spec = importlib.util.spec_from_file_location("a3_all24_stage_helper", helper)
+        q = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(q)
+        p, m, t = q.p, q.m, q.t
+        prototype_path = Path(__file__).with_name("a3_mxfp8_bf16_staged_native_kernel_20261001.py")
+        spec = importlib.util.spec_from_file_location("a3_all24_actual_c_native", prototype_path)
+        proto = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = proto
+        spec.loader.exec_module(proto)
+        original_kernel = m.api.BlockScaledContiguousGroupedGemmKernel
+        m.api.BlockScaledContiguousGroupedGemmKernel = proto.BlockScaledContiguousGroupedGemmKernel
+        source = Path(args.expected_source).resolve()
+        assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == args.expected_head
+        assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+        for module in (m.cudnn, m.api, m._compiled_module):
+            assert Path(module.__file__).resolve().is_relative_to(source / "python")
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        assert m.sha_file(m.MODEL / "model.safetensors") == m.WEIGHT_SHA
+        prior = m.ROOT / "results/a3-residual-staging-20261001-r1"
+        prior_meta = json.loads((prior / "result.json").read_text())
+        assert prior_meta["source_head"] == "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744" and prior_meta["stock_baseline_byte_exact"]
+        captured = t.load(prior / "outputs.pt", map_location="cpu", weights_only=True)
+        t.set_num_threads(4)
+        t.backends.cuda.matmul.allow_tf32 = False
+        t.set_float32_matmul_precision("highest")
+        from safetensors import safe_open
+
+        adapter = object.__new__(m.A3ExpertAdapter)
+        adapter.e, adapter.h = 32, 1024
+        alpha = t.ones(32, dtype=t.float32, device="cuda")
+        norm = t.ones(1, dtype=t.float32, device="cuda")
+        perm = t.arange(4096, device="cuda").reshape(4, 32, 32).permute(1, 0, 2).reshape(-1)
+        sfperm = perm.reshape(-1, 32)[:, 0] // 32
+
+        def repack(codes, scale):
+            c = codes.view(t.uint8).index_select(-1, perm).view(t.float8_e4m3fn)
+            s = scale.index_select(-1, sfperm)
+            rows, cols = c.shape[-2:]
+            raw = (t.log2(s).int() + 127).to(t.uint8).reshape(-1, rows // 128, 4, 32, cols // 128, 4)
+            return c, raw.permute(0, 1, 4, 3, 2, 5).contiguous().view(t.float8_e8m0fnu)
+
+        saved, rows = {}, []
+        with safe_open(m.MODEL / "model.safetensors", framework="pt", device="cpu") as checkpoint, t.inference_mode():
+            for layer in range(24):
+                hidden = captured[f"stock_input/{layer}"]["original"].cuda()
+                index = captured[f"stock_route/{layer}"]["index"].cuda()
+                assert hidden.shape == (73, 1024) and index.shape == (73, 8)
+                x, offsets, destinations, order, token_ids, sizes, aligned = adapter.routing(hidden, index)
+                weight = checkpoint.get_tensor(f"model.layers.{layer}.block_sparse_moe.input_linear.weight").cuda()
+                assert weight.shape == (32, 1024, 1024)
+                gate, up = weight.chunk(2, 1)
+                packed_weight = t.stack((gate.reshape(32, -1, 32, 1024), up.reshape(32, -1, 32, 1024)), 2).reshape(32, 1024, 1024)
+                ac, _, ascale, _ = q.expanded_quantize(x, "A")
+                bc, _, bscale, _ = q.expanded_quantize(packed_weight, "B")
+                a, sfa = repack(ac, ascale)
+                b, sfb = repack(bc, bscale)
+                original_c = captured[f"local/{layer}"]["original_bf16_local"]["c"]
+                original_d = captured[f"local/{layer}"]["original_bf16_local"]["d"]
+                for dtype in (t.bfloat16, t.float16):
+                    before = m.NATIVE_CALLS
+                    result = m.api.grouped_gemm_swiglu_wrapper_sm100(
+                        a_tensor=a,
+                        b_tensor=b,
+                        sfa_tensor=sfa,
+                        sfb_tensor=sfb,
+                        padded_offsets=offsets,
+                        alpha_tensor=alpha,
+                        norm_const_tensor=norm,
+                        prob_tensor=None,
+                        acc_dtype=t.float32,
+                        c_dtype=t.float32,
+                        d_dtype=dtype,
+                        mma_tiler_mn=(256, 256),
+                        cluster_shape_mn=(2, 1),
+                        sf_vec_size=32,
+                        m_aligned=256,
+                        current_stream=m.cuda.CUstream(t.cuda.current_stream().cuda_stream),
+                    )
+                    assert m.NATIVE_CALLS - before == 1
+                    c = result["c_tensor"].squeeze(-1)[destinations]
+                    split = c.to(t.bfloat16).reshape(584, -1, 2, 32)
+                    stage = (m.F.silu(split[:, :, 0]) * split[:, :, 1]).reshape(584, 512)
+                    expected = (p.reference_fp16_round(stage) if dtype == t.float16 else stage.float()).cpu()
+                    actual = p.decode_float32(result, norm)[destinations].cpu()
+                    c_cpu = c.cpu()
+                    prefix = f"{layer}/{dtype}/"
+                    saved.update(
+                        {
+                            prefix + "c": c_cpu,
+                            prefix + "d": actual,
+                            prefix + "expected_actual_c_gpu_stage": expected,
+                            prefix + "raw_d": result["d_tensor"].cpu(),
+                            prefix + "raw_sfd": result["sfd_row_tensor"].cpu(),
+                            prefix + "destinations": destinations.cpu(),
+                        }
+                    )
+                    row = {
+                        "layer": layer,
+                        "dtype": str(dtype),
+                        "native_calls": 1,
+                        "live_rows": 584,
+                        "native_d_actual_c_gpu_reference": m.difference(actual, expected),
+                        "native_d_actual_c_gpu_different_values": (actual != expected).sum().item(),
+                        "native_c_original_bf16_cast_mismatches": (c_cpu.to(t.bfloat16) != original_c).sum().item(),
+                        "native_d_original_stock": m.difference(actual, original_d),
+                        "padded_rows": x.shape[0],
+                        "route_counts": sizes,
+                    }
+                    rows.append(row)
+                    print(json.dumps(row), flush=True)
+                    (out / "partial.json").write_text(json.dumps({"stage": "RUNNING_FIXED_INPUT_LAYER_ISOLATION", "rows": rows}, indent=2))
+                del weight, packed_weight, ac, bc, a, b, sfa, sfb, result
+        assert m.NATIVE_CALLS == 48
+        t.save(saved, out / "outputs.pt")
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+        meta = {
+            "stage": "ALL24_FIXED_INPUT_ACTUAL_C_STAGE_DIAGNOSTIC_NOT_MODEL_SUCCESS",
+            "scope": __doc__,
+            "source": str(source),
+            "source_head": args.expected_head,
+            "native_calls": m.NATIVE_CALLS,
+            "native_plans": m.NATIVE_PLANS,
+            "rows": rows,
+            "checkpoint_sha256": m.WEIGHT_SHA,
+            "original_baseline_replaced": False,
+            "model_parameters": 1334628352,
+            "harness_sha256": m.sha_file(__file__),
+            "helper_sha256": m.sha_file(helper),
+            "prototype": {"path": str(prototype_path), "sha256": m.sha_file(prototype_path)},
+            "prior_metadata_sha256": m.sha_file(prior / "result.json"),
+            "prior_outputs_sha256": m.sha_file(prior / "outputs.pt"),
+            "outputs_sha256": m.sha_file(out / "outputs.pt"),
+            "imports": {
+                name: {"path": mod.__file__, "sha256": m.sha_file(mod.__file__)}
+                for name, mod in (("cudnn", m.cudnn), ("api", m.api), ("binding", m._compiled_module))
+            },
+            "formal_performance": "NOT_RUN",
+            "service_final": "inactive",
+            "limits": "48 separate fixed-input layer/storage-mode executions; no feedback through model, complete-model accuracy/generation/KV/performance or accepted production feature. Candidate input buffers not saved for independent physical-pack audit.",
+        }
+        (out / "result.json").write_text(json.dumps(meta, indent=2) + "\n")
+        m.api.BlockScaledContiguousGroupedGemmKernel = original_kernel
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

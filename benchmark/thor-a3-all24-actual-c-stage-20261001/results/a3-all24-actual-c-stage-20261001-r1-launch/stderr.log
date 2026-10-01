@@ -1,0 +1,12 @@
+GroupedGemmSwigluSm100 is an experimental API
+Traceback (most recent call last):
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_all24_actual_c_stage_queued_20261001.py", line 194, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_all24_actual_c_stage_queued_20261001.py", line 130, in main
+    actual = p.decode_float32(result, norm)[destinations].cpu()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_all24_precision_probe_20261001.py", line 25, in decode_float32
+    assert d.dtype == t.float16 and sf is not None
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

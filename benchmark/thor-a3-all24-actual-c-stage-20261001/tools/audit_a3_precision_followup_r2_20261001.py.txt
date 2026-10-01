@@ -1,0 +1,224 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Independent CPU-only audit of saved Granite precision diagnostics.
+
+Does not import either model harness, cuDNN, Transformers or any GPU kernels.
+Recomputes complete-logit errors in FP64, trace metrics and logical FP8 codes.
+"""
+
+import argparse
+import hashlib
+import json
+import math
+import os
+from pathlib import Path
+import subprocess
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+import torch
+
+HEAD = "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha_file(path):
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for chunk in iter(lambda: handle.read(4 * 1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def tensor_info(value):
+    assert value.device.type == "cpu"
+    value = value.contiguous()
+    if value.is_floating_point():
+        assert torch.isfinite(value.float()).all().item()
+    return {
+        "shape": list(value.shape),
+        "dtype": str(value.dtype),
+        "sha256": hashlib.sha256(value.flatten().view(torch.uint8).numpy().tobytes()).hexdigest(),
+    }
+
+
+def difference(actual, reference, dtype=torch.float64):
+    assert actual.shape == reference.shape
+    a, b = actual.to(dtype), reference.to(dtype)
+    assert torch.isfinite(a).all().item() and torch.isfinite(b).all().item()
+    delta = a - b
+    return {
+        "max_abs": delta.abs().max().item(),
+        "relative_l2": (torch.linalg.vector_norm(delta) / torch.linalg.vector_norm(b).clamp_min(1e-12)).item(),
+        "argmax_equal_fraction": (a.argmax(-1) == b.argmax(-1)).to(dtype).mean().item(),
+    }
+
+
+def compare_metric(actual, recorded):
+    assert actual["max_abs"] == recorded["max_abs"], (actual, recorded)
+    assert actual["relative_l2"] == recorded["relative_l2"], (actual, recorded)
+    assert math.isclose(actual["argmax_equal_fraction"], recorded["argmax_equal_fraction"], abs_tol=1e-7), (actual, recorded)
+
+
+def logical_codes(value):
+    # Independent logical quantizer: no padding, packing or producer imports.
+    blocks = value.float().reshape(value.shape[0], 32, 32)
+    peak = blocks.abs().amax(-1)
+    exponent = torch.where(peak > 0, torch.ceil(torch.log2(peak * (1.0 / 448.0))), 0).clamp(-126, 127)
+    scale = torch.pow(2.0, exponent)
+    quantized = (blocks / scale.unsqueeze(-1)).clamp(-448, 448).to(torch.float8_e4m3fn).view(torch.uint8)
+    return quantized, scale
+
+
+def provenance(directory, expected_calls):
+    result = json.loads((directory / "result.json").read_text())
+    run = json.loads(directory.with_name(directory.name + "-launch").joinpath("run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    assert result["stage"] == "DIAGNOSTIC_COMPLETE" and result["source_head"] == HEAD
+    assert result["model_parameters"] == 1334628352 and result["native_calls"] == expected_calls
+    assert result["formal_performance"] == "NOT_RUN" and result["service_final"] == "inactive"
+    source = Path(result["source"])
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == HEAD
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    for record in [*result["imports"].values(), *result["native_plans"].values()]:
+        assert Path(record["path"]).resolve().is_relative_to(source / "python")
+        assert sha_file(record["path"]) == record["sha256"]
+    assert sha_file(run["argv"][1]) == result["harness_sha256"]
+    assert sha_file(ROOT / "tools/a3_model_e2e_mergefix_20261001.py") == result["base_adapter_sha256"]
+    if "precision_probe_sha256" in result:
+        assert sha_file(ROOT / "tools/a3_all24_precision_probe_20261001.py") == result["precision_probe_sha256"]
+    return result, run
+
+
+def flatten_tensors(values, prefix=""):
+    items = {}
+    for name, value in values.items():
+        key = prefix + str(name)
+        if isinstance(value, torch.Tensor):
+            items[key] = tensor_info(value)
+        else:
+            assert isinstance(value, dict)
+            items.update(flatten_tensors(value, key + "/"))
+    return items
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    torch.set_num_threads(4)
+    assert not torch.cuda.is_initialized()
+    baseline_dir = ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    baseline_meta = json.loads((baseline_dir / "result.json").read_text())
+    assert baseline_meta["source_head"] == HEAD
+    baseline = torch.load(baseline_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    records = []
+    with torch.inference_mode():
+        for name, expected_calls in (("a3-all24-precision-probe-20261001-r1", 168), ("a3-all24-channel-rescale-20261001-r1", 576)):
+            directory = ROOT / "results" / name
+            meta, run = provenance(directory, expected_calls)
+            values = torch.load(directory / "outputs.pt", map_location="cpu", weights_only=True)
+            tensors = flatten_tensors(values)
+            rows = []
+            for row in meta["rows"]:
+                policy, case = row["policy"], row["case"]
+                assert row["mxfp8_layers"] == list(range(24)) and row["native_calls"] == 24
+                assert row["input_tokens"] == [73, 70, 256][case]
+                prefix = f"{policy}_{case}_" if expected_calls == 168 else f"{policy}/{case}/"
+                native, reference = values[prefix + "native"], values[prefix + "reference"]
+                assert native.shape == (1, row["input_tokens"], 49155)
+                comparisons = {
+                    "quantized_oracle": reference,
+                    "original_bf16": baseline[f"forward_{case}_stock"],
+                }
+                metrics = {
+                    "quantized_oracle": difference(native, reference),
+                    "original_bf16": difference(native, baseline[f"forward_{case}_stock"]),
+                }
+                if expected_calls == 168:
+                    comparisons["ideal_fp32_activation_oracle"] = values[prefix + "reference_fp32"]
+                    metrics["ideal_fp32_activation_oracle"] = difference(native, values[prefix + "reference_fp32"])
+                reproduced = {key: difference(native, value, torch.float32) for key, value in comparisons.items()}
+                for key, metric in reproduced.items():
+                    compare_metric(metric, row[key])
+                oracle_pass = metrics["quantized_oracle"]["relative_l2"] <= 0.01
+                bf16_pass = metrics["original_bf16"]["relative_l2"] <= 0.05
+                assert oracle_pass == row["oracle_gate_pass"] and bf16_pass == row["bf16_gate_pass"]
+                assert not oracle_pass and not bf16_pass
+                rows.append(
+                    {
+                        "policy": policy,
+                        "case": case,
+                        **metrics,
+                        "producer_fp32_reproduced": reproduced,
+                        "oracle_gate_pass": oracle_pass,
+                        "bf16_gate_pass": bf16_pass,
+                    }
+                )
+            extra = {}
+            if expected_calls == 168:
+                assert len(rows) == 6 and len(tensors) == 210 and meta["trace_baseline_bytes_unchanged"]
+                trace = []
+                for layer, row in enumerate(meta["trace_rows"]):
+                    assert row["layer"] == layer
+                    native, reference = values["baseline_native"][layer], values["baseline_reference"][layer]
+                    metrics = {"hidden_input": difference(native["x"], reference["x"]), "expert_output": difference(native["y"], reference["y"])}
+                    compare_metric(difference(native["x"], reference["x"], torch.float32), row["hidden_input"])
+                    compare_metric(difference(native["y"], reference["y"], torch.float32), row["expert_output"])
+                    qn, sn = logical_codes(native["x"])
+                    qr, sr = logical_codes(reference["x"])
+                    counts = {
+                        "route_slots_differ": (native["index"] != reference["index"]).sum().item(),
+                        "tokens_route_set_differ": (native["index"].sort(-1).values != reference["index"].sort(-1).values).any(-1).sum().item(),
+                        "input_fp8_codes_differ": (qn != qr).sum().item(),
+                        "input_scale_blocks_differ": (sn != sr).sum().item(),
+                    }
+                    for key, count in counts.items():
+                        assert count == row[key], (layer, key, count, row[key])
+                    trace.append({"layer": layer, **metrics, **counts})
+                assert len(trace) == 24
+                extra["trace_rows"] = trace
+                extra["trace_full_logits_byte_parity"] = "PRODUCER_ASSERTION_ONLY; logits were not saved a second time"
+            else:
+                assert len(rows) == 24 and len(tensors) == 48 and len(meta["policies"]) == 8
+                assert meta["calibration_expert_visits"] == [4] * 24
+                calibration = torch.load(directory / "calibration.pt", map_location="cpu", weights_only=True)
+                assert len(calibration) == 24
+                for layer in range(24):
+                    assert tensor_info(calibration[str(layer)]) == meta["calibration_activation_digests"][layer]
+                extra["calibration_tensors"] = flatten_tensors(calibration)
+                extra["calibration_sha256"] = sha_file(directory / "calibration.pt")
+                extra["scale_policy_validation_scope"] = "Producer asserted inverse weight transform L2 < 1e-6; scale tensors not saved separately"
+            records.append(
+                {
+                    "directory": str(directory),
+                    "run": run,
+                    "native_calls": expected_calls,
+                    "rows": rows,
+                    "tensors": tensors,
+                    "outputs_sha256": sha_file(directory / "outputs.pt"),
+                    "producer_metadata_sha256": sha_file(directory / "result.json"),
+                    "provenance_current_files_match": True,
+                    **extra,
+                }
+            )
+            print(json.dumps({"stage": "CPU_AUDITED", "name": name, "logit_cases": len(rows), "tensor_entries": len(tensors)}), flush=True)
+            del values
+    assert not torch.cuda.is_initialized()
+    result = {
+        "stage": "PASS_EVIDENCE_AUDIT_ALL24_QUALITY_FAILED",
+        "source_head": HEAD,
+        "audit_method": "CPU FP32 reproduces producer max/L2 exactly; independent FP64 complete-logit norms verify unchanged 1%/5% classifications; argmax fraction tolerance 1e-7",
+        "cuda_initialized": False,
+        "harness_sha256": sha_file(__file__),
+        "baseline_outputs_sha256": sha_file(baseline_dir / "outputs.pt"),
+        "records": records,
+        "formal_performance": "NOT_RUN",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "cuda_initialized": False}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

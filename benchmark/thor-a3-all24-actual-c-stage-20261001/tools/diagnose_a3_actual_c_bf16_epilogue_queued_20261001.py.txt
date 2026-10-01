@@ -1,0 +1,176 @@
+"""Isolate native BF16 epilogue against GPU reference using actual native C; no model/performance pass."""
+
+import argparse
+import fcntl
+import importlib.util
+import json
+import os
+import sys
+from pathlib import Path
+import subprocess
+import time
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--expected-source", required=True)
+    parser.add_argument("--expected-head", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        start = time.monotonic()
+        (out / "admission_wait.json").write_text(json.dumps({"stage": "WAITING_FOR_SHARED_LOCK", "pid": os.getpid(), "torch_imported": False}))
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - start > 3600:
+                    (out / "admission.json").write_text(json.dumps({"stage": "NOT_RUN_SHARED_LOCK_BUSY", "torch_imported": False}))
+                    return 75
+                time.sleep(1)
+        helper = Path(__file__).with_name("a3_double_mxfp8_recipe_probe_20261001.py")
+        spec = importlib.util.spec_from_file_location("k_block_double", helper)
+        q = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(q)
+        p, m, t = q.p, q.m, q.t
+        prototype_path = Path(__file__).with_name("a3_mxfp8_bf16_staged_native_kernel_20261001.py")
+        pspec = importlib.util.spec_from_file_location("a3_local_bf16_staged_native", prototype_path)
+        prototype = importlib.util.module_from_spec(pspec)
+        sys.modules[pspec.name] = prototype
+        pspec.loader.exec_module(prototype)
+        original_kernel = m.api.BlockScaledContiguousGroupedGemmKernel
+        m.api.BlockScaledContiguousGroupedGemmKernel = prototype.BlockScaledContiguousGroupedGemmKernel
+        source = Path(args.expected_source).resolve()
+        assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == args.expected_head
+        assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+        for mod in (m.cudnn, m.api, m._compiled_module):
+            assert Path(mod.__file__).resolve().is_relative_to(source / "python")
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        t.set_num_threads(4)
+        t.backends.cuda.matmul.allow_tf32 = False
+        t.set_float32_matmul_precision("highest")
+        prior = m.ROOT / "results/a3-native-c-boundary-20261001-r2"
+        pm = json.loads((prior / "result.json").read_text())
+        v = t.load(prior / "outputs.pt", map_location="cpu", weights_only=True)
+        a0, b0 = v["input_fp8"].cuda(), v["weight_fp8"].cuda()
+        sa0, sb0 = v["input_logical_scale"].cuda(), v["weight_logical_scale"].cuda()
+        offsets, destinations = v["padded_offsets"].cuda(), v["destinations"].cuda()
+        alpha = t.ones(32, dtype=t.float32, device="cuda")
+        norm = t.ones(1, dtype=t.float32, device="cuda")
+        ends = offsets.cpu().tolist()
+        rows, saved = [], {}
+
+        def repack(codes, scale, perm):
+            sf_perm = perm.reshape(-1, 32)[:, 0] // 32
+            assert t.equal(perm.reshape(-1, 32) % 32, t.arange(32, device="cuda").expand(128, 32))
+            qcodes = codes.view(t.uint8).index_select(-1, perm).view(t.float8_e4m3fn)
+            s = scale.index_select(-1, sf_perm)
+            n, k = qcodes.shape[-2:]
+            raw = (t.log2(s).int() + 127).to(t.uint8).reshape(-1, n // 128, 4, 32, k // 128, 4)
+            physical = raw.permute(0, 1, 4, 3, 2, 5).contiguous().view(t.float8_e8m0fnu)
+            return qcodes, physical, s
+
+        with t.inference_mode():
+            for block in (0, 32):
+                perm = t.arange(4096, device="cuda")
+                if block:
+                    perm = perm.reshape(4, 1024 // block, block).permute(1, 0, 2).reshape(-1)
+                a, sfa, sa = repack(a0, sa0, perm)
+                b, sfb, sb = repack(b0, sb0, perm)
+                ad, bd = m.dequantize(a, sa), m.dequantize(b, sb)
+                refs, begin = [], 0
+                for expert, end in enumerate(ends):
+                    refs.append(m.F.linear(ad[begin:end], bd[expert]))
+                    begin = end
+                c_ref = t.cat(refs)[destinations].cpu()
+                split = c_ref.to(t.bfloat16).reshape(584, -1, 2, 32)
+                d_ref = p.reference_fp16_round((m.F.silu(split[:, :, 0]) * split[:, :, 1]).reshape(584, 512))
+                before = m.NATIVE_CALLS
+                result = m.api.grouped_gemm_swiglu_wrapper_sm100(
+                    a_tensor=a,
+                    b_tensor=b,
+                    sfa_tensor=sfa,
+                    sfb_tensor=sfb,
+                    padded_offsets=offsets,
+                    alpha_tensor=alpha,
+                    norm_const_tensor=norm,
+                    prob_tensor=None,
+                    acc_dtype=t.float32,
+                    c_dtype=t.float32,
+                    d_dtype=t.float16,
+                    mma_tiler_mn=(256, 256),
+                    cluster_shape_mn=(2, 1),
+                    sf_vec_size=32,
+                    m_aligned=256,
+                    current_stream=m.cuda.CUstream(t.cuda.current_stream().cuda_stream),
+                )
+                assert m.NATIVE_CALLS - before == 1
+                c_gpu = result["c_tensor"].squeeze(-1)[destinations]
+                c = c_gpu.cpu()
+                native_split = c_gpu.to(t.bfloat16).reshape(584, -1, 2, 32)
+                expected_native_c_stage = p.reference_fp16_round((m.F.silu(native_split[:, :, 0]) * native_split[:, :, 1]).reshape(584, 512)).cpu()
+                d = p.decode_float32(result, norm)[destinations].cpu()
+                prefix = f"block{block}"
+                for key, value in (
+                    ("permutation", perm.cpu()),
+                    ("c", c),
+                    ("d", d),
+                    ("reference_c", c_ref),
+                    ("reference_d", d_ref),
+                    ("raw_d", result["d_tensor"].cpu()),
+                    ("raw_sfd", result["sfd_row_tensor"].cpu()),
+                    ("expected_native_c_gpu_bf16_stage", expected_native_c_stage),
+                ):
+                    saved[prefix + "/" + key] = value
+                if block == 0:
+                    assert t.equal(c.view(t.uint8), v["torch.float32/native_c"].view(t.uint8))
+
+                row = {
+                    "block": block,
+                    "native_calls": 1,
+                    "native_d_vs_actual_c_gpu_stage": m.difference(d, expected_native_c_stage),
+                    "native_d_vs_actual_c_gpu_stage_different_values": (d != expected_native_c_stage).sum().item(),
+                    "native_c_original_bf16_cast_mismatches": (c.to(t.bfloat16) != v["original_stock_c"]).sum().item(),
+                    "reference_c_original_bf16_cast_mismatches": (c_ref.to(t.bfloat16) != v["original_stock_c"]).sum().item(),
+                    "native_c_reference": m.difference(c, c_ref),
+                    "native_d_reference": m.difference(d, d_ref),
+                    "native_d_original": m.difference(d, v["original_stock_d"]),
+                }
+                rows.append(row)
+                print(json.dumps(row), flush=True)
+        t.save(saved, out / "outputs.pt")
+        assert m.NATIVE_CALLS == 2
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        metadata = {
+            "stage": "LOCAL_ACTUAL_C_BF16_EPILOGUE_ISOLATION_NOT_MODEL_SUCCESS",
+            "rows": rows,
+            "native_calls": m.NATIVE_CALLS,
+            "source": str(source),
+            "source_head": args.expected_head,
+            "prior_metadata_sha256": m.sha_file(prior / "result.json"),
+            "prior_outputs_sha256": m.sha_file(prior / "outputs.pt"),
+            "outputs_sha256": m.sha_file(out / "outputs.pt"),
+            "harness_sha256": m.sha_file(__file__),
+            "helper_sha256": m.sha_file(helper),
+            "native_plans": m.NATIVE_PLANS,
+            "experimental_native_kernel": {"path": str(prototype_path), "sha256": m.sha_file(prototype_path)},
+            "production_source_modified": False,
+            "imports": {
+                name: {"path": mod.__file__, "sha256": m.sha_file(mod.__file__)}
+                for name, mod in (("cudnn", m.cudnn), ("api", m.api), ("binding", m._compiled_module))
+            },
+            "original_baseline_replaced": False,
+            "formal_performance": "NOT_RUN",
+            "service_final": "inactive",
+            "limits": "First-layer original73-token trajectory only, identity/K32. Actual native FP32 C is rounded/activated on GPU solely as independent epilogue reference, not a native D replacement. Actual staged native D consumed. Experimental native prototype; production frozen source unchanged. No model or performance claim.",
+        }
+        (out / "result.json").write_text(json.dumps(metadata, indent=2) + "\n")
+        m.api.BlockScaledContiguousGroupedGemmKernel = original_kernel
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
