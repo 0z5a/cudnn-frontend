@@ -1,0 +1,1 @@
+{"stage": "PASS_CPU_EVIDENCE_AUDIT_NATIVE_C_BOUNDARY_NOT_MODEL_SUCCESS", "tensor_count": 21, "raw_d_equal": true, "raw_sfd_equal": true}

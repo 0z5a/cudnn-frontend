@@ -1,0 +1,12 @@
+{
+  "verified": true,
+  "utc": "2026-10-01T11:30:33.894565+00:00",
+  "manifest_entries": 21,
+  "transport": {
+    "archive": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-native-c-boundary-archive-20261001/a3-native-c-boundary-evidence-20261001.tar.gz",
+    "sha256": "f9307890fc655bf7261edcb16b909307da2fc17a64e79a976773c467dc1877c9",
+    "size": 27227,
+    "files": 22
+  },
+  "mac_directory": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-native-c-boundary-evidence-20261001"
+}

@@ -1,0 +1,87 @@
+{
+  "stage": "DIAGNOSTIC_COMPLETE",
+  "scope": "Same-input original first-layer native C/D boundary, not full-model success.",
+  "source_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "source": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4",
+  "native_calls": 2,
+  "native_plans": {
+    "cudnn.gemm.cutedsl.grouped.swiglu.grouped_gemm_swiglu_quant.BlockScaledContiguousGroupedGemmKernel": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+      "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+    }
+  },
+  "rows": [
+    {
+      "c_dtype": "torch.bfloat16",
+      "native_calls": 1,
+      "native_c_original_bf16_rounding_mismatches": 285,
+      "native_c_reference_bf16_rounding_mismatches": 211,
+      "native_c_vs_reference": {
+        "max_abs": 0.247833251953125,
+        "relative_l2": 0.0016416719881817698,
+        "argmax_equal_fraction": 0.9931507110595703
+      },
+      "native_d_vs_reference_fp16_d": {
+        "max_abs": 0.03125,
+        "relative_l2": 4.8729401896707714e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_vs_original_stock_d": {
+        "max_abs": 0.4375,
+        "relative_l2": 0.003189191920682788,
+        "argmax_equal_fraction": 0.9982876777648926
+      }
+    },
+    {
+      "c_dtype": "torch.float32",
+      "native_calls": 1,
+      "native_c_original_bf16_rounding_mismatches": 285,
+      "native_c_reference_bf16_rounding_mismatches": 211,
+      "native_c_vs_reference": {
+        "max_abs": 0.000518798828125,
+        "relative_l2": 2.8039037260896293e-06,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_vs_reference_fp16_d": {
+        "max_abs": 0.03125,
+        "relative_l2": 4.8729401896707714e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_vs_original_stock_d": {
+        "max_abs": 0.4375,
+        "relative_l2": 0.003189191920682788,
+        "argmax_equal_fraction": 0.9982876777648926
+      }
+    }
+  ],
+  "gemm_k": 4096,
+  "original_h": 1024,
+  "layer": 0,
+  "actual_model_route_assignments": 584,
+  "same_input_c_storage_arms_raw_d_byte_equal": true,
+  "same_input_c_storage_arms_raw_sfd_byte_equal": true,
+  "hypothetical_reference_bf16_stage_native_supported": false,
+  "weight_sha256": "ac02591061f1344027a7e7b11dbb4143f75f166c47dc09b742f5de3ab1dde1d1",
+  "prior_outputs_sha256": "34be866726f1e7c30c66af3d1009e07070b88ea045e8966d037772dd9d240ed1",
+  "harness_sha256": "2f8403179cabded0ba3e0884b7d8d13ea943354fe10ce2d797580f761e7fa7ff",
+  "double_helper_sha256": "fa63500b8a10122fc7bf16e52aaf10a0ceb64cc23816aeec28ccc55bd257fe7e",
+  "precision_probe_sha256": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5",
+  "base_adapter_sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea",
+  "imports": {
+    "cudnn": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4/python/cudnn/__init__.py",
+      "sha256": "ee53bcbde07f59b89ca9378184a7a54beb5d36d216df1f15d7e6d810d9b7f1f9"
+    },
+    "api": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+      "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+    },
+    "binding": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+      "sha256": "2edf36cdbdebe785ab48e30086d595c5799d5131ad3036d385771ca5f39763cc"
+    }
+  },
+  "formal_performance": "NOT_RUN",
+  "service_final": "inactive",
+  "limits": "Captured original first-layer same-input study only. No full model/generation/KV pass, no production change, no unsupported-D/support bypass or native-output replacement. BF16 C output storage does not imply fused activation rounds C first."
+}

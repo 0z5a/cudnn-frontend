@@ -1,0 +1,129 @@
+{
+  "stage": "PUBLISHED_NATIVE_C_BOUNDARY_EVIDENCE",
+  "runtime_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "native_calls": 2,
+  "production_changes": false,
+  "full_model_pass": false,
+  "files": [
+    {
+      "path": "MAC_TRANSPORT.json",
+      "size": 508,
+      "sha256": "198f742a810aa33da3444d02130aee6a07487fe2d66aea66309031cd59c6b6c4"
+    },
+    {
+      "path": "RESULT.md",
+      "size": 3066,
+      "sha256": "46b50d9b17f0fba9f7296d0cbae05e8df2df2120179e03d2923b20de7894866d"
+    },
+    {
+      "path": "raw/manifest.json",
+      "size": 6942,
+      "sha256": "c6a9ed251bfafce149cd7b659ebde6d5c7282d1a1e2a96fa020af1d2b02b545d"
+    },
+    {
+      "path": "raw/results/a3-native-c-boundary-20261001-r1/admission_wait.json",
+      "size": 77,
+      "sha256": "812483cd1b8da86a5b3ef17b8e28c640c532d0d0e4f44bc3d2f3cb6994fd69e9"
+    },
+    {
+      "path": "raw/results/a3-native-c-boundary-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "raw/results/a3-native-c-boundary-20261001-r1-launch/stdout.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "raw/results/a3-native-c-boundary-20261001-r2/admission_wait.json",
+      "size": 75,
+      "sha256": "cd9bc32fa6ceb4880a44c26e251897a207e517f1d9b64726cb6a80334166147e"
+    },
+    {
+      "path": "raw/results/a3-native-c-boundary-20261001-r2/result.json",
+      "size": 3916,
+      "sha256": "4c0aba88779c34477528194cf185ecde9d30cece6c331023b1a8235822c0fb6f"
+    },
+    {
+      "path": "raw/results/a3-native-c-boundary-20261001-r2-launch/run.json",
+      "size": 766,
+      "sha256": "5f9c102defdd5f2e4d8ed3de91f7b10ac3a9a1a081b4771d161a2278b7e69d0e"
+    },
+    {
+      "path": "raw/results/a3-native-c-boundary-20261001-r2-launch/stderr.log",
+      "size": 46,
+      "sha256": "c0362da2d738fd8f26bcb4467800ed22c57dd7a61da33405a76421244f48fecb"
+    },
+    {
+      "path": "raw/results/a3-native-c-boundary-20261001-r2-launch/stdout.log",
+      "size": 1203,
+      "sha256": "493c99d1301a8ba71320c525f301d4c1dd8821ab2787d1cc4fab203e1d2ac2d0"
+    },
+    {
+      "path": "raw/results/a3-native-c-boundary-cpu-audit-20261001-r2/result.json",
+      "size": 7635,
+      "sha256": "a102c49ab2f6da99892ef5703f239571fab9b4f52670aea680e1c84484ed0e8a"
+    },
+    {
+      "path": "raw/results/a3-native-c-boundary-cpu-audit-20261001-r2-launch/run.json",
+      "size": 712,
+      "sha256": "4e8f90fc9ae64546c9a87ca217bcf41f1dc35250f578810086e80966c3bea60b"
+    },
+    {
+      "path": "raw/results/a3-native-c-boundary-cpu-audit-20261001-r2-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "raw/results/a3-native-c-boundary-cpu-audit-20261001-r2-launch/stdout.log",
+      "size": 137,
+      "sha256": "62ba169501f7c216ae5b04ecec878a8546029f219de8b509238cdfb258d20a70"
+    },
+    {
+      "path": "raw/results/a3-native-c-boundary-reboot-state-20261001.json",
+      "size": 711,
+      "sha256": "48b0d94dcf256416e172e4e58892c4926b6fc9f6e5093a91fdaf6d5391d253be"
+    },
+    {
+      "path": "raw/tools/a3_all24_precision_probe_20261001.py.txt",
+      "size": 12896,
+      "sha256": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5"
+    },
+    {
+      "path": "raw/tools/a3_double_mxfp8_recipe_probe_20261001.py.txt",
+      "size": 11740,
+      "sha256": "fa63500b8a10122fc7bf16e52aaf10a0ceb64cc23816aeec28ccc55bd257fe7e"
+    },
+    {
+      "path": "raw/tools/a3_model_e2e_mergefix_20261001.py.txt",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "path": "raw/tools/archive_a3_native_c_boundary_20261001.py.txt",
+      "size": 3519,
+      "sha256": "472110eb6713cf393c8b7fa52ed97717b391d6852d6bd04d3d66282e04b8d40f"
+    },
+    {
+      "path": "raw/tools/audit_a3_native_c_boundary_20261001.py.txt",
+      "size": 6549,
+      "sha256": "895f6b4981aab5f75032acd2fa48f19d4126f684988ca80a79b33e70fcf86e73"
+    },
+    {
+      "path": "raw/tools/audit_a3_precision_followup_r2_20261001.py.txt",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "raw/tools/diagnose_a3_native_c_boundary_queued_20261001.py.txt",
+      "size": 9451,
+      "sha256": "2f8403179cabded0ba3e0884b7d8d13ea943354fe10ce2d797580f761e7fa7ff"
+    },
+    {
+      "path": "raw/tools/run_logged.py.txt",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    }
+  ]
+}

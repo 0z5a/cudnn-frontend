@@ -1,0 +1,177 @@
+"""Same-input original first-layer native C/D boundary, not full-model success."""
+
+import argparse
+import fcntl
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import time
+from types import SimpleNamespace
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--expected-source", required=True)
+    parser.add_argument("--expected-head", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        started = time.monotonic()
+        (out / "admission_wait.json").write_text(json.dumps({"stage": "WAITING_FOR_SHARED_LOCK", "pid": os.getpid(), "torch_imported": False}))
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - started > 3600:
+                    (out / "admission.json").write_text(json.dumps({"stage": "NOT_RUN_SHARED_LOCK_BUSY", "torch_imported": False}))
+                    return 75
+                time.sleep(1)
+        helper = Path(__file__).with_name("a3_double_mxfp8_recipe_probe_20261001.py")
+        spec = importlib.util.spec_from_file_location("native_boundary_double", helper)
+        q = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(q)
+        p, m, t = q.p, q.m, q.t
+        from safetensors import safe_open
+
+        source = Path(args.expected_source).resolve()
+        assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == args.expected_head
+        assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+        for mod in (m.cudnn, m.api, m._compiled_module):
+            assert Path(mod.__file__).resolve().is_relative_to(source / "python")
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        t.set_num_threads(4)
+        t.backends.cuda.matmul.allow_tf32 = False
+        t.backends.cudnn.allow_tf32 = False
+        t.set_float32_matmul_precision("highest")
+        assert m.sha_file(m.MODEL / "model.safetensors") == m.WEIGHT_SHA
+        with safe_open(str(m.MODEL / "model.safetensors"), framework="pt", device="cpu") as handle:
+            weight = handle.get_tensor("model.layers.0.block_sparse_moe.input_linear.weight").cuda()
+            down = handle.get_tensor("model.layers.0.block_sparse_moe.output_linear.weight").cuda()
+        expert = SimpleNamespace(gate_up_proj=weight, down_proj=down, forward=lambda *args: None)
+        adapter = q.make_adapter(p.PrecisionAdapter, expert, 0)
+        prior_dir = m.ROOT / "results/a3-residual-staging-20261001-r1"
+        prior = t.load(prior_dir / "outputs.pt", map_location="cpu", weights_only=True)
+        hidden, indices = prior["stock_input/0"]["original"].cuda(), prior["stock_route/0"]["index"].cuda()
+        stock_c, stock_d = prior["local/0"]["original_bf16_local"]["c"], prior["local/0"]["original_bf16_local"]["d"]
+        x, ends, destinations, order, token_ids, sizes, aligned = adapter.routing(hidden, indices)
+        a, sfa, scale, effective_a = q.expanded_quantize(x, "A")
+        adeq, bdeq = m.dequantize(a, scale), m.dequantize(adapter.b, adapter.bscale)
+        saved = {
+            "input_fp8": a.cpu(),
+            "sfa": sfa.cpu(),
+            "input_logical_scale": scale.cpu(),
+            "weight_fp8": adapter.b.cpu(),
+            "sfb": adapter.sfb.cpu(),
+            "weight_logical_scale": adapter.bscale.cpu(),
+            "destinations": destinations.cpu(),
+            "padded_offsets": ends.cpu(),
+        }
+        with t.inference_mode():
+            references, start = [], 0
+            for group, n in enumerate(aligned):
+                if n:
+                    references.append(m.F.linear(adeq[start : start + n], bdeq[group]))
+                start += n
+            reference_c = t.cat(references)[destinations].cpu()
+            assert reference_c.shape == stock_c.shape == (584, 1024)
+            c = reference_c.reshape(584, -1, 2, 32)
+            ref_d = p.reference_fp16_round((m.F.silu(c[:, :, 0]) * c[:, :, 1]).reshape(584, 512))
+            cb = reference_c.to(t.bfloat16).reshape(584, -1, 2, 32)
+            hypothetical_bf16_stage_d = (m.F.silu(cb[:, :, 0]) * cb[:, :, 1]).reshape(584, 512)
+            saved.update(
+                reference_c=reference_c,
+                reference_fp16_d=ref_d,
+                hypothetical_reference_bf16_stage_d=hypothetical_bf16_stage_d,
+                original_stock_c=stock_c,
+                original_stock_d=stock_d,
+            )
+            rows = []
+            for c_dtype in (t.bfloat16, t.float32):
+                before = m.NATIVE_CALLS
+                result = m.api.grouped_gemm_swiglu_wrapper_sm100(
+                    a_tensor=a,
+                    b_tensor=adapter.b,
+                    sfa_tensor=sfa,
+                    sfb_tensor=adapter.sfb,
+                    padded_offsets=ends,
+                    alpha_tensor=adapter.alpha,
+                    norm_const_tensor=adapter.norm,
+                    prob_tensor=None,
+                    acc_dtype=t.float32,
+                    c_dtype=c_dtype,
+                    d_dtype=t.float16,
+                    mma_tiler_mn=(256, 256),
+                    cluster_shape_mn=(2, 1),
+                    sf_vec_size=32,
+                    m_aligned=256,
+                    current_stream=m.cuda.CUstream(t.cuda.current_stream().cuda_stream),
+                )
+                assert m.NATIVE_CALLS - before == 1
+                native_c = result["c_tensor"].squeeze(-1)[destinations].cpu()
+                native_d = p.decode_float32(result, adapter.norm)[destinations].cpu()
+                prefix = str(c_dtype)
+                saved[prefix + "/native_c"] = native_c
+                saved[prefix + "/native_d"] = native_d
+                saved[prefix + "/raw_d"] = result["d_tensor"].cpu()
+                saved[prefix + "/raw_sfd"] = result["sfd_row_tensor"].cpu()
+                row = {
+                    "c_dtype": prefix,
+                    "native_calls": 1,
+                    "native_c_original_bf16_rounding_mismatches": (native_c.to(t.bfloat16) != stock_c).sum().item(),
+                    "native_c_reference_bf16_rounding_mismatches": (native_c.to(t.bfloat16) != reference_c.to(t.bfloat16)).sum().item(),
+                    "native_c_vs_reference": m.difference(native_c, reference_c),
+                    "native_d_vs_reference_fp16_d": m.difference(native_d, ref_d),
+                    "native_d_vs_original_stock_d": m.difference(native_d, stock_d),
+                }
+                rows.append(row)
+                print(json.dumps(row), flush=True)
+        raw_d_equal = t.equal(saved["torch.bfloat16/raw_d"].view(t.uint8), saved["torch.float32/raw_d"].view(t.uint8))
+        raw_sf_equal = t.equal(saved["torch.bfloat16/raw_sfd"].view(t.uint8), saved["torch.float32/raw_sfd"].view(t.uint8))
+        t.save(saved, out / "outputs.pt")
+        assert m.NATIVE_CALLS == 2
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+        metadata = {
+            "stage": "DIAGNOSTIC_COMPLETE",
+            "scope": __doc__,
+            "source_head": args.expected_head,
+            "source": str(source),
+            "native_calls": m.NATIVE_CALLS,
+            "native_plans": m.NATIVE_PLANS,
+            "rows": rows,
+            "gemm_k": 4096,
+            "original_h": 1024,
+            "layer": 0,
+            "actual_model_route_assignments": 584,
+            "same_input_c_storage_arms_raw_d_byte_equal": raw_d_equal,
+            "same_input_c_storage_arms_raw_sfd_byte_equal": raw_sf_equal,
+            "hypothetical_reference_bf16_stage_native_supported": False,
+            "weight_sha256": m.WEIGHT_SHA,
+            "prior_outputs_sha256": m.sha_file(prior_dir / "outputs.pt"),
+            "harness_sha256": m.sha_file(__file__),
+            "double_helper_sha256": m.sha_file(helper),
+            "precision_probe_sha256": m.sha_file(q.PROBE),
+            "base_adapter_sha256": m.sha_file(p.BASE),
+            "imports": {
+                name: {"path": mod.__file__, "sha256": m.sha_file(mod.__file__)}
+                for name, mod in (("cudnn", m.cudnn), ("api", m.api), ("binding", m._compiled_module))
+            },
+            "formal_performance": "NOT_RUN",
+            "service_final": "inactive",
+            "limits": "Captured original first-layer same-input study only. No full model/generation/KV pass, no production change, no unsupported-D/support bypass or native-output replacement. BF16 C output storage does not imply fused activation rounds C first.",
+        }
+        (out / "result.json").write_text(json.dumps(metadata, indent=2) + "\n")
+        print(
+            json.dumps({"stage": metadata["stage"], "native_calls": 2, "C_storage_D_byte_equal": raw_d_equal, "C_storage_SFD_byte_equal": raw_sf_equal}),
+            flush=True,
+        )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

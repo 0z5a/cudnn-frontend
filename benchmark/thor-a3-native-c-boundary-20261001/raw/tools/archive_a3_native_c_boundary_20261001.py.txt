@@ -1,0 +1,69 @@
+"""Archive native C boundary and reboot-interrupted evidence without tensor payloads."""
+
+import hashlib
+import io
+import json
+from pathlib import Path
+import tarfile
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+PREFIX = "a3-native-c-boundary-evidence-20261001"
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    destination = ROOT / "results/a3-native-c-boundary-archive-20261001"
+    destination.mkdir(exist_ok=False)
+    selected = {}
+    for name in ("a3-native-c-boundary-20261001-r2", "a3-native-c-boundary-cpu-audit-20261001-r2"):
+        launch = ROOT / "results" / (name + "-launch")
+        run = json.loads((launch / "run.json").read_text())
+        assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+        for directory in (launch, ROOT / "results" / name):
+            for path in sorted(directory.rglob("*")):
+                if path.is_file() and path.suffix in (".json", ".log"):
+                    selected[str(path.relative_to(ROOT))] = path
+    for directory in (ROOT / "results/a3-native-c-boundary-20261001-r1", ROOT / "results/a3-native-c-boundary-20261001-r1-launch"):
+        for path in sorted(directory.rglob("*")):
+            if path.is_file() and path.suffix in (".json", ".log"):
+                selected[str(path.relative_to(ROOT))] = path
+    selected["results/a3-native-c-boundary-reboot-state-20261001.json"] = ROOT / "results/a3-native-c-boundary-reboot-state-20261001.json"
+    for name in (
+        "diagnose_a3_native_c_boundary_queued_20261001.py",
+        "audit_a3_native_c_boundary_20261001.py",
+        "a3_double_mxfp8_recipe_probe_20261001.py",
+        "a3_all24_precision_probe_20261001.py",
+        "audit_a3_precision_followup_r2_20261001.py",
+        "a3_model_e2e_mergefix_20261001.py",
+        "archive_a3_native_c_boundary_20261001.py",
+    ):
+        path = ROOT / "tools" / name
+        selected[str(path.relative_to(ROOT))] = path
+    selected["tools/run_logged.py"] = Path("/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py")
+    records = [{"path": name, "origin": str(path), "size": path.stat().st_size, "sha256": sha(path)} for name, path in sorted(selected.items())]
+    assert all(path.suffix in (".json", ".log", ".py") and not path.is_symlink() for path in selected.values())
+    manifest = {
+        "stage": "NATIVE_C_D_BOUNDARY_AUDITED_NOT_MODEL_SUCCESS",
+        "tested_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+        "files": records,
+        "excluded": ["models", "cache", "engines", ".pt outputs", "native binaries"],
+        "scope": "First-layer same-input native C storage control; two actual native calls; raw D/SF decoded and audited; full-model/generation/performance NOT_RUN",
+    }
+    payload = (json.dumps(manifest, indent=2) + "\n").encode()
+    archive = destination / (PREFIX + ".tar.gz")
+    with tarfile.open(archive, "w:gz") as tar:
+        for name, path in selected.items():
+            tar.add(path, arcname=PREFIX + "/" + name, recursive=False)
+        info = tarfile.TarInfo(PREFIX + "/manifest.json")
+        info.size = len(payload)
+        tar.addfile(info, io.BytesIO(payload))
+    transport = {"archive": str(archive), "sha256": sha(archive), "size": archive.stat().st_size, "files": len(records) + 1}
+    (destination / "transport.json").write_text(json.dumps(transport, indent=2) + "\n")
+    print(json.dumps(transport), flush=True)
+
+
+if __name__ == "__main__":
+    main()

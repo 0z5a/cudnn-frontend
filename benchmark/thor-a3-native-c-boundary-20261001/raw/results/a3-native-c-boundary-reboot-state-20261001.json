@@ -1,0 +1,12 @@
+{
+  "observed_utc": "2026-10-01T11:27:50.539163+00:00",
+  "boot_id": "45fb4742-5aac-48ce-bcd7-0db6a26ee428",
+  "boot_started_local": "2026-10-01 19:10:57",
+  "vllm_state": "inactive",
+  "service_details": "MainPID=0\nUnitFileState=enabled\nActiveEnterTimestamp=Thu 2026-10-01 19:11:32 CST\nInactiveEnterTimestamp=Thu 2026-10-01 19:25:48 CST\n",
+  "interrupted_pid": 3031786,
+  "interrupted_pid_exists": false,
+  "r1_completed_run_json_exists": false,
+  "r1_completed_result_exists": false,
+  "event_scope": "Observed host reboot interrupted r1; externally caused reboot reason unknown. Boot started enabled vLLM; stopped under existing user authorization. Service not disabled; no restoration timer created."
+}
