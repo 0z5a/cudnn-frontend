@@ -1,0 +1,2 @@
+{"cpu_rounding": {"layer": 0, "elements": 598016, "stock_vs_fp32_bf16_elements_differ": 270, "stock_vs_fp64_bf16_elements_differ": 269, "fp32_bf16_vs_fp64_bf16_elements_differ": 61, "fp32_vs_fp64_relative_l2": 1.4260706228650923e-07, "mismatch_distance_to_bf16_midpoint_in_fp32_ulps_max": 2651136.0, "mismatches_within_8_fp32_ulps_of_midpoint": 56, "mismatches_exact_fp64_midpoint": 0, "cpu_cuda_initialized": false}}
+{"stage": "DIAGNOSTIC_COMPLETE", "cuda_initialized": false, "bf16_flag": "NOT_RUN_SHARED_LOCK_TIMEOUT"}

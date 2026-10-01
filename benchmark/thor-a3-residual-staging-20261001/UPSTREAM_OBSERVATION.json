@@ -1,0 +1,31 @@
+{
+  "verified_utc": "2026-10-01T09:06:10.005174+00:00",
+  "observed_upstream_develop": "160f322f560c2cabfecfc20f164ca21fb14981b9",
+  "commit": "160f322f560c2cabfecfc20f164ca21fb14981b9 2026-10-01T00:46:38-07:00 perf: reuse immutable tensor-map acquires in SDPA and grouped WGrad (#1313)",
+  "tested_base": "ef85ae94d04b0a366ff6446b327e787d9af5eb85",
+  "tested_runtime_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "relevant_paths": [
+    "python/cudnn/gemm",
+    "python/cudnn/api_base.py",
+    "python/cudnn/_torch_stream.py",
+    "python/*.cpp",
+    "include",
+    "cmake",
+    "setup.py",
+    "CMakeLists.txt"
+  ],
+  "changed_relevant_paths": [
+    "python/cudnn/gemm/cutedsl/grouped/wgrad/moe_blockscaled_grouped_gemm_wgrad.py"
+  ],
+  "scope": "Observed and compared only; no rebase or hardware validation of upstream160f claimed",
+  "changed_relevant_paths_scope": "Only grouped WGrad acquire hoisting changed within broad GEMM comparison; grouped SwiGLU/API/native build paths unchanged",
+  "same_a3_paths": [
+    "python/cudnn/gemm/cutedsl/grouped/swiglu",
+    "python/cudnn/api_base.py",
+    "python/cudnn/_torch_stream.py",
+    "include",
+    "cmake",
+    "setup.py",
+    "CMakeLists.txt"
+  ]
+}

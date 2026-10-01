@@ -1,0 +1,290 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Causal Torch-only controls for residual reconstruction and arithmetic staging.
+
+Full unchanged pinned Granite, original saved BF16 logits and both gates retained.
+No native feature, kernel modification, native accuracy success or timing claim.
+Each control changes only the declared gate/up arithmetic, not routing or weights.
+The previous expanded-K BF16-stage oracle is reused, not rerun.
+"""
+
+import argparse
+import fcntl
+import importlib.util
+import json
+from pathlib import Path
+import subprocess
+
+BASE = Path(__file__).with_name("a3_model_e2e_mergefix_20261001.py")
+spec = importlib.util.spec_from_file_location("a3_staging_base", BASE)
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+t = m.torch
+from transformers.integrations import moe
+
+POLICIES = (
+    "original_fp32_dot_fp32_activation",
+    "original_fp32_dot_bf16_stages",
+    "double_effective_fp32_dot_bf16_stages",
+    "double_recast_bf16_dot_bf16_stages",
+)
+
+
+def components(value):
+    hi, _, hs = m.quantize_mxfp8(value)
+    lo, _, ls = m.quantize_mxfp8(value.float() - m.dequantize(hi, hs))
+    effective = m.dequantize(hi, hs) + m.dequantize(lo, ls)
+    return hi, hs, lo, ls, effective
+
+
+def input_components(value):
+    padded = t.zeros(((value.shape[0] + 127) // 128 * 128, 1024), dtype=value.dtype, device=value.device)
+    padded[: value.shape[0]] = value
+    hi, hs, lo, ls, effective = components(padded)
+    n = value.shape[0]
+    return {
+        "original": value.cpu(),
+        "hi": hi[:n].view(t.uint8).cpu(),
+        "hi_scale": hs[:n].cpu(),
+        "lo": lo[:n].view(t.uint8).cpu(),
+        "lo_scale": ls[:n].cpu(),
+        "effective": effective[:n].cpu(),
+    }
+
+
+class ControlAdapter(m.A3ExpertAdapter):
+    def __init__(self, expert, index):
+        self.expert, self.original, self.index = expert, expert.forward, index
+        self.e, self.i, self.h, self.mode = 32, 512, 1024, "stock"
+        gate, up = expert.gate_up_proj.detach().chunk(2, 1)
+        packed = t.stack((gate.reshape(32, -1, 32, 1024), up.reshape(32, -1, 32, 1024)), 2).reshape(32, 1024, 1024)
+        self.original_weight = packed
+        self.weight32 = packed.float()
+        hi, hs, lo, ls, self.effective_weight = components(packed)
+        self.weight_error = m.difference(self.effective_weight, packed)
+        self.weight_recast_mismatch = (self.effective_weight.to(t.bfloat16) != packed).sum().item()
+        self.input_rows = []
+
+    def compute(self, hidden, index, probability, policy, save_stages=False):
+        x, ends, destinations, order, token_ids, sizes, aligned = self.routing(hidden, index)
+        effective = None
+        if policy.startswith("double_"):
+            hi, hs, lo, ls, effective = components(x)
+            self.input_rows.append(
+                {
+                    "layer": self.index,
+                    "reconstruction": m.difference(effective[destinations], x[destinations]),
+                    "recast_mismatch": (effective[destinations].to(t.bfloat16) != x[destinations]).sum().item(),
+                }
+            )
+        if policy == "original_bf16_local":
+            operand, weight = x, self.original_weight
+        elif policy == "double_recast_bf16_dot_bf16_stages":
+            operand, weight = effective.to(t.bfloat16), self.effective_weight.to(t.bfloat16)
+        else:
+            operand = effective if effective is not None else x.float()
+            weight = self.effective_weight if effective is not None else self.weight32
+        d = t.zeros((x.shape[0], self.i), dtype=t.bfloat16, device=x.device)
+        cs = []
+        start = 0
+        for expert, n in enumerate(aligned):
+            if n:
+                c = m.F.linear(operand[start : start + n], weight[expert])
+                if policy != "original_fp32_dot_fp32_activation":
+                    c = c.to(t.bfloat16)
+                if save_stages:
+                    cs.append(c[: sizes[expert]])
+                c = c.reshape(n, -1, 2, 32)
+                d[start : start + n] = (m.F.silu(c[:, :, 0]) * c[:, :, 1]).reshape(n, self.i).to(t.bfloat16)
+            start += n
+        live = d[destinations]
+        routes = t.empty((order.numel(), self.h), dtype=t.bfloat16, device=x.device)
+        weights = probability.flatten()[order]
+        start = 0
+        for expert, n in enumerate(sizes):
+            if n:
+                y = m.F.linear(live[start : start + n], self.expert.down_proj[expert])
+                routes[start : start + n] = (y * weights[start : start + n, None]).to(t.bfloat16)
+            start += n
+        unsorted = t.empty_like(routes)
+        unsorted[order] = routes
+        output = unsorted.reshape(hidden.shape[0], index.shape[-1], self.h).sum(1)
+        stages = {"c": t.cat(cs).cpu(), "d": live.cpu(), "y": output.cpu()} if save_stages else None
+        return output, stages
+
+    def forward(self, hidden, index, probability):
+        assert self.mode in POLICIES
+        return self.compute(hidden, index, probability, self.mode)[0]
+
+
+def compatibility(oracle, stock):
+    r, b = oracle.double(), stock.double()
+    error = (t.linalg.vector_norm(r - b) / t.linalg.vector_norm(b)).item()
+    ratio = (t.linalg.vector_norm(r) / t.linalg.vector_norm(b)).item()
+    bound = max(0.0, error - 0.01 * ratio)
+    return {"oracle_bf16_relative_l2_fp64": error, "norm_ratio_fp64": ratio, "native_bf16_lower_bound": bound, "both_gates_impossible": bound > 0.05}
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--expected-source", required=True)
+    parser.add_argument("--expected-head", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    source = Path(args.expected_source).resolve()
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == args.expected_head
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    for module in (m.cudnn, m.api, m._compiled_module):
+        assert Path(module.__file__).resolve().is_relative_to(source / "python")
+    t.set_num_threads(4)
+    t.backends.cuda.matmul.allow_tf32 = False
+    t.backends.cudnn.allow_tf32 = False
+    t.set_float32_matmul_precision("highest")
+    flags = {
+        name: getattr(t.backends.cuda.matmul, name, None)
+        for name in ("allow_tf32", "allow_bf16_reduced_precision_reduction", "allow_fp16_reduced_precision_reduction")
+    }
+    saved, rows, local_rows, dispatcher = {}, [], [], []
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        model, loading = m.AutoModelForCausalLM.from_pretrained(
+            m.MODEL, dtype=t.bfloat16, attn_implementation="sdpa", trust_remote_code=False, local_files_only=True, output_loading_info=True
+        )
+        assert not any(loading.values()) and sum(v.numel() for v in model.parameters()) == 1334628352
+        model = model.eval().cuda()
+        experts = [e for e in model.modules() if isinstance(e, m.GraniteMoeExperts)]
+        assert len(experts) == 24
+        adapters = [ControlAdapter(e, i) for i, e in enumerate(experts)]
+        tokenizer = m.AutoTokenizer.from_pretrained(m.MODEL, local_files_only=True, trust_remote_code=False)
+        _, prompts, workloads = m.load_inputs(tokenizer)
+        cases = [prompts[0], prompts[1], workloads["256"]]
+        base_dir = m.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+        base_meta = json.loads((base_dir / "result.json").read_text())
+        assert base_meta["source_head"] == args.expected_head
+        baseline = t.load(base_dir / "outputs.pt", map_location="cpu", weights_only=True)
+        previous_dir = m.ROOT / "results/a3-double-mxfp8-recipe-20261001-r1"
+        previous = t.load(previous_dir / "outputs.pt", map_location="cpu", weights_only=True)
+        original_grouped = moe._grouped_mm
+
+        def observed_grouped(input, weight, offs):
+            supported = moe._can_use_grouped_mm(input, weight, offs)
+            target = (
+                ("torch.nn.functional.grouped_mm" if hasattr(t.nn.functional, "grouped_mm") else "torch._grouped_mm")
+                if supported
+                else "transformers::grouped_mm_fallback"
+            )
+            dispatcher.append({"input_shape": list(input.shape), "weight_shape": list(weight.shape), "dtype": str(input.dtype), "target": target})
+            return original_grouped(input, weight, offs)
+
+        captured = {}
+        with t.inference_mode():
+            moe._grouped_mm = observed_grouped
+            for adapter in adapters:
+
+                def traced(hidden, index, prob, adapter=adapter):
+                    y = adapter.original(hidden, index, prob)
+                    captured[adapter.index] = {
+                        "hidden": hidden.detach().clone(),
+                        "index": index.detach().clone(),
+                        "prob": prob.detach().clone(),
+                        "y": y.detach().clone(),
+                    }
+                    return y
+
+                adapter.expert.forward = traced
+            try:
+                stock = model(input_ids=cases[0].cuda(), use_cache=False).logits.cpu()
+                assert t.equal(stock.view(t.uint8), baseline["forward_0_stock"].view(t.uint8)), "Original BF16 baseline drift"
+            finally:
+                moe._grouped_mm = original_grouped
+                m.attach(adapters, "stock")
+            assert len(captured) == 24 and len(dispatcher) == 48
+            for layer, values in captured.items():
+                parts = input_components(values["hidden"])
+                saved[f"stock_input/{layer}"] = parts
+                saved[f"stock_route/{layer}"] = {k: values[k].cpu() for k in ("index", "prob", "y")}
+                stage_values = {}
+                for policy in ("original_bf16_local", *POLICIES[:3]):
+                    output, stages = adapters[layer].compute(values["hidden"], values["index"], values["prob"], policy, True)
+                    stage_values[policy] = stages
+                saved[f"local/{layer}"] = stage_values
+                local_rows.append(
+                    {
+                        "layer": layer,
+                        "input_error": m.difference(parts["effective"], parts["original"]),
+                        "input_recast_mismatch": (parts["effective"].to(t.bfloat16) != parts["original"]).sum().item(),
+                        "bf16_local_vs_stock_y": m.difference(stage_values["original_bf16_local"]["y"], values["y"].cpu()),
+                        "controls_vs_bf16_local": {
+                            policy: {name: m.difference(stages[name], stage_values["original_bf16_local"][name]) for name in ("c", "d", "y")}
+                            for policy, stages in stage_values.items()
+                            if policy != "original_bf16_local"
+                        },
+                    }
+                )
+            for policy in POLICIES:
+                m.attach(adapters, policy)
+                for case, ids in enumerate(cases):
+                    for adapter in adapters:
+                        adapter.input_rows = []
+                    oracle = model(input_ids=ids.cuda(), use_cache=False).logits.cpu()
+                    saved[f"{policy}/{case}"] = oracle
+                    previous_oracle = previous[f"double_mxfp8_bf16_gate_activation_reference_only/{case}/reference"]
+                    row = {
+                        "policy": policy,
+                        "case": case,
+                        "input_tokens": ids.shape[-1],
+                        "native_status": "NOT_RUN_TORCH_CAUSAL_CONTROL",
+                        **compatibility(oracle, baseline[f"forward_{case}_stock"]),
+                        "vs_original_bf16": m.difference(oracle, baseline[f"forward_{case}_stock"]),
+                        "vs_prior_expanded_double_bf16_stage": m.difference(oracle, previous_oracle),
+                        "input_reconstruction": [item for adapter in adapters for item in adapter.input_rows],
+                    }
+                    rows.append(row)
+                    print(json.dumps(row), flush=True)
+                    (out / "partial.json").write_text(json.dumps({"rows": rows, "local_rows": local_rows}, indent=2))
+            m.attach(adapters, "stock")
+        assert m.NATIVE_CALLS == 0 and not m.NATIVE_PLANS
+        t.save(saved, out / "outputs.pt")
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+        result = {
+            "stage": "DIAGNOSTIC_COMPLETE",
+            "scope": __doc__,
+            "source_head": args.expected_head,
+            "source": str(source),
+            "checkpoint": base_meta["checkpoint"],
+            "model_parameters": 1334628352,
+            "layers": list(range(24)),
+            "rows": rows,
+            "local_rows": local_rows,
+            "stock_baseline_byte_exact": True,
+            "stock_experts_implementation": model.config._experts_implementation,
+            "observed_stock_dispatch": dispatcher,
+            "torch_matmul_flags": flags,
+            "weight_reconstruction": [{"layer": a.index, "error": a.weight_error, "recast_mismatch": a.weight_recast_mismatch} for a in adapters],
+            "weight_component_scope": "Producer complete-weight metrics; full component weights not saved",
+            "native_calls": 0,
+            "native_plans": {},
+            "imports": {
+                name: {"path": mod.__file__, "sha256": m.sha_file(mod.__file__)}
+                for name, mod in (("cudnn", m.cudnn), ("api", m.api), ("binding", m._compiled_module))
+            },
+            "stock_moe_source": {"path": moe.__file__, "sha256": m.sha_file(moe.__file__)},
+            "torch_version": t.__version__,
+            "harness_sha256": m.sha_file(__file__),
+            "base_adapter_sha256": m.sha_file(BASE),
+            "prior_result_sha256": m.sha_file(previous_dir / "result.json"),
+            "prior_outputs_sha256": m.sha_file(previous_dir / "outputs.pt"),
+            "baseline_outputs_sha256": m.sha_file(base_dir / "outputs.pt"),
+            "formal_performance": "NOT_RUN",
+            "service_final": "inactive",
+        }
+        (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps({"stage": result["stage"], "native_calls": 0, "full_forward_controls": len(rows)}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

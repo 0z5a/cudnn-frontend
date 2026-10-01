@@ -1,0 +1,138 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""CPU audit of BF16 reduction flag and selected first-layer dot/rounding cells.
+
+Checks original checkpoint products independently with elementwise FP64 sums.
+The generic FP32 summation bound is a consistency test, not single-op causality.
+"""
+
+import argparse
+import importlib.util
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+HELPER = Path(__file__).with_name("audit_a3_precision_followup_r2_20261001.py")
+spec = importlib.util.spec_from_file_location("a3_cpu_audit", HELPER)
+a = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(a)
+t = a.torch
+from safetensors import safe_open
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized()
+    directory = a.ROOT / "results/a3-bf16-rounding-boundaries-20261001-r1"
+    meta, run = a.provenance(directory, 0)
+    values = t.load(directory / "outputs.pt", weights_only=True, map_location="cpu")
+    base_dir = a.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    baseline = t.load(base_dir / "outputs.pt", weights_only=True, map_location="cpu")
+    prior_dir = a.ROOT / "results/a3-residual-staging-20261001-r1"
+    prior = t.load(prior_dir / "outputs.pt", weights_only=True, map_location="cpu")
+    for path, recorded in (
+        (prior_dir / "outputs.pt", "prior_outputs_sha256"),
+        (prior_dir / "result.json", "prior_result_sha256"),
+        (base_dir / "outputs.pt", "baseline_outputs_sha256"),
+    ):
+        assert a.sha_file(path) == meta[recorded]
+    model_path = Path("/home/jwipc/models/granite-3.1-1b-a400m-instruct-0da7a48b/model.safetensors")
+    assert a.sha_file(model_path) == meta["weight_sha256"]
+    assert meta["flag_restored"] and meta["allow_bf16_reduced_precision_reduction_original"] is True
+    rows = []
+    with t.inference_mode():
+        for row in meta["rows"]:
+            case = row["case"]
+            actual, stock = values[f"strict_bf16/{case}"], baseline[f"forward_{case}_stock"]
+            assert actual.shape == stock.shape == (1, [73, 70, 256][case], 49155)
+            a.compare_metric(a.difference(actual, stock, t.float32), row["vs_original_stored_bf16"])
+            exact = t.equal(actual.view(t.uint8), stock.view(t.uint8))
+            assert exact == row["byte_exact_original_bf16"] and not row["original_baseline_replaced"]
+            assert row["native_status"] == "NOT_RUN_BF16_FLAG_CONTROL"
+            rows.append({"case": case, "byte_exact_original_bf16": exact, "vs_original_bf16_fp64": a.difference(actual, stock)})
+        c64 = values["cpu_c64"]
+        local = prior["local/0"]
+        stock = local["original_bf16_local"]["c"]
+        c32 = local["original_fp32_dot_fp32_activation"]["c"]
+        c32_bf16 = local["original_fp32_dot_bf16_stages"]["c"]
+        mismatch = stock != c32_bf16
+        positions = mismatch.nonzero()
+        midpoint = (stock.double()[mismatch] + c32_bf16.double()[mismatch]) * 0.5
+        near = c64[mismatch].float()
+        ulp = (t.nextafter(near, t.full_like(near, float("inf"))) - near).abs().double()
+        distances = (c64[mismatch] - midpoint).abs() / ulp.clamp_min(1e-45)
+        assert t.equal(distances, values["bf16_midpoint_distances_in_fp32_ulps"])
+        recomputed = {
+            "layer": 0,
+            "elements": c64.numel(),
+            "stock_vs_fp32_bf16_elements_differ": mismatch.sum().item(),
+            "stock_vs_fp64_bf16_elements_differ": (stock != c64.to(t.bfloat16)).sum().item(),
+            "fp32_bf16_vs_fp64_bf16_elements_differ": (c32_bf16 != c64.to(t.bfloat16)).sum().item(),
+            "fp32_vs_fp64_relative_l2": (t.linalg.vector_norm(c32.double() - c64) / t.linalg.vector_norm(c64)).item(),
+            "mismatch_distance_to_bf16_midpoint_in_fp32_ulps_max": distances.max().item(),
+            "mismatches_within_8_fp32_ulps_of_midpoint": (distances <= 8).sum().item(),
+            "mismatches_exact_fp64_midpoint": (distances == 0).sum().item(),
+            "cpu_cuda_initialized": False,
+        }
+        assert recomputed == meta["cpu_rounding"]
+        with safe_open(str(model_path), framework="pt", device="cpu") as f:
+            weight = f.get_tensor("model.layers.0.block_sparse_moe.input_linear.weight")
+        gate, up = weight.chunk(2, 1)
+        packed = t.stack((gate.reshape(32, -1, 32, 1024), up.reshape(32, -1, 32, 1024)), 2).reshape(32, 1024, 1024)
+        hidden = prior["stock_input/0"]["original"]
+        index = prior["stock_route/0"]["index"]
+        order = t.argsort(index.flatten(), stable=True)
+        expert_ids = index.flatten()[order]
+        token_ids = order // 8
+        x = hidden[token_ids[positions[:, 0]]].double()
+        w = packed[expert_ids[positions[:, 0]], positions[:, 1]].double()
+        products = x * w
+        independent_dot = products.sum(-1)
+        assert t.allclose(independent_dot, c64[mismatch], rtol=1e-12, atol=1e-12)
+        center = stock[mismatch]
+        before = t.nextafter(center, t.full_like(center, float("-inf"))).double()
+        after = t.nextafter(center, t.full_like(center, float("inf"))).double()
+        lower, upper = (before + center.double()) * 0.5, (after + center.double()) * 0.5
+        gap = t.maximum(lower - independent_dot, independent_dot - upper).clamp_min(0)
+        eps = t.finfo(t.float32).eps
+        gamma_k = 1024 * eps / (1 - 1024 * eps)
+        bound = gamma_k * products.abs().sum(-1)
+        assert (gap <= bound).all().item()
+        cells = {
+            "selected_c_elements": positions.shape[0],
+            "independent_dot_max_abs_vs_saved_c64": (independent_dot - c64[mismatch]).abs().max().item(),
+            "stock_bf16_rounding_cell_gap_max": gap.max().item(),
+            "generic_fp32_summation_bound_max_gap_ratio": (gap / bound.clamp_min(1e-30)).max().item(),
+            "all_selected_stock_rounding_cells_within_generic_fp32_summation_bound": True,
+            "scope": "FP64 dot verified at all differing C positions; generic gamma_1024 bound is consistent with accumulation-order effects, not proof of an exact GPU instruction path",
+        }
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "PASS_EVIDENCE_AUDIT_BF16_ROUNDING_DIAGNOSTIC_NOT_NATIVE_SUCCESS",
+        "source_head": a.HEAD,
+        "run": run,
+        "cuda_initialized": False,
+        "rows": rows,
+        "cpu_rounding": recomputed,
+        "selected_dot_rounding_cells": cells,
+        "tensors": a.flatten_tensors(values),
+        "outputs_sha256": a.sha_file(directory / "outputs.pt"),
+        "metadata_sha256": a.sha_file(directory / "result.json"),
+        "harness_sha256": a.sha_file(__file__),
+        "audit_helper_sha256": a.sha_file(HELPER),
+        "native_calls": 0,
+        "formal_performance": "NOT_RUN",
+    }
+    assert len(result["tensors"]) == 5
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "selected_c_elements": positions.shape[0], "cuda_initialized": False}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

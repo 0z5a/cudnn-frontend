@@ -1,0 +1,533 @@
+{
+  "weights": [
+    {
+      "layer": 0,
+      "checkpoint_key": "model.layers.0.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 2.2351741790771484e-08,
+          "relative_l2_fp64": 1.423144834471279e-09,
+          "fp32_elements_differ": 1124,
+          "bf16_recast_elements_differ": 1124
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 2.3283064365386963e-10,
+          "relative_l2_fp64": 4.2523752865174304e-12,
+          "fp32_elements_differ": 17,
+          "bf16_recast_elements_differ": 17
+        }
+      ]
+    },
+    {
+      "layer": 1,
+      "checkpoint_key": "model.layers.1.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.3640838967815258e-09,
+          "fp32_elements_differ": 1045,
+          "bf16_recast_elements_differ": 1045
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 4.656612873077393e-10,
+          "relative_l2_fp64": 7.046958397961919e-12,
+          "fp32_elements_differ": 24,
+          "bf16_recast_elements_differ": 24
+        }
+      ]
+    },
+    {
+      "layer": 2,
+      "checkpoint_key": "model.layers.2.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.3979927007293436e-09,
+          "fp32_elements_differ": 1155,
+          "bf16_recast_elements_differ": 1155
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 2.3283064365386963e-10,
+          "relative_l2_fp64": 4.8182340073873595e-12,
+          "fp32_elements_differ": 21,
+          "bf16_recast_elements_differ": 21
+        }
+      ]
+    },
+    {
+      "layer": 3,
+      "checkpoint_key": "model.layers.3.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.386144122958699e-09,
+          "fp32_elements_differ": 1124,
+          "bf16_recast_elements_differ": 1124
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 2.3283064365386963e-10,
+          "relative_l2_fp64": 5.833032879241387e-12,
+          "fp32_elements_differ": 26,
+          "bf16_recast_elements_differ": 26
+        }
+      ]
+    },
+    {
+      "layer": 4,
+      "checkpoint_key": "model.layers.4.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.3865139796300627e-09,
+          "fp32_elements_differ": 1152,
+          "bf16_recast_elements_differ": 1152
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 2.3283064365386963e-10,
+          "relative_l2_fp64": 4.278974987005773e-12,
+          "fp32_elements_differ": 19,
+          "bf16_recast_elements_differ": 19
+        }
+      ]
+    },
+    {
+      "layer": 5,
+      "checkpoint_key": "model.layers.5.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 7.450580596923828e-09,
+          "relative_l2_fp64": 1.3695465223394027e-09,
+          "fp32_elements_differ": 1126,
+          "bf16_recast_elements_differ": 1126
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 1.1641532182693481e-10,
+          "relative_l2_fp64": 3.4129486184953214e-12,
+          "fp32_elements_differ": 17,
+          "bf16_recast_elements_differ": 17
+        }
+      ]
+    },
+    {
+      "layer": 6,
+      "checkpoint_key": "model.layers.6.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.346577465733594e-09,
+          "fp32_elements_differ": 1109,
+          "bf16_recast_elements_differ": 1109
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 2.3283064365386963e-10,
+          "relative_l2_fp64": 4.523109066980569e-12,
+          "fp32_elements_differ": 15,
+          "bf16_recast_elements_differ": 15
+        }
+      ]
+    },
+    {
+      "layer": 7,
+      "checkpoint_key": "model.layers.7.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 2.9802322387695312e-08,
+          "relative_l2_fp64": 1.4584189103733136e-09,
+          "fp32_elements_differ": 1195,
+          "bf16_recast_elements_differ": 1195
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 1.1641532182693481e-10,
+          "relative_l2_fp64": 4.3139032617479845e-12,
+          "fp32_elements_differ": 21,
+          "bf16_recast_elements_differ": 21
+        }
+      ]
+    },
+    {
+      "layer": 8,
+      "checkpoint_key": "model.layers.8.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.3990570058292315e-09,
+          "fp32_elements_differ": 1127,
+          "bf16_recast_elements_differ": 1127
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 2.3283064365386963e-10,
+          "relative_l2_fp64": 6.02627700343023e-12,
+          "fp32_elements_differ": 20,
+          "bf16_recast_elements_differ": 20
+        }
+      ]
+    },
+    {
+      "layer": 9,
+      "checkpoint_key": "model.layers.9.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 2.2351741790771484e-08,
+          "relative_l2_fp64": 1.3868332150077474e-09,
+          "fp32_elements_differ": 1197,
+          "bf16_recast_elements_differ": 1197
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 2.3283064365386963e-10,
+          "relative_l2_fp64": 5.5986876286412164e-12,
+          "fp32_elements_differ": 30,
+          "bf16_recast_elements_differ": 30
+        }
+      ]
+    },
+    {
+      "layer": 10,
+      "checkpoint_key": "model.layers.10.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.3890684468998623e-09,
+          "fp32_elements_differ": 1151,
+          "bf16_recast_elements_differ": 1151
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 2.3283064365386963e-10,
+          "relative_l2_fp64": 5.7015398112458345e-12,
+          "fp32_elements_differ": 28,
+          "bf16_recast_elements_differ": 28
+        }
+      ]
+    },
+    {
+      "layer": 11,
+      "checkpoint_key": "model.layers.11.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.3847805178409125e-09,
+          "fp32_elements_differ": 1101,
+          "bf16_recast_elements_differ": 1101
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 2.3283064365386963e-10,
+          "relative_l2_fp64": 3.64260227035046e-12,
+          "fp32_elements_differ": 15,
+          "bf16_recast_elements_differ": 15
+        }
+      ]
+    },
+    {
+      "layer": 12,
+      "checkpoint_key": "model.layers.12.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.403917175218391e-09,
+          "fp32_elements_differ": 1132,
+          "bf16_recast_elements_differ": 1132
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 2.3283064365386963e-10,
+          "relative_l2_fp64": 7.940562152546985e-12,
+          "fp32_elements_differ": 26,
+          "bf16_recast_elements_differ": 26
+        }
+      ]
+    },
+    {
+      "layer": 13,
+      "checkpoint_key": "model.layers.13.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.4062537882612638e-09,
+          "fp32_elements_differ": 1124,
+          "bf16_recast_elements_differ": 1124
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 1.1641532182693481e-10,
+          "relative_l2_fp64": 3.3071781446847504e-12,
+          "fp32_elements_differ": 15,
+          "bf16_recast_elements_differ": 15
+        }
+      ]
+    },
+    {
+      "layer": 14,
+      "checkpoint_key": "model.layers.14.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.4963302947012992e-09,
+          "fp32_elements_differ": 1258,
+          "bf16_recast_elements_differ": 1258
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 2.3283064365386963e-10,
+          "relative_l2_fp64": 5.835456575071743e-12,
+          "fp32_elements_differ": 30,
+          "bf16_recast_elements_differ": 30
+        }
+      ]
+    },
+    {
+      "layer": 15,
+      "checkpoint_key": "model.layers.15.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.4383127597214273e-09,
+          "fp32_elements_differ": 1158,
+          "bf16_recast_elements_differ": 1158
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 2.3283064365386963e-10,
+          "relative_l2_fp64": 6.347063123030299e-12,
+          "fp32_elements_differ": 32,
+          "bf16_recast_elements_differ": 32
+        }
+      ]
+    },
+    {
+      "layer": 16,
+      "checkpoint_key": "model.layers.16.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.5056399089175893e-09,
+          "fp32_elements_differ": 1187,
+          "bf16_recast_elements_differ": 1187
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 1.1641532182693481e-10,
+          "relative_l2_fp64": 4.581416997531503e-12,
+          "fp32_elements_differ": 21,
+          "bf16_recast_elements_differ": 21
+        }
+      ]
+    },
+    {
+      "layer": 17,
+      "checkpoint_key": "model.layers.17.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.4621770472170072e-09,
+          "fp32_elements_differ": 1155,
+          "bf16_recast_elements_differ": 1155
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 2.3283064365386963e-10,
+          "relative_l2_fp64": 4.344692903620044e-12,
+          "fp32_elements_differ": 19,
+          "bf16_recast_elements_differ": 19
+        }
+      ]
+    },
+    {
+      "layer": 18,
+      "checkpoint_key": "model.layers.18.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.4127179246347446e-09,
+          "fp32_elements_differ": 1181,
+          "bf16_recast_elements_differ": 1181
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 2.3283064365386963e-10,
+          "relative_l2_fp64": 6.245408486577597e-12,
+          "fp32_elements_differ": 26,
+          "bf16_recast_elements_differ": 26
+        }
+      ]
+    },
+    {
+      "layer": 19,
+      "checkpoint_key": "model.layers.19.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.4394160740577445e-09,
+          "fp32_elements_differ": 1209,
+          "bf16_recast_elements_differ": 1209
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 2.3283064365386963e-10,
+          "relative_l2_fp64": 5.326528430873882e-12,
+          "fp32_elements_differ": 26,
+          "bf16_recast_elements_differ": 26
+        }
+      ]
+    },
+    {
+      "layer": 20,
+      "checkpoint_key": "model.layers.20.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.404236141723915e-09,
+          "fp32_elements_differ": 1188,
+          "bf16_recast_elements_differ": 1188
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 2.3283064365386963e-10,
+          "relative_l2_fp64": 4.911497581243234e-12,
+          "fp32_elements_differ": 19,
+          "bf16_recast_elements_differ": 19
+        }
+      ]
+    },
+    {
+      "layer": 21,
+      "checkpoint_key": "model.layers.21.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.3142927683780956e-09,
+          "fp32_elements_differ": 1065,
+          "bf16_recast_elements_differ": 1065
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 2.3283064365386963e-10,
+          "relative_l2_fp64": 4.830750282551858e-12,
+          "fp32_elements_differ": 17,
+          "bf16_recast_elements_differ": 17
+        }
+      ]
+    },
+    {
+      "layer": 22,
+      "checkpoint_key": "model.layers.22.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 1.4901161193847656e-08,
+          "relative_l2_fp64": 1.337575310535611e-09,
+          "fp32_elements_differ": 1147,
+          "bf16_recast_elements_differ": 1147
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 2.3283064365386963e-10,
+          "relative_l2_fp64": 5.1792992428650215e-12,
+          "fp32_elements_differ": 28,
+          "bf16_recast_elements_differ": 28
+        }
+      ]
+    },
+    {
+      "layer": 23,
+      "checkpoint_key": "model.layers.23.block_sparse_moe.input_linear.weight",
+      "rows": [
+        {
+          "components": 2,
+          "elements": 33554432,
+          "max_abs": 2.421438694000244e-08,
+          "relative_l2_fp64": 1.3697742918794032e-09,
+          "fp32_elements_differ": 1170,
+          "bf16_recast_elements_differ": 1170
+        },
+        {
+          "components": 3,
+          "elements": 33554432,
+          "max_abs": 1.1641532182693481e-10,
+          "relative_l2_fp64": 4.078357582869389e-12,
+          "fp32_elements_differ": 21,
+          "bf16_recast_elements_differ": 21
+        }
+      ]
+    }
+  ],
+  "inputs": []
+}

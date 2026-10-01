@@ -1,0 +1,154 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""First-layer FP64 rounding-boundary audit and BF16 reduction-flag control.
+
+Uses original checkpoint values and saved same-input C from the new controls.
+The stored original BF16 baseline remains the comparison target. No native pass.
+"""
+
+import argparse
+import fcntl
+import importlib.util
+import json
+from pathlib import Path
+import subprocess
+
+BASE = Path(__file__).with_name("a3_model_e2e_mergefix_20261001.py")
+spec = importlib.util.spec_from_file_location("a3_rounding_base", BASE)
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+t = m.torch
+from safetensors import safe_open
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--expected-source", required=True)
+    parser.add_argument("--expected-head", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized()
+    source = Path(args.expected_source).resolve()
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == args.expected_head
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    for module in (m.cudnn, m.api, m._compiled_module):
+        assert Path(module.__file__).resolve().is_relative_to(source / "python")
+    prior_dir = m.ROOT / "results/a3-residual-staging-20261001-r1"
+    prior = t.load(prior_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    weight_path = m.MODEL / "model.safetensors"
+    assert m.sha_file(weight_path) == m.WEIGHT_SHA
+    with safe_open(str(weight_path), framework="pt", device="cpu") as f:
+        weight = f.get_tensor("model.layers.0.block_sparse_moe.input_linear.weight")
+    gate, up = weight.chunk(2, 1)
+    packed = t.stack((gate.reshape(32, -1, 32, 1024), up.reshape(32, -1, 32, 1024)), 2).reshape(32, 1024, 1024)
+    hidden = prior["stock_input/0"]["original"]
+    index = prior["stock_route/0"]["index"]
+    order = t.argsort(index.flatten(), stable=True)
+    token_ids = order // 8
+    sizes = t.bincount(index.flatten(), minlength=32).tolist()
+    c64s, start = [], 0
+    with t.inference_mode():
+        for expert, n in enumerate(sizes):
+            if n:
+                c64s.append(m.F.linear(hidden[token_ids[start : start + n]].double(), packed[expert].double()))
+            start += n
+        c64 = t.cat(c64s)
+        stock_c = prior["local/0"]["original_bf16_local"]["c"]
+        c32 = prior["local/0"]["original_fp32_dot_fp32_activation"]["c"]
+        c32_bf16 = prior["local/0"]["original_fp32_dot_bf16_stages"]["c"]
+        assert c64.shape == stock_c.shape == c32.shape == (584, 1024)
+        assert t.equal(c32.to(t.bfloat16), c32_bf16)
+        mismatch = stock_c != c32_bf16
+        midpoint = (stock_c.double()[mismatch] + c32_bf16.double()[mismatch]) * 0.5
+        near = c64[mismatch].float()
+        fp32_ulp = (t.nextafter(near, t.full_like(near, float("inf"))) - near).abs().double()
+        distances = (c64[mismatch] - midpoint).abs() / fp32_ulp.clamp_min(1e-45)
+        local = {
+            "layer": 0,
+            "elements": c64.numel(),
+            "stock_vs_fp32_bf16_elements_differ": mismatch.sum().item(),
+            "stock_vs_fp64_bf16_elements_differ": (stock_c != c64.to(t.bfloat16)).sum().item(),
+            "fp32_bf16_vs_fp64_bf16_elements_differ": (c32_bf16 != c64.to(t.bfloat16)).sum().item(),
+            "fp32_vs_fp64_relative_l2": (t.linalg.vector_norm(c32.double() - c64) / t.linalg.vector_norm(c64)).item(),
+            "mismatch_distance_to_bf16_midpoint_in_fp32_ulps_max": distances.max().item(),
+            "mismatches_within_8_fp32_ulps_of_midpoint": (distances <= 8).sum().item(),
+            "mismatches_exact_fp64_midpoint": (distances == 0).sum().item(),
+            "cpu_cuda_initialized": t.cuda.is_initialized(),
+        }
+        assert local["fp32_vs_fp64_relative_l2"] < 1e-5 and not t.cuda.is_initialized()
+        saved = {"cpu_c64": c64, "bf16_midpoint_distances_in_fp32_ulps": distances}
+        print(json.dumps({"cpu_rounding": local}), flush=True)
+        (out / "cpu_partial.json").write_text(json.dumps(local, indent=2) + "\n")
+        del prior
+        rows = []
+        t.backends.cuda.matmul.allow_tf32 = False
+        t.backends.cudnn.allow_tf32 = False
+        t.set_float32_matmul_precision("highest")
+        original_flag = t.backends.cuda.matmul.allow_bf16_reduced_precision_reduction
+        with open("/tmp/codex-thor-perf.lock", "a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+            try:
+                t.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = False
+                model, loading = m.AutoModelForCausalLM.from_pretrained(
+                    m.MODEL, dtype=t.bfloat16, attn_implementation="sdpa", local_files_only=True, trust_remote_code=False, output_loading_info=True
+                )
+                assert not any(loading.values()) and sum(v.numel() for v in model.parameters()) == 1334628352
+                model = model.eval().cuda()
+                tokenizer = m.AutoTokenizer.from_pretrained(m.MODEL, local_files_only=True, trust_remote_code=False)
+                _, prompts, workloads = m.load_inputs(tokenizer)
+                baseline_dir = m.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+                baseline = t.load(baseline_dir / "outputs.pt", map_location="cpu", weights_only=True)
+                for case, ids in enumerate((prompts[0], prompts[1], workloads["256"])):
+                    logits = model(input_ids=ids.cuda(), use_cache=False).logits.cpu()
+                    saved[f"strict_bf16/{case}"] = logits
+                    stock = baseline[f"forward_{case}_stock"]
+                    row = {
+                        "case": case,
+                        "input_tokens": ids.shape[-1],
+                        "vs_original_stored_bf16": m.difference(logits, stock),
+                        "byte_exact_original_bf16": t.equal(logits.view(t.uint8), stock.view(t.uint8)),
+                        "native_status": "NOT_RUN_BF16_FLAG_CONTROL",
+                        "original_baseline_replaced": False,
+                    }
+                    rows.append(row)
+                    print(json.dumps(row), flush=True)
+            finally:
+                t.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = original_flag
+            assert m.NATIVE_CALLS == 0 and not m.NATIVE_PLANS
+            assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        t.save(saved, out / "outputs.pt")
+        assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+        result = {
+            "stage": "DIAGNOSTIC_COMPLETE",
+            "scope": __doc__,
+            "source_head": args.expected_head,
+            "source": str(source),
+            "model_parameters": 1334628352,
+            "native_calls": 0,
+            "native_plans": {},
+            "rows": rows,
+            "cpu_rounding": local,
+            "allow_bf16_reduced_precision_reduction_original": original_flag,
+            "flag_restored": True,
+            "weight_sha256": m.WEIGHT_SHA,
+            "prior_result_sha256": m.sha_file(prior_dir / "result.json"),
+            "prior_outputs_sha256": m.sha_file(prior_dir / "outputs.pt"),
+            "baseline_outputs_sha256": m.sha_file(baseline_dir / "outputs.pt"),
+            "imports": {
+                name: {"path": mod.__file__, "sha256": m.sha_file(mod.__file__)}
+                for name, mod in (("cudnn", m.cudnn), ("api", m.api), ("binding", m._compiled_module))
+            },
+            "harness_sha256": m.sha_file(__file__),
+            "base_adapter_sha256": m.sha_file(BASE),
+            "formal_performance": "NOT_RUN",
+            "service_final": "inactive",
+        }
+        (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+
+
+if __name__ == "__main__":
+    main()

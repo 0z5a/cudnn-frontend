@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest4/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_bf16_rounding_cpu_r2_20261001.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-rounding-cpu-20261001-r2",
+    "--expected-source",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4",
+    "--expected-head",
+    "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-01T09:36:15.539612+00:00",
+  "deadline_seconds": 300.0,
+  "status": "EXITED",
+  "selected_env": {},
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 14.082874099956825
+}

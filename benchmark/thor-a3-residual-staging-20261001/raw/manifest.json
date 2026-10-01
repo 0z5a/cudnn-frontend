@@ -1,0 +1,264 @@
+{
+  "stage": "RAW_RESIDUAL_STAGING_EVIDENCE_SELECTED",
+  "tested_runtime_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "files": [
+    {
+      "path": "results/a3-bf16-rounding-boundaries-20261001-r1-launch/run.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-rounding-boundaries-20261001-r1-launch/run.json",
+      "size": 757,
+      "sha256": "2d3e3ab58e402c1b25d727aa05d725da9ba18087ab1a8257e6e632c6912a17ab"
+    },
+    {
+      "path": "results/a3-bf16-rounding-boundaries-20261001-r1-launch/stderr.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-rounding-boundaries-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-bf16-rounding-boundaries-20261001-r1-launch/stdout.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-rounding-boundaries-20261001-r1-launch/stdout.log",
+      "size": 418,
+      "sha256": "5c86cdf960316200cd921228f347ec0e2cf2f1d8d799e687c6da5c8caaace8cd"
+    },
+    {
+      "path": "results/a3-bf16-rounding-boundaries-20261001-r1/cpu_partial.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-rounding-boundaries-20261001-r1/cpu_partial.json",
+      "size": 422,
+      "sha256": "5adcfff5becccc3398fcfb0893dd18792893ba4d4c13314e12da719c191e1b14"
+    },
+    {
+      "path": "results/a3-bf16-rounding-cpu-20261001-r2-launch/run.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-rounding-cpu-20261001-r2-launch/run.json",
+      "size": 762,
+      "sha256": "c916bde885967cb872d910710da0f5a5ec9c64a6194159bc90a060f3c2ec7ba8"
+    },
+    {
+      "path": "results/a3-bf16-rounding-cpu-20261001-r2-launch/stderr.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-rounding-cpu-20261001-r2-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-bf16-rounding-cpu-20261001-r2-launch/stdout.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-rounding-cpu-20261001-r2-launch/stdout.log",
+      "size": 522,
+      "sha256": "373ed8245fd50a414126bc2a8e24a420ca2dba5b2d746e678755ad62e4602d5a"
+    },
+    {
+      "path": "results/a3-bf16-rounding-cpu-20261001-r2/cpu_partial.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-rounding-cpu-20261001-r2/cpu_partial.json",
+      "size": 422,
+      "sha256": "5adcfff5becccc3398fcfb0893dd18792893ba4d4c13314e12da719c191e1b14"
+    },
+    {
+      "path": "results/a3-bf16-rounding-cpu-20261001-r2/result.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-rounding-cpu-20261001-r2/result.json",
+      "size": 3384,
+      "sha256": "cd44218042c1b6e1adba6282e28e062dd5f3284973a871041e6f45b774eccc33"
+    },
+    {
+      "path": "results/a3-bf16-rounding-cpu-audit-20261001-r2-launch/run.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-rounding-cpu-audit-20261001-r2-launch/run.json",
+      "size": 597,
+      "sha256": "53de46808631a50498bf5b6b9289b41ab60a84721618db5adaf7070eb05b8684"
+    },
+    {
+      "path": "results/a3-bf16-rounding-cpu-audit-20261001-r2-launch/stderr.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-rounding-cpu-audit-20261001-r2-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-bf16-rounding-cpu-audit-20261001-r2-launch/stdout.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-rounding-cpu-audit-20261001-r2-launch/stdout.log",
+      "size": 132,
+      "sha256": "402dce82ff6d768ede205e62b088dc92550a936ea484e97221ed356fbeda0ccf"
+    },
+    {
+      "path": "results/a3-bf16-rounding-cpu-audit-20261001-r2/result.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-rounding-cpu-audit-20261001-r2/result.json",
+      "size": 2869,
+      "sha256": "9fc99b7917dd999fc5869518b746cb9ea143d80baeea982915abb43a63031c0a"
+    },
+    {
+      "path": "results/a3-component-reconstruction-cpu-20261001-r1-launch/run.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-component-reconstruction-cpu-20261001-r1-launch/run.json",
+      "size": 614,
+      "sha256": "2d45a40b8f6b5a86d5c07921bde3893c832978bbe6f8947a00576b4f92f31549"
+    },
+    {
+      "path": "results/a3-component-reconstruction-cpu-20261001-r1-launch/stderr.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-component-reconstruction-cpu-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-component-reconstruction-cpu-20261001-r1-launch/stdout.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-component-reconstruction-cpu-20261001-r1-launch/stdout.log",
+      "size": 11595,
+      "sha256": "87087d0cc6abbfc2c3ee00565578a726c0c069a5d063eb219449f7c8962ea694"
+    },
+    {
+      "path": "results/a3-component-reconstruction-cpu-20261001-r1/partial.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-component-reconstruction-cpu-20261001-r1/partial.json",
+      "size": 15854,
+      "sha256": "4ba38545f403ad980d6eb0b7a337b11c457320daa5463e511813ddeaa75dd473"
+    },
+    {
+      "path": "results/a3-component-reconstruction-cpu-20261001-r1/result.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-component-reconstruction-cpu-20261001-r1/result.json",
+      "size": 42841,
+      "sha256": "1ff936909dd8dfc3b972b261bc691297dd3d303ea3a13ae8a88b39f4c8583a1d"
+    },
+    {
+      "path": "results/a3-residual-staging-20261001-r1-launch/run.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-residual-staging-20261001-r1-launch/run.json",
+      "size": 757,
+      "sha256": "6d957be1ac81eadea00ad345db4246b363612788bc24fb51180c355f466fd5c5"
+    },
+    {
+      "path": "results/a3-residual-staging-20261001-r1-launch/stderr.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-residual-staging-20261001-r1-launch/stderr.log",
+      "size": 147,
+      "sha256": "5f85f3d03f9118872b4b9b8963337428cc6612005fb3d7f4bf8140fe613ccc76"
+    },
+    {
+      "path": "results/a3-residual-staging-20261001-r1-launch/stdout.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-residual-staging-20261001-r1-launch/stdout.log",
+      "size": 27663,
+      "sha256": "5a0bf87774b73816fd4a39fbb0b235fb059af16972d5ef79a6d1c815547ec7bd"
+    },
+    {
+      "path": "results/a3-residual-staging-20261001-r1/partial.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-residual-staging-20261001-r1/partial.json",
+      "size": 90606,
+      "sha256": "c1008c93ae11d55c87add105d402601bf2d52ca3979f07bf165534d77c3f4d15"
+    },
+    {
+      "path": "results/a3-residual-staging-20261001-r1/result.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-residual-staging-20261001-r1/result.json",
+      "size": 118096,
+      "sha256": "03787154caf7cee9d5bb500c66f6b58f636454c4ff2d27ed9a720d14df6f304f"
+    },
+    {
+      "path": "results/a3-residual-staging-cpu-audit-20261001-r1-launch/run.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-residual-staging-cpu-audit-20261001-r1-launch/run.json",
+      "size": 596,
+      "sha256": "247b8ea891cfd7d27780c27ff0cb86cf4cd28708817886a4cc933614d90365da"
+    },
+    {
+      "path": "results/a3-residual-staging-cpu-audit-20261001-r1-launch/stderr.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-residual-staging-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-residual-staging-cpu-audit-20261001-r1-launch/stdout.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-residual-staging-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 124,
+      "sha256": "dfd890b0bf299fa2c79a3433d59144cef8e60c1a800a7feeceeab00e0f4d28a4"
+    },
+    {
+      "path": "results/a3-residual-staging-cpu-audit-20261001-r1/result.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-residual-staging-cpu-audit-20261001-r1/result.json",
+      "size": 182738,
+      "sha256": "bdb6d6d5d97b86490d792ed9ef84a8c09cad901bfe4f5b2ab34ea8fa65ae8fb2"
+    },
+    {
+      "path": "tools/a3_model_e2e_mergefix_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_model_e2e_mergefix_20261001.py",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "path": "tools/archive_a3_residual_staging_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/archive_a3_residual_staging_20261001.py",
+      "size": 4449,
+      "sha256": "f9c776dc2b7a0076c179edb6f5e4b0daae49dcc3d01ccf8b7641b43ce9b7b9c3"
+    },
+    {
+      "path": "tools/audit_a3_bf16_rounding_boundaries_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_bf16_rounding_boundaries_20261001.py",
+      "size": 7314,
+      "sha256": "bab484c3addd21e1cf008463054dedfcdf43140955dc294d26a795e3812457b7"
+    },
+    {
+      "path": "tools/audit_a3_bf16_rounding_cpu_r2_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_bf16_rounding_cpu_r2_20261001.py",
+      "size": 6803,
+      "sha256": "6676db28dd1b8f0d50789d9bb022a90ef0fda02a8e4a05cdaeae219742d68739"
+    },
+    {
+      "path": "tools/audit_a3_precision_followup_r2_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_precision_followup_r2_20261001.py",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "tools/audit_a3_residual_staging_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_residual_staging_20261001.py",
+      "size": 7083,
+      "sha256": "1e64a2fd75c107abf210eaf942c02625f4858b411d00e6cee79ecf5ac7a3cda6"
+    },
+    {
+      "path": "tools/diagnose_a3_bf16_rounding_boundaries_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_bf16_rounding_boundaries_20261001.py",
+      "size": 8397,
+      "sha256": "2dae00e3d902ac853bda461f68888d14fe8fc072e0d6c8a04a9531d41c30669e"
+    },
+    {
+      "path": "tools/diagnose_a3_bf16_rounding_cpu_r2_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_bf16_rounding_cpu_r2_20261001.py",
+      "size": 6639,
+      "sha256": "05d9bc6a9b9cff532277a4775f607a895b27d577a480b9304641cc0b8807dd24"
+    },
+    {
+      "path": "tools/diagnose_a3_component_reconstruction_cpu_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_component_reconstruction_cpu_20261001.py",
+      "size": 4686,
+      "sha256": "faf3a4a43d744b50bf2938ce39d3f60ab52b839625146f2c870ab031ffd9efcf"
+    },
+    {
+      "path": "tools/diagnose_a3_residual_staging_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_residual_staging_20261001.py",
+      "size": 14974,
+      "sha256": "2adf17dac2caf303bc040d7609c51c846c23ce41f4428eafda1df5235d44d0c9"
+    },
+    {
+      "path": "tools/run_logged.py",
+      "origin": "/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    }
+  ],
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    ".pt outputs",
+    "native binaries",
+    "object files"
+  ],
+  "scope": "Torch causal controls and CPU audits; no new native recipe or production code accepted",
+  "gpu_flag_control": "NOT_RUN_SHARED_LOCK_TIMEOUT",
+  "preserved_lock_timeout": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest4/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_bf16_rounding_boundaries_20261001.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-rounding-boundaries-20261001-r1",
+      "--expected-source",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4",
+      "--expected-head",
+      "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-01T09:20:41.743697+00:00",
+    "deadline_seconds": 600.0,
+    "status": "TIMEOUT",
+    "selected_env": {},
+    "returncode": -15,
+    "elapsed_seconds": 600.0643306620186
+  },
+  "unexecuted_harness": "tools/audit_a3_bf16_rounding_boundaries_20261001.py (GPU flag result absent)"
+}

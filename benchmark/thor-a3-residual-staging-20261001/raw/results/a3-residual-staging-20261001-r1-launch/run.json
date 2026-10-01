@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest4/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_residual_staging_20261001.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-residual-staging-20261001-r1",
+    "--expected-source",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4",
+    "--expected-head",
+    "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-01T09:06:08.868074+00:00",
+  "deadline_seconds": 600.0,
+  "status": "EXITED",
+  "selected_env": {},
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 360.59492946596583
+}

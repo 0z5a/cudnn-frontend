@@ -1,0 +1,66 @@
+{
+  "stage": "DIAGNOSTIC_COMPLETE",
+  "scope": "CPU-only first-layer FP64 control after the GPU-lock timeout.\n\nThe reduction-flag GPU control is explicitly NOT_RUN_SHARED_LOCK_TIMEOUT.\n\nUses original checkpoint values and saved same-input C from the new controls.\nThe stored original BF16 baseline remains the comparison target. No native pass.\n",
+  "source_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "source": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4",
+  "model_parameters": 1334628352,
+  "native_calls": 0,
+  "native_plans": {},
+  "rows": [],
+  "cpu_rounding": {
+    "layer": 0,
+    "elements": 598016,
+    "stock_vs_fp32_bf16_elements_differ": 270,
+    "stock_vs_fp64_bf16_elements_differ": 269,
+    "fp32_bf16_vs_fp64_bf16_elements_differ": 61,
+    "fp32_vs_fp64_relative_l2": 1.4260706228650923e-07,
+    "mismatch_distance_to_bf16_midpoint_in_fp32_ulps_max": 2651136.0,
+    "mismatches_within_8_fp32_ulps_of_midpoint": 56,
+    "mismatches_exact_fp64_midpoint": 0,
+    "cpu_cuda_initialized": false
+  },
+  "cuda_initialized": false,
+  "bf16_reduction_flag_control": "NOT_RUN_SHARED_LOCK_TIMEOUT",
+  "timeout_run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest4/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_bf16_rounding_boundaries_20261001.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-rounding-boundaries-20261001-r1",
+      "--expected-source",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4",
+      "--expected-head",
+      "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-01T09:20:41.743697+00:00",
+    "deadline_seconds": 600.0,
+    "status": "TIMEOUT",
+    "selected_env": {},
+    "returncode": -15,
+    "elapsed_seconds": 600.0643306620186
+  },
+  "timeout_run_sha256": "2d3e3ab58e402c1b25d727aa05d725da9ba18087ab1a8257e6e632c6912a17ab",
+  "weight_sha256": "ac02591061f1344027a7e7b11dbb4143f75f166c47dc09b742f5de3ab1dde1d1",
+  "prior_result_sha256": "03787154caf7cee9d5bb500c66f6b58f636454c4ff2d27ed9a720d14df6f304f",
+  "prior_outputs_sha256": "34be866726f1e7c30c66af3d1009e07070b88ea045e8966d037772dd9d240ed1",
+  "imports": {
+    "cudnn": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4/python/cudnn/__init__.py",
+      "sha256": "ee53bcbde07f59b89ca9378184a7a54beb5d36d216df1f15d7e6d810d9b7f1f9"
+    },
+    "api": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+      "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+    },
+    "binding": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+      "sha256": "2edf36cdbdebe785ab48e30086d595c5799d5131ad3036d385771ca5f39763cc"
+    }
+  },
+  "harness_sha256": "05d9bc6a9b9cff532277a4775f607a895b27d577a480b9304641cc0b8807dd24",
+  "base_adapter_sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea",
+  "formal_performance": "NOT_RUN",
+  "service_final": "inactive",
+  "scope_limit": "CPU dot and rounding-boundary evidence only; imported native binding is not executed"
+}

@@ -1,0 +1,131 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Independent CPU audit of new residual/staging controls; no GPU imports."""
+
+import argparse
+import importlib.util
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+HELPER = Path(__file__).with_name("audit_a3_precision_followup_r2_20261001.py")
+spec = importlib.util.spec_from_file_location("a3_cpu_audit", HELPER)
+a = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(a)
+t = a.torch
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized()
+    directory = a.ROOT / "results/a3-residual-staging-20261001-r1"
+    meta, run = a.provenance(directory, 0)
+    assert len(meta["rows"]) == 12 and len(meta["local_rows"]) == 24 and meta["layers"] == list(range(24))
+    assert meta["stock_baseline_byte_exact"] and len(meta["observed_stock_dispatch"]) == 48
+    assert a.sha_file(meta["stock_moe_source"]["path"]) == meta["stock_moe_source"]["sha256"]
+    baseline_dir = a.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    previous_dir = a.ROOT / "results/a3-double-mxfp8-recipe-20261001-r1"
+    assert a.sha_file(previous_dir / "result.json") == meta["prior_result_sha256"]
+    assert a.sha_file(previous_dir / "outputs.pt") == meta["prior_outputs_sha256"]
+    assert a.sha_file(baseline_dir / "outputs.pt") == meta["baseline_outputs_sha256"]
+    values = t.load(directory / "outputs.pt", map_location="cpu", weights_only=True)
+    baseline = t.load(baseline_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    previous = t.load(previous_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    rows, local_rows = [], []
+    with t.inference_mode():
+        for row in meta["rows"]:
+            policy, case = row["policy"], row["case"]
+            oracle = values[f"{policy}/{case}"]
+            stock = baseline[f"forward_{case}_stock"]
+            prior = previous[f"double_mxfp8_bf16_gate_activation_reference_only/{case}/reference"]
+            assert row["input_tokens"] == [73, 70, 256][case] and oracle.shape == stock.shape == (1, row["input_tokens"], 49155)
+            assert row["native_status"] == "NOT_RUN_TORCH_CAUSAL_CONTROL"
+            a.compare_metric(a.difference(oracle, stock, t.float32), row["vs_original_bf16"])
+            a.compare_metric(a.difference(oracle, prior, t.float32), row["vs_prior_expanded_double_bf16_stage"])
+            error = a.difference(oracle, stock)
+            ratio = (t.linalg.vector_norm(oracle.double()) / t.linalg.vector_norm(stock.double())).item()
+            bound = max(0, error["relative_l2"] - 0.01 * ratio)
+            assert error["relative_l2"] == row["oracle_bf16_relative_l2_fp64"]
+            assert ratio == row["norm_ratio_fp64"] and bound == row["native_bf16_lower_bound"]
+            assert (bound > 0.05) == row["both_gates_impossible"]
+            expected_reconstruction = 24 if policy.startswith("double_") else 0
+            assert len(row["input_reconstruction"]) == expected_reconstruction
+            rows.append(
+                {
+                    "policy": policy,
+                    "case": case,
+                    "oracle_bf16_fp64": error,
+                    "norm_ratio_fp64": ratio,
+                    "native_bf16_lower_bound": bound,
+                    "both_gates_impossible": bound > 0.05,
+                    "vs_prior_expanded_double_bf16_stage_fp64": a.difference(oracle, prior),
+                    "byte_exact_original_bf16": t.equal(oracle.view(t.uint8), stock.view(t.uint8)),
+                }
+            )
+        for row in meta["local_rows"]:
+            layer = row["layer"]
+            part = values[f"stock_input/{layer}"]
+            assert part["original"].shape == (73, 1024)
+            effective = t.zeros_like(part["original"], dtype=t.float32)
+            for prefix in ("hi", "lo"):
+                q = part[prefix].view(t.float8_e4m3fn).float().reshape(73, 32, 32)
+                effective += (q * part[prefix + "_scale"].unsqueeze(-1)).reshape(73, 1024)
+            assert t.equal(effective, part["effective"])
+            a.compare_metric(a.difference(effective, part["original"], t.float32), row["input_error"])
+            mismatches = (effective.to(t.bfloat16) != part["original"]).sum().item()
+            assert mismatches == row["input_recast_mismatch"]
+            stages = values[f"local/{layer}"]
+            original = stages["original_bf16_local"]
+            stock_y = values[f"stock_route/{layer}"]["y"]
+            a.compare_metric(a.difference(original["y"], stock_y, t.float32), row["bf16_local_vs_stock_y"])
+            control_errors = {}
+            for policy, metrics in row["controls_vs_bf16_local"].items():
+                controls = stages[policy]
+                control_errors[policy] = {}
+                for name in ("c", "d", "y"):
+                    a.compare_metric(a.difference(controls[name], original[name], t.float32), metrics[name])
+                    control_errors[policy][name] = {
+                        **a.difference(controls[name], original[name]),
+                        "elements_differ": (controls[name] != original[name]).sum().item(),
+                        "elements": original[name].numel(),
+                    }
+            local_rows.append(
+                {
+                    "layer": layer,
+                    "independently_reconstructed_input_error_fp64": a.difference(effective, part["original"]),
+                    "input_recast_mismatch": mismatches,
+                    "bf16_local_vs_stock_y_fp64": a.difference(original["y"], stock_y),
+                    "control_errors_fp64": control_errors,
+                }
+            )
+    tensors = a.flatten_tensors(values)
+    assert len(tensors) == 516 and not t.cuda.is_initialized()
+    result = {
+        "stage": "PASS_EVIDENCE_AUDIT_TORCH_CAUSAL_CONTROLS_NOT_NATIVE_SUCCESS",
+        "source_head": a.HEAD,
+        "run": run,
+        "cuda_initialized": False,
+        "rows": rows,
+        "local_rows": local_rows,
+        "tensors": tensors,
+        "outputs_sha256": a.sha_file(directory / "outputs.pt"),
+        "metadata_sha256": a.sha_file(directory / "result.json"),
+        "harness_sha256": a.sha_file(__file__),
+        "audit_helper_sha256": a.sha_file(HELPER),
+        "native_calls": 0,
+        "stock_forward_byte_parity_scope": "Producer assertion at original stored baseline; captured per-layer local controls and full control logits independently audited",
+        "weight_reconstruction_scope": meta["weight_component_scope"],
+        "formal_performance": "NOT_RUN",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "tensor_entries": len(tensors), "cuda_initialized": False}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

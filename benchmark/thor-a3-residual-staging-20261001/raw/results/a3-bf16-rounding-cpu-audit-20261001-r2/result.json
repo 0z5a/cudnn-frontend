@@ -1,0 +1,70 @@
+{
+  "stage": "PASS_EVIDENCE_AUDIT_BF16_ROUNDING_DIAGNOSTIC_NOT_NATIVE_SUCCESS",
+  "source_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest4/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_bf16_rounding_cpu_r2_20261001.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-rounding-cpu-20261001-r2",
+      "--expected-source",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4",
+      "--expected-head",
+      "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-01T09:36:15.539612+00:00",
+    "deadline_seconds": 300.0,
+    "status": "EXITED",
+    "selected_env": {},
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 14.082874099956825
+  },
+  "cuda_initialized": false,
+  "rows": [],
+  "cpu_rounding": {
+    "layer": 0,
+    "elements": 598016,
+    "stock_vs_fp32_bf16_elements_differ": 270,
+    "stock_vs_fp64_bf16_elements_differ": 269,
+    "fp32_bf16_vs_fp64_bf16_elements_differ": 61,
+    "fp32_vs_fp64_relative_l2": 1.4260706228650923e-07,
+    "mismatch_distance_to_bf16_midpoint_in_fp32_ulps_max": 2651136.0,
+    "mismatches_within_8_fp32_ulps_of_midpoint": 56,
+    "mismatches_exact_fp64_midpoint": 0,
+    "cpu_cuda_initialized": false
+  },
+  "selected_dot_rounding_cells": {
+    "selected_c_elements": 270,
+    "independent_dot_max_abs_vs_saved_c64": 0.0,
+    "stock_bf16_rounding_cell_gap_max": 1.630745828151703e-05,
+    "generic_fp32_summation_bound_max_gap_ratio": 0.002611377365778554,
+    "all_selected_stock_rounding_cells_within_generic_fp32_summation_bound": true,
+    "scope": "FP64 dot verified at all differing C positions; generic gamma_1024 bound is consistent with accumulation-order effects, not proof of an exact GPU instruction path"
+  },
+  "tensors": {
+    "cpu_c64": {
+      "shape": [
+        584,
+        1024
+      ],
+      "dtype": "torch.float64",
+      "sha256": "e1fa1ae43c401cbd2bbd28e878c843d5c7135d5a3b23be142cbe6e21f3271364"
+    },
+    "bf16_midpoint_distances_in_fp32_ulps": {
+      "shape": [
+        270
+      ],
+      "dtype": "torch.float64",
+      "sha256": "87a245a381361bb91dabb62d2b41df323c0ba80cdbc7177b86838b87438a73e6"
+    }
+  },
+  "outputs_sha256": "1ca081e3fcdb597ff2e26295dcf1e2ba3049a13c62187a9761a6e6a1194384e8",
+  "metadata_sha256": "cd44218042c1b6e1adba6282e28e062dd5f3284973a871041e6f45b774eccc33",
+  "harness_sha256": "6676db28dd1b8f0d50789d9bb022a90ef0fda02a8e4a05cdaeae219742d68739",
+  "audit_helper_sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944",
+  "native_calls": 0,
+  "formal_performance": "NOT_RUN",
+  "bf16_reduction_flag_control": "NOT_RUN_SHARED_LOCK_TIMEOUT"
+}

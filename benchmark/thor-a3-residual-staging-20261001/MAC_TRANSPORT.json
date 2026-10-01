@@ -1,0 +1,11 @@
+{
+  "archive": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-residual-staging-archive-20261001/a3-residual-staging-evidence-20261001.tar.gz",
+  "size": 80585,
+  "sha256": "b42295dae25dffabdda9c7c0c2542caa836a2237499d8012ef14156694a77400",
+  "files": 39,
+  "payload_bytes": 614971,
+  "local_archive": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-residual-staging-20261001/a3-residual-staging-evidence-20261001.tar.gz",
+  "local_evidence_directory": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-residual-staging-evidence-20261001",
+  "all_manifest_entries_verified": true,
+  "excluded_model_tensor_binary_payloads": true
+}
