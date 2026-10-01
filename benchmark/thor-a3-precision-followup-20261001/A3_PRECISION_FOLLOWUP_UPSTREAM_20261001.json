@@ -1,0 +1,21 @@
+{
+  "verified_utc": "2026-10-01T07:39:09.402459+00:00",
+  "observed_upstream_develop": "3d1135e83573507b903e439bac28194a2b52e7a4",
+  "commit": "3d1135e83573507b903e439bac28194a2b52e7a4 2026-09-30T23:12:23-07:00 frost(sdpa): add a specialized SM90 D512 f16/bf16 prefill kernel (#1159)",
+  "previous_upstream_base": "ef85ae94d04b0a366ff6446b327e787d9af5eb85",
+  "tested_runtime_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "relevant_paths": [
+    "python/cudnn/gemm",
+    "python/cudnn/api_base.py",
+    "python/cudnn/_torch_stream.py",
+    "python/*.cpp",
+    "include",
+    "cmake",
+    "setup.py",
+    "CMakeLists.txt"
+  ],
+  "changed_relevant_paths": [],
+  "upstream_diff": "python/cudnn/engines/manifest.py                   |    1 +\n python/cudnn/frost/README.md                       |   10 +-\n python/cudnn/frost/tile_dsl/thd.py                 |   13 +\n python/cudnn/frost/tile_dsl/wgmma.py               |  133 ++\n python/cudnn/sdpa/frost/SUPPORT_MATRIX_TRACKER.md  |  164 +-\n python/cudnn/sdpa/fwd/__init__.py                  |    2 +\n python/cudnn/sdpa/fwd/api_dsl.py                   |  392 +++++\n python/cudnn/sdpa/fwd/config_sm90.py               |  109 ++\n python/cudnn/sdpa/fwd/engines.py                   |   49 +\n python/cudnn/sdpa/fwd/heuristics.py                |   19 +-\n python/cudnn/sdpa/fwd/kernels/__init__.py          |   15 +-\n python/cudnn/sdpa/fwd/kernels/sm90/__init__.py     |    4 +\n .../cudnn/sdpa/fwd/kernels/sm90/_common_hopper.py  |  196 +++\n .../sdpa/fwd/kernels/sm90/prefill_d512_f16.py      | 1637 ++++++++++++++++++++\n test/AGENTS.md                                     |   19 +\n test/python/api_index/api_index.txt                |    7 +\n test/python/sdpa/frost/test_sdpa_fwd_dsl_sm107.py  |    5 +-\n test/python/sdpa/frost/test_sdpa_fwd_dsl_sm90.py   |  677 ++++++++\n 18 files changed, 3431 insertions(+), 21 deletions(-)",
+  "current_tracked_status": "",
+  "scope": "Upstream observation and path equality only; 3d1135e is not a tested/rebased runtime head."
+}

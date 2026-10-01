@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest4/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_gate_compatibility_20261001.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-gate-compatibility-20261001-r1"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-01T07:37:59.850716+00:00",
+  "deadline_seconds": 600.0,
+  "status": "EXITED",
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": ""
+  },
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 3.4345597630017437
+}

@@ -1,0 +1,3 @@
+{"stage": "CPU_AUDITED", "name": "a3-all24-precision-probe-20261001-r1", "logit_cases": 6, "tensor_entries": 210}
+{"stage": "CPU_AUDITED", "name": "a3-all24-channel-rescale-20261001-r1", "logit_cases": 24, "tensor_entries": 48}
+{"stage": "PASS_EVIDENCE_AUDIT_ALL24_QUALITY_FAILED", "cuda_initialized": false}

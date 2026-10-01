@@ -1,0 +1,21 @@
+{
+  "archive": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-precision-followup-archive-20261001/a3-precision-followup-evidence-20261001.tar.gz",
+  "size": 117933,
+  "sha256": "b82b7d5d87a9498a5fd10cc17bc676127d80cc0ab0a7a96c9dc3b4fd59afd5b5",
+  "files": 36,
+  "payload_bytes": 723050,
+  "stage": "VERIFIED_COMPLETE",
+  "verified_utc": "2026-10-01T07:42:45.799319+00:00",
+  "local_archive": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-precision-followup-20261001/a3-precision-followup-evidence-20261001.tar.gz",
+  "local_directory": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-precision-followup-evidence-20261001",
+  "manifest_entries_verified": 35,
+  "all_files_size_sha256_verified": true,
+  "excluded": [
+    ".pt outputs and calibration",
+    "models",
+    "engines",
+    "cache",
+    "native binaries",
+    "object files"
+  ]
+}

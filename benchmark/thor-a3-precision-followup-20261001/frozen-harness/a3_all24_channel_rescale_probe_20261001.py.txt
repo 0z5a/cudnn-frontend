@@ -1,0 +1,195 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""All24 MXFP8 channel-rescaling diagnostic on the same full Granite model.
+
+Test the algebraic x/s, W*s transform with four distinct calibration prompts.
+Inspired by https://github.com/mit-han-lab/smoothquant/blob/main/smoothquant/smooth.py
+No model parameters/support gates are changed. No failure fallback or timing.
+"""
+
+import argparse
+import fcntl
+import importlib.util
+import json
+from pathlib import Path
+import subprocess
+
+PROBE = Path(__file__).with_name("a3_all24_precision_probe_20261001.py")
+spec = importlib.util.spec_from_file_location("a3_precision_probe", PROBE)
+p = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(p)
+m, t = p.m, p.t
+quantize = m.quantize_mxfp8
+
+
+def make_adapter(base, expert, layer, scale):
+    class RescaledAdapter(base):
+        def __init__(self):
+            super().__init__(expert, layer, (256, 256))
+            self.scale = scale
+            gate, up = expert.gate_up_proj.detach().chunk(2, 1)
+            weight = t.stack((gate.reshape(32, -1, 32, 1024), up.reshape(32, -1, 32, 1024)), 2).reshape(32, 1024, 1024).float()
+            scaled_weight = weight * scale
+            self.transform_error = m.difference(scaled_weight / scale, weight)
+            self.b, self.sfb, self.bscale = quantize(scaled_weight)
+            self.bref = None
+            self.weight_quant_error = m.difference(m.dequantize(self.b, self.bscale) / scale, weight)
+            if isinstance(self, p.PrecisionAdapter):
+                self.policy = "merge_fp32"
+
+        def forward(self, *args):
+            assert m.quantize_mxfp8 is quantize
+            m.quantize_mxfp8 = lambda x: quantize(x.float() / self.scale)
+            try:
+                return super().forward(*args)
+            finally:
+                m.quantize_mxfp8 = quantize
+
+    return RescaledAdapter()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--expected-source", required=True)
+    parser.add_argument("--expected-head", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    source = Path(args.expected_source).resolve()
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == args.expected_head
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    for module in (m.cudnn, m.api, m._compiled_module):
+        assert Path(module.__file__).resolve().is_relative_to(source / "python")
+    t.set_num_threads(4)
+    t.backends.cuda.matmul.allow_tf32 = False
+    t.backends.cudnn.allow_tf32 = False
+    t.set_float32_matmul_precision("highest")
+    rows, saved, policies = [], {}, []
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        model, loading = m.AutoModelForCausalLM.from_pretrained(
+            m.MODEL, dtype=t.bfloat16, attn_implementation="sdpa", trust_remote_code=False, local_files_only=True, output_loading_info=True
+        )
+        assert not any(loading.values())
+        assert sum(parameter.numel() for parameter in model.parameters()) == 1334628352
+        model = model.eval().cuda()
+        experts = [e for e in model.modules() if isinstance(e, m.GraniteMoeExperts)]
+        assert len(experts) == 24
+        tokenizer = m.AutoTokenizer.from_pretrained(m.MODEL, local_files_only=True, trust_remote_code=False)
+        calibration_messages = [
+            "Describe how a compiler translates a short computer program.",
+            "Give a short recipe for vegetable soup using carrots and potatoes.",
+            "Sort these numbers from smallest to largest: 42, 7, 19, 3, 28.",
+            "Write a sentence using each of these words: river, bridge, bicycle.",
+        ]
+        calibration_ids = [
+            tokenizer.apply_chat_template(
+                [{"role": "user", "content": message}], tokenize=True, add_generation_prompt=True, return_tensors="pt", return_dict=True
+            )["input_ids"]
+            for message in calibration_messages
+        ]
+        amax = [t.zeros(1024, device="cuda") for _ in experts]
+        visits = [0] * 24
+        hooks = []
+        for layer, expert in enumerate(experts):
+
+            def capture(module, inputs, layer=layer):
+                amax[layer] = t.maximum(amax[layer], inputs[0].detach().float().abs().amax(0))
+                visits[layer] += 1
+
+            hooks.append(expert.register_forward_pre_hook(capture))
+        with t.inference_mode():
+            for ids in calibration_ids:
+                model(input_ids=ids.cuda(), use_cache=False)
+        for hook in hooks:
+            hook.remove()
+        assert visits == [4] * 24
+        assert m.NATIVE_CALLS == 0
+        t.save({str(layer): x.cpu() for layer, x in enumerate(amax)}, out / "calibration.pt")
+        _, prompts, workloads = m.load_inputs(tokenizer)
+        cases = [prompts[0], prompts[1], workloads["256"]]
+        baseline_dir = m.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+        baseline_meta = json.loads((baseline_dir / "result.json").read_text())
+        assert baseline_meta["source_head"] == args.expected_head
+        baseline = t.load(baseline_dir / "outputs.pt", map_location="cpu", weights_only=True)
+        weight_amax = [e.gate_up_proj.detach().float().abs().amax((0, 1)).clamp_min(1e-5) for e in experts]
+        for precision, base in (("bf16_d_down_bf16", m.A3ExpertAdapter), ("fp16_d_down_merge_fp32", p.PrecisionAdapter)):
+            for scheme, alpha in (("scalar_1p1", None), ("channel_alpha0", 0.0), ("channel_alpha05", 0.5), ("channel_alpha1", 1.0)):
+                scales = [
+                    t.full((1024,), 1.1, device="cuda") if alpha is None else (a.clamp_min(1e-5).pow(alpha) / w.pow(1 - alpha)).clamp_min(1e-5)
+                    for a, w in zip(amax, weight_amax)
+                ]
+                adapters = [make_adapter(base, expert, layer, scales[layer]) for layer, expert in enumerate(experts)]
+                policy_name = precision + "/" + scheme
+                policy = {
+                    "policy": policy_name,
+                    "alpha": alpha,
+                    "scale_digests": [m.tensor_info(x) for x in scales],
+                    "weight_transform_max_l2": max(a.transform_error["relative_l2"] for a in adapters),
+                    "weight_quant_max_l2": max(a.weight_quant_error["relative_l2"] for a in adapters),
+                }
+                assert policy["weight_transform_max_l2"] < 1e-6
+                policies.append(policy)
+                with t.inference_mode():
+                    for case, ids in enumerate(cases):
+                        outputs = {}
+                        for backend in ("reference", "native"):
+                            m.attach(adapters, backend)
+                            before = m.NATIVE_CALLS
+                            outputs[backend] = model(input_ids=ids.cuda(), use_cache=False).logits.cpu()
+                            assert m.NATIVE_CALLS - before == (24 if backend == "native" else 0)
+                            saved[f"{policy_name}/{case}/{backend}"] = outputs[backend]
+                        oracle = m.difference(outputs["native"], outputs["reference"])
+                        stock = m.difference(outputs["native"], baseline[f"forward_{case}_stock"])
+                        row = {
+                            "policy": policy_name,
+                            "case": case,
+                            "input_tokens": ids.shape[-1],
+                            "native_calls": 24,
+                            "mxfp8_layers": list(range(24)),
+                            "quantized_oracle": oracle,
+                            "original_bf16": stock,
+                            "oracle_gate_pass": oracle["relative_l2"] <= 0.01,
+                            "bf16_gate_pass": stock["relative_l2"] <= 0.05,
+                        }
+                        rows.append(row)
+                        print(json.dumps(row), flush=True)
+                        (out / "partial.json").write_text(json.dumps({"rows": rows, "policies": policies}, indent=2))
+                m.attach(adapters, "stock")
+        t.save(saved, out / "outputs.pt")
+        assert m.NATIVE_CALLS == 576
+        assert m.quantize_mxfp8 is quantize
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+        result = {
+            "stage": "DIAGNOSTIC_COMPLETE",
+            "source": str(source),
+            "source_head": args.expected_head,
+            "model_parameters": 1334628352,
+            "checkpoint": baseline_meta["checkpoint"],
+            "calibration_messages": calibration_messages,
+            "calibration_token_ids": [x.tolist() for x in calibration_ids],
+            "calibration_activation_digests": [m.tensor_info(x) for x in amax],
+            "calibration_expert_visits": visits,
+            "policies": policies,
+            "rows": rows,
+            "native_calls": m.NATIVE_CALLS,
+            "native_plans": m.NATIVE_PLANS,
+            "imports": {
+                name: {"path": module.__file__, "sha256": m.sha_file(module.__file__)}
+                for name, module in (("cudnn", m.cudnn), ("api", m.api), ("binding", m._compiled_module))
+            },
+            "harness_sha256": m.sha_file(__file__),
+            "precision_probe_sha256": m.sha_file(PROBE),
+            "base_adapter_sha256": m.sha_file(p.BASE),
+            "formal_performance": "NOT_RUN",
+            "service_final": "inactive",
+        }
+        (out / "result.json").write_text(json.dumps(result, indent=2))
+        print(json.dumps({"stage": result["stage"], "native_calls": m.NATIVE_CALLS, "policies": len(policies)}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

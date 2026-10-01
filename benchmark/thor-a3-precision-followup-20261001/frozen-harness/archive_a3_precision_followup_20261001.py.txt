@@ -1,0 +1,103 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Archive selected raw A3 follow-up evidence, excluding tensors and models."""
+
+import hashlib
+import io
+import json
+from pathlib import Path
+import tarfile
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+PREFIX = "a3-precision-followup-evidence-20261001"
+
+
+def sha_file(path):
+    h = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(4 * 1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def main():
+    destination = ROOT / "results/a3-precision-followup-archive-20261001"
+    destination.mkdir(exist_ok=False)
+    selected = {}
+    for name in (
+        "a3-all24-precision-probe-20261001-r1",
+        "a3-all24-channel-rescale-20261001-r1",
+        "a3-precision-followup-cpu-audit-20261001-r1",
+        "a3-precision-followup-cpu-audit-20261001-r2",
+        "a3-gate-compatibility-20261001-r1",
+    ):
+        for directory in (ROOT / "results" / name, ROOT / "results" / (name + "-launch")):
+            assert directory.is_dir()
+            for path in sorted(directory.rglob("*")):
+                if path.is_file() and path.suffix in (".json", ".log"):
+                    selected[str(path.relative_to(ROOT))] = path
+    for name in ("result.json", "input-token-ids.json"):
+        path = ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001" / name
+        selected[str(path.relative_to(ROOT))] = path
+    for name in (
+        "a3_model_e2e_mergefix_20261001.py",
+        "a3_all24_precision_probe_20261001.py",
+        "a3_all24_channel_rescale_probe_20261001.py",
+        "audit_a3_precision_followup_20261001.py",
+        "audit_a3_precision_followup_r2_20261001.py",
+        "diagnose_a3_gate_compatibility_20261001.py",
+        "archive_a3_precision_followup_20261001.py",
+    ):
+        path = ROOT / "tools" / name
+        selected[str(path.relative_to(ROOT))] = path
+    logger = Path("/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py")
+    selected["tools/run_logged.py"] = logger
+    for name in (
+        "python/cudnn/__init__.py",
+        "python/cudnn/_torch_stream.py",
+        "python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+        "python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+    ):
+        selected["frozen-source/" + name] = ROOT / "a3sfdlatest4" / name
+    for name in (
+        "a3-all24-precision-probe-20261001-r1",
+        "a3-all24-channel-rescale-20261001-r1",
+        "a3-precision-followup-cpu-audit-20261001-r2",
+        "a3-gate-compatibility-20261001-r1",
+    ):
+        run = json.loads((ROOT / "results" / (name + "-launch") / "run.json").read_text())
+        assert run["returncode"] == 0 and run["status"] == "EXITED"
+    records = []
+    for name, path in sorted(selected.items()):
+        assert not path.is_symlink() and path.is_file()
+        assert path.suffix in (".json", ".log", ".py")
+        records.append({"path": name, "origin": str(path), "size": path.stat().st_size, "sha256": sha_file(path)})
+    manifest = {
+        "stage": "RAW_EVIDENCE_SELECTED",
+        "source_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+        "files": records,
+        "excluded": [".pt outputs and calibration", "models", "engines", "cache", "native binaries", "object files"],
+        "failed_audit_r1_preserved": True,
+    }
+    manifest_bytes = (json.dumps(manifest, indent=2) + "\n").encode()
+    (destination / "manifest.json").write_bytes(manifest_bytes)
+    archive = destination / (PREFIX + ".tar.gz")
+    with tarfile.open(archive, "w:gz") as handle:
+        for record in records:
+            handle.add(selected[record["path"]], arcname=PREFIX + "/" + record["path"], recursive=False)
+        info = tarfile.TarInfo(PREFIX + "/manifest.json")
+        info.size = len(manifest_bytes)
+        handle.addfile(info, io.BytesIO(manifest_bytes))
+    transport = {
+        "archive": str(archive),
+        "size": archive.stat().st_size,
+        "sha256": sha_file(archive),
+        "files": len(records) + 1,
+        "payload_bytes": sum(r["size"] for r in records) + len(manifest_bytes),
+    }
+    (destination / "transport.json").write_text(json.dumps(transport, indent=2) + "\n")
+    print(json.dumps(transport), flush=True)
+
+
+if __name__ == "__main__":
+    main()

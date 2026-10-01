@@ -1,0 +1,240 @@
+{
+  "source_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "scope": "Evidence-only; raw source bytes preserved with .py.txt suffix",
+  "files": [
+    {
+      "published_path": "frozen-source/python/cudnn/__init__.py.txt",
+      "origin": "frozen-source/python/cudnn/__init__.py",
+      "size": 28982,
+      "sha256": "ee53bcbde07f59b89ca9378184a7a54beb5d36d216df1f15d7e6d810d9b7f1f9"
+    },
+    {
+      "published_path": "frozen-source/python/cudnn/_torch_stream.py.txt",
+      "origin": "frozen-source/python/cudnn/_torch_stream.py",
+      "size": 3966,
+      "sha256": "3e3e2a6b2be9e591c81dbba1340d3d1d458767843cdde9260f5f8c6c8df31e19"
+    },
+    {
+      "published_path": "frozen-source/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py.txt",
+      "origin": "frozen-source/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+      "size": 52640,
+      "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+    },
+    {
+      "published_path": "frozen-source/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py.txt",
+      "origin": "frozen-source/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+      "size": 131027,
+      "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+    },
+    {
+      "published_path": "results/a3-all24-channel-rescale-20261001-r1-launch/run.json",
+      "origin": "results/a3-all24-channel-rescale-20261001-r1-launch/run.json",
+      "size": 764,
+      "sha256": "d40d87a4851db7222bbf419a67dd03b64fdecbdd3214dbaba52b958f1203049a"
+    },
+    {
+      "published_path": "results/a3-all24-channel-rescale-20261001-r1-launch/stderr.log",
+      "origin": "results/a3-all24-channel-rescale-20261001-r1-launch/stderr.log",
+      "size": 193,
+      "sha256": "09e38ebafc5963f7e6aba5f7fb94d4720f646a957fab2849bda5b115d6ffd4e7"
+    },
+    {
+      "published_path": "results/a3-all24-channel-rescale-20261001-r1-launch/stdout.log",
+      "origin": "results/a3-all24-channel-rescale-20261001-r1-launch/stdout.log",
+      "size": 11867,
+      "sha256": "8a09ebccd10b1800c20bfa602dc59e0767ee1ca4ecbfed880cbeccda8bd7558a"
+    },
+    {
+      "published_path": "results/a3-all24-channel-rescale-20261001-r1/partial.json",
+      "origin": "results/a3-all24-channel-rescale-20261001-r1/partial.json",
+      "size": 58944,
+      "sha256": "f80f1235a4b91e72341b2c7168c40aa2cc93341e2c9552d1e5a1f9a3daf169dd"
+    },
+    {
+      "published_path": "results/a3-all24-channel-rescale-20261001-r1/result.json",
+      "origin": "results/a3-all24-channel-rescale-20261001-r1/result.json",
+      "size": 78213,
+      "sha256": "75ee8c1ec5724ac5da15cae4be1135586264a995717eb8e7997e8e3469846653"
+    },
+    {
+      "published_path": "results/a3-all24-precision-probe-20261001-r1-launch/run.json",
+      "origin": "results/a3-all24-precision-probe-20261001-r1-launch/run.json",
+      "size": 759,
+      "sha256": "17e9b9e7b9fa1f3f1221da32aa3b44dfe9ed5e30eddfe4f5f9c51af38a12310a"
+    },
+    {
+      "published_path": "results/a3-all24-precision-probe-20261001-r1-launch/stderr.log",
+      "origin": "results/a3-all24-precision-probe-20261001-r1-launch/stderr.log",
+      "size": 193,
+      "sha256": "cdf96cec801f1957c22fc7181652aeb56aca8b8f01f55422eb9bd5dd8cb3c922"
+    },
+    {
+      "published_path": "results/a3-all24-precision-probe-20261001-r1-launch/stdout.log",
+      "origin": "results/a3-all24-precision-probe-20261001-r1-launch/stdout.log",
+      "size": 13999,
+      "sha256": "6ed417686bed3f75d546763c94ebc08d50770a1937fc67ebc0cfa9a7cb09c4cc"
+    },
+    {
+      "published_path": "results/a3-all24-precision-probe-20261001-r1/partial.json",
+      "origin": "results/a3-all24-precision-probe-20261001-r1/partial.json",
+      "size": 18101,
+      "sha256": "98c7106780b87d09cafcccf12193108eaf2e2480a70135c3869575dbbe91c7e1"
+    },
+    {
+      "published_path": "results/a3-all24-precision-probe-20261001-r1/result.json",
+      "origin": "results/a3-all24-precision-probe-20261001-r1/result.json",
+      "size": 28736,
+      "sha256": "710325ca077e8bce9ddcbe9949072fb79e174a2739ee146fd9300077aab6e3bc"
+    },
+    {
+      "published_path": "results/a3-gate-compatibility-20261001-r1-launch/run.json",
+      "origin": "results/a3-gate-compatibility-20261001-r1-launch/run.json",
+      "size": 628,
+      "sha256": "c226865be7f1d2d45c1c5a5082c762de62a041027fc089e7de65f380eee6ba90"
+    },
+    {
+      "published_path": "results/a3-gate-compatibility-20261001-r1-launch/stderr.log",
+      "origin": "results/a3-gate-compatibility-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "published_path": "results/a3-gate-compatibility-20261001-r1-launch/stdout.log",
+      "origin": "results/a3-gate-compatibility-20261001-r1-launch/stdout.log",
+      "size": 11485,
+      "sha256": "bdfd4ab9038fb302a5ab7fd13d17727a0f83dec79b560b376fcec95608ee60a3"
+    },
+    {
+      "published_path": "results/a3-gate-compatibility-20261001-r1/result.json",
+      "origin": "results/a3-gate-compatibility-20261001-r1/result.json",
+      "size": 15321,
+      "sha256": "2ab071e3911fbaf5f1183307237e93646cb272435772f2ef2c455548c3df5d4a"
+    },
+    {
+      "published_path": "results/a3-model-repair-a3sfdlatest4-n256-20261001/input-token-ids.json",
+      "origin": "results/a3-model-repair-a3sfdlatest4-n256-20261001/input-token-ids.json",
+      "size": 21027,
+      "sha256": "0983f2e3e173eb5d6dd1fdb286b1bd96b513bff54b1f1a2724cc76bdc82122dc"
+    },
+    {
+      "published_path": "results/a3-model-repair-a3sfdlatest4-n256-20261001/result.json",
+      "origin": "results/a3-model-repair-a3sfdlatest4-n256-20261001/result.json",
+      "size": 34298,
+      "sha256": "74e662122f4aa17a3f491584bef1194d42bdfb92420b6daadf36cea8f23c3063"
+    },
+    {
+      "published_path": "results/a3-precision-followup-cpu-audit-20261001-r1-launch/run.json",
+      "origin": "results/a3-precision-followup-cpu-audit-20261001-r1-launch/run.json",
+      "size": 635,
+      "sha256": "c7b2dace46fa512169c100ebdc0e41411534a8310e2ec695446b58e78e3a8901"
+    },
+    {
+      "published_path": "results/a3-precision-followup-cpu-audit-20261001-r1-launch/stderr.log",
+      "origin": "results/a3-precision-followup-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 917,
+      "sha256": "b075827d6bc833389ae76e54443729db519cbf25c761c4c9cf8b83c1d7f871b3"
+    },
+    {
+      "published_path": "results/a3-precision-followup-cpu-audit-20261001-r1-launch/stdout.log",
+      "origin": "results/a3-precision-followup-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "published_path": "results/a3-precision-followup-cpu-audit-20261001-r2-launch/run.json",
+      "origin": "results/a3-precision-followup-cpu-audit-20261001-r2-launch/run.json",
+      "size": 638,
+      "sha256": "898f0ee41a90b4d3880c7d4f2fa1b1f05dc30a83579abc3d8d89084cd64aac3d"
+    },
+    {
+      "published_path": "results/a3-precision-followup-cpu-audit-20261001-r2-launch/stderr.log",
+      "origin": "results/a3-precision-followup-cpu-audit-20261001-r2-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "published_path": "results/a3-precision-followup-cpu-audit-20261001-r2-launch/stdout.log",
+      "origin": "results/a3-precision-followup-cpu-audit-20261001-r2-launch/stdout.log",
+      "size": 309,
+      "sha256": "d05ff330441e5e283d2bb845818cf5a76a0207df5d3b304823bd47ab483231a3"
+    },
+    {
+      "published_path": "results/a3-precision-followup-cpu-audit-20261001-r2/result.json",
+      "origin": "results/a3-precision-followup-cpu-audit-20261001-r2/result.json",
+      "size": 115606,
+      "sha256": "7a77fb49479091cc0eb7f79bd85408b1509f927d9573e62eade3b6901cad168c"
+    },
+    {
+      "published_path": "frozen-harness/a3_all24_channel_rescale_probe_20261001.py.txt",
+      "origin": "tools/a3_all24_channel_rescale_probe_20261001.py",
+      "size": 10289,
+      "sha256": "2065df6d9324ca6a9ef3db809bc0020643cda9a92493144d254356076e612501"
+    },
+    {
+      "published_path": "frozen-harness/a3_all24_precision_probe_20261001.py.txt",
+      "origin": "tools/a3_all24_precision_probe_20261001.py",
+      "size": 12896,
+      "sha256": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5"
+    },
+    {
+      "published_path": "frozen-harness/a3_model_e2e_mergefix_20261001.py.txt",
+      "origin": "tools/a3_model_e2e_mergefix_20261001.py",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "published_path": "frozen-harness/archive_a3_precision_followup_20261001.py.txt",
+      "origin": "tools/archive_a3_precision_followup_20261001.py",
+      "size": 4426,
+      "sha256": "06720ea21f97826f23e647c2b708a8f863104747821cdea5a9e9c9ae2d8148f5"
+    },
+    {
+      "published_path": "frozen-harness/audit_a3_precision_followup_20261001.py.txt",
+      "origin": "tools/audit_a3_precision_followup_20261001.py",
+      "size": 10678,
+      "sha256": "2dcb3c96df5d6de3884a8342cae53d7ae4ddd8ce6d6d39cb98f078c543ae9ac6"
+    },
+    {
+      "published_path": "frozen-harness/audit_a3_precision_followup_r2_20261001.py.txt",
+      "origin": "tools/audit_a3_precision_followup_r2_20261001.py",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "published_path": "frozen-harness/diagnose_a3_gate_compatibility_20261001.py.txt",
+      "origin": "tools/diagnose_a3_gate_compatibility_20261001.py",
+      "size": 4777,
+      "sha256": "a548ed56edb61c512457a3bf60f8eacc3d14af1ba4887e1e278e4b7ad21710e1"
+    },
+    {
+      "published_path": "frozen-harness/run_logged.py.txt",
+      "origin": "tools/run_logged.py",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    },
+    {
+      "published_path": "RAW_ARCHIVE_MANIFEST.json",
+      "origin": "manifest.json",
+      "size": 11459,
+      "sha256": "a9702ce24a852736e208125e55922d9a3e6898ac8c9eb875828db62c4d06ff3d"
+    },
+    {
+      "published_path": "A3_PRECISION_FOLLOWUP_UPSTREAM_20261001.json",
+      "origin": "Mac/A3_PRECISION_FOLLOWUP_UPSTREAM_20261001.json",
+      "size": 2034,
+      "sha256": "12dfb2284d12affa93f36e71ea55bfe391cf8aae2427c6b2adca2eed5f18acce"
+    },
+    {
+      "published_path": "A3_PRECISION_FOLLOWUP_MAC_TRANSPORT_20261001.json",
+      "origin": "Mac/A3_PRECISION_FOLLOWUP_MAC_TRANSPORT_20261001.json",
+      "size": 877,
+      "sha256": "9cb2724f43b9cd49cbd4281729423e3ff58c22a2623b4c45452a5479489f4c1d"
+    },
+    {
+      "published_path": "README.md",
+      "origin": "Generated follow-up report and reproduction notes",
+      "size": 13175,
+      "sha256": "48b2e6d124cbf1496ca052115d2f834a402bd2131bde769e1af52e180ad6353a"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_precision_followup_20261001.py", line 209, in <module>
+    main()
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_precision_followup_20261001.py", line 138, in main
+    compare_metric(metric, row[key])
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_precision_followup_20261001.py", line 58, in compare_metric
+    assert math.isclose(actual["relative_l2"], recorded["relative_l2"], rel_tol=5e-5, abs_tol=1e-10), (actual, recorded)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ({'max_abs': 9.359375, 'relative_l2': 0.20443138600296082, 'argmax_equal_fraction': 0.8356164383561644}, {'max_abs': 9.359375, 'relative_l2': 0.20445822179317474, 'argmax_equal_fraction': 0.835616409778595})

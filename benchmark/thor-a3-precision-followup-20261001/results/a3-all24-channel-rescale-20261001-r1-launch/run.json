@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest4/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_all24_channel_rescale_probe_20261001.py",
+    "--expected-source",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4",
+    "--expected-head",
+    "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-all24-channel-rescale-20261001-r1"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-01T07:19:25.923204+00:00",
+  "deadline_seconds": 1800.0,
+  "status": "EXITED",
+  "selected_env": {},
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 36.76915615098551
+}

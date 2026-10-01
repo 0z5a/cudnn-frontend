@@ -1,0 +1,103 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""CPU-only necessary-condition check for the unchanged model quality gates.
+
+For any candidate Y, ||Y-R|| <= .01||R|| implies
+||Y-B||/||B|| >= ||R-B||/||B|| - .01||R||/||B||.
+R is the independently computed quantized oracle, B the original BF16 logits.
+If the lower bound exceeds .05, no native output can satisfy both gates for
+that fixed quantization recipe. This does not justify changing either gate.
+"""
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+import torch
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+
+
+def sha_file(path):
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for chunk in iter(lambda: handle.read(4 * 1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    torch.set_num_threads(4)
+    assert not torch.cuda.is_initialized()
+    baseline_dir = ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    baseline = torch.load(baseline_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    rows, evidence = [], []
+    directories = [baseline_dir, ROOT / "results/a3-all24-precision-probe-20261001-r1", ROOT / "results/a3-all24-channel-rescale-20261001-r1"]
+    with torch.inference_mode():
+        for number, directory in enumerate(directories):
+            meta = json.loads((directory / "result.json").read_text())
+            assert meta["source_head"] == HEAD
+            values = baseline if number == 0 else torch.load(directory / "outputs.pt", map_location="cpu", weights_only=True)
+            evidence.append(
+                {"directory": str(directory), "outputs_sha256": sha_file(directory / "outputs.pt"), "metadata_sha256": sha_file(directory / "result.json")}
+            )
+            if number == 0:
+                cases = [("original_all24_mxfp8", case, f"forward_{case}_reference") for case in range(3)]
+            elif number == 1:
+                cases = [(row["policy"], row["case"], f"{row['policy']}_{row['case']}_reference") for row in meta["rows"]]
+            else:
+                cases = [(row["policy"], row["case"], f"{row['policy']}/{row['case']}/reference") for row in meta["rows"]]
+            for policy, case, key in cases:
+                reference, bf16 = values[key].double(), baseline[f"forward_{case}_stock"].double()
+                assert reference.shape == bf16.shape == (1, [73, 70, 256][case], 49155)
+                assert torch.isfinite(reference).all().item() and torch.isfinite(bf16).all().item()
+                norm_bf16 = torch.linalg.vector_norm(bf16).item()
+                norm_oracle = torch.linalg.vector_norm(reference).item()
+                difference = torch.linalg.vector_norm(reference - bf16).item()
+                error = difference / norm_bf16
+                ratio = norm_oracle / norm_bf16
+                lower_bound = max(0.0, error - 0.01 * ratio)
+                row = {
+                    "policy": policy,
+                    "case": case,
+                    "input_tokens": reference.shape[1],
+                    "oracle_original_bf16_relative_l2": error,
+                    "oracle_bf16_norm_ratio": ratio,
+                    "native_bf16_lower_bound_under_1pct_oracle_gate": lower_bound,
+                    "oracle_limit": 0.01,
+                    "bf16_limit": 0.05,
+                    "simultaneous_gates_impossible_for_fixed_oracle": lower_bound > 0.05,
+                }
+                rows.append(row)
+                print(json.dumps(row), flush=True)
+            if number != 0:
+                del values
+    assert len(rows) == 33 and not torch.cuda.is_initialized()
+    result = {
+        "stage": "CPU_GATE_COMPATIBILITY_COMPLETE",
+        "scope": __doc__,
+        "source_head": HEAD,
+        "cuda_initialized": False,
+        "harness_sha256": sha_file(__file__),
+        "evidence": evidence,
+        "rows": rows,
+        "impossible_case_count": sum(row["simultaneous_gates_impossible_for_fixed_oracle"] for row in rows),
+        "model_parameters": 1334628352,
+        "native_kernel_changes": False,
+        "formal_performance": "NOT_RUN",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "cases": len(rows), "impossible_cases": result["impossible_case_count"]}), flush=True)
+
+
+if __name__ == "__main__":
+    main()
