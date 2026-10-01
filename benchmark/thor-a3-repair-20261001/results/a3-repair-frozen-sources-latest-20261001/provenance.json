@@ -1,0 +1,910 @@
+{
+  "sources": [
+    {
+      "source": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol",
+      "head": "83374af96ec3f8e22dd159d278bdf25acab17a4e",
+      "tracked_status": " M test/python/core/torch/test_torch_stream.py\n",
+      "production_tracked_diff": "",
+      "snapshots": [
+        {
+          "path": "python/cudnn/_torch_stream.py",
+          "sha256": "3e3e2a6b2be9e591c81dbba1340d3d1d458767843cdde9260f5f8c6c8df31e19"
+        },
+        {
+          "path": "python/cudnn/api_base.py",
+          "sha256": "e4301cbfd5b73ac52f925cfa27adae1d73799a22bcecf2465cdc6e1c6f08c239"
+        },
+        {
+          "path": "test/AGENTS.md",
+          "sha256": "23f08f6506014f8b24cb6b3bff30570669e363c2a5537fa78df7fd6557c7ddd9"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/__init__.py",
+          "sha256": "c153ea9e03bb88db03aacb1246e13f0419c4068b5bcbb6f7251dadff8db38136"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+          "sha256": "2bb9517e7f61c020bc23f64fadf6c9d2287ee33d87861b7cf061ac3884277959"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/jax_api.py",
+          "sha256": "8562737869a4f88e98092ecf061cef5ea70d594b219223d11dc894891ccbb373"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+          "sha256": "b8cd2615c8a7f9d040636801b533d39a8f67fdb79967f20314087f9ca945ac28"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/_blockscaled_api.py",
+          "sha256": "727ae28fc45fb157c77a669ba5138d5e0dbfbf2180b969c0246ed4fdce6f1a04"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/__init__.py",
+          "sha256": "3977b60c4ab9c19e6ef86682326c9742c20d5c1f5106758647081e9e9115cfb1"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_grouped_gemm_glu_bias.py",
+          "sha256": "112d1e2f6fc2d6f54e089acfac0c47768df208440109ceb753cc5c99bd1a5367"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/api.py",
+          "sha256": "853d71d459157b472dded82db5d14a093e9ecdbfa1990acf9bd2645e4556162d"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/jax_api.py",
+          "sha256": "170501f29607b677f2b3c7556701a48ece2d02651aa915e4e5ecc9833811ae46"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_rubin.py",
+          "sha256": "84244163e536beb8559ac00c917a8c0db32d3d947c1296bb67de46bec1ebcfb6"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_bias.py",
+          "sha256": "ac515fb8a81c89e13141fb788f6fd3e48b9722efd452d639a07b66ae938b3cf5"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/_bf16_api.py",
+          "sha256": "621caf718700e248cbdba4418c492636e9c7519673e8e4c389f6957a11501857"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_swiglu_utils.py",
+          "sha256": "f2a034eb5e2b872fa13377ae851995b126e6ffb0aa93b31eda305f865de54ae2"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py",
+          "sha256": "152e36f7e8d659af8865787af2b30b8eec1b3c120265e4abe6ca5c492e880b2c"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_swiglu_failure_diagnostics.py",
+          "sha256": "10d8e7f4232406c66cc75f6c5f364d8a325745ba589af32cdde24c7a89f80881"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_gemm_swiglu.py",
+          "sha256": "4d2b9a40ea9fd79c24942a492b097bf328ff4d6fa360f56e6c5b600ebfb720e8"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_swiglu.py",
+          "sha256": "dbf4b7e7656aea9e46c18abc1814e97e11432be0d3e0b0f6c9fa8d89fb0d000b"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_gemm_swiglu_utils.py",
+          "sha256": "d267bf81d0203e890a5c13fd61d7e386aa98a8bfff7d21c91512c6a15c83c284"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_dswiglu.py",
+          "sha256": "57433aaf08d9d3e22a85ccb5423b02b8595b867cfb9abea5886e2538da108f5d"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_swiglu.py",
+          "sha256": "7876580d52cefe84b73965209be5d19540075c68d6d1333e45662c808a53f89c"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_dswiglu_utils.py",
+          "sha256": "a7c9f7690bbd9aa90fab4837d3a7302081845a1e3afcbc37c429916d232246f5"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_swiglu_wrapper_memo.py",
+          "sha256": "881c45e9bf4a35fd05380d14f236a945582c6329ab90a9dfd20851c31ee51a36"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_dswiglu.py",
+          "sha256": "f477de2c5c324f1f51287b51d117194d435c7375d64a0888904fc4e14866a98d"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_dswiglu_utils.py",
+          "sha256": "2422c48c4fd6ca49bc66a8dfdcdd8eed62799f309fadc9aaed479ef4ca4a91eb"
+        }
+      ],
+      "native_bindings_metadata_only": [
+        {
+          "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+          "size": 6532704,
+          "sha256": "25dd95a5a2a2a925f6ae5127695322bc9f6316aa20966464ed4c9208d8020f70"
+        }
+      ]
+    },
+    {
+      "source": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3modelrepair",
+      "head": "c93d38192ba10073ac7e62f7f25a0c595b649fed",
+      "tracked_status": "",
+      "production_tracked_diff": "",
+      "snapshots": [
+        {
+          "path": "python/cudnn/_torch_stream.py",
+          "sha256": "df8132f6d7df776d3be8371a9a2bb0e87a0098d88781cbb53e5b4d09020c4d77"
+        },
+        {
+          "path": "python/cudnn/api_base.py",
+          "sha256": "e4301cbfd5b73ac52f925cfa27adae1d73799a22bcecf2465cdc6e1c6f08c239"
+        },
+        {
+          "path": "test/AGENTS.md",
+          "sha256": "23f08f6506014f8b24cb6b3bff30570669e363c2a5537fa78df7fd6557c7ddd9"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/__init__.py",
+          "sha256": "c153ea9e03bb88db03aacb1246e13f0419c4068b5bcbb6f7251dadff8db38136"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+          "sha256": "16e3105a645695abf7579e5a8bdfe5f4557a20ff9299e2f4357b7b74a4a80698"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/jax_api.py",
+          "sha256": "8562737869a4f88e98092ecf061cef5ea70d594b219223d11dc894891ccbb373"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+          "sha256": "06e16a758d341db8b0531edb6c3dfe5f95e92571e95d7a6004771add4bc1ef1f"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/_blockscaled_api.py",
+          "sha256": "727ae28fc45fb157c77a669ba5138d5e0dbfbf2180b969c0246ed4fdce6f1a04"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/__init__.py",
+          "sha256": "3977b60c4ab9c19e6ef86682326c9742c20d5c1f5106758647081e9e9115cfb1"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_grouped_gemm_glu_bias.py",
+          "sha256": "112d1e2f6fc2d6f54e089acfac0c47768df208440109ceb753cc5c99bd1a5367"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/api.py",
+          "sha256": "853d71d459157b472dded82db5d14a093e9ecdbfa1990acf9bd2645e4556162d"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/jax_api.py",
+          "sha256": "170501f29607b677f2b3c7556701a48ece2d02651aa915e4e5ecc9833811ae46"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_rubin.py",
+          "sha256": "84244163e536beb8559ac00c917a8c0db32d3d947c1296bb67de46bec1ebcfb6"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_bias.py",
+          "sha256": "5524e35eefa1f53651fe61b13be3ed77a354923c3c5ff0308f92b56947ef5032"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/_bf16_api.py",
+          "sha256": "621caf718700e248cbdba4418c492636e9c7519673e8e4c389f6957a11501857"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_swiglu_utils.py",
+          "sha256": "f2a034eb5e2b872fa13377ae851995b126e6ffb0aa93b31eda305f865de54ae2"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py",
+          "sha256": "152e36f7e8d659af8865787af2b30b8eec1b3c120265e4abe6ca5c492e880b2c"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_swiglu_failure_diagnostics.py",
+          "sha256": "10d8e7f4232406c66cc75f6c5f364d8a325745ba589af32cdde24c7a89f80881"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_gemm_swiglu.py",
+          "sha256": "4d2b9a40ea9fd79c24942a492b097bf328ff4d6fa360f56e6c5b600ebfb720e8"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_swiglu.py",
+          "sha256": "dbf4b7e7656aea9e46c18abc1814e97e11432be0d3e0b0f6c9fa8d89fb0d000b"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_gemm_swiglu_utils.py",
+          "sha256": "d267bf81d0203e890a5c13fd61d7e386aa98a8bfff7d21c91512c6a15c83c284"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_dswiglu.py",
+          "sha256": "57433aaf08d9d3e22a85ccb5423b02b8595b867cfb9abea5886e2538da108f5d"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+          "sha256": "11ede67ee46e21f0f3e7aa3e10a2a059cbe4583cbb6888c1328f554c583dae07"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_swiglu.py",
+          "sha256": "7876580d52cefe84b73965209be5d19540075c68d6d1333e45662c808a53f89c"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_dswiglu_utils.py",
+          "sha256": "a7c9f7690bbd9aa90fab4837d3a7302081845a1e3afcbc37c429916d232246f5"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_swiglu_wrapper_memo.py",
+          "sha256": "881c45e9bf4a35fd05380d14f236a945582c6329ab90a9dfd20851c31ee51a36"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_dswiglu.py",
+          "sha256": "f477de2c5c324f1f51287b51d117194d435c7375d64a0888904fc4e14866a98d"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_dswiglu_utils.py",
+          "sha256": "2422c48c4fd6ca49bc66a8dfdcdd8eed62799f309fadc9aaed479ef4ca4a91eb"
+        }
+      ],
+      "native_bindings_metadata_only": [
+        {
+          "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3modelrepair/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+          "size": 6532792,
+          "sha256": "38c021825c9337ae4cd7c3c3b4c95598e671f29cc9ffd7c3b921308f675aed4f"
+        }
+      ]
+    },
+    {
+      "source": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3modelrepair3",
+      "head": "7e94a406ba41b020647763da3f1df9b4ff34612a",
+      "tracked_status": "",
+      "production_tracked_diff": "",
+      "snapshots": [
+        {
+          "path": "python/cudnn/_torch_stream.py",
+          "sha256": "df8132f6d7df776d3be8371a9a2bb0e87a0098d88781cbb53e5b4d09020c4d77"
+        },
+        {
+          "path": "python/cudnn/api_base.py",
+          "sha256": "e4301cbfd5b73ac52f925cfa27adae1d73799a22bcecf2465cdc6e1c6f08c239"
+        },
+        {
+          "path": "test/AGENTS.md",
+          "sha256": "23f08f6506014f8b24cb6b3bff30570669e363c2a5537fa78df7fd6557c7ddd9"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/__init__.py",
+          "sha256": "c153ea9e03bb88db03aacb1246e13f0419c4068b5bcbb6f7251dadff8db38136"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+          "sha256": "16e3105a645695abf7579e5a8bdfe5f4557a20ff9299e2f4357b7b74a4a80698"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/jax_api.py",
+          "sha256": "8562737869a4f88e98092ecf061cef5ea70d594b219223d11dc894891ccbb373"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+          "sha256": "06e16a758d341db8b0531edb6c3dfe5f95e92571e95d7a6004771add4bc1ef1f"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/_blockscaled_api.py",
+          "sha256": "727ae28fc45fb157c77a669ba5138d5e0dbfbf2180b969c0246ed4fdce6f1a04"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/__init__.py",
+          "sha256": "3977b60c4ab9c19e6ef86682326c9742c20d5c1f5106758647081e9e9115cfb1"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_grouped_gemm_glu_bias.py",
+          "sha256": "112d1e2f6fc2d6f54e089acfac0c47768df208440109ceb753cc5c99bd1a5367"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/api.py",
+          "sha256": "853d71d459157b472dded82db5d14a093e9ecdbfa1990acf9bd2645e4556162d"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/jax_api.py",
+          "sha256": "170501f29607b677f2b3c7556701a48ece2d02651aa915e4e5ecc9833811ae46"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_rubin.py",
+          "sha256": "84244163e536beb8559ac00c917a8c0db32d3d947c1296bb67de46bec1ebcfb6"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_bias.py",
+          "sha256": "5524e35eefa1f53651fe61b13be3ed77a354923c3c5ff0308f92b56947ef5032"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/_bf16_api.py",
+          "sha256": "621caf718700e248cbdba4418c492636e9c7519673e8e4c389f6957a11501857"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_swiglu_utils.py",
+          "sha256": "f2a034eb5e2b872fa13377ae851995b126e6ffb0aa93b31eda305f865de54ae2"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py",
+          "sha256": "152e36f7e8d659af8865787af2b30b8eec1b3c120265e4abe6ca5c492e880b2c"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_swiglu_failure_diagnostics.py",
+          "sha256": "10d8e7f4232406c66cc75f6c5f364d8a325745ba589af32cdde24c7a89f80881"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_gemm_swiglu.py",
+          "sha256": "4d2b9a40ea9fd79c24942a492b097bf328ff4d6fa360f56e6c5b600ebfb720e8"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_swiglu.py",
+          "sha256": "dbf4b7e7656aea9e46c18abc1814e97e11432be0d3e0b0f6c9fa8d89fb0d000b"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_gemm_swiglu_utils.py",
+          "sha256": "d267bf81d0203e890a5c13fd61d7e386aa98a8bfff7d21c91512c6a15c83c284"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_dswiglu.py",
+          "sha256": "57433aaf08d9d3e22a85ccb5423b02b8595b867cfb9abea5886e2538da108f5d"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+          "sha256": "38f60c55058056ccc222ec0699d664e91d6526f2bdd8fce5832c0a89ff2f4a34"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_swiglu.py",
+          "sha256": "7876580d52cefe84b73965209be5d19540075c68d6d1333e45662c808a53f89c"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_dswiglu_utils.py",
+          "sha256": "a7c9f7690bbd9aa90fab4837d3a7302081845a1e3afcbc37c429916d232246f5"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_swiglu_wrapper_memo.py",
+          "sha256": "881c45e9bf4a35fd05380d14f236a945582c6329ab90a9dfd20851c31ee51a36"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_dswiglu.py",
+          "sha256": "f477de2c5c324f1f51287b51d117194d435c7375d64a0888904fc4e14866a98d"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_dswiglu_utils.py",
+          "sha256": "2422c48c4fd6ca49bc66a8dfdcdd8eed62799f309fadc9aaed479ef4ca4a91eb"
+        }
+      ],
+      "native_bindings_metadata_only": [
+        {
+          "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3modelrepair3/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+          "size": 6532792,
+          "sha256": "38c021825c9337ae4cd7c3c3b4c95598e671f29cc9ffd7c3b921308f675aed4f"
+        }
+      ]
+    },
+    {
+      "source": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest2",
+      "head": "052f88de8b22826904d2ab98ab77019ee9474466",
+      "tracked_status": "",
+      "production_tracked_diff": "",
+      "snapshots": [
+        {
+          "path": "python/cudnn/_torch_stream.py",
+          "sha256": "3e3e2a6b2be9e591c81dbba1340d3d1d458767843cdde9260f5f8c6c8df31e19"
+        },
+        {
+          "path": "python/cudnn/api_base.py",
+          "sha256": "e4301cbfd5b73ac52f925cfa27adae1d73799a22bcecf2465cdc6e1c6f08c239"
+        },
+        {
+          "path": "test/AGENTS.md",
+          "sha256": "23f08f6506014f8b24cb6b3bff30570669e363c2a5537fa78df7fd6557c7ddd9"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/__init__.py",
+          "sha256": "c153ea9e03bb88db03aacb1246e13f0419c4068b5bcbb6f7251dadff8db38136"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+          "sha256": "b635b60be2a51ca34311a770c64f0ae6a553a5738d5c8d0c858f51f59046f460"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/jax_api.py",
+          "sha256": "0f52de504772311459f6ee0bdb3b97a4f1329caa32ed46f71dd3a6d7a1bc517f"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+          "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/_blockscaled_api.py",
+          "sha256": "76219bb1917cac916ed0d2579244500fad9a09795c0025aa99f51f8f851bf02a"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/__init__.py",
+          "sha256": "3977b60c4ab9c19e6ef86682326c9742c20d5c1f5106758647081e9e9115cfb1"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_grouped_gemm_glu_bias.py",
+          "sha256": "112d1e2f6fc2d6f54e089acfac0c47768df208440109ceb753cc5c99bd1a5367"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/api.py",
+          "sha256": "16f1ad9f743b3148e8f5b6d61f7f1ab6b006a9e26ee2e7fb8ed86ef3ae820fc1"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/jax_api.py",
+          "sha256": "170501f29607b677f2b3c7556701a48ece2d02651aa915e4e5ecc9833811ae46"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_rubin.py",
+          "sha256": "bfafe5fe69e86bc1062ecd19521d60e5bdea60b15e758b4612128c75330e09e1"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_bias.py",
+          "sha256": "e465925d0cb385795494cc037cf71caf20a19a0e8d70722e9fd21bff9caac4e1"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/_bf16_api.py",
+          "sha256": "621caf718700e248cbdba4418c492636e9c7519673e8e4c389f6957a11501857"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_swiglu_amax_per_call.py",
+          "sha256": "d3017b0723ce039fb89e6db5770bdab80e56613e0f6e8cb8873f3b19cda4a465"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_swiglu_utils.py",
+          "sha256": "f2a034eb5e2b872fa13377ae851995b126e6ffb0aa93b31eda305f865de54ae2"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py",
+          "sha256": "152e36f7e8d659af8865787af2b30b8eec1b3c120265e4abe6ca5c492e880b2c"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_swiglu_failure_diagnostics.py",
+          "sha256": "10d8e7f4232406c66cc75f6c5f364d8a325745ba589af32cdde24c7a89f80881"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_gemm_swiglu.py",
+          "sha256": "4d2b9a40ea9fd79c24942a492b097bf328ff4d6fa360f56e6c5b600ebfb720e8"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_swiglu.py",
+          "sha256": "dbf4b7e7656aea9e46c18abc1814e97e11432be0d3e0b0f6c9fa8d89fb0d000b"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_gemm_swiglu_utils.py",
+          "sha256": "d267bf81d0203e890a5c13fd61d7e386aa98a8bfff7d21c91512c6a15c83c284"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_dswiglu.py",
+          "sha256": "57433aaf08d9d3e22a85ccb5423b02b8595b867cfb9abea5886e2538da108f5d"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+          "sha256": "38f60c55058056ccc222ec0699d664e91d6526f2bdd8fce5832c0a89ff2f4a34"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_swiglu.py",
+          "sha256": "a2e13e9a82c91f3855c6e3e80bd04d8c1f5ca5dfa610ac8566621b3194e7756c"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_dswiglu_utils.py",
+          "sha256": "a7c9f7690bbd9aa90fab4837d3a7302081845a1e3afcbc37c429916d232246f5"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_dswiglu.py",
+          "sha256": "f477de2c5c324f1f51287b51d117194d435c7375d64a0888904fc4e14866a98d"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_dswiglu_utils.py",
+          "sha256": "2422c48c4fd6ca49bc66a8dfdcdd8eed62799f309fadc9aaed479ef4ca4a91eb"
+        }
+      ],
+      "native_bindings_metadata_only": [
+        {
+          "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest2/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+          "size": 6533128,
+          "sha256": "1434ac957728c462d23295ddc493874ecd6b7b6bd2315ea67e31da3cc792a8cd"
+        }
+      ]
+    },
+    {
+      "source": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3modelrepairlatest2",
+      "head": "ad33459c19969eff5170e32d4319ff27183b8796",
+      "tracked_status": "",
+      "production_tracked_diff": "",
+      "snapshots": [
+        {
+          "path": "python/cudnn/_torch_stream.py",
+          "sha256": "df8132f6d7df776d3be8371a9a2bb0e87a0098d88781cbb53e5b4d09020c4d77"
+        },
+        {
+          "path": "python/cudnn/api_base.py",
+          "sha256": "e4301cbfd5b73ac52f925cfa27adae1d73799a22bcecf2465cdc6e1c6f08c239"
+        },
+        {
+          "path": "test/AGENTS.md",
+          "sha256": "23f08f6506014f8b24cb6b3bff30570669e363c2a5537fa78df7fd6557c7ddd9"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/__init__.py",
+          "sha256": "c153ea9e03bb88db03aacb1246e13f0419c4068b5bcbb6f7251dadff8db38136"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+          "sha256": "16e3105a645695abf7579e5a8bdfe5f4557a20ff9299e2f4357b7b74a4a80698"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/jax_api.py",
+          "sha256": "8562737869a4f88e98092ecf061cef5ea70d594b219223d11dc894891ccbb373"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+          "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/_blockscaled_api.py",
+          "sha256": "727ae28fc45fb157c77a669ba5138d5e0dbfbf2180b969c0246ed4fdce6f1a04"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/__init__.py",
+          "sha256": "3977b60c4ab9c19e6ef86682326c9742c20d5c1f5106758647081e9e9115cfb1"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_grouped_gemm_glu_bias.py",
+          "sha256": "112d1e2f6fc2d6f54e089acfac0c47768df208440109ceb753cc5c99bd1a5367"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/api.py",
+          "sha256": "853d71d459157b472dded82db5d14a093e9ecdbfa1990acf9bd2645e4556162d"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/jax_api.py",
+          "sha256": "170501f29607b677f2b3c7556701a48ece2d02651aa915e4e5ecc9833811ae46"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_rubin.py",
+          "sha256": "84244163e536beb8559ac00c917a8c0db32d3d947c1296bb67de46bec1ebcfb6"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_bias.py",
+          "sha256": "c9be7ab8860ccf8c73b240f2c300d5bd339e00f8bd9e2a2bd96872ad99fdb612"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/_bf16_api.py",
+          "sha256": "621caf718700e248cbdba4418c492636e9c7519673e8e4c389f6957a11501857"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_swiglu_utils.py",
+          "sha256": "f2a034eb5e2b872fa13377ae851995b126e6ffb0aa93b31eda305f865de54ae2"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py",
+          "sha256": "152e36f7e8d659af8865787af2b30b8eec1b3c120265e4abe6ca5c492e880b2c"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_swiglu_failure_diagnostics.py",
+          "sha256": "10d8e7f4232406c66cc75f6c5f364d8a325745ba589af32cdde24c7a89f80881"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_gemm_swiglu.py",
+          "sha256": "4d2b9a40ea9fd79c24942a492b097bf328ff4d6fa360f56e6c5b600ebfb720e8"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_swiglu.py",
+          "sha256": "dbf4b7e7656aea9e46c18abc1814e97e11432be0d3e0b0f6c9fa8d89fb0d000b"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_gemm_swiglu_utils.py",
+          "sha256": "d267bf81d0203e890a5c13fd61d7e386aa98a8bfff7d21c91512c6a15c83c284"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_dswiglu.py",
+          "sha256": "57433aaf08d9d3e22a85ccb5423b02b8595b867cfb9abea5886e2538da108f5d"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+          "sha256": "38f60c55058056ccc222ec0699d664e91d6526f2bdd8fce5832c0a89ff2f4a34"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_swiglu.py",
+          "sha256": "7876580d52cefe84b73965209be5d19540075c68d6d1333e45662c808a53f89c"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_dswiglu_utils.py",
+          "sha256": "a7c9f7690bbd9aa90fab4837d3a7302081845a1e3afcbc37c429916d232246f5"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_swiglu_wrapper_memo.py",
+          "sha256": "881c45e9bf4a35fd05380d14f236a945582c6329ab90a9dfd20851c31ee51a36"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_dswiglu.py",
+          "sha256": "f477de2c5c324f1f51287b51d117194d435c7375d64a0888904fc4e14866a98d"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_dswiglu_utils.py",
+          "sha256": "2422c48c4fd6ca49bc66a8dfdcdd8eed62799f309fadc9aaed479ef4ca4a91eb"
+        }
+      ],
+      "native_bindings_metadata_only": [
+        {
+          "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3modelrepairlatest2/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+          "size": 6533072,
+          "sha256": "3143b9d17bf4453a75d0ae1535d70c118e787092c0a150ed2281ff2a6b78197d"
+        }
+      ]
+    },
+    {
+      "source": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest3",
+      "head": "5227f1e07c5432e94033b2ed0461b4a9a2819c1b",
+      "tracked_status": "",
+      "production_tracked_diff": "",
+      "snapshots": [
+        {
+          "path": "python/cudnn/_torch_stream.py",
+          "sha256": "3e3e2a6b2be9e591c81dbba1340d3d1d458767843cdde9260f5f8c6c8df31e19"
+        },
+        {
+          "path": "python/cudnn/api_base.py",
+          "sha256": "e4301cbfd5b73ac52f925cfa27adae1d73799a22bcecf2465cdc6e1c6f08c239"
+        },
+        {
+          "path": "test/AGENTS.md",
+          "sha256": "8b6e479432db175dab054de396384100f0d18840409d3bcbed5292f3c9566eb1"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/__init__.py",
+          "sha256": "c153ea9e03bb88db03aacb1246e13f0419c4068b5bcbb6f7251dadff8db38136"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+          "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/jax_api.py",
+          "sha256": "0f52de504772311459f6ee0bdb3b97a4f1329caa32ed46f71dd3a6d7a1bc517f"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+          "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/_blockscaled_api.py",
+          "sha256": "76219bb1917cac916ed0d2579244500fad9a09795c0025aa99f51f8f851bf02a"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/__init__.py",
+          "sha256": "3977b60c4ab9c19e6ef86682326c9742c20d5c1f5106758647081e9e9115cfb1"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_grouped_gemm_glu_bias.py",
+          "sha256": "112d1e2f6fc2d6f54e089acfac0c47768df208440109ceb753cc5c99bd1a5367"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/api.py",
+          "sha256": "16f1ad9f743b3148e8f5b6d61f7f1ab6b006a9e26ee2e7fb8ed86ef3ae820fc1"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/jax_api.py",
+          "sha256": "170501f29607b677f2b3c7556701a48ece2d02651aa915e4e5ecc9833811ae46"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_rubin.py",
+          "sha256": "bfafe5fe69e86bc1062ecd19521d60e5bdea60b15e758b4612128c75330e09e1"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_bias.py",
+          "sha256": "e465925d0cb385795494cc037cf71caf20a19a0e8d70722e9fd21bff9caac4e1"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/_bf16_api.py",
+          "sha256": "621caf718700e248cbdba4418c492636e9c7519673e8e4c389f6957a11501857"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_swiglu_amax_per_call.py",
+          "sha256": "d3017b0723ce039fb89e6db5770bdab80e56613e0f6e8cb8873f3b19cda4a465"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_swiglu_utils.py",
+          "sha256": "f2a034eb5e2b872fa13377ae851995b126e6ffb0aa93b31eda305f865de54ae2"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py",
+          "sha256": "152e36f7e8d659af8865787af2b30b8eec1b3c120265e4abe6ca5c492e880b2c"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_swiglu_failure_diagnostics.py",
+          "sha256": "10d8e7f4232406c66cc75f6c5f364d8a325745ba589af32cdde24c7a89f80881"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_gemm_swiglu.py",
+          "sha256": "4d2b9a40ea9fd79c24942a492b097bf328ff4d6fa360f56e6c5b600ebfb720e8"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_swiglu.py",
+          "sha256": "dbf4b7e7656aea9e46c18abc1814e97e11432be0d3e0b0f6c9fa8d89fb0d000b"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_gemm_swiglu_utils.py",
+          "sha256": "d267bf81d0203e890a5c13fd61d7e386aa98a8bfff7d21c91512c6a15c83c284"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_dswiglu.py",
+          "sha256": "57433aaf08d9d3e22a85ccb5423b02b8595b867cfb9abea5886e2538da108f5d"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+          "sha256": "38f60c55058056ccc222ec0699d664e91d6526f2bdd8fce5832c0a89ff2f4a34"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_swiglu.py",
+          "sha256": "a2e13e9a82c91f3855c6e3e80bd04d8c1f5ca5dfa610ac8566621b3194e7756c"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_dswiglu_utils.py",
+          "sha256": "a7c9f7690bbd9aa90fab4837d3a7302081845a1e3afcbc37c429916d232246f5"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_dswiglu.py",
+          "sha256": "f477de2c5c324f1f51287b51d117194d435c7375d64a0888904fc4e14866a98d"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_dswiglu_utils.py",
+          "sha256": "2422c48c4fd6ca49bc66a8dfdcdd8eed62799f309fadc9aaed479ef4ca4a91eb"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py",
+          "sha256": "5c9587dea4ffbf8d33e3b7e25197e9c8a5463763a4390b8f113fb3e68e649af7"
+        }
+      ],
+      "native_bindings_metadata_only": [
+        {
+          "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest3/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+          "size": 6533128,
+          "sha256": "2edf36cdbdebe785ab48e30086d595c5799d5131ad3036d385771ca5f39763cc"
+        }
+      ]
+    },
+    {
+      "source": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4",
+      "head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+      "tracked_status": "",
+      "production_tracked_diff": "",
+      "snapshots": [
+        {
+          "path": "python/cudnn/_torch_stream.py",
+          "sha256": "3e3e2a6b2be9e591c81dbba1340d3d1d458767843cdde9260f5f8c6c8df31e19"
+        },
+        {
+          "path": "python/cudnn/api_base.py",
+          "sha256": "e4301cbfd5b73ac52f925cfa27adae1d73799a22bcecf2465cdc6e1c6f08c239"
+        },
+        {
+          "path": "test/AGENTS.md",
+          "sha256": "8b6e479432db175dab054de396384100f0d18840409d3bcbed5292f3c9566eb1"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/__init__.py",
+          "sha256": "c153ea9e03bb88db03aacb1246e13f0419c4068b5bcbb6f7251dadff8db38136"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+          "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/jax_api.py",
+          "sha256": "0f52de504772311459f6ee0bdb3b97a4f1329caa32ed46f71dd3a6d7a1bc517f"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+          "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/_blockscaled_api.py",
+          "sha256": "76219bb1917cac916ed0d2579244500fad9a09795c0025aa99f51f8f851bf02a"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/__init__.py",
+          "sha256": "3977b60c4ab9c19e6ef86682326c9742c20d5c1f5106758647081e9e9115cfb1"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_grouped_gemm_glu_bias.py",
+          "sha256": "112d1e2f6fc2d6f54e089acfac0c47768df208440109ceb753cc5c99bd1a5367"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/api.py",
+          "sha256": "16f1ad9f743b3148e8f5b6d61f7f1ab6b006a9e26ee2e7fb8ed86ef3ae820fc1"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/jax_api.py",
+          "sha256": "170501f29607b677f2b3c7556701a48ece2d02651aa915e4e5ecc9833811ae46"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_rubin.py",
+          "sha256": "bfafe5fe69e86bc1062ecd19521d60e5bdea60b15e758b4612128c75330e09e1"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_bias.py",
+          "sha256": "e465925d0cb385795494cc037cf71caf20a19a0e8d70722e9fd21bff9caac4e1"
+        },
+        {
+          "path": "python/cudnn/gemm/cutedsl/grouped/glu/_bf16_api.py",
+          "sha256": "621caf718700e248cbdba4418c492636e9c7519673e8e4c389f6957a11501857"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_swiglu_amax_per_call.py",
+          "sha256": "d3017b0723ce039fb89e6db5770bdab80e56613e0f6e8cb8873f3b19cda4a465"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_swiglu_utils.py",
+          "sha256": "f2a034eb5e2b872fa13377ae851995b126e6ffb0aa93b31eda305f865de54ae2"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py",
+          "sha256": "152e36f7e8d659af8865787af2b30b8eec1b3c120265e4abe6ca5c492e880b2c"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_swiglu_failure_diagnostics.py",
+          "sha256": "10d8e7f4232406c66cc75f6c5f364d8a325745ba589af32cdde24c7a89f80881"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_gemm_swiglu.py",
+          "sha256": "4d2b9a40ea9fd79c24942a492b097bf328ff4d6fa360f56e6c5b600ebfb720e8"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_swiglu.py",
+          "sha256": "dbf4b7e7656aea9e46c18abc1814e97e11432be0d3e0b0f6c9fa8d89fb0d000b"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_gemm_swiglu_utils.py",
+          "sha256": "d267bf81d0203e890a5c13fd61d7e386aa98a8bfff7d21c91512c6a15c83c284"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_dswiglu.py",
+          "sha256": "57433aaf08d9d3e22a85ccb5423b02b8595b867cfb9abea5886e2538da108f5d"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+          "sha256": "38f60c55058056ccc222ec0699d664e91d6526f2bdd8fce5832c0a89ff2f4a34"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_swiglu.py",
+          "sha256": "a2e13e9a82c91f3855c6e3e80bd04d8c1f5ca5dfa610ac8566621b3194e7756c"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_grouped_gemm_dswiglu_utils.py",
+          "sha256": "a7c9f7690bbd9aa90fab4837d3a7302081845a1e3afcbc37c429916d232246f5"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_dswiglu.py",
+          "sha256": "f477de2c5c324f1f51287b51d117194d435c7375d64a0888904fc4e14866a98d"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_discrete_grouped_gemm_dswiglu_utils.py",
+          "sha256": "2422c48c4fd6ca49bc66a8dfdcdd8eed62799f309fadc9aaed479ef4ca4a91eb"
+        },
+        {
+          "path": "test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py",
+          "sha256": "5c9587dea4ffbf8d33e3b7e25197e9c8a5463763a4390b8f113fb3e68e649af7"
+        }
+      ],
+      "native_bindings_metadata_only": [
+        {
+          "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+          "size": 6533128,
+          "sha256": "2edf36cdbdebe785ab48e30086d595c5799d5131ad3036d385771ca5f39763cc"
+        }
+      ]
+    }
+  ],
+  "runtime_reference": [
+    {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3wrappercontrol/lib/python3.12/site-packages/transformers/models/granitemoe/modeling_granitemoe.py",
+      "sha256": "0288f149b1beca4bd1b19bc866886115963a6c11abc2c7e022f417acb2eacd79"
+    },
+    {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3wrappercontrol/lib/python3.12/site-packages/transformers/integrations/moe.py",
+      "sha256": "6f40b9a4220c6d5476a0207c7ef0aa7e188c3d457ad70df1b1b703461239b7ff"
+    }
+  ],
+  "optional_tool_files_missing": [
+    "diagnose_a3_plain_d_r2_20261001.py"
+  ]
+}

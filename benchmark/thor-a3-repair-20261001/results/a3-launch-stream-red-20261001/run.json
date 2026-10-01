@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest2/bin/python",
+    "-m",
+    "pytest",
+    "-p",
+    "a3_repair_import_probe_20261001",
+    "-o",
+    "addopts=",
+    "-q",
+    "--junitxml=/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-launch-stream-red-20261001/junit.xml",
+    "test_swiglu_wrapper_launch_stream.py"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3-stream-red-fixture-20261001",
+  "started_utc": "2026-10-01T05:23:45.731934+00:00",
+  "deadline_seconds": 1200.0,
+  "status": "EXITED",
+  "selected_env": {},
+  "returncode": 1,
+  "signal": null,
+  "elapsed_seconds": 13.046969956019893
+}

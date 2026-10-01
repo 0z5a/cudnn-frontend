@@ -1,0 +1,64 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Rebase verification after an unrelated SDPA backward upstream update.
+
+Reuse the freshly built binding only after exact native build input equality;
+this is explicitly not another native build. GPU tests run in a new checkout.
+"""
+import hashlib
+import json
+from pathlib import Path
+import shutil
+import subprocess
+
+r=Path('/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928')
+old=r/'a3sfdlatest3'
+source=r/'a3sfdlatest4'
+head='7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744'
+upstream='ef85ae94d04b0a366ff6446b327e787d9af5eb85'
+assert not source.exists()
+subprocess.run(['git','init',str(source)],check=True)
+shutil.copytree(old/'.git/objects',source/'.git/objects',dirs_exist_ok=True)
+with (r/'tools/a3-correctness-ef85-latest-20261001.pack').open('rb') as f:
+    subprocess.run(['git','-C',str(source),'unpack-objects'],stdin=f,check=True)
+(source/'.git/shallow').write_text('ad741313819327324412f5df74d4f5f32ff302b1\n')
+subprocess.run(['git','-C',str(source),'checkout','--detach',head],check=True)
+assert subprocess.check_output(['git','-C',str(source),'merge-base','HEAD',upstream],text=True).strip()==upstream
+changes=subprocess.check_output(['git','-C',str(source),'diff','--name-only','5227f1e07c5432e94033b2ed0461b4a9a2819c1b',head],text=True).splitlines()
+assert changes and all(p.startswith(('python/cudnn/sdpa/bwd/','test/python/sdpa/frost/')) for p in changes),changes
+files=subprocess.check_output(['git','-C',str(old),'ls-files'],text=True).splitlines()
+native_paths=[p for p in files if p.startswith(('include/','cmake/')) or p in ('CMakeLists.txt','setup.py','pyproject.toml') or (p.startswith('python/') and Path(p).suffix in ('.h','.hpp','.cpp','.cc','.cu','.c'))]
+digests=[]
+for p in native_paths:
+    x,y=old/p,source/p
+    assert x.read_bytes()==y.read_bytes(),p
+    digests.append({'path':p,'sha256':hashlib.sha256(x.read_bytes()).hexdigest()})
+binding_records=[]
+for p in (old/'python').rglob('_compiled_module*.so'):
+    destination=source/p.relative_to(old)
+    shutil.copyfile(p,destination)
+    assert destination.read_bytes()==p.read_bytes()
+    binding_records.append({'source':str(p),'destination':str(destination),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()})
+assert len(binding_records)==1
+envdir=r/'venvs/a3sfdlatest4'
+assert not envdir.exists()
+subprocess.run(['python3','-m','venv',str(envdir)],check=True)
+oldsite=r/'venvs/a3sfdlatest3/lib/python3.12/site-packages'
+site=envdir/'lib/python3.12/site-packages'
+for p in oldsite.iterdir():
+    destination=site/p.name
+    if destination.exists() or p.name=='__pycache__':continue
+    if p.name.startswith('__editable__'):
+        assert p.is_file()
+        destination.write_text(p.read_text().replace(str(old),str(source)))
+    elif p.name.startswith('nvidia_cudnn_frontend'):
+        if p.is_dir():shutil.copytree(p,destination,symlinks=True)
+        else:shutil.copyfile(p,destination)
+    elif p.suffix=='.pth':
+        destination.write_bytes(p.read_bytes())
+    else:
+        destination.symlink_to(p,target_is_directory=p.is_dir())
+assert not subprocess.check_output(['git','-C',str(source),'status','--porcelain','--untracked-files=no'],text=True)
+record={'source':str(source),'head':head,'upstream':upstream,'previous_freshly_built_source':str(old),'previous_freshly_built_head':'5227f1e07c5432e94033b2ed0461b4a9a2819c1b','native_build':'NOT_REPEATED_UNCHANGED_INPUTS_VERIFIED','native_build_inputs':digests,'binding_copies':binding_records,'runtime_difference_from_previous_tested_head':changes,'private_frontend_mapping_retargeted':True,'scope':__doc__}
+(r/'results/a3-latest4-native-provenance-20261001.json').write_text(json.dumps(record,indent=2))
+print(json.dumps({'head':head,'upstream':upstream,'native_build_inputs_compared':len(digests),'binding_reused_with_equal_inputs':True}),flush=True)

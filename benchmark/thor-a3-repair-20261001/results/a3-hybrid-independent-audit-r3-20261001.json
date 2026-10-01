@@ -1,0 +1,1870 @@
+{
+  "stage": "HYBRID_FULL_LOGIT_AND_DECODE_GATES_AND_SOURCE_TILE_PARITY_PASS",
+  "scope": "CPU-only full-logit, decode-logit and source/tile audit of explicit layer-23 MXFP8.",
+  "mxfp8_layers": [
+    23
+  ],
+  "bf16_layers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22
+  ],
+  "all24_mxfp8_quality": "STILL_FAILED_SEPARATELY",
+  "runs": [
+    {
+      "name": "a3-hybrid-a3sfdlatest2-n256-20261001",
+      "head": "052f88de8b22826904d2ab98ab77019ee9474466",
+      "tile": [
+        256,
+        256
+      ],
+      "real_returncode": 0,
+      "native_calls": 122
+    },
+    {
+      "name": "a3-hybrid-a3modelrepairlatest2-n256-20261001",
+      "head": "ad33459c19969eff5170e32d4319ff27183b8796",
+      "tile": [
+        256,
+        256
+      ],
+      "real_returncode": 0,
+      "native_calls": 122
+    },
+    {
+      "name": "a3-hybrid-a3modelrepairlatest2-n128-20261001",
+      "head": "ad33459c19969eff5170e32d4319ff27183b8796",
+      "tile": [
+        256,
+        128
+      ],
+      "real_returncode": 0,
+      "native_calls": 122
+    },
+    {
+      "name": "a3-hybrid-a3sfdlatest3-n256-20261001",
+      "head": "5227f1e07c5432e94033b2ed0461b4a9a2819c1b",
+      "tile": [
+        256,
+        256
+      ],
+      "real_returncode": 0,
+      "native_calls": 122
+    },
+    {
+      "name": "a3-hybrid-a3sfdlatest4-n256-20261001",
+      "head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+      "tile": [
+        256,
+        256
+      ],
+      "real_returncode": 0,
+      "native_calls": 122
+    }
+  ],
+  "full_model_parameters": 1334628352,
+  "unique_full_logit_cases": 10,
+  "short_generations": 3,
+  "kv_requests": 2,
+  "saved_tensors_per_run": 60,
+  "tensor_digests": [
+    {
+      "name": "forward_original_math_stock",
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d821f2ba2944f24a4bbd62604d4fdc0249efba46529f018f7ceed0b0faf25c03",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_original_math_reference",
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "1bb03ec626f259a3b9b532c3b8431288fb445d70348eeb10fee0bf1edde4fb2f",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_original_math_native",
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "7fbc563aec21239f6d9433751f4d06835c74a7c6c19ea296bc83e3f4ca50a7e6",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_original_sky_stock",
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "11ecfe7300f0a2e2c8d26b5983344bec3c14117d141f794d948bf7f8ef5a1129",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_original_sky_reference",
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "bb129a1d69a9e10965ea4c7d0d615b3799ac4fd02674a44d3377376be4829c72",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_original_sky_native",
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "04b45b58b5a37e883fc675c67cbe7df26cdcff23f54d7935af89c23a588cbbf3",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_original_256_stock",
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "0c24431f760ca0958414a86f55d1b3c837ccc6bfbc6c5a49329e6a62302cb056",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_original_256_reference",
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "1ba43c5c83936b8029df481eb7d283dc0d4a2c91eb8275e441dcbd0660f6c52e",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_original_256_native",
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "f66da8a229efc9daca33d759b90e3a86b6f776d193b279e6d986e09a8d08d35a",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_0_stock",
+      "shape": [
+        1,
+        74,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "4d29766a3946a2e5d97e179eb2230ebbcf1c3fe6f7f95333aaa46f691b69e3d7",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_0_reference",
+      "shape": [
+        1,
+        74,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "39b9dfb0dc3d325adf5bddc1ee2840c7a829dd8b3e939080821b5a80fceafb7e",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_0_native",
+      "shape": [
+        1,
+        74,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "6c75743bbb04550df4433aa1e9ec9cb168a4643b0d5d5f013474cf045a8b2d13",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_1_stock",
+      "shape": [
+        1,
+        66,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "024b2aeca9e5d3f5df99e4094ce0b5534f0a175782105b4addc7890896515ac7",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_1_reference",
+      "shape": [
+        1,
+        66,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "bda6d6210c7089820195c14c5257045b1a4eff89b7c2fbaebe012cf6b2a9a174",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_1_native",
+      "shape": [
+        1,
+        66,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "3da62b9a01ad687f3c769b8add0aa22bca640233fc5d227ca73c2eb2c6e2ac05",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_2_stock",
+      "shape": [
+        1,
+        67,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "1493063ab39c19c2feb7f380ec1dc5d5fb496a8408da24fe0c836b02347a9ed0",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_2_reference",
+      "shape": [
+        1,
+        67,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "fc700168dbb76392e125a740dca6a36e19a6d252198d2028c955966654be0d91",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_2_native",
+      "shape": [
+        1,
+        67,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d54080c44728692404017803c29b0d301fcfc55f8dd491acdb1bf87c5e14409f",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_3_stock",
+      "shape": [
+        1,
+        69,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "a9f1a58afd387105856f27d018f702f1d0a208993f83ed8e36ad11f5a0892028",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_3_reference",
+      "shape": [
+        1,
+        69,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "b752df8456b7169adc1137653f8e7479c472e3be4d5afd619320c299c5525823",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_3_native",
+      "shape": [
+        1,
+        69,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "98c3808aa99c4a4a34201fe2cb42f07c79b5ad882e2b20cd56b36891b0d59489",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_4_stock",
+      "shape": [
+        1,
+        77,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "2af5577b0e744179a00f3f9ae42efb061e53a9204ff3925c4bc7928b4df17069",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_4_reference",
+      "shape": [
+        1,
+        77,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "ee2a02f8adf887d24abb5dd503541a4ccecd47a539e8779bc9a9f113faa0300a",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_4_native",
+      "shape": [
+        1,
+        77,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "08216def7e3a08430df70e67e85f1da91c9524a17c55e2772ec6687ea39dceda",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_5_stock",
+      "shape": [
+        1,
+        84,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "aeb0959b943433b65bc231f8158ec90247c0a1d02ac862e870601b6d41ecc4cb",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_5_reference",
+      "shape": [
+        1,
+        84,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "6332433ed2a1dadb09349cfd8f257546f1a86f9aed43e6feec9b3a3deb6ec616",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_5_native",
+      "shape": [
+        1,
+        84,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "bf765a139ab8f332e41f98992ca0c760d612a8a7df0331eeb6d081c348d74f32",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_1024_stock",
+      "shape": [
+        1,
+        1024,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "5b1a713b5276c95460b4f7fc8f4b431f0e5f338c2dfef1eb25472f163c786ffb",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_1024_reference",
+      "shape": [
+        1,
+        1024,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "789229adf46c27a239fc6a2d28af550f9f1aab65d43171c08c239a6871c80ac2",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_holdout_1024_native",
+      "shape": [
+        1,
+        1024,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "8d3e569c3118903fb30274e6ffee49b04e92d534e3c4d67af1a927e3966515ef",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_0_stock_ids",
+      "shape": [
+        1,
+        16
+      ],
+      "dtype": "torch.int64",
+      "sha256": "fa00cb5388f31796f5fc763c8f1a0831c53a2956832d77c8a5ff7d8d05f1e247",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_0_stock_logits",
+      "shape": [
+        1,
+        16,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d84fd14d2ef29cad417dd04ad520c3865aca08408e4440b9d682e189c758c868",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_1_stock_ids",
+      "shape": [
+        1,
+        16
+      ],
+      "dtype": "torch.int64",
+      "sha256": "a37e97451bbcb4aab5804c90278795ddecd43ffc0dbedf38843c0ee4fe02e88d",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_1_stock_logits",
+      "shape": [
+        1,
+        16,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "438ff8869c5aa67e02d21defea302b95ea6d95e09468d25b9bf0dd2555c036a7",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_2_stock_ids",
+      "shape": [
+        1,
+        16
+      ],
+      "dtype": "torch.int64",
+      "sha256": "19fd278742748e99918277ae816c11c4e75e8611e399cde36af6a9aa85f5dc57",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_2_stock_logits",
+      "shape": [
+        1,
+        16,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "8f4795a161dc01a7b6d96c89edee595d41e3c654d153410bdc7ec4e9a25e8b78",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "request_256_stock_ids",
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "74ca2fef8293b476859f524249eb60dc727fb6bbf33a889e13bb4f0b8a005770",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "request_256_stock_logits",
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "39af9c15e9ae27a18da8c1315a4b45ad1a29b68f7fe5bcae1c2a7585bc956d75",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "request_1024_stock_ids",
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "783b9116216e1626ca58929d4839922310132c57ee2c83373541deffaa301d2f",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "request_1024_stock_logits",
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "3c56d1ecf49e9cfeddeacbf0681cf9ff0a82356b7599d03ea67ca079f48d1dc8",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_0_reference_ids",
+      "shape": [
+        1,
+        16
+      ],
+      "dtype": "torch.int64",
+      "sha256": "fa00cb5388f31796f5fc763c8f1a0831c53a2956832d77c8a5ff7d8d05f1e247",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_0_reference_logits",
+      "shape": [
+        1,
+        16,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "c2538292865b88c3321a650b6e2f25d2a076ea44c19aa1ce9071ce0c6868eb51",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_1_reference_ids",
+      "shape": [
+        1,
+        16
+      ],
+      "dtype": "torch.int64",
+      "sha256": "a37e97451bbcb4aab5804c90278795ddecd43ffc0dbedf38843c0ee4fe02e88d",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_1_reference_logits",
+      "shape": [
+        1,
+        16,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "00055786eef76ea58065eadff7a3f5737a912959fc7511e29013c0c6fbba4133",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_2_reference_ids",
+      "shape": [
+        1,
+        16
+      ],
+      "dtype": "torch.int64",
+      "sha256": "19fd278742748e99918277ae816c11c4e75e8611e399cde36af6a9aa85f5dc57",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_2_reference_logits",
+      "shape": [
+        1,
+        16,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "ce8b52dbcf712e182e7b90926872223222459ca44c3edf3ce23b8c0fccde4154",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "request_256_reference_ids",
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "74ca2fef8293b476859f524249eb60dc727fb6bbf33a889e13bb4f0b8a005770",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "request_256_reference_logits",
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "1180af72e38f044f271a17a36b94c5156dd8da9553aeaf93b2432f14670a10e4",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "request_1024_reference_ids",
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "783b9116216e1626ca58929d4839922310132c57ee2c83373541deffaa301d2f",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "request_1024_reference_logits",
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "0a175506e01762106b52dd107d842f8bea45e2fe859b5d3a43996d9e33e4c809",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_0_native_ids",
+      "shape": [
+        1,
+        16
+      ],
+      "dtype": "torch.int64",
+      "sha256": "fa00cb5388f31796f5fc763c8f1a0831c53a2956832d77c8a5ff7d8d05f1e247",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_0_native_logits",
+      "shape": [
+        1,
+        16,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "c2538292865b88c3321a650b6e2f25d2a076ea44c19aa1ce9071ce0c6868eb51",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_1_native_ids",
+      "shape": [
+        1,
+        16
+      ],
+      "dtype": "torch.int64",
+      "sha256": "a37e97451bbcb4aab5804c90278795ddecd43ffc0dbedf38843c0ee4fe02e88d",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_1_native_logits",
+      "shape": [
+        1,
+        16,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "7a8dced215444bbcf29d21486f267f0f1187325b48769d8d654af43c1fe3809d",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_2_native_ids",
+      "shape": [
+        1,
+        16
+      ],
+      "dtype": "torch.int64",
+      "sha256": "19fd278742748e99918277ae816c11c4e75e8611e399cde36af6a9aa85f5dc57",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_2_native_logits",
+      "shape": [
+        1,
+        16,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "648c963827fbd5d212316f181b717186ec8e62e95ec25e04cc8f5f0852d93cbf",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "request_256_native_ids",
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "74ca2fef8293b476859f524249eb60dc727fb6bbf33a889e13bb4f0b8a005770",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "request_256_native_logits",
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "1180af72e38f044f271a17a36b94c5156dd8da9553aeaf93b2432f14670a10e4",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "request_1024_native_ids",
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "783b9116216e1626ca58929d4839922310132c57ee2c83373541deffaa301d2f",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "request_1024_native_logits",
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "0f996b0fb58f98d1f32df3cc8d03aa0201ac6919148d10634cdeccae55b18fd1",
+      "same_bytes_across_all_sources_and_tiles": true
+    }
+  ],
+  "quality_checks": [
+    {
+      "run": "a3-hybrid-a3sfdlatest2-n256-20261001",
+      "tensor": "forward_original_math_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0002668054949026555,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04614469036459923,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest2-n256-20261001",
+      "tensor": "forward_original_sky_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00029513525078073144,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.045057445764541626,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest2-n256-20261001",
+      "tensor": "forward_original_256_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0001314792170887813,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.02693737857043743,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest2-n256-20261001",
+      "tensor": "forward_holdout_0_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0002619292645249516,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04483332112431526,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest2-n256-20261001",
+      "tensor": "forward_holdout_1_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00026807765243574977,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04557930305600166,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest2-n256-20261001",
+      "tensor": "forward_holdout_2_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00030459868139587343,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04697699844837189,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest2-n256-20261001",
+      "tensor": "forward_holdout_3_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00027173873968422413,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04632994905114174,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest2-n256-20261001",
+      "tensor": "forward_holdout_4_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00031376234255731106,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04544229805469513,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest2-n256-20261001",
+      "tensor": "forward_holdout_5_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00026342517230659723,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04364005848765373,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest2-n256-20261001",
+      "tensor": "forward_holdout_1024_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00016508011322002858,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.018613465130329132,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest2-n256-20261001",
+      "tensor": "generation_0_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.03870004788041115,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest2-n256-20261001",
+      "tensor": "generation_1_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00019203397096134722,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.037744879722595215,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest2-n256-20261001",
+      "tensor": "generation_2_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 7.90577323641628e-05,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.030687114223837852,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest2-n256-20261001",
+      "tensor": "request_256_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.025438755750656128,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest2-n256-20261001",
+      "tensor": "request_1024_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 6.41274091321975e-05,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.027464305981993675,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n256-20261001",
+      "tensor": "forward_original_math_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0002668054949026555,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04614469036459923,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n256-20261001",
+      "tensor": "forward_original_sky_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00029513525078073144,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.045057445764541626,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n256-20261001",
+      "tensor": "forward_original_256_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0001314792170887813,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.02693737857043743,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n256-20261001",
+      "tensor": "forward_holdout_0_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0002619292645249516,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04483332112431526,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n256-20261001",
+      "tensor": "forward_holdout_1_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00026807765243574977,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04557930305600166,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n256-20261001",
+      "tensor": "forward_holdout_2_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00030459868139587343,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04697699844837189,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n256-20261001",
+      "tensor": "forward_holdout_3_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00027173873968422413,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04632994905114174,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n256-20261001",
+      "tensor": "forward_holdout_4_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00031376234255731106,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04544229805469513,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n256-20261001",
+      "tensor": "forward_holdout_5_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00026342517230659723,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04364005848765373,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n256-20261001",
+      "tensor": "forward_holdout_1024_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00016508011322002858,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.018613465130329132,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n256-20261001",
+      "tensor": "generation_0_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.03870004788041115,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n256-20261001",
+      "tensor": "generation_1_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00019203397096134722,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.037744879722595215,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n256-20261001",
+      "tensor": "generation_2_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 7.90577323641628e-05,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.030687114223837852,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n256-20261001",
+      "tensor": "request_256_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.025438755750656128,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n256-20261001",
+      "tensor": "request_1024_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 6.41274091321975e-05,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.027464305981993675,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n128-20261001",
+      "tensor": "forward_original_math_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0002668054949026555,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04614469036459923,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n128-20261001",
+      "tensor": "forward_original_sky_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00029513525078073144,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.045057445764541626,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n128-20261001",
+      "tensor": "forward_original_256_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0001314792170887813,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.02693737857043743,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n128-20261001",
+      "tensor": "forward_holdout_0_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0002619292645249516,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04483332112431526,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n128-20261001",
+      "tensor": "forward_holdout_1_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00026807765243574977,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04557930305600166,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n128-20261001",
+      "tensor": "forward_holdout_2_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00030459868139587343,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04697699844837189,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n128-20261001",
+      "tensor": "forward_holdout_3_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00027173873968422413,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04632994905114174,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n128-20261001",
+      "tensor": "forward_holdout_4_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00031376234255731106,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04544229805469513,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n128-20261001",
+      "tensor": "forward_holdout_5_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00026342517230659723,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04364005848765373,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n128-20261001",
+      "tensor": "forward_holdout_1024_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00016508011322002858,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.018613465130329132,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n128-20261001",
+      "tensor": "generation_0_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.03870004788041115,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n128-20261001",
+      "tensor": "generation_1_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00019203397096134722,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.037744879722595215,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n128-20261001",
+      "tensor": "generation_2_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 7.90577323641628e-05,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.030687114223837852,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n128-20261001",
+      "tensor": "request_256_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.025438755750656128,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3modelrepairlatest2-n128-20261001",
+      "tensor": "request_1024_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 6.41274091321975e-05,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.027464305981993675,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest3-n256-20261001",
+      "tensor": "forward_original_math_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0002668054949026555,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04614469036459923,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest3-n256-20261001",
+      "tensor": "forward_original_sky_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00029513525078073144,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.045057445764541626,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest3-n256-20261001",
+      "tensor": "forward_original_256_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0001314792170887813,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.02693737857043743,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest3-n256-20261001",
+      "tensor": "forward_holdout_0_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0002619292645249516,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04483332112431526,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest3-n256-20261001",
+      "tensor": "forward_holdout_1_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00026807765243574977,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04557930305600166,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest3-n256-20261001",
+      "tensor": "forward_holdout_2_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00030459868139587343,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04697699844837189,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest3-n256-20261001",
+      "tensor": "forward_holdout_3_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00027173873968422413,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04632994905114174,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest3-n256-20261001",
+      "tensor": "forward_holdout_4_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00031376234255731106,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04544229805469513,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest3-n256-20261001",
+      "tensor": "forward_holdout_5_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00026342517230659723,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04364005848765373,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest3-n256-20261001",
+      "tensor": "forward_holdout_1024_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00016508011322002858,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.018613465130329132,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest3-n256-20261001",
+      "tensor": "generation_0_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.03870004788041115,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest3-n256-20261001",
+      "tensor": "generation_1_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00019203397096134722,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.037744879722595215,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest3-n256-20261001",
+      "tensor": "generation_2_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 7.90577323641628e-05,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.030687114223837852,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest3-n256-20261001",
+      "tensor": "request_256_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.025438755750656128,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest3-n256-20261001",
+      "tensor": "request_1024_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 6.41274091321975e-05,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.027464305981993675,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest4-n256-20261001",
+      "tensor": "forward_original_math_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0002668054949026555,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04614469036459923,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest4-n256-20261001",
+      "tensor": "forward_original_sky_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00029513525078073144,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.045057445764541626,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest4-n256-20261001",
+      "tensor": "forward_original_256_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0001314792170887813,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.02693737857043743,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest4-n256-20261001",
+      "tensor": "forward_holdout_0_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0002619292645249516,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04483332112431526,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest4-n256-20261001",
+      "tensor": "forward_holdout_1_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00026807765243574977,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04557930305600166,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest4-n256-20261001",
+      "tensor": "forward_holdout_2_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00030459868139587343,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04697699844837189,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest4-n256-20261001",
+      "tensor": "forward_holdout_3_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00027173873968422413,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04632994905114174,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest4-n256-20261001",
+      "tensor": "forward_holdout_4_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00031376234255731106,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04544229805469513,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest4-n256-20261001",
+      "tensor": "forward_holdout_5_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00026342517230659723,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.04364005848765373,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest4-n256-20261001",
+      "tensor": "forward_holdout_1024_native",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00016508011322002858,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.018613465130329132,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest4-n256-20261001",
+      "tensor": "generation_0_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.03870004788041115,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest4-n256-20261001",
+      "tensor": "generation_1_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.00019203397096134722,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.037744879722595215,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest4-n256-20261001",
+      "tensor": "generation_2_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 7.90577323641628e-05,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.030687114223837852,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest4-n256-20261001",
+      "tensor": "request_256_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 0.0,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.025438755750656128,
+        "threshold": 0.05,
+        "passed": true
+      }
+    },
+    {
+      "run": "a3-hybrid-a3sfdlatest4-n256-20261001",
+      "tensor": "request_1024_native_logits",
+      "all_positions_checked": true,
+      "reference": {
+        "relative_l2": 6.41274091321975e-05,
+        "threshold": 0.01,
+        "passed": true
+      },
+      "stock": {
+        "relative_l2": 0.027464305981993675,
+        "threshold": 0.05,
+        "passed": true
+      }
+    }
+  ],
+  "all_three_backends_same_generated_token_ids": true,
+  "short_passcode_semantic_check": "FAILS_IDENTICALLY_IN_ORIGINAL_BF16_REFERENCE_AND_NATIVE; not repaired",
+  "math_and_long_note_answers_pass": true,
+  "formal_performance": "NOT_RUN",
+  "cuda_initialized_by_auditor": false,
+  "service": "inactive"
+}

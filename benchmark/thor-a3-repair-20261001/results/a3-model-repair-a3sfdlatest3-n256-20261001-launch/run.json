@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest3/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_model_e2e_mergefix_20261001.py",
+    "--mode",
+    "diagnostic",
+    "--expected-source",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest3",
+    "--expected-head",
+    "5227f1e07c5432e94033b2ed0461b4a9a2819c1b",
+    "--tile",
+    "256",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-model-repair-a3sfdlatest3-n256-20261001"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-01T05:35:52.878177+00:00",
+  "deadline_seconds": 1200.0,
+  "status": "EXITED",
+  "selected_env": {},
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 20.837533887999598
+}

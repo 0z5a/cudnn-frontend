@@ -1,0 +1,66 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""CPU-only audit of all-24-layer repair/source/tile parity and failed quality."""
+import os
+os.environ['CUDA_VISIBLE_DEVICES']=''
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import torch
+
+r=Path('/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928')
+runs=[('a3-model-repair-a3sfdlatest2-n256-20261001','052f88de8b22826904d2ab98ab77019ee9474466'),('a3-model-repair-a3modelrepairlatest2-n256-20261001','ad33459c19969eff5170e32d4319ff27183b8796'),('a3-model-repair-a3modelrepairlatest2-n128-20261001','ad33459c19969eff5170e32d4319ff27183b8796'),('a3-model-repair-a3sfdlatest3-n256-20261001','5227f1e07c5432e94033b2ed0461b4a9a2819c1b'),('a3-model-repair-a3sfdlatest4-n256-20261001','7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744')]
+torch.set_num_threads(4)
+metadata,saved,records={},{},[]
+for name,head in runs:
+    p=r/'results'/name
+    meta=json.loads((p/'result.json').read_text())
+    run=json.loads((r/'results'/(name+'-launch')/'run.json').read_text())
+    assert run['returncode']==0 and run['status']=='EXITED'
+    assert meta['source_head']==head and meta['total_native_calls']==2761
+    assert meta['parameters']==1334628352 and meta['adapters']==24
+    assert meta['reference_quality_pass'] is False and meta['stage']=='DIAGNOSTIC_COMPLETE'
+    for key,value in {**meta['imports'],**meta['native_plans']}.items():
+        path=Path(value['path'])
+        assert hashlib.sha256(path.read_bytes()).hexdigest()==value['sha256'],key
+        if key.startswith('cudnn'):
+            assert path.is_relative_to(Path(meta['source'])/'python'),key
+    assert subprocess.check_output(['git','-C',meta['source'],'rev-parse','HEAD'],text=True).strip()==head
+    assert not subprocess.check_output(['git','-C',meta['source'],'status','--porcelain','--untracked-files=no'],text=True).strip()
+    metadata[name]=meta
+    saved[name]=torch.load(p/'outputs.pt',map_location='cpu',weights_only=True)
+    assert len(saved[name])==20
+    for check in meta['forward_checks']:
+        i=check['case']
+        a=saved[name][f'forward_{i}_native'].float()
+        checks={}
+        for ref,label,limit in [('reference','quantized_oracle',.01),('stock','original_bf16',.05)]:
+            b=saved[name][f'forward_{i}_{ref}'].float()
+            assert torch.isfinite(a).all() and torch.isfinite(b).all()
+            l2=(torch.linalg.vector_norm(a-b)/torch.linalg.vector_norm(b)).item()
+            assert abs(l2-check[label]['relative_l2'])<1e-5
+            assert l2>limit
+            checks[label]={'relative_l2':l2,'threshold':limit,'passed':False}
+        records.append({'run':name,'case':i,**checks})
+base=runs[0][0]
+digests=[]
+for key in saved[base]:
+    x=saved[base][key]
+    for name,_ in runs[1:]:
+        y=saved[name][key]
+        assert x.dtype==y.dtype and x.shape==y.shape and torch.equal(x.contiguous().view(torch.uint8),y.contiguous().view(torch.uint8)),(name,key)
+    digests.append({'name':key,'shape':list(x.shape),'dtype':str(x.dtype),'sha256':hashlib.sha256(x.contiguous().flatten().view(torch.uint8).numpy().tobytes()).hexdigest(),'same_bytes_across_all_sources_and_tiles':True})
+for name,_ in runs[1:]:
+    for key in ('inputs','checkpoint','full_config','weight_digests','harness_sha256','generations','e2e_requests'):
+        if key=='e2e_requests':
+            # Time is a diagnostic observation and is not part of numerical parity.
+            a=[{k:v for k,v in row.items() if not k.endswith('_diagnostic_only')} for row in metadata[base][key]]
+            b=[{k:v for k,v in row.items() if not k.endswith('_diagnostic_only')} for row in metadata[name][key]]
+            assert a==b,key
+        else:
+            assert metadata[base][key]==metadata[name][key],key
+assert not torch.cuda.is_initialized()
+result={'stage':'SOURCE_AND_TILE_PARITY_PASS_FULL24_MXFP8_QUALITY_FAILED','runs':[{'name':name,'head':head,'real_returncode':0,'native_calls':2761,'tile':metadata[name]['tile']} for name,head in runs],'saved_tensor_count_per_run':20,'tensor_digests':digests,'quality_checks':records,'quality_pass':False,'cuda_initialized_by_auditor':False,'formal_performance':'NOT_RUN'}
+(r/'results/a3-model-repair-independent-audit-r3-20261001.json').write_text(json.dumps(result,indent=2))
+print(json.dumps({'stage':result['stage'],'tensor_count':20,'runs':len(runs),'quality_pass':False,'cuda_initialized':False}))

@@ -1,0 +1,22 @@
+{
+  "source_head": "052f88de8b22826904d2ab98ab77019ee9474466",
+  "cudnn": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest2/python/cudnn/__init__.py",
+    "sha256": "ee53bcbde07f59b89ca9378184a7a54beb5d36d216df1f15d7e6d810d9b7f1f9"
+  },
+  "binding": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest2/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+    "sha256": "1434ac957728c462d23295ddc493874ecd6b7b6bd2315ea67e31da3cc792a8cd"
+  },
+  "swiglu_api": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest2/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+    "sha256": "b635b60be2a51ca34311a770c64f0ae6a553a5738d5c8d0c858f51f59046f460"
+  },
+  "cudnn.gemm.cutedsl.grouped.swiglu.grouped_gemm_swiglu_quant.BlockScaledContiguousGroupedGemmKernel": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest2/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+    "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+  },
+  "actual_native_calls": 6,
+  "pytest_exitstatus": 1,
+  "worker": "gw0"
+}

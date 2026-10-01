@@ -1,0 +1,9 @@
+{
+  "verified": true,
+  "archive_sha256": "d7b8ee51d5dacbfba85bc3cb8d149c675de2e43e70702a2026b4a0e4e93ca685",
+  "archive_bytes": 1771359,
+  "files_verified": 476,
+  "local": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-repair-evidence-latest-20261001",
+  "outcome": "KERNEL_CORRECTNESS_PASS_HYBRID_GATES_PASS_FULL24_MXFP8_QUALITY_FAILED",
+  "excluded": "models/engines/cache/.pt outputs/native binaries/source object packs"
+}

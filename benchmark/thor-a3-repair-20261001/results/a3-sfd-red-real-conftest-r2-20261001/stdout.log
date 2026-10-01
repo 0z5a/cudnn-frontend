@@ -1,0 +1,498 @@
+===== cudnn-frontend conftest.py ====
+cuDNN Frontend Version: 1.31.0
+cuDNN Frontend Path: /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/__init__.py
+cuDNN Backend Version: 92000
+GPU Name: NVIDIA Thor
+SM Arch Version: (11, 0)
+PyTorch Version: 2.13.0+cu130
+PyTorch Path: /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3wrappercontrol/lib/python3.12/site-packages/torch/__init__.py
+PyTorch CUDA Version: 13.0
+PyTorch cuDNN Version: 92000
+bringing up nodes...
+bringing up nodes...
+
+FFFFFFFFFFF                                                              [100%]
+=================================== FAILURES ===================================
+_____ test_narrow_sfd_matches_wide_and_independent_activation[True-1-256] ______
+[gw0] linux -- Python 3.12.3 /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3wrappercontrol/bin/python
+
+api = <module 'cudnn.gemm.cutedsl.grouped.swiglu.api' from '/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xfffcb67a0b30>
+experts = 1, n = 256, canonical = True
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    def test_narrow_sfd_matches_wide_and_independent_activation(api, monkeypatch, experts, n, canonical):
+        inputs, counts, a, b = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        wide, narrow = _call(api, inputs, 256), _call(api, inputs, 128)
+        rows = sum(counts)
+        wr, wc, wd, wdc = _dequantized(wide, rows, n, canonical)
+>       nr, nc, nd, ndc = _dequantized(narrow, rows, n, canonical)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_grouped_swiglu_sfd_tiles.py:131: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+result = {'c_tensor': tensor([[ 1.5625,  1.0156,  0.4004,  ...,  0.5508, -0.6133, -0.4629],
+        [ 1.0703, -0.2422,  0.7344,...      [nan, nan, nan, nan],
+            [nan, nan, nan, nan]]]]]], device='cuda:0',
+       dtype=torch.float8_e8m0fnu)}
+rows = 512, n = 256, canonical = True
+
+    def _dequantized(result, rows, n, canonical):
+        d = result["d_tensor"].reshape(rows, n // 2).float()
+        dc = result["d_col_tensor"].reshape(rows, n // 2).float()
+        row = _logical_codes(result["sfd_row_tensor"], rows, n // 2, canonical)
+        col = _logical_codes(result["sfd_col_tensor"], n // 2, rows, canonical)
+>       assert not bool((row == 255).any()), "live row SFD contains unwritten output poison"
+E       AssertionError: live row SFD contains unwritten output poison
+E       assert not True
+E        +  where True = bool(tensor(True, device='cuda:0'))
+E        +    where tensor(True, device='cuda:0') = <built-in method any of Tensor object at 0xfffcb6740eb0>()
+E        +      where <built-in method any of Tensor object at 0xfffcb6740eb0> = tensor([[255, 255, 255, 255],\n        [255, 255, 255, 255],\n        [255, 255, 255, 255],\n        ...,\n        [255, 255, 255, 255],\n        [255, 255, 255, 255],\n        [255, 255, 255, 255]], device='cuda:0', dtype=torch.uint8) == 255.any
+
+test_grouped_swiglu_sfd_tiles.py:88: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  GroupedGemmSwigluSm100:api_base.py:94 GroupedGemmSwigluSm100 is an experimental API
+_____ test_narrow_sfd_matches_wide_and_independent_activation[True-4-512] ______
+[gw0] linux -- Python 3.12.3 /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3wrappercontrol/bin/python
+
+api = <module 'cudnn.gemm.cutedsl.grouped.swiglu.api' from '/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xfffcb43ed280>
+experts = 4, n = 512, canonical = True
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    def test_narrow_sfd_matches_wide_and_independent_activation(api, monkeypatch, experts, n, canonical):
+        inputs, counts, a, b = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        wide, narrow = _call(api, inputs, 256), _call(api, inputs, 128)
+        rows = sum(counts)
+        wr, wc, wd, wdc = _dequantized(wide, rows, n, canonical)
+>       nr, nc, nd, ndc = _dequantized(narrow, rows, n, canonical)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_grouped_swiglu_sfd_tiles.py:131: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+result = {'c_tensor': tensor([[ 1.3047, -0.5820, -0.2617,  ...,  0.4844,  0.6797,  0.6367],
+        [ 0.0260, -1.9453,  0.5078,...      [nan, nan, nan, nan],
+            [nan, nan, nan, nan]]]]]], device='cuda:0',
+       dtype=torch.float8_e8m0fnu)}
+rows = 1280, n = 512, canonical = True
+
+    def _dequantized(result, rows, n, canonical):
+        d = result["d_tensor"].reshape(rows, n // 2).float()
+        dc = result["d_col_tensor"].reshape(rows, n // 2).float()
+        row = _logical_codes(result["sfd_row_tensor"], rows, n // 2, canonical)
+        col = _logical_codes(result["sfd_col_tensor"], n // 2, rows, canonical)
+>       assert not bool((row == 255).any()), "live row SFD contains unwritten output poison"
+E       AssertionError: live row SFD contains unwritten output poison
+E       assert not True
+E        +  where True = bool(tensor(True, device='cuda:0'))
+E        +    where tensor(True, device='cuda:0') = <built-in method any of Tensor object at 0xfffcb6740500>()
+E        +      where <built-in method any of Tensor object at 0xfffcb6740500> = tensor([[255, 255, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ....5, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ..., 255, 255, 255]], device='cuda:0',\n       dtype=torch.uint8) == 255.any
+
+test_grouped_swiglu_sfd_tiles.py:88: AssertionError
+____ test_narrow_sfd_matches_wide_and_independent_activation[True-31-1024] _____
+[gw0] linux -- Python 3.12.3 /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3wrappercontrol/bin/python
+
+api = <module 'cudnn.gemm.cutedsl.grouped.swiglu.api' from '/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xfffcb67cadb0>
+experts = 31, n = 1024, canonical = True
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    def test_narrow_sfd_matches_wide_and_independent_activation(api, monkeypatch, experts, n, canonical):
+        inputs, counts, a, b = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        wide, narrow = _call(api, inputs, 256), _call(api, inputs, 128)
+        rows = sum(counts)
+        wr, wc, wd, wdc = _dequantized(wide, rows, n, canonical)
+>       nr, nc, nd, ndc = _dequantized(narrow, rows, n, canonical)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_grouped_swiglu_sfd_tiles.py:131: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+result = {'c_tensor': tensor([[ 0.5234, -1.0469, -0.6680,  ...,  0.3848, -0.0244,  0.0432],
+        [-0.3555,  1.6953, -0.3242,...      [nan, nan, nan, nan],
+            [nan, nan, nan, nan]]]]]], device='cuda:0',
+       dtype=torch.float8_e8m0fnu)}
+rows = 10496, n = 1024, canonical = True
+
+    def _dequantized(result, rows, n, canonical):
+        d = result["d_tensor"].reshape(rows, n // 2).float()
+        dc = result["d_col_tensor"].reshape(rows, n // 2).float()
+        row = _logical_codes(result["sfd_row_tensor"], rows, n // 2, canonical)
+        col = _logical_codes(result["sfd_col_tensor"], n // 2, rows, canonical)
+>       assert not bool((row == 255).any()), "live row SFD contains unwritten output poison"
+E       AssertionError: live row SFD contains unwritten output poison
+E       assert not True
+E        +  where True = bool(tensor(True, device='cuda:0'))
+E        +    where tensor(True, device='cuda:0') = <built-in method any of Tensor object at 0xfffcb40e4050>()
+E        +      where <built-in method any of Tensor object at 0xfffcb40e4050> = tensor([[255, 255, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ....5, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ..., 255, 255, 255]], device='cuda:0',\n       dtype=torch.uint8) == 255.any
+
+test_grouped_swiglu_sfd_tiles.py:88: AssertionError
+____ test_narrow_sfd_matches_wide_and_independent_activation[True-33-1024] _____
+[gw0] linux -- Python 3.12.3 /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3wrappercontrol/bin/python
+
+api = <module 'cudnn.gemm.cutedsl.grouped.swiglu.api' from '/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xfffcb673cb90>
+experts = 33, n = 1024, canonical = True
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    def test_narrow_sfd_matches_wide_and_independent_activation(api, monkeypatch, experts, n, canonical):
+        inputs, counts, a, b = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        wide, narrow = _call(api, inputs, 256), _call(api, inputs, 128)
+        rows = sum(counts)
+        wr, wc, wd, wdc = _dequantized(wide, rows, n, canonical)
+>       nr, nc, nd, ndc = _dequantized(narrow, rows, n, canonical)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_grouped_swiglu_sfd_tiles.py:131: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+result = {'c_tensor': tensor([[ 0.8945,  0.8242,  0.3613,  ...,  0.4668,  0.7031,  0.2812],
+        [-1.2812,  0.4688, -0.0574,...      [nan, nan, nan, nan],
+            [nan, nan, nan, nan]]]]]], device='cuda:0',
+       dtype=torch.float8_e8m0fnu)}
+rows = 11008, n = 1024, canonical = True
+
+    def _dequantized(result, rows, n, canonical):
+        d = result["d_tensor"].reshape(rows, n // 2).float()
+        dc = result["d_col_tensor"].reshape(rows, n // 2).float()
+        row = _logical_codes(result["sfd_row_tensor"], rows, n // 2, canonical)
+        col = _logical_codes(result["sfd_col_tensor"], n // 2, rows, canonical)
+>       assert not bool((row == 255).any()), "live row SFD contains unwritten output poison"
+E       AssertionError: live row SFD contains unwritten output poison
+E       assert not True
+E        +  where True = bool(tensor(True, device='cuda:0'))
+E        +    where tensor(True, device='cuda:0') = <built-in method any of Tensor object at 0xfffcac17a6c0>()
+E        +      where <built-in method any of Tensor object at 0xfffcac17a6c0> = tensor([[255, 255, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ....5, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ..., 255, 255, 255]], device='cuda:0',\n       dtype=torch.uint8) == 255.any
+
+test_grouped_swiglu_sfd_tiles.py:88: AssertionError
+_____ test_narrow_sfd_matches_wide_and_independent_activation[False-1-256] _____
+[gw0] linux -- Python 3.12.3 /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3wrappercontrol/bin/python
+
+api = <module 'cudnn.gemm.cutedsl.grouped.swiglu.api' from '/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xfffcb673ce60>
+experts = 1, n = 256, canonical = False
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    def test_narrow_sfd_matches_wide_and_independent_activation(api, monkeypatch, experts, n, canonical):
+        inputs, counts, a, b = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        wide, narrow = _call(api, inputs, 256), _call(api, inputs, 128)
+        rows = sum(counts)
+        wr, wc, wd, wdc = _dequantized(wide, rows, n, canonical)
+>       nr, nc, nd, ndc = _dequantized(narrow, rows, n, canonical)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_grouped_swiglu_sfd_tiles.py:131: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+result = {'c_tensor': tensor([[[ 1.5625],
+         [ 1.0156],
+         [ 0.4004],
+         ...,
+         [ 0.5508],
+         [-...    [[nan],
+            [nan],
+            [nan],
+            [nan]]]]]], device='cuda:0', dtype=torch.float8_e8m0fnu)}
+rows = 512, n = 256, canonical = False
+
+    def _dequantized(result, rows, n, canonical):
+        d = result["d_tensor"].reshape(rows, n // 2).float()
+        dc = result["d_col_tensor"].reshape(rows, n // 2).float()
+        row = _logical_codes(result["sfd_row_tensor"], rows, n // 2, canonical)
+        col = _logical_codes(result["sfd_col_tensor"], n // 2, rows, canonical)
+>       assert not bool((row == 255).any()), "live row SFD contains unwritten output poison"
+E       AssertionError: live row SFD contains unwritten output poison
+E       assert not True
+E        +  where True = bool(tensor(True, device='cuda:0'))
+E        +    where tensor(True, device='cuda:0') = <built-in method any of Tensor object at 0xfffcb43bf610>()
+E        +      where <built-in method any of Tensor object at 0xfffcb43bf610> = tensor([[255, 255, 255, 255],\n        [255, 255, 255, 255],\n        [255, 255, 255, 255],\n        ...,\n        [255, 255, 255, 255],\n        [255, 255, 255, 255],\n        [255, 255, 255, 255]], device='cuda:0', dtype=torch.uint8) == 255.any
+
+test_grouped_swiglu_sfd_tiles.py:88: AssertionError
+_____ test_narrow_sfd_matches_wide_and_independent_activation[False-4-512] _____
+[gw0] linux -- Python 3.12.3 /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3wrappercontrol/bin/python
+
+api = <module 'cudnn.gemm.cutedsl.grouped.swiglu.api' from '/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xfffcb43eec30>
+experts = 4, n = 512, canonical = False
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    def test_narrow_sfd_matches_wide_and_independent_activation(api, monkeypatch, experts, n, canonical):
+        inputs, counts, a, b = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        wide, narrow = _call(api, inputs, 256), _call(api, inputs, 128)
+        rows = sum(counts)
+        wr, wc, wd, wdc = _dequantized(wide, rows, n, canonical)
+>       nr, nc, nd, ndc = _dequantized(narrow, rows, n, canonical)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_grouped_swiglu_sfd_tiles.py:131: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+result = {'c_tensor': tensor([[[ 1.3047],
+         [-0.5820],
+         [-0.2617],
+         ...,
+         [ 0.4844],
+         [ ...       ...,
+            [nan],
+            [nan],
+            [nan]]]]]], device='cuda:0', dtype=torch.float8_e8m0fnu)}
+rows = 1280, n = 512, canonical = False
+
+    def _dequantized(result, rows, n, canonical):
+        d = result["d_tensor"].reshape(rows, n // 2).float()
+        dc = result["d_col_tensor"].reshape(rows, n // 2).float()
+        row = _logical_codes(result["sfd_row_tensor"], rows, n // 2, canonical)
+        col = _logical_codes(result["sfd_col_tensor"], n // 2, rows, canonical)
+>       assert not bool((row == 255).any()), "live row SFD contains unwritten output poison"
+E       AssertionError: live row SFD contains unwritten output poison
+E       assert not True
+E        +  where True = bool(tensor(True, device='cuda:0'))
+E        +    where tensor(True, device='cuda:0') = <built-in method any of Tensor object at 0xfffcac1dd8b0>()
+E        +      where <built-in method any of Tensor object at 0xfffcac1dd8b0> = tensor([[255, 255, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ....5, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ..., 255, 255, 255]], device='cuda:0',\n       dtype=torch.uint8) == 255.any
+
+test_grouped_swiglu_sfd_tiles.py:88: AssertionError
+____ test_narrow_sfd_matches_wide_and_independent_activation[False-31-1024] ____
+[gw0] linux -- Python 3.12.3 /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3wrappercontrol/bin/python
+
+api = <module 'cudnn.gemm.cutedsl.grouped.swiglu.api' from '/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xfffcb4061a90>
+experts = 31, n = 1024, canonical = False
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    def test_narrow_sfd_matches_wide_and_independent_activation(api, monkeypatch, experts, n, canonical):
+        inputs, counts, a, b = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        wide, narrow = _call(api, inputs, 256), _call(api, inputs, 128)
+        rows = sum(counts)
+        wr, wc, wd, wdc = _dequantized(wide, rows, n, canonical)
+>       nr, nc, nd, ndc = _dequantized(narrow, rows, n, canonical)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_grouped_swiglu_sfd_tiles.py:131: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+result = {'c_tensor': tensor([[[ 0.5234],
+         [-1.0469],
+         [-0.6680],
+         ...,
+         [ 0.3848],
+         [-...       ...,
+            [nan],
+            [nan],
+            [nan]]]]]], device='cuda:0', dtype=torch.float8_e8m0fnu)}
+rows = 10496, n = 1024, canonical = False
+
+    def _dequantized(result, rows, n, canonical):
+        d = result["d_tensor"].reshape(rows, n // 2).float()
+        dc = result["d_col_tensor"].reshape(rows, n // 2).float()
+        row = _logical_codes(result["sfd_row_tensor"], rows, n // 2, canonical)
+        col = _logical_codes(result["sfd_col_tensor"], n // 2, rows, canonical)
+>       assert not bool((row == 255).any()), "live row SFD contains unwritten output poison"
+E       AssertionError: live row SFD contains unwritten output poison
+E       assert not True
+E        +  where True = bool(tensor(True, device='cuda:0'))
+E        +    where tensor(True, device='cuda:0') = <built-in method any of Tensor object at 0xfffcac1c2a30>()
+E        +      where <built-in method any of Tensor object at 0xfffcac1c2a30> = tensor([[255, 255, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ....5, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ..., 255, 255, 255]], device='cuda:0',\n       dtype=torch.uint8) == 255.any
+
+test_grouped_swiglu_sfd_tiles.py:88: AssertionError
+____ test_narrow_sfd_matches_wide_and_independent_activation[False-33-1024] ____
+[gw0] linux -- Python 3.12.3 /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3wrappercontrol/bin/python
+
+api = <module 'cudnn.gemm.cutedsl.grouped.swiglu.api' from '/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xfffcb43ed430>
+experts = 33, n = 1024, canonical = False
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    def test_narrow_sfd_matches_wide_and_independent_activation(api, monkeypatch, experts, n, canonical):
+        inputs, counts, a, b = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        wide, narrow = _call(api, inputs, 256), _call(api, inputs, 128)
+        rows = sum(counts)
+        wr, wc, wd, wdc = _dequantized(wide, rows, n, canonical)
+>       nr, nc, nd, ndc = _dequantized(narrow, rows, n, canonical)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_grouped_swiglu_sfd_tiles.py:131: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+result = {'c_tensor': tensor([[[ 0.8945],
+         [ 0.8242],
+         [ 0.3613],
+         ...,
+         [ 0.4668],
+         [ ...       ...,
+            [nan],
+            [nan],
+            [nan]]]]]], device='cuda:0', dtype=torch.float8_e8m0fnu)}
+rows = 11008, n = 1024, canonical = False
+
+    def _dequantized(result, rows, n, canonical):
+        d = result["d_tensor"].reshape(rows, n // 2).float()
+        dc = result["d_col_tensor"].reshape(rows, n // 2).float()
+        row = _logical_codes(result["sfd_row_tensor"], rows, n // 2, canonical)
+        col = _logical_codes(result["sfd_col_tensor"], n // 2, rows, canonical)
+>       assert not bool((row == 255).any()), "live row SFD contains unwritten output poison"
+E       AssertionError: live row SFD contains unwritten output poison
+E       assert not True
+E        +  where True = bool(tensor(True, device='cuda:0'))
+E        +    where tensor(True, device='cuda:0') = <built-in method any of Tensor object at 0xfffcac17a7b0>()
+E        +      where <built-in method any of Tensor object at 0xfffcac17a7b0> = tensor([[255, 255, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ....5, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ..., 255, 255, 255]], device='cuda:0',\n       dtype=torch.uint8) == 255.any
+
+test_grouped_swiglu_sfd_tiles.py:88: AssertionError
+_________ test_narrow_sfd_plan_reuse_preserves_previous_outputs[True] __________
+[gw0] linux -- Python 3.12.3 /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3wrappercontrol/bin/python
+
+api = <module 'cudnn.gemm.cutedsl.grouped.swiglu.api' from '/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xfffcb4446960>
+side_stream = True
+
+    @pytest.mark.parametrize("side_stream", [True, False])
+    def test_narrow_sfd_plan_reuse_preserves_previous_outputs(api, monkeypatch, side_stream):
+        inputs, counts, _, _ = _operands(4, 1024, True)
+        guards = _poison_outputs(monkeypatch)
+        stream = torch.cuda.Stream() if side_stream else torch.cuda.current_stream()
+        stream.wait_stream(torch.cuda.current_stream())
+        launch = cuda.CUstream(stream.cuda_stream)
+        first = _call(api, inputs, 128, current_stream=launch)
+        torch.cuda.current_stream().wait_stream(stream)
+        rows = sum(counts)
+>       snapshot = tuple(x.clone() for x in _dequantized(first, rows, 1024, True))
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_grouped_swiglu_sfd_tiles.py:160: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+result = {'c_tensor': tensor([[-3.1445e-01, -1.1172e+00,  6.9922e-01,  ...,  9.0234e-01,
+         -1.5137e-01,  5.9766e-01],
+  ...      [nan, nan, nan, nan],
+            [nan, nan, nan, nan]]]]]], device='cuda:0',
+       dtype=torch.float8_e8m0fnu)}
+rows = 1280, n = 1024, canonical = True
+
+    def _dequantized(result, rows, n, canonical):
+        d = result["d_tensor"].reshape(rows, n // 2).float()
+        dc = result["d_col_tensor"].reshape(rows, n // 2).float()
+        row = _logical_codes(result["sfd_row_tensor"], rows, n // 2, canonical)
+        col = _logical_codes(result["sfd_col_tensor"], n // 2, rows, canonical)
+>       assert not bool((row == 255).any()), "live row SFD contains unwritten output poison"
+E       AssertionError: live row SFD contains unwritten output poison
+E       assert not True
+E        +  where True = bool(tensor(True, device='cuda:0'))
+E        +    where tensor(True, device='cuda:0') = <built-in method any of Tensor object at 0xfffcac1889b0>()
+E        +      where <built-in method any of Tensor object at 0xfffcac1889b0> = tensor([[255, 255, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ....5, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ..., 255, 255, 255]], device='cuda:0',\n       dtype=torch.uint8) == 255.any
+
+test_grouped_swiglu_sfd_tiles.py:88: AssertionError
+_________ test_narrow_sfd_plan_reuse_preserves_previous_outputs[False] _________
+[gw0] linux -- Python 3.12.3 /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3wrappercontrol/bin/python
+
+api = <module 'cudnn.gemm.cutedsl.grouped.swiglu.api' from '/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xfffcb40616a0>
+side_stream = False
+
+    @pytest.mark.parametrize("side_stream", [True, False])
+    def test_narrow_sfd_plan_reuse_preserves_previous_outputs(api, monkeypatch, side_stream):
+        inputs, counts, _, _ = _operands(4, 1024, True)
+        guards = _poison_outputs(monkeypatch)
+        stream = torch.cuda.Stream() if side_stream else torch.cuda.current_stream()
+        stream.wait_stream(torch.cuda.current_stream())
+        launch = cuda.CUstream(stream.cuda_stream)
+        first = _call(api, inputs, 128, current_stream=launch)
+        torch.cuda.current_stream().wait_stream(stream)
+        rows = sum(counts)
+>       snapshot = tuple(x.clone() for x in _dequantized(first, rows, 1024, True))
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_grouped_swiglu_sfd_tiles.py:160: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+result = {'c_tensor': tensor([[-3.1445e-01, -1.1172e+00,  6.9922e-01,  ...,  9.0234e-01,
+         -1.5137e-01,  5.9766e-01],
+  ...      [nan, nan, nan, nan],
+            [nan, nan, nan, nan]]]]]], device='cuda:0',
+       dtype=torch.float8_e8m0fnu)}
+rows = 1280, n = 1024, canonical = True
+
+    def _dequantized(result, rows, n, canonical):
+        d = result["d_tensor"].reshape(rows, n // 2).float()
+        dc = result["d_col_tensor"].reshape(rows, n // 2).float()
+        row = _logical_codes(result["sfd_row_tensor"], rows, n // 2, canonical)
+        col = _logical_codes(result["sfd_col_tensor"], n // 2, rows, canonical)
+>       assert not bool((row == 255).any()), "live row SFD contains unwritten output poison"
+E       AssertionError: live row SFD contains unwritten output poison
+E       assert not True
+E        +  where True = bool(tensor(True, device='cuda:0'))
+E        +    where tensor(True, device='cuda:0') = <built-in method any of Tensor object at 0xfffcac232350>()
+E        +      where <built-in method any of Tensor object at 0xfffcac232350> = tensor([[255, 255, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ....5, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ..., 255, 255, 255]], device='cuda:0',\n       dtype=torch.uint8) == 255.any
+
+test_grouped_swiglu_sfd_tiles.py:88: AssertionError
+_______________ test_narrow_sfd_graph_replay_changes_live_scales _______________
+[gw0] linux -- Python 3.12.3 /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3wrappercontrol/bin/python
+
+api = <module 'cudnn.gemm.cutedsl.grouped.swiglu.api' from '/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xfffcb412d340>
+
+    def test_narrow_sfd_graph_replay_changes_live_scales(api, monkeypatch):
+        inputs, counts, _, _ = _operands(4, 512, True)
+        guards = _poison_outputs(monkeypatch)
+        _call(api, inputs, 128)
+        torch.cuda.synchronize()
+        graph = torch.cuda.CUDAGraph()
+        try:
+            with torch.cuda.graph(graph):
+                captured = _call(api, inputs, 128)
+            graph.replay()
+>           first = tuple(x.clone() for x in _dequantized(captured, sum(counts), 512, True))
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_grouped_swiglu_sfd_tiles.py:186: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+result = {'c_tensor': tensor([[ 1.3047, -0.5820, -0.2617,  ...,  0.4844,  0.6797,  0.6367],
+        [ 0.0260, -1.9453,  0.5078,...      [nan, nan, nan, nan],
+            [nan, nan, nan, nan]]]]]], device='cuda:0',
+       dtype=torch.float8_e8m0fnu)}
+rows = 1280, n = 512, canonical = True
+
+    def _dequantized(result, rows, n, canonical):
+        d = result["d_tensor"].reshape(rows, n // 2).float()
+        dc = result["d_col_tensor"].reshape(rows, n // 2).float()
+        row = _logical_codes(result["sfd_row_tensor"], rows, n // 2, canonical)
+        col = _logical_codes(result["sfd_col_tensor"], n // 2, rows, canonical)
+>       assert not bool((row == 255).any()), "live row SFD contains unwritten output poison"
+E       AssertionError: live row SFD contains unwritten output poison
+E       assert not True
+E        +  where True = bool(tensor(True, device='cuda:0'))
+E        +    where tensor(True, device='cuda:0') = <built-in method any of Tensor object at 0xfffcac0d8050>()
+E        +      where <built-in method any of Tensor object at 0xfffcac0d8050> = tensor([[255, 255, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ....5, 255,  ..., 255, 255, 255],\n        [255, 255, 255,  ..., 255, 255, 255]], device='cuda:0',\n       dtype=torch.uint8) == 255.any
+
+test_grouped_swiglu_sfd_tiles.py:88: AssertionError
+- generated xml file: /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-sfd-red-real-conftest-r2-20261001/junit.xml -
+=========================== short test summary info ============================
+FAILED test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_matches_wide_and_independent_activation[True-1-256]
+FAILED test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_matches_wide_and_independent_activation[True-4-512]
+FAILED test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_matches_wide_and_independent_activation[True-31-1024]
+FAILED test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_matches_wide_and_independent_activation[True-33-1024]
+FAILED test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_matches_wide_and_independent_activation[False-1-256]
+FAILED test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_matches_wide_and_independent_activation[False-4-512]
+FAILED test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_matches_wide_and_independent_activation[False-31-1024]
+FAILED test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_matches_wide_and_independent_activation[False-33-1024]
+FAILED test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_plan_reuse_preserves_previous_outputs[True]
+FAILED test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_plan_reuse_preserves_previous_outputs[False]
+FAILED test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_graph_replay_changes_live_scales
+11 failed in 34.29s

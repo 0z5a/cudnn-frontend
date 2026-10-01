@@ -1,0 +1,53 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Final independent-PR head: regression, full24 diagnostics and explicit hybrid E2E."""
+import fcntl
+import json
+import os
+from pathlib import Path
+import subprocess
+import time
+
+r=Path('/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928')
+logger=Path('/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py')
+source=r/'a3sfdlatest4'
+head='7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744'
+python=r/'venvs/a3sfdlatest4/bin/python'
+native=json.loads((r/'results/a3-latest4-native-provenance-20261001.json').read_text())
+assert native['head']==head and native['native_build']=='NOT_REPEATED_UNCHANGED_INPUTS_VERIFIED'
+result=r/'results/a3-latest4-correctness-tests-20261001'
+assert not result.exists()
+env=os.environ.copy()
+env.update(PYTHONPATH=str(r/'tools'),A3_EXPECT_SOURCE=str(source),A3_EXPECT_HEAD=head,A3_IMPORT_LOG=str(result/'imports'))
+tests=[
+    'gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py',
+    'gemm/cutedsl/test_swiglu_amax_per_call.py',
+    'gemm/cutedsl/test_swiglu_wrapper_launch_stream.py',
+    'gemm/cutedsl/test_grouped_gemm_swiglu.py::test_grouped_gemm_swiglu_wrapper_fp4',
+    'gemm/cutedsl/test_grouped_gemm_swiglu.py::test_grouped_gemm_swiglu_wrapper_fp8',
+    'gemm/cutedsl/test_grouped_gemm_canonical_layouts.py::test_grouped_gemm_swiglu_canonical_matches_legacy',
+    'gemm/cutedsl/test_grouped_gemm_canonical_layouts.py::test_grouped_gemm_swiglu_canonical_bf16_prob',
+]
+with open('/tmp/codex-thor-perf.lock','a') as lock:
+    fcntl.flock(lock,fcntl.LOCK_EX)
+    assert subprocess.run(['systemctl','is-active','vllm.service'],capture_output=True,text=True).stdout.strip()=='inactive'
+    rc=subprocess.run([str(python),str(logger),'--out',str(result),'--cwd',str(source/'test/python'),'--timeout','1200','--',str(python),'-m','pytest','-p','a3_repair_import_probe_20261001','-p','a3_repair_matrix_select_20261001','-o','addopts=','-q','--grouped-gemm-nkl=1024,1024,4','--junitxml='+str(result/'junit.xml'),*tests],env=env).returncode
+    assert subprocess.run(['systemctl','is-active','vllm.service'],capture_output=True,text=True).stdout.strip()=='inactive'
+assert rc==0 and json.loads((result/'run.json').read_text())['returncode']==0
+print(json.dumps({'tests_result':str(result),'real_returncode':0,'head':head}),flush=True)
+output=r/'results/a3-model-repair-a3sfdlatest4-n256-20261001'
+assert not output.exists()
+with open('/tmp/codex-thor-perf.lock','a') as lock:
+    fcntl.flock(lock,fcntl.LOCK_EX)
+    rc=subprocess.run([str(python),str(logger),'--out',str(output)+'-launch','--cwd',str(r),'--timeout','1200','--',str(python),str(r/'tools/a3_model_e2e_mergefix_20261001.py'),'--mode','diagnostic','--expected-source',str(source),'--expected-head',head,'--tile','256','--out',str(output)]).returncode
+assert rc==0 and json.loads(Path(str(output)+'-launch/run.json').read_text())['returncode']==0
+meta=json.loads((output/'result.json').read_text())
+assert meta['reference_quality_pass'] is False and meta['total_native_calls']==2761
+output=r/'results/a3-hybrid-a3sfdlatest4-n256-20261001'
+assert not output.exists()
+rc=subprocess.run([str(python),str(logger),'--out',str(output)+'-launch','--cwd',str(r),'--timeout','1200','--',str(python),str(r/'tools/a3_granite_hybrid_e2e_20261001.py'),'--expected-source',str(source),'--expected-head',head,'--tile','256','--out',str(output)]).returncode
+assert rc==0 and json.loads(Path(str(output)+'-launch/run.json').read_text())['returncode']==0
+meta=json.loads((output/'result.json').read_text())
+assert meta['full_logit_quality_pass'] is True and meta['total_native_calls']==122 and meta['mxfp8_layers']==[23]
+assert subprocess.run(['systemctl','is-active','vllm.service'],capture_output=True,text=True).stdout.strip()=='inactive'
+print(json.dumps({'stage':'FINAL_CORRECTNESS_AND_MODEL_DIAGNOSTICS_COMPLETE','head':head,'all24_mxfp8_quality_pass':False,'explicit_layer23_hybrid_quality_pass':True,'formal_performance':'NOT_RUN'}),flush=True)

@@ -1,0 +1,88 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Separate output normalization and vector math from the frozen model accuracy failure."""
+import fcntl
+import importlib.util
+import json
+from pathlib import Path
+import subprocess
+
+spec = importlib.util.spec_from_file_location('a3_e2e', Path(__file__).with_name('a3_model_e2e_20261001.py'))
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+t = m.torch
+OUT = m.ROOT / 'results/a3-plain-d-diagnosis-r3-20261001'
+OUT.mkdir(exist_ok=False)
+plans = {}
+vector = True
+
+
+def plain_wrapper(**args):
+    a, b = args['a_tensor'], args['b_tensor']
+    c = t.empty((a.shape[0], b.shape[1]), dtype=t.bfloat16, device=a.device)
+    d = t.empty((a.shape[0], b.shape[1] // 2), dtype=t.bfloat16, device=a.device)
+    dcol = t.empty_like(d)
+    amax = t.full((b.shape[0], 1), -float('inf'), dtype=t.float32, device=a.device)
+    key = (vector, args['mma_tiler_mn'])
+    if key not in plans:
+        plan = m.api.GroupedGemmSwigluSm100(
+            sample_a=a, sample_b=b, sample_c=c, sample_d=d,
+            sample_sfa=args['sfa_tensor'], sample_sfb=args['sfb_tensor'],
+            sample_padded_offsets=args['padded_offsets'], sample_alpha=args['alpha_tensor'],
+            sample_amax=amax, sample_d_col=dcol, sample_sfd_row=None, sample_sfd_col=None,
+            sample_norm_const=None, sample_prob=None, acc_dtype=t.float32,
+            mma_tiler_mn=args['mma_tiler_mn'], cluster_shape_mn=(2, 1),
+            sf_vec_size=32, vector_f32=vector, m_aligned=256,
+        )
+        assert plan.check_support()
+        plan.compile()
+        plans[key] = plan
+    plans[key].execute(
+        a_tensor=a, b_tensor=b, c_tensor=c, d_tensor=d,
+        sfa_tensor=args['sfa_tensor'], sfb_tensor=args['sfb_tensor'],
+        padded_offsets=args['padded_offsets'], alpha_tensor=args['alpha_tensor'],
+        d_col_tensor=dcol, amax_tensor=amax, current_stream=args['current_stream'],
+    )
+    return {'c_tensor': c, 'd_tensor': d, 'amax_tensor': amax}
+
+
+t.set_num_threads(4)
+t.backends.cuda.matmul.allow_tf32 = False
+t.backends.cudnn.allow_tf32 = False
+t.set_float32_matmul_precision('highest')
+with open('/tmp/codex-thor-perf.lock', 'a') as lock:
+    fcntl.flock(lock, fcntl.LOCK_EX)
+    assert subprocess.run(['systemctl', 'is-active', 'vllm.service'], capture_output=True, text=True).stdout.strip() == 'inactive'
+    model = m.AutoModelForCausalLM.from_pretrained(m.MODEL, dtype=t.bfloat16, attn_implementation='sdpa', local_files_only=True, trust_remote_code=False).eval().cuda()
+    tokenizer = m.AutoTokenizer.from_pretrained(m.MODEL, local_files_only=True, trust_remote_code=False)
+    adapters = [m.A3ExpertAdapter(e, i, (256, 256)) for i, e in enumerate(model.modules()) if isinstance(e, m.GraniteMoeExperts)]
+    messages, prompts, workloads = m.load_inputs(tokenizer)
+    saved = t.load(m.ROOT / 'results/a3-model-e2e-regression-20261001/control/outputs.pt', map_location='cpu', weights_only=True)
+    m.api.grouped_gemm_swiglu_wrapper_sm100 = plain_wrapper
+    m.dequantize_wrapper_d = lambda output, norm: output['d_tensor']
+    rows, outputs = [], {}
+    with t.inference_mode():
+        for vector in (True, False):
+            m.attach(adapters, 'native')
+            for case, ids in enumerate((prompts[0], prompts[1], workloads['256'])):
+                before = m.NATIVE_CALLS
+                y = model(input_ids=ids.cuda(), use_cache=False).logits.cpu()
+                assert m.NATIVE_CALLS - before == 24
+                row = {'vector_f32': vector, 'case': case, 'plain_native_vs_quantized_oracle': m.difference(y, saved[f'forward_{case}_reference']), 'plain_native_vs_original_bf16': m.difference(y, saved[f'forward_{case}_stock']), 'plain_native_vs_normalized_native': m.difference(y, saved[f'forward_{case}_native']), 'native_calls': 24}
+                rows.append(row)
+                outputs[f'case{case}-vector{vector}'] = y
+                print(json.dumps(row), flush=True)
+        generations = []
+        for backend in ('stock', 'reference', 'native'):
+            m.attach(adapters, backend)
+            for case, ids in enumerate(prompts):
+                r = m.request(model, ids.cuda(), 16)
+                tokens = r['ids'][0].tolist()
+                if tokenizer.eos_token_id in tokens:
+                    tokens = tokens[:tokens.index(tokenizer.eos_token_id)]
+                row = {'backend': backend, 'case': case, 'text': tokenizer.decode(tokens, skip_special_tokens=True).strip(), 'token_ids': r['ids'].tolist(), 'native_calls': r['native_calls']}
+                generations.append(row)
+                print(json.dumps(row), flush=True)
+        result = {'stage': 'DIAGNOSTIC_COMPLETE', 'scope': __doc__, 'source_head': subprocess.check_output(['git', '-C', str(m.ROOT / 'a3wrappercontrol'), 'rev-parse', 'HEAD'], text=True).strip(), 'imports': {'cudnn': m.cudnn.__file__, 'native': m._compiled_module.__file__}, 'rows': rows, 'generations': generations, 'native_plans': m.NATIVE_PLANS, 'formal_performance': 'NOT_RUN', 'service': 'inactive'}
+        t.save(outputs, OUT / 'outputs.pt')
+        (OUT / 'result.json').write_text(json.dumps(result, indent=2))

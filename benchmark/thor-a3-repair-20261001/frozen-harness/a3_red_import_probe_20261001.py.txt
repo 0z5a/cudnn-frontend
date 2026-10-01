@@ -1,0 +1,58 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Verify old frozen production; disclose its unrelated preserved stream detector."""
+import hashlib
+import importlib
+import json
+import os
+from pathlib import Path
+import subprocess
+
+records = {}
+calls = 0
+
+
+def record(name,module):
+    source=Path(os.environ['A3_EXPECT_SOURCE']).resolve()
+    path=Path(module.__file__).resolve()
+    assert path.is_relative_to(source/'python'),(name,path,source)
+    digest=hashlib.sha256(path.read_bytes()).hexdigest()
+    if path.suffix=='.py':
+        blob=subprocess.check_output(['git','-C',str(source),'show','HEAD:'+str(path.relative_to(source))])
+        assert hashlib.sha256(blob).hexdigest()==digest,(name,path)
+    records[name]={'path':str(path),'sha256':digest}
+
+
+def pytest_sessionstart(session):
+    import cudnn
+    from cudnn import _compiled_module
+    from cudnn.gemm.cutedsl.grouped.swiglu import api
+    source=Path(os.environ['A3_EXPECT_SOURCE']).resolve()
+    head=subprocess.check_output(['git','-C',str(source),'rev-parse','HEAD'],text=True).strip()
+    assert head==os.environ['A3_EXPECT_HEAD']
+    status=subprocess.check_output(['git','-C',str(source),'status','--porcelain','--untracked-files=no'],text=True)
+    assert status==' M test/python/core/torch/test_torch_stream.py\n',status
+    assert not subprocess.check_output(['git','-C',str(source),'diff','HEAD','--','python/cudnn'],text=True)
+    preserved=source/'test/python/core/torch/test_torch_stream.py'
+    records.update(source_head=head,unrelated_preserved_test_status=status,preserved_test_sha256=hashlib.sha256(preserved.read_bytes()).hexdigest())
+    for name,module in [('cudnn',cudnn),('binding',_compiled_module),('swiglu_api',api)]:
+        record(name,module)
+    original=api.GroupedGemmSwigluSm100.execute
+    def execute(self,*args,**kwargs):
+        global calls
+        value=original(self,*args,**kwargs)
+        calls+=1
+        kernel=self._kernel
+        record(kernel.__module__+'.'+kernel.__name__,importlib.import_module(kernel.__module__))
+        return value
+    api.GroupedGemmSwigluSm100.execute=execute
+
+
+def pytest_sessionfinish(session,exitstatus):
+    source=Path(os.environ['A3_EXPECT_SOURCE']).resolve()
+    if 'preserved_test_sha256' in records:
+        assert hashlib.sha256((source/'test/python/core/torch/test_torch_stream.py').read_bytes()).hexdigest()==records['preserved_test_sha256']
+    log=Path(os.environ['A3_IMPORT_LOG'])
+    log.mkdir(exist_ok=True,parents=True)
+    records.update(actual_native_calls=calls,pytest_exitstatus=int(exitstatus),worker=os.environ.get('PYTEST_XDIST_WORKER'))
+    (log/(str(os.getpid())+'.json')).write_text(json.dumps(records,indent=2))

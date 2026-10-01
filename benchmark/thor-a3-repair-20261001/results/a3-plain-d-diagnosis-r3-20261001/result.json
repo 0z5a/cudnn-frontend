@@ -1,0 +1,375 @@
+{
+  "stage": "DIAGNOSTIC_COMPLETE",
+  "scope": "Separate output normalization and vector math from the frozen model accuracy failure.",
+  "source_head": "83374af96ec3f8e22dd159d278bdf25acab17a4e",
+  "imports": {
+    "cudnn": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/__init__.py",
+    "native": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so"
+  },
+  "rows": [
+    {
+      "vector_f32": true,
+      "case": 0,
+      "plain_native_vs_quantized_oracle": {
+        "max_abs": 8.09375,
+        "relative_l2": 0.20117458701133728,
+        "argmax_equal_fraction": 0.835616409778595
+      },
+      "plain_native_vs_original_bf16": {
+        "max_abs": 13.6953125,
+        "relative_l2": 0.2417554408311844,
+        "argmax_equal_fraction": 0.7808219194412231
+      },
+      "plain_native_vs_normalized_native": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_calls": 24
+    },
+    {
+      "vector_f32": true,
+      "case": 1,
+      "plain_native_vs_quantized_oracle": {
+        "max_abs": 8.09375,
+        "relative_l2": 0.21341614425182343,
+        "argmax_equal_fraction": 0.8285714387893677
+      },
+      "plain_native_vs_original_bf16": {
+        "max_abs": 13.6953125,
+        "relative_l2": 0.23851339519023895,
+        "argmax_equal_fraction": 0.800000011920929
+      },
+      "plain_native_vs_normalized_native": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_calls": 24
+    },
+    {
+      "vector_f32": true,
+      "case": 2,
+      "plain_native_vs_quantized_oracle": {
+        "max_abs": 6.0625,
+        "relative_l2": 0.07042684406042099,
+        "argmax_equal_fraction": 0.953125
+      },
+      "plain_native_vs_original_bf16": {
+        "max_abs": 6.0615234375,
+        "relative_l2": 0.08172731101512909,
+        "argmax_equal_fraction": 0.9453125
+      },
+      "plain_native_vs_normalized_native": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_calls": 24
+    },
+    {
+      "vector_f32": false,
+      "case": 0,
+      "plain_native_vs_quantized_oracle": {
+        "max_abs": 8.09375,
+        "relative_l2": 0.20117458701133728,
+        "argmax_equal_fraction": 0.835616409778595
+      },
+      "plain_native_vs_original_bf16": {
+        "max_abs": 13.6953125,
+        "relative_l2": 0.2417554408311844,
+        "argmax_equal_fraction": 0.7808219194412231
+      },
+      "plain_native_vs_normalized_native": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_calls": 24
+    },
+    {
+      "vector_f32": false,
+      "case": 1,
+      "plain_native_vs_quantized_oracle": {
+        "max_abs": 8.09375,
+        "relative_l2": 0.21341614425182343,
+        "argmax_equal_fraction": 0.8285714387893677
+      },
+      "plain_native_vs_original_bf16": {
+        "max_abs": 13.6953125,
+        "relative_l2": 0.23851339519023895,
+        "argmax_equal_fraction": 0.800000011920929
+      },
+      "plain_native_vs_normalized_native": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_calls": 24
+    },
+    {
+      "vector_f32": false,
+      "case": 2,
+      "plain_native_vs_quantized_oracle": {
+        "max_abs": 6.0625,
+        "relative_l2": 0.07042684406042099,
+        "argmax_equal_fraction": 0.953125
+      },
+      "plain_native_vs_original_bf16": {
+        "max_abs": 6.0615234375,
+        "relative_l2": 0.08172731101512909,
+        "argmax_equal_fraction": 0.9453125
+      },
+      "plain_native_vs_normalized_native": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_calls": 24
+    }
+  ],
+  "generations": [
+    {
+      "backend": "stock",
+      "case": 0,
+      "text": "2 + 2 = 4",
+      "token_ids": [
+        [
+          36,
+          474,
+          225,
+          36,
+          280,
+          225,
+          38,
+          0,
+          203,
+          203,
+          77,
+          27652,
+          79,
+          886,
+          3632,
+          432
+        ]
+      ],
+      "native_calls": 0
+    },
+    {
+      "backend": "stock",
+      "case": 1,
+      "text": "The sky appears blue because of a process called Rayleigh scattering, where",
+      "token_ids": [
+        [
+          1318,
+          26718,
+          12929,
+          10087,
+          3301,
+          432,
+          312,
+          2164,
+          3823,
+          23480,
+          274,
+          1799,
+          26703,
+          299,
+          30,
+          2154
+        ]
+      ],
+      "native_calls": 0
+    },
+    {
+      "backend": "stock",
+      "case": 2,
+      "text": "I'm sorry for any confusion, but as a responsible AI, I don't",
+      "token_ids": [
+        [
+          59,
+          3464,
+          17636,
+          436,
+          1346,
+          25365,
+          30,
+          1273,
+          619,
+          312,
+          18392,
+          19551,
+          30,
+          439,
+          2800,
+          1330
+        ]
+      ],
+      "native_calls": 0
+    },
+    {
+      "backend": "reference",
+      "case": 0,
+      "text": "2 + 2 = 4",
+      "token_ids": [
+        [
+          36,
+          474,
+          225,
+          36,
+          280,
+          225,
+          38,
+          0,
+          203,
+          203,
+          77,
+          27652,
+          79,
+          886,
+          3632,
+          432
+        ]
+      ],
+      "native_calls": 0
+    },
+    {
+      "backend": "reference",
+      "case": 1,
+      "text": "The sky appears blue because of a process called Rayleigh scattering, where",
+      "token_ids": [
+        [
+          1318,
+          26718,
+          12929,
+          10087,
+          3301,
+          432,
+          312,
+          2164,
+          3823,
+          23480,
+          274,
+          1799,
+          26703,
+          299,
+          30,
+          2154
+        ]
+      ],
+      "native_calls": 0
+    },
+    {
+      "backend": "reference",
+      "case": 2,
+      "text": "I'm sorry for any confusion, but as a responsible AI, I don't",
+      "token_ids": [
+        [
+          59,
+          3464,
+          17636,
+          436,
+          1346,
+          25365,
+          30,
+          1273,
+          619,
+          312,
+          18392,
+          19551,
+          30,
+          439,
+          2800,
+          1330
+        ]
+      ],
+      "native_calls": 0
+    },
+    {
+      "backend": "native",
+      "case": 0,
+      "text": "2 + 2 = 4",
+      "token_ids": [
+        [
+          36,
+          474,
+          225,
+          36,
+          280,
+          225,
+          38,
+          0,
+          203,
+          203,
+          77,
+          27652,
+          79,
+          886,
+          3632,
+          432
+        ]
+      ],
+      "native_calls": 384
+    },
+    {
+      "backend": "native",
+      "case": 1,
+      "text": "The sky appears blue due to a process called Rayleigh scattering, where",
+      "token_ids": [
+        [
+          1318,
+          26718,
+          12929,
+          10087,
+          7254,
+          372,
+          312,
+          2164,
+          3823,
+          23480,
+          274,
+          1799,
+          26703,
+          299,
+          30,
+          2154
+        ]
+      ],
+      "native_calls": 384
+    },
+    {
+      "backend": "native",
+      "case": 2,
+      "text": "I'm sorry for any confusion, but as a responsible AI, I don't",
+      "token_ids": [
+        [
+          59,
+          3464,
+          17636,
+          436,
+          1346,
+          25365,
+          30,
+          1273,
+          619,
+          312,
+          18392,
+          19551,
+          30,
+          439,
+          2800,
+          1330
+        ]
+      ],
+      "native_calls": 384
+    }
+  ],
+  "native_plans": {
+    "cudnn.gemm.cutedsl.grouped.glu.moe_blockscaled_grouped_gemm_glu_bias.BlockScaledMoEGroupedGemmGluBiasKernel": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_bias.py",
+      "sha256": "ac515fb8a81c89e13141fb788f6fd3e48b9722efd452d639a07b66ae938b3cf5"
+    }
+  },
+  "formal_performance": "NOT_RUN",
+  "service": "inactive"
+}

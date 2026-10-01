@@ -1,0 +1,5 @@
+{"stage": "MODEL_LOADED", "parameters": 1334628352, "source_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"}
+{"stage": "FORWARD_CHECKED", "case": 0, "oracle": {"max_abs": 7.4375, "relative_l2": 0.19155704975128174, "argmax_equal_fraction": 0.8767123222351074}, "bf16": {"max_abs": 8.923828125, "relative_l2": 0.2500317394733429, "argmax_equal_fraction": 0.8493150472640991}}
+{"stage": "FORWARD_CHECKED", "case": 1, "oracle": {"max_abs": 7.4375, "relative_l2": 0.18657459318637848, "argmax_equal_fraction": 0.9142857193946838}, "bf16": {"max_abs": 8.923828125, "relative_l2": 0.23599834740161896, "argmax_equal_fraction": 0.8428571224212646}}
+{"stage": "FORWARD_CHECKED", "case": 2, "oracle": {"max_abs": 6.0, "relative_l2": 0.07221560180187225, "argmax_equal_fraction": 0.96875}, "bf16": {"max_abs": 5.9375, "relative_l2": 0.08284919708967209, "argmax_equal_fraction": 0.9453125}}
+{"stage": "DIAGNOSTIC_COMPLETE", "mode": "diagnostic", "native_calls": 2761}

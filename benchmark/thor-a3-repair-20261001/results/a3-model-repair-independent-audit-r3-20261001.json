@@ -1,0 +1,487 @@
+{
+  "stage": "SOURCE_AND_TILE_PARITY_PASS_FULL24_MXFP8_QUALITY_FAILED",
+  "runs": [
+    {
+      "name": "a3-model-repair-a3sfdlatest2-n256-20261001",
+      "head": "052f88de8b22826904d2ab98ab77019ee9474466",
+      "real_returncode": 0,
+      "native_calls": 2761,
+      "tile": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "a3-model-repair-a3modelrepairlatest2-n256-20261001",
+      "head": "ad33459c19969eff5170e32d4319ff27183b8796",
+      "real_returncode": 0,
+      "native_calls": 2761,
+      "tile": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "a3-model-repair-a3modelrepairlatest2-n128-20261001",
+      "head": "ad33459c19969eff5170e32d4319ff27183b8796",
+      "real_returncode": 0,
+      "native_calls": 2761,
+      "tile": [
+        256,
+        128
+      ]
+    },
+    {
+      "name": "a3-model-repair-a3sfdlatest3-n256-20261001",
+      "head": "5227f1e07c5432e94033b2ed0461b4a9a2819c1b",
+      "real_returncode": 0,
+      "native_calls": 2761,
+      "tile": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "a3-model-repair-a3sfdlatest4-n256-20261001",
+      "head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+      "real_returncode": 0,
+      "native_calls": 2761,
+      "tile": [
+        256,
+        256
+      ]
+    }
+  ],
+  "saved_tensor_count_per_run": 20,
+  "tensor_digests": [
+    {
+      "name": "operator_native",
+      "shape": [
+        13,
+        1024
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "ba4ca04b9737450dcfdf6ed276a6afb162de0a73efddcd5f30ce3148b0bec63d",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_0_stock",
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d821f2ba2944f24a4bbd62604d4fdc0249efba46529f018f7ceed0b0faf25c03",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_0_reference",
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "1e94eb2d0a10315211e02a38d759c809a1710b7ac530c3a64c41fbc4f9bc28a6",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_0_native",
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d3edf9da9463a7e27b3ef558b4723becc41c4661973b4682ceb23091aade1e70",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_1_stock",
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "11ecfe7300f0a2e2c8d26b5983344bec3c14117d141f794d948bf7f8ef5a1129",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_1_reference",
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "f32a71d378cf281c4386e5c30ce0eed687a5b491ab3f87df4153536fc42eecb0",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_1_native",
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d4c3622d38b773611ede30e78779a5fa4ef08531bbcef5aa05e12be0a1127ed0",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_2_stock",
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "0c24431f760ca0958414a86f55d1b3c837ccc6bfbc6c5a49329e6a62302cb056",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_2_reference",
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "58a44571128dfe749fee1fe5cdff39b7eb2d7efe73ba19529595d341787493df",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "forward_2_native",
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "47e54ecce20efef4d70920acfc3e118f6bf7f093fd9fbba12fd6ed7dc592896f",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_0_ids",
+      "shape": [
+        1,
+        16
+      ],
+      "dtype": "torch.int64",
+      "sha256": "fa00cb5388f31796f5fc763c8f1a0831c53a2956832d77c8a5ff7d8d05f1e247",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_0_logits",
+      "shape": [
+        1,
+        16,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "b616ebf6bc071b9ee47759bd16d3124165d8d737aef59cfd9233b11700bb2d4c",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_1_ids",
+      "shape": [
+        1,
+        16
+      ],
+      "dtype": "torch.int64",
+      "sha256": "a37e97451bbcb4aab5804c90278795ddecd43ffc0dbedf38843c0ee4fe02e88d",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_1_logits",
+      "shape": [
+        1,
+        16,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "274e4468da2cc824c5ca824619f7b66e71e5ad0a1a817a3c6b142e45b4363622",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_2_ids",
+      "shape": [
+        1,
+        16
+      ],
+      "dtype": "torch.int64",
+      "sha256": "19fd278742748e99918277ae816c11c4e75e8611e399cde36af6a9aa85f5dc57",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "generation_2_logits",
+      "shape": [
+        1,
+        16,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "43bad7e0ccc9bcea2b070fccacf797e8ba3a4b64950c54f8f07dfb4601f9d355",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "request_256_ids",
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "eb10425ce5f5b99d810b48d3e62b33eeac7013a2b6573974c6ec376307f5fac4",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "request_256_logits",
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "c6f1180c34cebc6e1be534418d7977c408cfc1cc40b66a52d4c62385b8ad9b12",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "request_1024_ids",
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "74ca2fef8293b476859f524249eb60dc727fb6bbf33a889e13bb4f0b8a005770",
+      "same_bytes_across_all_sources_and_tiles": true
+    },
+    {
+      "name": "request_1024_logits",
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "367794d3152ae76a2c4cd218c0660b63c57173a76cc922a06a62722014b02919",
+      "same_bytes_across_all_sources_and_tiles": true
+    }
+  ],
+  "quality_checks": [
+    {
+      "run": "a3-model-repair-a3sfdlatest2-n256-20261001",
+      "case": 0,
+      "quantized_oracle": {
+        "relative_l2": 0.19155704975128174,
+        "threshold": 0.01,
+        "passed": false
+      },
+      "original_bf16": {
+        "relative_l2": 0.2500317394733429,
+        "threshold": 0.05,
+        "passed": false
+      }
+    },
+    {
+      "run": "a3-model-repair-a3sfdlatest2-n256-20261001",
+      "case": 1,
+      "quantized_oracle": {
+        "relative_l2": 0.18657459318637848,
+        "threshold": 0.01,
+        "passed": false
+      },
+      "original_bf16": {
+        "relative_l2": 0.23599834740161896,
+        "threshold": 0.05,
+        "passed": false
+      }
+    },
+    {
+      "run": "a3-model-repair-a3sfdlatest2-n256-20261001",
+      "case": 2,
+      "quantized_oracle": {
+        "relative_l2": 0.07221560180187225,
+        "threshold": 0.01,
+        "passed": false
+      },
+      "original_bf16": {
+        "relative_l2": 0.08284919708967209,
+        "threshold": 0.05,
+        "passed": false
+      }
+    },
+    {
+      "run": "a3-model-repair-a3modelrepairlatest2-n256-20261001",
+      "case": 0,
+      "quantized_oracle": {
+        "relative_l2": 0.19155704975128174,
+        "threshold": 0.01,
+        "passed": false
+      },
+      "original_bf16": {
+        "relative_l2": 0.2500317394733429,
+        "threshold": 0.05,
+        "passed": false
+      }
+    },
+    {
+      "run": "a3-model-repair-a3modelrepairlatest2-n256-20261001",
+      "case": 1,
+      "quantized_oracle": {
+        "relative_l2": 0.18657459318637848,
+        "threshold": 0.01,
+        "passed": false
+      },
+      "original_bf16": {
+        "relative_l2": 0.23599834740161896,
+        "threshold": 0.05,
+        "passed": false
+      }
+    },
+    {
+      "run": "a3-model-repair-a3modelrepairlatest2-n256-20261001",
+      "case": 2,
+      "quantized_oracle": {
+        "relative_l2": 0.07221560180187225,
+        "threshold": 0.01,
+        "passed": false
+      },
+      "original_bf16": {
+        "relative_l2": 0.08284919708967209,
+        "threshold": 0.05,
+        "passed": false
+      }
+    },
+    {
+      "run": "a3-model-repair-a3modelrepairlatest2-n128-20261001",
+      "case": 0,
+      "quantized_oracle": {
+        "relative_l2": 0.19155704975128174,
+        "threshold": 0.01,
+        "passed": false
+      },
+      "original_bf16": {
+        "relative_l2": 0.2500317394733429,
+        "threshold": 0.05,
+        "passed": false
+      }
+    },
+    {
+      "run": "a3-model-repair-a3modelrepairlatest2-n128-20261001",
+      "case": 1,
+      "quantized_oracle": {
+        "relative_l2": 0.18657459318637848,
+        "threshold": 0.01,
+        "passed": false
+      },
+      "original_bf16": {
+        "relative_l2": 0.23599834740161896,
+        "threshold": 0.05,
+        "passed": false
+      }
+    },
+    {
+      "run": "a3-model-repair-a3modelrepairlatest2-n128-20261001",
+      "case": 2,
+      "quantized_oracle": {
+        "relative_l2": 0.07221560180187225,
+        "threshold": 0.01,
+        "passed": false
+      },
+      "original_bf16": {
+        "relative_l2": 0.08284919708967209,
+        "threshold": 0.05,
+        "passed": false
+      }
+    },
+    {
+      "run": "a3-model-repair-a3sfdlatest3-n256-20261001",
+      "case": 0,
+      "quantized_oracle": {
+        "relative_l2": 0.19155704975128174,
+        "threshold": 0.01,
+        "passed": false
+      },
+      "original_bf16": {
+        "relative_l2": 0.2500317394733429,
+        "threshold": 0.05,
+        "passed": false
+      }
+    },
+    {
+      "run": "a3-model-repair-a3sfdlatest3-n256-20261001",
+      "case": 1,
+      "quantized_oracle": {
+        "relative_l2": 0.18657459318637848,
+        "threshold": 0.01,
+        "passed": false
+      },
+      "original_bf16": {
+        "relative_l2": 0.23599834740161896,
+        "threshold": 0.05,
+        "passed": false
+      }
+    },
+    {
+      "run": "a3-model-repair-a3sfdlatest3-n256-20261001",
+      "case": 2,
+      "quantized_oracle": {
+        "relative_l2": 0.07221560180187225,
+        "threshold": 0.01,
+        "passed": false
+      },
+      "original_bf16": {
+        "relative_l2": 0.08284919708967209,
+        "threshold": 0.05,
+        "passed": false
+      }
+    },
+    {
+      "run": "a3-model-repair-a3sfdlatest4-n256-20261001",
+      "case": 0,
+      "quantized_oracle": {
+        "relative_l2": 0.19155704975128174,
+        "threshold": 0.01,
+        "passed": false
+      },
+      "original_bf16": {
+        "relative_l2": 0.2500317394733429,
+        "threshold": 0.05,
+        "passed": false
+      }
+    },
+    {
+      "run": "a3-model-repair-a3sfdlatest4-n256-20261001",
+      "case": 1,
+      "quantized_oracle": {
+        "relative_l2": 0.18657459318637848,
+        "threshold": 0.01,
+        "passed": false
+      },
+      "original_bf16": {
+        "relative_l2": 0.23599834740161896,
+        "threshold": 0.05,
+        "passed": false
+      }
+    },
+    {
+      "run": "a3-model-repair-a3sfdlatest4-n256-20261001",
+      "case": 2,
+      "quantized_oracle": {
+        "relative_l2": 0.07221560180187225,
+        "threshold": 0.01,
+        "passed": false
+      },
+      "original_bf16": {
+        "relative_l2": 0.08284919708967209,
+        "threshold": 0.05,
+        "passed": false
+      }
+    }
+  ],
+  "quality_pass": false,
+  "cuda_initialized_by_auditor": false,
+  "formal_performance": "NOT_RUN"
+}

@@ -1,0 +1,7 @@
+{
+  "timestamp_utc": "2026-10-01T06:17:25.855355+00:00",
+  "vllm": "inactive",
+  "service_rc": 3,
+  "gpu_lock_probe_rc": 0,
+  "repair_jobs": []
+}

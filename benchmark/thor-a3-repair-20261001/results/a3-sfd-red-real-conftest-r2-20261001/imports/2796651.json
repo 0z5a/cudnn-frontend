@@ -1,0 +1,24 @@
+{
+  "source_head": "83374af96ec3f8e22dd159d278bdf25acab17a4e",
+  "unrelated_preserved_test_status": " M test/python/core/torch/test_torch_stream.py\n",
+  "preserved_test_sha256": "5ba6fce45e0e1cb38b11c8713bea98a7ececb14ac6a8652ff57f78d6f914dc20",
+  "cudnn": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/__init__.py",
+    "sha256": "ee53bcbde07f59b89ca9378184a7a54beb5d36d216df1f15d7e6d810d9b7f1f9"
+  },
+  "binding": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+    "sha256": "25dd95a5a2a2a925f6ae5127695322bc9f6316aa20966464ed4c9208d8020f70"
+  },
+  "swiglu_api": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+    "sha256": "2bb9517e7f61c020bc23f64fadf6c9d2287ee33d87861b7cf061ac3884277959"
+  },
+  "cudnn.gemm.cutedsl.grouped.glu.moe_blockscaled_grouped_gemm_glu_bias.BlockScaledMoEGroupedGemmGluBiasKernel": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_bias.py",
+    "sha256": "ac515fb8a81c89e13141fb788f6fd3e48b9722efd452d639a07b66ae938b3cf5"
+  },
+  "actual_native_calls": 20,
+  "pytest_exitstatus": 1,
+  "worker": "gw0"
+}

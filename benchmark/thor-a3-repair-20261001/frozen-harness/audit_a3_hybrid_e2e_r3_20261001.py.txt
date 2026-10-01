@@ -1,0 +1,67 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""CPU-only full-logit, decode-logit and source/tile audit of explicit layer-23 MXFP8."""
+import os
+os.environ['CUDA_VISIBLE_DEVICES']=''
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import torch
+
+r=Path('/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928')
+runs=[('a3-hybrid-a3sfdlatest2-n256-20261001','052f88de8b22826904d2ab98ab77019ee9474466'),('a3-hybrid-a3modelrepairlatest2-n256-20261001','ad33459c19969eff5170e32d4319ff27183b8796'),('a3-hybrid-a3modelrepairlatest2-n128-20261001','ad33459c19969eff5170e32d4319ff27183b8796'),('a3-hybrid-a3sfdlatest3-n256-20261001','5227f1e07c5432e94033b2ed0461b4a9a2819c1b'),('a3-hybrid-a3sfdlatest4-n256-20261001','7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744')]
+torch.set_num_threads(4)
+metas,saved,checks={},{},[]
+for name,head in runs:
+    p=r/'results'/name
+    meta=json.loads((p/'result.json').read_text())
+    run=json.loads((r/'results'/(name+'-launch')/'run.json').read_text())
+    assert run['returncode']==0 and run['status']=='EXITED'
+    assert meta['source_head']==head and meta['model_parameters']==1334628352 and meta['total_native_calls']==122
+    assert meta['mxfp8_layers']==[23] and meta['bf16_layers']==list(range(23)) and meta['full_logit_quality_pass'] is True
+    assert subprocess.check_output(['git','-C',meta['source'],'rev-parse','HEAD'],text=True).strip()==head
+    assert not subprocess.check_output(['git','-C',meta['source'],'status','--porcelain','--untracked-files=no'],text=True).strip()
+    for key,entry in {**meta['imports'],**meta['native_plans']}.items():
+        path=Path(entry['path'])
+        assert path.is_relative_to(Path(meta['source'])/'python')
+        assert hashlib.sha256(path.read_bytes()).hexdigest()==entry['sha256'],key
+    metas[name]=meta
+    saved[name]=torch.load(p/'outputs.pt',map_location='cpu',weights_only=True)
+    assert len(saved[name])==60
+    for key,x in saved[name].items():
+        if key.startswith('forward_') and key.endswith('_native'):
+            prefix=key[:-len('native')]
+        elif key.endswith('_native_logits'):
+            prefix=key[:-len('native_logits')]
+            for backend in ('reference','stock'):
+                assert torch.equal(saved[name][prefix+'native_ids'],saved[name][prefix+backend+'_ids']),prefix
+        else:
+            continue
+        suffix='' if key.startswith('forward_') else '_logits'
+        row={'run':name,'tensor':key,'all_positions_checked':True}
+        for backend,limit in (('reference',.01),('stock',.05)):
+            y=saved[name][prefix+backend+suffix]
+            a,b=x.float(),y.float()
+            assert torch.isfinite(a).all() and torch.isfinite(b).all()
+            rel=(torch.linalg.vector_norm(a-b)/torch.linalg.vector_norm(b)).item()
+            assert rel<=limit,(name,key,backend,rel)
+            row[backend]={'relative_l2':rel,'threshold':limit,'passed':True}
+        checks.append(row)
+base=runs[0][0]
+digests=[]
+for key,x in saved[base].items():
+    for name,_ in runs[1:]:
+        y=saved[name][key]
+        assert x.dtype==y.dtype and x.shape==y.shape and torch.equal(x.contiguous().view(torch.uint8),y.contiguous().view(torch.uint8)),(name,key)
+    digests.append({'name':key,'shape':list(x.shape),'dtype':str(x.dtype),'sha256':hashlib.sha256(x.contiguous().flatten().view(torch.uint8).numpy().tobytes()).hexdigest(),'same_bytes_across_all_sources_and_tiles':True})
+for name,_ in runs[1:]:
+    for key in ('checkpoint','full_config','harness_sha256','adapter_sha256','generations','e2e_requests','mxfp8_layers','bf16_layers'):
+        assert metas[base][key]==metas[name][key],key
+    assert json.loads((r/'results'/base/'input-token-ids.json').read_text())==json.loads((r/'results'/name/'input-token-ids.json').read_text())
+assert len(checks)==len(runs)*(10+3+2)
+assert not torch.cuda.is_initialized()
+assert subprocess.run(['systemctl','is-active','vllm.service'],capture_output=True,text=True).stdout.strip()=='inactive'
+result={'stage':'HYBRID_FULL_LOGIT_AND_DECODE_GATES_AND_SOURCE_TILE_PARITY_PASS','scope':__doc__,'mxfp8_layers':[23],'bf16_layers':list(range(23)),'all24_mxfp8_quality':'STILL_FAILED_SEPARATELY','runs':[{'name':name,'head':head,'tile':metas[name]['tile'],'real_returncode':0,'native_calls':122} for name,head in runs],'full_model_parameters':1334628352,'unique_full_logit_cases':10,'short_generations':3,'kv_requests':2,'saved_tensors_per_run':60,'tensor_digests':digests,'quality_checks':checks,'all_three_backends_same_generated_token_ids':True,'short_passcode_semantic_check':'FAILS_IDENTICALLY_IN_ORIGINAL_BF16_REFERENCE_AND_NATIVE; not repaired','math_and_long_note_answers_pass':True,'formal_performance':'NOT_RUN','cuda_initialized_by_auditor':False,'service':'inactive'}
+(r/'results/a3-hybrid-independent-audit-r3-20261001.json').write_text(json.dumps(result,indent=2))
+print(json.dumps({'stage':result['stage'],'tensors_per_run':60,'runs':len(runs),'unique_full_logit_cases':10,'mxfp8_layers':[23],'cuda_initialized':False}))

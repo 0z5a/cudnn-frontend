@@ -1,0 +1,112 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Full pinned Granite E2E with an explicit experimental precision boundary.
+
+Only layer 23 uses the real public A3 MXFP8 gate/up SwiGLU wrapper. Layers 0-22
+use the original BF16 expert implementation. This does not validate the original
+all-24-layer MXFP8 recipe and has no performance claim. No failure fallback.
+All parameters, all input positions and the original 1%/5% logit gates remain.
+"""
+import argparse
+import fcntl
+import importlib.util
+import json
+from pathlib import Path
+import subprocess
+
+spec = importlib.util.spec_from_file_location('a3_e2e', Path(__file__).with_name('a3_model_e2e_mergefix_20261001.py'))
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+t = m.torch
+layers = [23]
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument('--expected-source',required=True)
+    p.add_argument('--expected-head',required=True)
+    p.add_argument('--out',required=True)
+    p.add_argument('--tile',type=int,choices=(128,256),default=256)
+    args = p.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    source = Path(args.expected_source).resolve()
+    assert subprocess.check_output(['git','-C',str(source),'rev-parse','HEAD'],text=True).strip() == args.expected_head
+    assert not subprocess.check_output(['git','-C',str(source),'status','--porcelain','--untracked-files=no'],text=True).strip()
+    for module in (m.cudnn,m.api,m._compiled_module):
+        assert Path(module.__file__).resolve().is_relative_to(source/'python'),module.__file__
+    t.set_num_threads(4)
+    t.backends.cuda.matmul.allow_tf32 = False
+    t.backends.cudnn.allow_tf32 = False
+    t.set_float32_matmul_precision('highest')
+    with open('/tmp/codex-thor-perf.lock','a') as lock:
+        fcntl.flock(lock,fcntl.LOCK_EX)
+        assert subprocess.run(['systemctl','is-active','vllm.service'],capture_output=True,text=True).stdout.strip() == 'inactive'
+        checkpoint = json.loads((m.MODEL/'thor-checkpoint-manifest.json').read_text())
+        assert checkpoint['stage'] == 'VERIFIED_COMPLETE'
+        assert next(f for f in checkpoint['files'] if f['name']=='model.safetensors')['sha256'] == m.WEIGHT_SHA
+        model,loading = m.AutoModelForCausalLM.from_pretrained(m.MODEL,dtype=t.bfloat16,attn_implementation='sdpa',local_files_only=True,trust_remote_code=False,output_loading_info=True)
+        assert not any(loading.values()),loading
+        model = model.eval().cuda()
+        assert sum(p.numel() for p in model.parameters()) == 1334628352
+        experts = [e for e in model.modules() if isinstance(e,m.GraniteMoeExperts)]
+        assert len(experts) == 24
+        adapters = [m.A3ExpertAdapter(experts[i],i,(256,args.tile)) for i in layers]
+        tokenizer = m.AutoTokenizer.from_pretrained(m.MODEL,local_files_only=True,trust_remote_code=False)
+        messages,prompts,workloads = m.load_inputs(tokenizer)
+        holdout_messages = [
+            'What is 17 times 19? Show a brief calculation.',
+            'List the first three prime numbers.',
+            "Translate 'good morning' into French.",
+            'Explain in one sentence why ice floats on water.',
+            'Write a JSON object with the key sum and the value of 3 plus 4.',
+            'Summarize this in five words: A small robot planted trees in a dry field and watered them every morning.',
+        ]
+        holdouts = [tokenizer.apply_chat_template([{'role':'user','content':s}],tokenize=True,add_generation_prompt=True,return_tensors='pt',return_dict=True)['input_ids'].cpu() for s in holdout_messages]
+        cases = [('original_math',prompts[0]),('original_sky',prompts[1]),('original_256',workloads['256'])]+[(f'holdout_{i}',x) for i,x in enumerate(holdouts)]+[('holdout_1024',workloads['1024'])]
+        (out/'input-token-ids.json').write_text(json.dumps({'full_logit_cases':{name:x.tolist() for name,x in cases},'generation_prompts':[x.tolist() for x in prompts],'workloads':{name:x.tolist() for name,x in workloads.items()}},indent=2))
+        saved,checks,generations,requests = {},[],[],[]
+
+        def attach(backend):
+            for a in adapters:
+                a.attach(backend if a.index in layers else 'stock')
+
+        with t.inference_mode():
+            for name,ids in cases:
+                outputs = {}
+                for backend in ('stock','reference','native'):
+                    attach(backend)
+                    before = m.NATIVE_CALLS
+                    outputs[backend] = model(input_ids=ids.cuda(),use_cache=False).logits.cpu()
+                    assert m.NATIVE_CALLS-before == (len(layers) if backend=='native' else 0)
+                    saved[f'forward_{name}_{backend}'] = outputs[backend]
+                oracle,stock = m.difference(outputs['native'],outputs['reference']),m.difference(outputs['native'],outputs['stock'])
+                row = {'case':name,'input_tokens':ids.shape[-1],'quantized_oracle':oracle,'original_bf16':stock,'oracle_gate_pass':oracle['relative_l2']<=.01,'bf16_gate_pass':stock['relative_l2']<=.05,'actual_native_calls':len(layers)}
+                checks.append(row)
+                print(json.dumps(row),flush=True)
+            for backend in ('stock','reference','native'):
+                attach(backend)
+                for case,ids in enumerate(prompts):
+                    r = m.request(model,ids.cuda(),16)
+                    assert r['native_calls'] == (len(layers)*16 if backend=='native' else 0)
+                    text = tokenizer.decode(r['ids'][0],skip_special_tokens=True).strip()
+                    generations.append({'case':case,'backend':backend,'text':text,'token_ids':r['ids'].tolist(),'actual_native_calls':r['native_calls'],'math_contains_4':('4' in text) if case==0 else None,'short_passcode_contains_cobalt':('cobalt' in text.lower()) if case==2 else None})
+                    saved[f'generation_{case}_{backend}_ids'] = r['ids']
+                    saved[f'generation_{case}_{backend}_logits'] = r['logits']
+                for length,ids in workloads.items():
+                    r = m.request(model,ids.cuda(),32)
+                    assert r['native_calls'] == (len(layers)*32 if backend=='native' else 0)
+                    text = tokenizer.decode(r['ids'][0],skip_special_tokens=True).strip()
+                    requests.append({'input_tokens':int(length),'new_tokens':32,'backend':backend,'text':text,'token_ids':r['ids'].tolist(),'actual_native_calls':r['native_calls'],'long_passcode_contains_cobalt':'cobalt' in text.lower()})
+                    saved[f'request_{length}_{backend}_ids'] = r['ids']
+                    saved[f'request_{length}_{backend}_logits'] = r['logits']
+        assert m.NATIVE_CALLS == len(cases)+3*16+2*32
+        assert subprocess.run(['systemctl','is-active','vllm.service'],capture_output=True,text=True).stdout.strip() == 'inactive'
+        t.save(saved,out/'outputs.pt')
+        result = {'stage':'DIAGNOSTIC_COMPLETE','scope':__doc__,'source':str(source),'source_head':args.expected_head,'tile':[256,args.tile],'checkpoint':checkpoint,'model_parameters':1334628352,'full_config':model.config.to_dict(),'loading_info':loading,'mxfp8_layers':layers,'bf16_layers':list(range(23)),'forward_checks':checks,'full_logit_quality_pass':all(x['oracle_gate_pass'] and x['bf16_gate_pass'] for x in checks),'generations':generations,'e2e_requests':requests,'total_native_calls':m.NATIVE_CALLS,'native_plans':m.NATIVE_PLANS,'imports':{name:{'path':module.__file__,'sha256':m.sha_file(module.__file__)} for name,module in [('cudnn',m.cudnn),('api',m.api),('binding',m._compiled_module)]},'harness_sha256':m.sha_file(__file__),'adapter_sha256':m.sha_file(Path(__file__).with_name('a3_model_e2e_mergefix_20261001.py')),'formal_performance':'NOT_RUN','service_final':'inactive'}
+        (out/'result.json').write_text(json.dumps(result,indent=2,default=m.json_default))
+        print(json.dumps({'stage':result['stage'],'full_logit_quality_pass':result['full_logit_quality_pass'],'native_calls':m.NATIVE_CALLS}),flush=True)
+
+
+if __name__ == '__main__':
+    main()

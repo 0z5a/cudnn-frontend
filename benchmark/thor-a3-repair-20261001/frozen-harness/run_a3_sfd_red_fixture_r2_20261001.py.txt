@@ -1,0 +1,29 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Reproduce SFD failures with the real conftest/isolation and untouched control."""
+import fcntl
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+
+r=Path('/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928')
+source=r/'a3wrappercontrol'
+suite=r/'tools/a3-sfd-red-fixture-r2-20261001'
+suite.mkdir(exist_ok=False)
+for file in ('conftest.py','pytest.ini'):
+    shutil.copyfile(source/'test/python'/file,suite/file)
+shutil.copyfile(r/'a3sfdlatest2/test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py',suite/'test_grouped_swiglu_sfd_tiles.py')
+python=r/'venvs/a3wrappercontrol/bin/python'
+result=r/'results/a3-sfd-red-real-conftest-r2-20261001'
+env=os.environ.copy()
+env.update(PYTHONPATH=str(r/'tools')+':'+str(source/'test/python'),A3_EXPECT_SOURCE=str(source),A3_EXPECT_HEAD='83374af96ec3f8e22dd159d278bdf25acab17a4e',A3_IMPORT_LOG=str(result/'imports'))
+with open('/tmp/codex-thor-perf.lock','a') as lock:
+    fcntl.flock(lock,fcntl.LOCK_EX)
+    assert subprocess.run(['systemctl','is-active','vllm.service'],capture_output=True,text=True).stdout.strip()=='inactive'
+    rc=subprocess.run([str(python),'/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py','--out',str(result),'--cwd',str(suite),'--timeout','1200','--',str(python),'-m','pytest','-p','a3_red_import_probe_20261001','-o','addopts=','-q','--junitxml='+str(result/'junit.xml'),'test_grouped_swiglu_sfd_tiles.py'],env=env).returncode
+    assert subprocess.run(['systemctl','is-active','vllm.service'],capture_output=True,text=True).stdout.strip()=='inactive'
+actual=json.loads((result/'run.json').read_text())
+assert rc==1 and actual['returncode']==1,actual
+print(json.dumps({'result':str(result),'real_returncode':1,'scope':__doc__}))

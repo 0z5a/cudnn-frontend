@@ -1,0 +1,941 @@
+{
+  "stage": "DIAGNOSTIC_COMPLETE",
+  "scope": "Diagnostic only: separate GEMM, activation rounding and model integration.",
+  "rows": [
+    {
+      "backend": "bf16_integration",
+      "case": 0,
+      "vs_old_quantized_oracle": {
+        "max_abs": 9.046875,
+        "relative_l2": 0.2590063512325287,
+        "argmax_equal_fraction": 0.8493150472640991
+      },
+      "vs_fixed_quantized_oracle": null,
+      "vs_original_bf16": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "vs_normal_native": {
+        "max_abs": 13.6953125,
+        "relative_l2": 0.24189460277557373,
+        "argmax_equal_fraction": 0.7808219194412231
+      },
+      "actual_native_calls": 0
+    },
+    {
+      "backend": "bf16_integration",
+      "case": 1,
+      "vs_old_quantized_oracle": {
+        "max_abs": 9.046875,
+        "relative_l2": 0.2456463873386383,
+        "argmax_equal_fraction": 0.8714285492897034
+      },
+      "vs_fixed_quantized_oracle": null,
+      "vs_original_bf16": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "vs_normal_native": {
+        "max_abs": 13.6953125,
+        "relative_l2": 0.23689958453178406,
+        "argmax_equal_fraction": 0.800000011920929
+      },
+      "actual_native_calls": 0
+    },
+    {
+      "backend": "bf16_integration",
+      "case": 2,
+      "vs_old_quantized_oracle": {
+        "max_abs": 5.54296875,
+        "relative_l2": 0.08042985945940018,
+        "argmax_equal_fraction": 0.94140625
+      },
+      "vs_fixed_quantized_oracle": null,
+      "vs_original_bf16": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "vs_normal_native": {
+        "max_abs": 6.0615234375,
+        "relative_l2": 0.08155640214681625,
+        "argmax_equal_fraction": 0.9453125
+      },
+      "actual_native_calls": 0
+    },
+    {
+      "backend": "reference",
+      "case": 0,
+      "vs_old_quantized_oracle": {
+        "max_abs": 8.09375,
+        "relative_l2": 0.21509195864200592,
+        "argmax_equal_fraction": 0.8082191944122314
+      },
+      "vs_fixed_quantized_oracle": null,
+      "vs_original_bf16": {
+        "max_abs": 8.625,
+        "relative_l2": 0.2022051066160202,
+        "argmax_equal_fraction": 0.7945205569267273
+      },
+      "vs_normal_native": {
+        "max_abs": 7.2578125,
+        "relative_l2": 0.19987750053405762,
+        "argmax_equal_fraction": 0.8493150472640991
+      },
+      "actual_native_calls": 0
+    },
+    {
+      "backend": "reference",
+      "case": 1,
+      "vs_old_quantized_oracle": {
+        "max_abs": 8.09375,
+        "relative_l2": 0.20475414395332336,
+        "argmax_equal_fraction": 0.8428571224212646
+      },
+      "vs_fixed_quantized_oracle": null,
+      "vs_original_bf16": {
+        "max_abs": 8.625,
+        "relative_l2": 0.20846296846866608,
+        "argmax_equal_fraction": 0.8571428656578064
+      },
+      "vs_normal_native": {
+        "max_abs": 7.484375,
+        "relative_l2": 0.20516587793827057,
+        "argmax_equal_fraction": 0.8857142925262451
+      },
+      "actual_native_calls": 0
+    },
+    {
+      "backend": "reference",
+      "case": 2,
+      "vs_old_quantized_oracle": {
+        "max_abs": 6.188720703125,
+        "relative_l2": 0.07804267108440399,
+        "argmax_equal_fraction": 0.94921875
+      },
+      "vs_fixed_quantized_oracle": null,
+      "vs_original_bf16": {
+        "max_abs": 6.01171875,
+        "relative_l2": 0.08790767192840576,
+        "argmax_equal_fraction": 0.953125
+      },
+      "vs_normal_native": {
+        "max_abs": 5.3125,
+        "relative_l2": 0.07778315246105194,
+        "argmax_equal_fraction": 0.94140625
+      },
+      "actual_native_calls": 0
+    },
+    {
+      "backend": "native_c_torch_activation",
+      "case": 0,
+      "vs_old_quantized_oracle": {
+        "max_abs": 7.8125,
+        "relative_l2": 0.19444029033184052,
+        "argmax_equal_fraction": 0.835616409778595
+      },
+      "vs_fixed_quantized_oracle": {
+        "max_abs": 5.1875,
+        "relative_l2": 0.154026597738266,
+        "argmax_equal_fraction": 0.9041095972061157
+      },
+      "vs_original_bf16": {
+        "max_abs": 7.96875,
+        "relative_l2": 0.23731406033039093,
+        "argmax_equal_fraction": 0.8493150472640991
+      },
+      "vs_normal_native": {
+        "max_abs": 9.3828125,
+        "relative_l2": 0.19473014771938324,
+        "argmax_equal_fraction": 0.8767123222351074
+      },
+      "actual_native_calls": 24
+    },
+    {
+      "backend": "native_c_torch_activation",
+      "case": 1,
+      "vs_old_quantized_oracle": {
+        "max_abs": 7.8125,
+        "relative_l2": 0.19896245002746582,
+        "argmax_equal_fraction": 0.8428571224212646
+      },
+      "vs_fixed_quantized_oracle": {
+        "max_abs": 6.2890625,
+        "relative_l2": 0.158731147646904,
+        "argmax_equal_fraction": 0.9571428298950195
+      },
+      "vs_original_bf16": {
+        "max_abs": 7.96875,
+        "relative_l2": 0.2399785816669464,
+        "argmax_equal_fraction": 0.8571428656578064
+      },
+      "vs_normal_native": {
+        "max_abs": 9.3828125,
+        "relative_l2": 0.20121891796588898,
+        "argmax_equal_fraction": 0.8857142925262451
+      },
+      "actual_native_calls": 24
+    },
+    {
+      "backend": "native_c_torch_activation",
+      "case": 2,
+      "vs_old_quantized_oracle": {
+        "max_abs": 9.625,
+        "relative_l2": 0.07818027585744858,
+        "argmax_equal_fraction": 0.95703125
+      },
+      "vs_fixed_quantized_oracle": {
+        "max_abs": 6.4375,
+        "relative_l2": 0.07302812486886978,
+        "argmax_equal_fraction": 0.94921875
+      },
+      "vs_original_bf16": {
+        "max_abs": 8.75,
+        "relative_l2": 0.0905500277876854,
+        "argmax_equal_fraction": 0.94140625
+      },
+      "vs_normal_native": {
+        "max_abs": 8.609375,
+        "relative_l2": 0.0858294665813446,
+        "argmax_equal_fraction": 0.96875
+      },
+      "actual_native_calls": 24
+    }
+  ],
+  "activation_records": [
+    {
+      "call": 0,
+      "native_d_vs_torch_d": {
+        "max_abs": 1.0,
+        "relative_l2": 0.003643378848209977,
+        "argmax_equal_fraction": 1.0
+      },
+      "bf16_d_mismatch_count": 159076,
+      "elements": 4194304
+    },
+    {
+      "call": 1,
+      "native_d_vs_torch_d": {
+        "max_abs": 1.0,
+        "relative_l2": 0.004044665955007076,
+        "argmax_equal_fraction": 0.9998698234558105
+      },
+      "bf16_d_mismatch_count": 134846,
+      "elements": 3932160
+    },
+    {
+      "call": 2,
+      "native_d_vs_torch_d": {
+        "max_abs": 1.0,
+        "relative_l2": 0.00416799308732152,
+        "argmax_equal_fraction": 0.9993489980697632
+      },
+      "bf16_d_mismatch_count": 129519,
+      "elements": 3932160
+    },
+    {
+      "call": 3,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.0036837945226579905,
+        "argmax_equal_fraction": 0.9997396469116211
+      },
+      "bf16_d_mismatch_count": 127456,
+      "elements": 3932160
+    },
+    {
+      "call": 4,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.0037440338637679815,
+        "argmax_equal_fraction": 0.9993896484375
+      },
+      "bf16_d_mismatch_count": 129152,
+      "elements": 4194304
+    },
+    {
+      "call": 5,
+      "native_d_vs_torch_d": {
+        "max_abs": 2.0,
+        "relative_l2": 0.0005130706122145057,
+        "argmax_equal_fraction": 0.9990234375
+      },
+      "bf16_d_mismatch_count": 125819,
+      "elements": 4194304
+    },
+    {
+      "call": 6,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.5,
+        "relative_l2": 0.003805773099884391,
+        "argmax_equal_fraction": 0.999117910861969
+      },
+      "bf16_d_mismatch_count": 127253,
+      "elements": 4063232
+    },
+    {
+      "call": 7,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.125,
+        "relative_l2": 0.0035975093487650156,
+        "argmax_equal_fraction": 0.99951171875
+      },
+      "bf16_d_mismatch_count": 133911,
+      "elements": 4194304
+    },
+    {
+      "call": 8,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.003915722481906414,
+        "argmax_equal_fraction": 0.9998779296875
+      },
+      "bf16_d_mismatch_count": 139210,
+      "elements": 4194304
+    },
+    {
+      "call": 9,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.125,
+        "relative_l2": 0.0038566587027162313,
+        "argmax_equal_fraction": 1.0
+      },
+      "bf16_d_mismatch_count": 130338,
+      "elements": 4194304
+    },
+    {
+      "call": 10,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.003856466617435217,
+        "argmax_equal_fraction": 0.9998739361763
+      },
+      "bf16_d_mismatch_count": 129894,
+      "elements": 4063232
+    },
+    {
+      "call": 11,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.125,
+        "relative_l2": 0.0037935967557132244,
+        "argmax_equal_fraction": 0.99951171875
+      },
+      "bf16_d_mismatch_count": 129891,
+      "elements": 4194304
+    },
+    {
+      "call": 12,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.125,
+        "relative_l2": 0.003828860353678465,
+        "argmax_equal_fraction": 0.99951171875
+      },
+      "bf16_d_mismatch_count": 130312,
+      "elements": 4194304
+    },
+    {
+      "call": 13,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.5,
+        "relative_l2": 0.003904253477230668,
+        "argmax_equal_fraction": 0.9996337890625
+      },
+      "bf16_d_mismatch_count": 132311,
+      "elements": 4194304
+    },
+    {
+      "call": 14,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.003842089092358947,
+        "argmax_equal_fraction": 0.9996337890625
+      },
+      "bf16_d_mismatch_count": 133816,
+      "elements": 4194304
+    },
+    {
+      "call": 15,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.003817792749032378,
+        "argmax_equal_fraction": 0.9993896484375
+      },
+      "bf16_d_mismatch_count": 131477,
+      "elements": 4194304
+    },
+    {
+      "call": 16,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.5,
+        "relative_l2": 0.003864619415253401,
+        "argmax_equal_fraction": 0.9994959235191345
+      },
+      "bf16_d_mismatch_count": 132816,
+      "elements": 4063232
+    },
+    {
+      "call": 17,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.003761913161724806,
+        "argmax_equal_fraction": 0.9996219277381897
+      },
+      "bf16_d_mismatch_count": 135593,
+      "elements": 4063232
+    },
+    {
+      "call": 18,
+      "native_d_vs_torch_d": {
+        "max_abs": 1.0,
+        "relative_l2": 0.003751196200028062,
+        "argmax_equal_fraction": 0.99951171875
+      },
+      "bf16_d_mismatch_count": 137668,
+      "elements": 4194304
+    },
+    {
+      "call": 19,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.5,
+        "relative_l2": 0.003748321672901511,
+        "argmax_equal_fraction": 0.99951171875
+      },
+      "bf16_d_mismatch_count": 140213,
+      "elements": 4194304
+    },
+    {
+      "call": 20,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.5,
+        "relative_l2": 0.003792186500504613,
+        "argmax_equal_fraction": 0.9996337890625
+      },
+      "bf16_d_mismatch_count": 145101,
+      "elements": 4194304
+    },
+    {
+      "call": 21,
+      "native_d_vs_torch_d": {
+        "max_abs": 2.0,
+        "relative_l2": 0.0037741009145975113,
+        "argmax_equal_fraction": 0.9996337890625
+      },
+      "bf16_d_mismatch_count": 155794,
+      "elements": 4194304
+    },
+    {
+      "call": 22,
+      "native_d_vs_torch_d": {
+        "max_abs": 1.0,
+        "relative_l2": 0.0033896309323608875,
+        "argmax_equal_fraction": 0.9998779296875
+      },
+      "bf16_d_mismatch_count": 156234,
+      "elements": 4194304
+    },
+    {
+      "call": 23,
+      "native_d_vs_torch_d": {
+        "max_abs": 16.0,
+        "relative_l2": 0.0037077313754707575,
+        "argmax_equal_fraction": 0.9996337890625
+      },
+      "bf16_d_mismatch_count": 166765,
+      "elements": 4194304
+    },
+    {
+      "call": 24,
+      "native_d_vs_torch_d": {
+        "max_abs": 1.0,
+        "relative_l2": 0.0036820280365645885,
+        "argmax_equal_fraction": 0.9998779296875
+      },
+      "bf16_d_mismatch_count": 150302,
+      "elements": 4194304
+    },
+    {
+      "call": 25,
+      "native_d_vs_torch_d": {
+        "max_abs": 1.0,
+        "relative_l2": 0.004077618010342121,
+        "argmax_equal_fraction": 0.9998698234558105
+      },
+      "bf16_d_mismatch_count": 128941,
+      "elements": 3932160
+    },
+    {
+      "call": 26,
+      "native_d_vs_torch_d": {
+        "max_abs": 1.0,
+        "relative_l2": 0.004101760219782591,
+        "argmax_equal_fraction": 0.9994792342185974
+      },
+      "bf16_d_mismatch_count": 123931,
+      "elements": 3932160
+    },
+    {
+      "call": 27,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.003630771767348051,
+        "argmax_equal_fraction": 0.9998698234558105
+      },
+      "bf16_d_mismatch_count": 122142,
+      "elements": 3932160
+    },
+    {
+      "call": 28,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.00368689326569438,
+        "argmax_equal_fraction": 0.999267578125
+      },
+      "bf16_d_mismatch_count": 123762,
+      "elements": 4194304
+    },
+    {
+      "call": 29,
+      "native_d_vs_torch_d": {
+        "max_abs": 2.0,
+        "relative_l2": 0.0005115796229802072,
+        "argmax_equal_fraction": 0.999267578125
+      },
+      "bf16_d_mismatch_count": 120651,
+      "elements": 4194304
+    },
+    {
+      "call": 30,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.5,
+        "relative_l2": 0.003804615465924144,
+        "argmax_equal_fraction": 0.999117910861969
+      },
+      "bf16_d_mismatch_count": 122176,
+      "elements": 4063232
+    },
+    {
+      "call": 31,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.125,
+        "relative_l2": 0.0036064288578927517,
+        "argmax_equal_fraction": 0.99951171875
+      },
+      "bf16_d_mismatch_count": 127973,
+      "elements": 4194304
+    },
+    {
+      "call": 32,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.0038502791430801153,
+        "argmax_equal_fraction": 0.9998779296875
+      },
+      "bf16_d_mismatch_count": 132950,
+      "elements": 4194304
+    },
+    {
+      "call": 33,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.125,
+        "relative_l2": 0.003910184372216463,
+        "argmax_equal_fraction": 1.0
+      },
+      "bf16_d_mismatch_count": 124966,
+      "elements": 4063232
+    },
+    {
+      "call": 34,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.0038671614602208138,
+        "argmax_equal_fraction": 0.99951171875
+      },
+      "bf16_d_mismatch_count": 124434,
+      "elements": 4194304
+    },
+    {
+      "call": 35,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.003805681364610791,
+        "argmax_equal_fraction": 0.9996337890625
+      },
+      "bf16_d_mismatch_count": 124903,
+      "elements": 4194304
+    },
+    {
+      "call": 36,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.125,
+        "relative_l2": 0.003826573956757784,
+        "argmax_equal_fraction": 0.999755859375
+      },
+      "bf16_d_mismatch_count": 124528,
+      "elements": 4194304
+    },
+    {
+      "call": 37,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.5,
+        "relative_l2": 0.003919678274542093,
+        "argmax_equal_fraction": 0.9996337890625
+      },
+      "bf16_d_mismatch_count": 126929,
+      "elements": 4194304
+    },
+    {
+      "call": 38,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.0038806963711977005,
+        "argmax_equal_fraction": 0.9996337890625
+      },
+      "bf16_d_mismatch_count": 128551,
+      "elements": 4194304
+    },
+    {
+      "call": 39,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.003844665829092264,
+        "argmax_equal_fraction": 0.9993896484375
+      },
+      "bf16_d_mismatch_count": 125736,
+      "elements": 4194304
+    },
+    {
+      "call": 40,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.5,
+        "relative_l2": 0.0038324978668242693,
+        "argmax_equal_fraction": 0.9996219277381897
+      },
+      "bf16_d_mismatch_count": 127503,
+      "elements": 4063232
+    },
+    {
+      "call": 41,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.003768111579120159,
+        "argmax_equal_fraction": 0.9996337890625
+      },
+      "bf16_d_mismatch_count": 129509,
+      "elements": 4194304
+    },
+    {
+      "call": 42,
+      "native_d_vs_torch_d": {
+        "max_abs": 1.0,
+        "relative_l2": 0.0037571233697235584,
+        "argmax_equal_fraction": 0.9993896484375
+      },
+      "bf16_d_mismatch_count": 131920,
+      "elements": 4194304
+    },
+    {
+      "call": 43,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.5,
+        "relative_l2": 0.003761720610782504,
+        "argmax_equal_fraction": 0.9993896484375
+      },
+      "bf16_d_mismatch_count": 134559,
+      "elements": 4194304
+    },
+    {
+      "call": 44,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.5,
+        "relative_l2": 0.003765658475458622,
+        "argmax_equal_fraction": 0.999755859375
+      },
+      "bf16_d_mismatch_count": 138459,
+      "elements": 4194304
+    },
+    {
+      "call": 45,
+      "native_d_vs_torch_d": {
+        "max_abs": 2.0,
+        "relative_l2": 0.0037659190129488707,
+        "argmax_equal_fraction": 0.9996337890625
+      },
+      "bf16_d_mismatch_count": 148801,
+      "elements": 4194304
+    },
+    {
+      "call": 46,
+      "native_d_vs_torch_d": {
+        "max_abs": 1.0,
+        "relative_l2": 0.0033674139995127916,
+        "argmax_equal_fraction": 1.0
+      },
+      "bf16_d_mismatch_count": 149667,
+      "elements": 4194304
+    },
+    {
+      "call": 47,
+      "native_d_vs_torch_d": {
+        "max_abs": 16.0,
+        "relative_l2": 0.003702338319271803,
+        "argmax_equal_fraction": 0.99951171875
+      },
+      "bf16_d_mismatch_count": 159979,
+      "elements": 4194304
+    },
+    {
+      "call": 48,
+      "native_d_vs_torch_d": {
+        "max_abs": 1.0,
+        "relative_l2": 0.003675874089822173,
+        "argmax_equal_fraction": 0.998291015625
+      },
+      "bf16_d_mismatch_count": 539092,
+      "elements": 4194304
+    },
+    {
+      "call": 49,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.5,
+        "relative_l2": 0.0036480268463492393,
+        "argmax_equal_fraction": 0.99853515625
+      },
+      "bf16_d_mismatch_count": 473718,
+      "elements": 4194304
+    },
+    {
+      "call": 50,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.5,
+        "relative_l2": 0.0037459973245859146,
+        "argmax_equal_fraction": 0.9984375238418579
+      },
+      "bf16_d_mismatch_count": 455115,
+      "elements": 3932160
+    },
+    {
+      "call": 51,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.0037566872779279947,
+        "argmax_equal_fraction": 0.9988281726837158
+      },
+      "bf16_d_mismatch_count": 446941,
+      "elements": 3932160
+    },
+    {
+      "call": 52,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.003877757815644145,
+        "argmax_equal_fraction": 0.9989013671875
+      },
+      "bf16_d_mismatch_count": 445448,
+      "elements": 4194304
+    },
+    {
+      "call": 53,
+      "native_d_vs_torch_d": {
+        "max_abs": 32.0,
+        "relative_l2": 0.004200158640742302,
+        "argmax_equal_fraction": 0.9979248046875
+      },
+      "bf16_d_mismatch_count": 438821,
+      "elements": 4194304
+    },
+    {
+      "call": 54,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.003790411166846752,
+        "argmax_equal_fraction": 0.9986572265625
+      },
+      "bf16_d_mismatch_count": 440901,
+      "elements": 4194304
+    },
+    {
+      "call": 55,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.125,
+        "relative_l2": 0.0037684885319322348,
+        "argmax_equal_fraction": 0.998291015625
+      },
+      "bf16_d_mismatch_count": 456141,
+      "elements": 4194304
+    },
+    {
+      "call": 56,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.0038961293175816536,
+        "argmax_equal_fraction": 0.9990234375
+      },
+      "bf16_d_mismatch_count": 473406,
+      "elements": 4194304
+    },
+    {
+      "call": 57,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.003886455437168479,
+        "argmax_equal_fraction": 0.998291015625
+      },
+      "bf16_d_mismatch_count": 448667,
+      "elements": 4194304
+    },
+    {
+      "call": 58,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.125,
+        "relative_l2": 0.003845895640552044,
+        "argmax_equal_fraction": 0.998291015625
+      },
+      "bf16_d_mismatch_count": 448794,
+      "elements": 4194304
+    },
+    {
+      "call": 59,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.003845015075057745,
+        "argmax_equal_fraction": 0.9989013671875
+      },
+      "bf16_d_mismatch_count": 448321,
+      "elements": 4194304
+    },
+    {
+      "call": 60,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.0038484742399305105,
+        "argmax_equal_fraction": 0.997314453125
+      },
+      "bf16_d_mismatch_count": 447921,
+      "elements": 4194304
+    },
+    {
+      "call": 61,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.00382607476785779,
+        "argmax_equal_fraction": 0.9981689453125
+      },
+      "bf16_d_mismatch_count": 455822,
+      "elements": 4194304
+    },
+    {
+      "call": 62,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.003832818940281868,
+        "argmax_equal_fraction": 0.9981689453125
+      },
+      "bf16_d_mismatch_count": 462490,
+      "elements": 4194304
+    },
+    {
+      "call": 63,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.0038115393836051226,
+        "argmax_equal_fraction": 0.99853515625
+      },
+      "bf16_d_mismatch_count": 459241,
+      "elements": 4194304
+    },
+    {
+      "call": 64,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.25,
+        "relative_l2": 0.00378799089230597,
+        "argmax_equal_fraction": 0.9986572265625
+      },
+      "bf16_d_mismatch_count": 464638,
+      "elements": 4194304
+    },
+    {
+      "call": 65,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.5,
+        "relative_l2": 0.0037626102566719055,
+        "argmax_equal_fraction": 0.998046875
+      },
+      "bf16_d_mismatch_count": 473575,
+      "elements": 4194304
+    },
+    {
+      "call": 66,
+      "native_d_vs_torch_d": {
+        "max_abs": 1.0,
+        "relative_l2": 0.003662016009911895,
+        "argmax_equal_fraction": 0.9990234375
+      },
+      "bf16_d_mismatch_count": 474991,
+      "elements": 4194304
+    },
+    {
+      "call": 67,
+      "native_d_vs_torch_d": {
+        "max_abs": 0.5,
+        "relative_l2": 0.0037226942367851734,
+        "argmax_equal_fraction": 0.99853515625
+      },
+      "bf16_d_mismatch_count": 481208,
+      "elements": 4194304
+    },
+    {
+      "call": 68,
+      "native_d_vs_torch_d": {
+        "max_abs": 1.0,
+        "relative_l2": 0.003628265345469117,
+        "argmax_equal_fraction": 0.998291015625
+      },
+      "bf16_d_mismatch_count": 504005,
+      "elements": 4194304
+    },
+    {
+      "call": 69,
+      "native_d_vs_torch_d": {
+        "max_abs": 1.0,
+        "relative_l2": 0.0037084624636918306,
+        "argmax_equal_fraction": 0.998779296875
+      },
+      "bf16_d_mismatch_count": 533868,
+      "elements": 4194304
+    },
+    {
+      "call": 70,
+      "native_d_vs_torch_d": {
+        "max_abs": 2.0,
+        "relative_l2": 0.0035258301068097353,
+        "argmax_equal_fraction": 0.998291015625
+      },
+      "bf16_d_mismatch_count": 526914,
+      "elements": 4194304
+    },
+    {
+      "call": 71,
+      "native_d_vs_torch_d": {
+        "max_abs": 8.0,
+        "relative_l2": 0.0029416759498417377,
+        "argmax_equal_fraction": 0.999267578125
+      },
+      "bf16_d_mismatch_count": 536020,
+      "elements": 4194304
+    }
+  ],
+  "native_plans": {
+    "cudnn.gemm.cutedsl.grouped.glu.moe_blockscaled_grouped_gemm_glu_bias.BlockScaledMoEGroupedGemmGluBiasKernel": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_bias.py",
+      "sha256": "ac515fb8a81c89e13141fb788f6fd3e48b9722efd452d639a07b66ae938b3cf5"
+    }
+  },
+  "imports": {
+    "api": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+    "binding": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so"
+  },
+  "formal_performance": "NOT_RUN",
+  "source_head": "83374af96ec3f8e22dd159d278bdf25acab17a4e"
+}

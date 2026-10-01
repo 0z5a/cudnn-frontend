@@ -1,0 +1,101 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Diagnostic only: separate GEMM, activation rounding and model integration."""
+import fcntl
+import importlib.util
+import json
+from pathlib import Path
+import subprocess
+
+spec = importlib.util.spec_from_file_location('a3_e2e', Path(__file__).with_name('a3_model_e2e_mergefix_20261001.py'))
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+t = m.torch
+OUT = m.ROOT / 'results/a3-dot-rounding-diagnosis-20261001'
+OUT.mkdir(exist_ok=False)
+original = m.api.grouped_gemm_swiglu_wrapper_sm100
+records = []
+
+
+def native_c_torch_activation(**kw):
+    kw['c_dtype'] = t.float32
+    result = original(**kw)
+    c = result['c_tensor'].reshape(-1, kw['b_tensor'].shape[1] // 64, 2, 32)
+    plain = (m.F.silu(c[:, :, 0]) * c[:, :, 1]).reshape(result['d_tensor'].shape).to(t.bfloat16)
+    native = m.dequantize_wrapper_d_original(result, kw['norm_const_tensor'])
+    records.append({'call': len(records), 'native_d_vs_torch_d': m.difference(native, plain), 'bf16_d_mismatch_count': (native != plain).sum().item(), 'elements': plain.numel()})
+    result['torch_d'] = plain
+    return result
+
+
+m.dequantize_wrapper_d_original = m.dequantize_wrapper_d
+
+
+def bf16_forward(adapter):
+    def forward(x, index, prob):
+        padded, ends, destinations, order, token_ids, sizes, aligned = adapter.routing(x, index)
+        d = t.zeros((padded.shape[0], 512), device=x.device, dtype=x.dtype)
+        start = 0
+        for expert, n in enumerate(aligned):
+            if n:
+                c = m.F.linear(padded[start:start+n], adapter.expert.gate_up_proj[expert])
+                gate, up = c.chunk(2, -1)
+                d[start:start+n] = m.F.silu(gate) * up
+            start += n
+        live = d[destinations]
+        out = t.empty((order.numel(), adapter.h), device=x.device, dtype=x.dtype)
+        weights = prob.flatten()[order]
+        start = 0
+        for expert, n in enumerate(sizes):
+            if n:
+                y = m.F.linear(live[start:start+n], adapter.expert.down_proj[expert]) * weights[start:start+n, None]
+                out[start:start+n] = y.to(out.dtype)
+            start += n
+        unsorted = t.empty_like(out)
+        unsorted[order] = out
+        return unsorted.reshape(x.shape[0], index.shape[-1], adapter.h).sum(dim=1)
+    return forward
+
+
+
+t.set_num_threads(4)
+t.backends.cuda.matmul.allow_tf32 = False
+t.backends.cudnn.allow_tf32 = False
+t.set_float32_matmul_precision('highest')
+with open('/tmp/codex-thor-perf.lock', 'a') as lock:
+    fcntl.flock(lock, fcntl.LOCK_EX)
+    assert subprocess.run(['systemctl', 'is-active', 'vllm.service'], capture_output=True, text=True).stdout.strip() == 'inactive'
+    model = m.AutoModelForCausalLM.from_pretrained(m.MODEL, dtype=t.bfloat16, attn_implementation='sdpa', local_files_only=True, trust_remote_code=False).eval().cuda()
+    tokenizer = m.AutoTokenizer.from_pretrained(m.MODEL, local_files_only=True, trust_remote_code=False)
+    experts = [e for e in model.modules() if isinstance(e, m.GraniteMoeExperts)]
+    adapter = m.A3ExpertAdapter(experts[0], 0, (256,256))
+    captured={}
+    def trace_input(x, index, prob):
+        captured.update(x=x.clone(), index=index.clone(), prob=prob.clone())
+        return adapter.original(x,index,prob)
+    experts[0].forward=trace_input
+    _, prompts, _ = m.load_inputs(tokenizer)
+    rows=[]
+    with t.inference_mode():
+        model(input_ids=prompts[0].cuda(),use_cache=False)
+        padded, ends, destinations, order, token_ids, sizes, aligned = adapter.routing(captured['x'], captured['index'])
+        a,sfa,ascale=m.quantize_mxfp8(padded)
+        adeq,bdeq=m.dequantize(a,ascale),m.dequantize(adapter.b,adapter.bscale)
+        out=original(a_tensor=a,b_tensor=adapter.b,sfa_tensor=sfa,sfb_tensor=adapter.sfb,padded_offsets=ends,alpha_tensor=adapter.alpha,norm_const_tensor=adapter.norm,acc_dtype=t.float32,c_dtype=t.float32,d_dtype=t.bfloat16,mma_tiler_mn=(256,256),cluster_shape_mn=(2,1),sf_vec_size=32,m_aligned=256)
+        native_d=m.dequantize_wrapper_d(out,adapter.norm)
+        start=0
+        for expert,(count,n) in enumerate(zip(sizes,aligned)):
+            if count:
+                cn=out['c_tensor'][start:start+count]
+                c32=m.F.linear(adeq[start:start+count],bdeq[expert])
+                c64=m.F.linear(adeq[start:start+count].double(),bdeq[expert].double()).float()
+                def activate(c):
+                    pair=c.reshape(count,-1,2,32)
+                    return (m.F.silu(pair[:,:,0])*pair[:,:,1]).reshape(count,512).to(t.bfloat16)
+                d32,d64,dfromcn=activate(c32),activate(c64),activate(cn)
+                dn=native_d[start:start+count]
+                rows.append({'expert':expert,'count':count,'native_c_vs_fp32':m.difference(cn,c32),'native_c_vs_fp64_rounded_fp32':m.difference(cn,c64),'fp32_c_vs_fp64_rounded_fp32':m.difference(c32,c64),'native_c_fp32_mismatches':(cn!=c32).sum().item(),'native_c_fp64_mismatches':(cn!=c64).sum().item(),'native_c_fp32_bf16_mismatches':(cn.to(t.bfloat16)!=c32.to(t.bfloat16)).sum().item(),'native_c_fp64_bf16_mismatches':(cn.to(t.bfloat16)!=c64.to(t.bfloat16)).sum().item(),'native_d_vs_fp32_d_mismatches':(dn!=d32).sum().item(),'native_d_vs_fp64_d_mismatches':(dn!=d64).sum().item(),'native_d_vs_native_c_torch_d_mismatches':(dn!=dfromcn).sum().item(),'native_d_vs_fp64_d':m.difference(dn,d64),'d_elements':dn.numel(),'gemm_tf32':t.backends.cuda.matmul.allow_tf32,'gemm_fp32_precision':t.get_float32_matmul_precision()})
+                print(json.dumps(rows[-1]),flush=True)
+            start+=n
+        report={'stage':'DIAGNOSTIC_COMPLETE','scope':'Same real first-layer input/routes: native FP32 C and BF16 D vs FP32/FP64 dot and Torch SiLU. Not an E2E/performance pass.','rows':rows,'native_plans':m.NATIVE_PLANS,'source_head':subprocess.check_output(['git','-C',str(m.ROOT/'a3wrappercontrol'),'rev-parse','HEAD'],text=True).strip(),'native_calls':1}
+        (OUT/'result.json').write_text(json.dumps(report,indent=2))

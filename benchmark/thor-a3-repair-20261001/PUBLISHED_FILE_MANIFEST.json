@@ -1,0 +1,546 @@
+{
+  "runtime_tested_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "upstream_base": "ef85ae94d04b0a366ff6446b327e787d9af5eb85",
+  "experimental_tested_head": "ad33459c19969eff5170e32d4319ff27183b8796",
+  "evidence_only_commit": true,
+  "raw_archive_sha256": "d7b8ee51d5dacbfba85bc3cb8d149c675de2e43e70702a2026b4a0e4e93ca685",
+  "raw_archive_files_verified": 476,
+  "files": [
+    {
+      "published": "results/a3-activation-boundary-diagnosis-20261001/result.json",
+      "archived": "results/a3-activation-boundary-diagnosis-20261001/result.json",
+      "bytes": 21966,
+      "sha256": "ed2f1da6649aa8bfca96b5d63c2071dd2be7360773c4d0fe641d5d75417bb653",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-cstage-diagnosis-20261001/result.json",
+      "archived": "results/a3-cstage-diagnosis-20261001/result.json",
+      "bytes": 25137,
+      "sha256": "dbae53ec1c3ed395107d58ba3a124a827e0d02729a6326fba49e99396fbefe5b",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-d16-diagnosis-20261001/result.json",
+      "archived": "results/a3-d16-diagnosis-20261001/result.json",
+      "bytes": 5010,
+      "sha256": "9e56e6c1a141727721cf7e6938aa9b042ac4f45153374467aecb1ef93c2c992c",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-dot-rounding-diagnosis-20261001/result.json",
+      "archived": "results/a3-dot-rounding-diagnosis-20261001/result.json",
+      "bytes": 35444,
+      "sha256": "559563b0fe46b72ac8470be8fea67719ccfe25f129b77d3c33b2dc03299add74",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-hybrid-a3modelrepairlatest2-n128-20261001/result.json",
+      "archived": "results/a3-hybrid-a3modelrepairlatest2-n128-20261001/result.json",
+      "bytes": 26666,
+      "sha256": "b5a9297831e90fb6c955b1ce6fc9975f34d755e9da61eebffb9b9d210d5b0fb5",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-hybrid-a3modelrepairlatest2-n128-20261001-launch/run.json",
+      "archived": "results/a3-hybrid-a3modelrepairlatest2-n128-20261001-launch/run.json",
+      "bytes": 803,
+      "sha256": "f17df35040d6ff668f347c6419d1ba4ed03c32157715b19da354b4aa0d053186",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-hybrid-a3modelrepairlatest2-n256-20261001/result.json",
+      "archived": "results/a3-hybrid-a3modelrepairlatest2-n256-20261001/result.json",
+      "bytes": 26666,
+      "sha256": "dc59356e3b90cd181bb80a5a866f0a6087233fa702e09f9d33faaa18e86cf77f",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-hybrid-a3modelrepairlatest2-n256-20261001-launch/run.json",
+      "archived": "results/a3-hybrid-a3modelrepairlatest2-n256-20261001-launch/run.json",
+      "bytes": 805,
+      "sha256": "784982fc65d78308eef489dfcb6975a2e5d169933d53be770096c5fc81c6d69e",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-hybrid-a3sfdlatest2-n256-20261001/result.json",
+      "archived": "results/a3-hybrid-a3sfdlatest2-n256-20261001/result.json",
+      "bytes": 26608,
+      "sha256": "eb19bbb2a6e754d2306e2756cd409a620af89892f19932f5000c3464a35db9b5",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-hybrid-a3sfdlatest2-n256-20261001-launch/run.json",
+      "archived": "results/a3-hybrid-a3sfdlatest2-n256-20261001-launch/run.json",
+      "bytes": 781,
+      "sha256": "f8a253d9c517970816f462b871dd0fbd0bd9ec36295de7e956761ded6a227e2c",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-hybrid-a3sfdlatest3-n256-20261001/result.json",
+      "archived": "results/a3-hybrid-a3sfdlatest3-n256-20261001/result.json",
+      "bytes": 26608,
+      "sha256": "526acf3dd3abc906eaf9975f333730deb916f85fa61a90d3749e14eee4ac98a5",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-hybrid-a3sfdlatest3-n256-20261001-launch/run.json",
+      "archived": "results/a3-hybrid-a3sfdlatest3-n256-20261001-launch/run.json",
+      "bytes": 781,
+      "sha256": "e710cb667fc60abb36db4b6d5078946653259ffe6b156886c269a4a38233e847",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-hybrid-a3sfdlatest4-n256-20261001/input-token-ids.json",
+      "archived": "results/a3-hybrid-a3sfdlatest4-n256-20261001/input-token-ids.json",
+      "bytes": 47053,
+      "sha256": "80732e1755b4075664679f3b0d2d0951fcf5b6b36a628ecd1efeb8e588431228",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-hybrid-a3sfdlatest4-n256-20261001/result.json",
+      "archived": "results/a3-hybrid-a3sfdlatest4-n256-20261001/result.json",
+      "bytes": 26608,
+      "sha256": "4edf28e2d4f1882d937656680ae73e782f8c505580b9e0e86f2e98ad03417595",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-hybrid-a3sfdlatest4-n256-20261001-launch/run.json",
+      "archived": "results/a3-hybrid-a3sfdlatest4-n256-20261001-launch/run.json",
+      "bytes": 781,
+      "sha256": "37f1165493f5e927dbecb1e562eb3a8f3b7944fabf814263a1850c8eaba4467e",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-hybrid-a3sfdlatest4-n256-20261001-launch/stderr.log",
+      "archived": "results/a3-hybrid-a3sfdlatest4-n256-20261001-launch/stderr.log",
+      "bytes": 612,
+      "sha256": "8c1ce271ff11292f61a8f3f7bce1f764d24c496d6df6318f0bfd3a38eaefa217",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-hybrid-a3sfdlatest4-n256-20261001-launch/stdout.log",
+      "archived": "results/a3-hybrid-a3sfdlatest4-n256-20261001-launch/stdout.log",
+      "bytes": 3565,
+      "sha256": "7637f0f9e2c5d25fbdb0d4494ec456b9de8240e57babcd09fc6e67b5cfbf3254",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-hybrid-independent-audit-r3-20261001.json",
+      "archived": "results/a3-hybrid-independent-audit-r3-20261001.json",
+      "bytes": 48939,
+      "sha256": "b03fc624f39ef7ad2bf50394c36b22aec9a58efa1c57963be32c7fcf9dcf0ef7",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-latest4-correctness-tests-20261001/imports/2816279.json",
+      "archived": "results/a3-latest4-correctness-tests-20261001/imports/2816279.json",
+      "bytes": 812,
+      "sha256": "576470ace7dbdb4913b0bb17992441b7f3436a326e226829456409623a38b9a7",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-latest4-correctness-tests-20261001/imports/2816359.json",
+      "archived": "results/a3-latest4-correctness-tests-20261001/imports/2816359.json",
+      "bytes": 1155,
+      "sha256": "ffb0669751da93f3da1e95f6e95cea02d5b58e66384e8dd8d779305c2ae1f583",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-latest4-correctness-tests-20261001/imports/matrix-selection-2816359.json",
+      "archived": "results/a3-latest4-correctness-tests-20261001/imports/matrix-selection-2816359.json",
+      "bytes": 10462,
+      "sha256": "984ab995e403dd86e650bb5bc055224d846f48f57d8071ce71a5c68a75408ae6",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-latest4-correctness-tests-20261001/junit.xml",
+      "archived": "results/a3-latest4-correctness-tests-20261001/junit.xml",
+      "bytes": 5632,
+      "sha256": "6dcabb9ec84696fad835de8b4893b6b30d895e91727b034ee027841dd17eb884",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-latest4-correctness-tests-20261001/run.json",
+      "archived": "results/a3-latest4-correctness-tests-20261001/run.json",
+      "bytes": 1267,
+      "sha256": "2d0137b5cd8cfb58ece5769b901f5c77245deed5c487f1af1b28187235cde298",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-latest4-correctness-tests-20261001/stderr.log",
+      "archived": "results/a3-latest4-correctness-tests-20261001/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-latest4-correctness-tests-20261001/stdout.log",
+      "archived": "results/a3-latest4-correctness-tests-20261001/stdout.log",
+      "bytes": 746,
+      "sha256": "36034db71b8ec1b155158f90258e57633b3e31e68efc8ccc47bc47ad37dd4574",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-latest4-native-provenance-20261001.json",
+      "archived": "results/a3-latest4-native-provenance-20261001.json",
+      "bytes": 19145,
+      "sha256": "6865321c68c3964c1b33b8b34119995fd3b90133d1d749f0f4f79451b205010a",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-launch-stream-red-20261001/imports/2802005.json",
+      "archived": "results/a3-launch-stream-red-20261001/imports/2802005.json",
+      "bytes": 812,
+      "sha256": "ce5d9d44b00c6afab12154dd941eb9a35249821a4cca799ac223f7917355995e",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-launch-stream-red-20261001/imports/2802070.json",
+      "archived": "results/a3-launch-stream-red-20261001/imports/2802070.json",
+      "bytes": 1154,
+      "sha256": "9e0895244a1b16502e697aaba3df2b84f75dd438ba7bf673c588c91df6d3ac45",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-launch-stream-red-20261001/junit.xml",
+      "archived": "results/a3-launch-stream-red-20261001/junit.xml",
+      "bytes": 18887,
+      "sha256": "2f78486270183030a972b123586c5db58e4a0bbbcbf96c0df6377c79816a601c",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-launch-stream-red-20261001/run.json",
+      "archived": "results/a3-launch-stream-red-20261001/run.json",
+      "bytes": 682,
+      "sha256": "2bd50c647b58947eafb08f5c7930bfe36363814982f4d2911b9f4373e4efc1eb",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-launch-stream-red-20261001/stderr.log",
+      "archived": "results/a3-launch-stream-red-20261001/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-launch-stream-red-20261001/stdout.log",
+      "archived": "results/a3-launch-stream-red-20261001/stdout.log",
+      "bytes": 17886,
+      "sha256": "bef980321f04ee38262778921e64bb907994dfd3461fd5c9d127444896d116a9",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-layer-precision-diagnosis-20261001/result.json",
+      "archived": "results/a3-layer-precision-diagnosis-20261001/result.json",
+      "bytes": 18834,
+      "sha256": "5bf396e4d898d4c76a493e34965cd06fa0e20b609c57a0c29f278d09471a467c",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-merge-diagnosis-20261001/result.json",
+      "archived": "results/a3-merge-diagnosis-20261001/result.json",
+      "bytes": 26517,
+      "sha256": "9d9605ab4aedebb9bbdf50aad7abf6d73b2b1234cd0b95061af6a93e8bc6f784",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-model-repair-a3modelrepairlatest2-n128-20261001/result.json",
+      "archived": "results/a3-model-repair-a3modelrepairlatest2-n128-20261001/result.json",
+      "bytes": 34361,
+      "sha256": "125f632af34fd1cfb692b0319a0b1c3a712e5e9d837bb6c3a2ec421cabd0dbbd",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-model-repair-a3modelrepairlatest2-n128-20261001-launch/run.json",
+      "archived": "results/a3-model-repair-a3modelrepairlatest2-n128-20261001-launch/run.json",
+      "bytes": 843,
+      "sha256": "340471fb25f167fae0e4ab13e532e9623922558b7720cf833943b8b23008a022",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-model-repair-a3modelrepairlatest2-n256-20261001/result.json",
+      "archived": "results/a3-model-repair-a3modelrepairlatest2-n256-20261001/result.json",
+      "bytes": 34365,
+      "sha256": "f7aceb70d82f159b69675bf57c8e405a58575095023472cfeb65a989dc34803a",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-model-repair-a3modelrepairlatest2-n256-20261001-launch/run.json",
+      "archived": "results/a3-model-repair-a3modelrepairlatest2-n256-20261001-launch/run.json",
+      "bytes": 843,
+      "sha256": "65215c4f575ca8da8eb0ca6ee8363537e5ac902e7081d99149394597fc5cfb2d",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-model-repair-a3sfdlatest2-n256-20261001/result.json",
+      "archived": "results/a3-model-repair-a3sfdlatest2-n256-20261001/result.json",
+      "bytes": 34299,
+      "sha256": "c522a15f5a3cffb2df7489bf2af4858c683b7af0efeb04b8292207bfdc23b5cb",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-model-repair-a3sfdlatest2-n256-20261001-launch/run.json",
+      "archived": "results/a3-model-repair-a3sfdlatest2-n256-20261001-launch/run.json",
+      "bytes": 819,
+      "sha256": "96f57c7b8910ab998db2a63ecfe081d738d8631d77800e3aa503697b4ab854fc",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-model-repair-a3sfdlatest3-n256-20261001/result.json",
+      "archived": "results/a3-model-repair-a3sfdlatest3-n256-20261001/result.json",
+      "bytes": 34299,
+      "sha256": "150d4503af39f5d7bfeb05c0ea436421bcc6f4538d759f491fbe5d8d1c1501aa",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-model-repair-a3sfdlatest3-n256-20261001-launch/run.json",
+      "archived": "results/a3-model-repair-a3sfdlatest3-n256-20261001-launch/run.json",
+      "bytes": 819,
+      "sha256": "100258cd7ddebb3b7f8b9dbf15bf1b55db0f8bff4b5a379572e326d0b8b8bbf1",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-model-repair-a3sfdlatest4-n256-20261001/input-token-ids.json",
+      "archived": "results/a3-model-repair-a3sfdlatest4-n256-20261001/input-token-ids.json",
+      "bytes": 21027,
+      "sha256": "0983f2e3e173eb5d6dd1fdb286b1bd96b513bff54b1f1a2724cc76bdc82122dc",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-model-repair-a3sfdlatest4-n256-20261001/result.json",
+      "archived": "results/a3-model-repair-a3sfdlatest4-n256-20261001/result.json",
+      "bytes": 34298,
+      "sha256": "74e662122f4aa17a3f491584bef1194d42bdfb92420b6daadf36cea8f23c3063",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-model-repair-a3sfdlatest4-n256-20261001-launch/run.json",
+      "archived": "results/a3-model-repair-a3sfdlatest4-n256-20261001-launch/run.json",
+      "bytes": 819,
+      "sha256": "7ee068f7dd142ca1df76c391d1cb7831328bb71841e1367b3cce81277a508448",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-model-repair-a3sfdlatest4-n256-20261001-launch/stderr.log",
+      "archived": "results/a3-model-repair-a3sfdlatest4-n256-20261001-launch/stderr.log",
+      "bytes": 612,
+      "sha256": "c879780c19bdca304eb631f80d2d277d92ded52b44714bd8ecb91197bf40f742",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-model-repair-a3sfdlatest4-n256-20261001-launch/stdout.log",
+      "archived": "results/a3-model-repair-a3sfdlatest4-n256-20261001-launch/stdout.log",
+      "bytes": 960,
+      "sha256": "4a880969892af442988b85c0e9c8a309f4e222c38d8a2c4a9912bb4403ffd4a1",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-model-repair-independent-audit-r3-20261001.json",
+      "archived": "results/a3-model-repair-independent-audit-r3-20261001.json",
+      "bytes": 12289,
+      "sha256": "b34040819aa27b23a4e80f59ef82e93e9b380930291ccb1bf46f838322272b86",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-plain-d-diagnosis-r3-20261001/result.json",
+      "archived": "results/a3-plain-d-diagnosis-r3-20261001/result.json",
+      "bytes": 8394,
+      "sha256": "959dc78739822caeeb8b27214f3ce351b37bb5bc09566d141c864fb32d3d6bdc",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-repair-frozen-sources-latest-20261001/provenance.json",
+      "archived": "results/a3-repair-frozen-sources-latest-20261001/provenance.json",
+      "bytes": 40984,
+      "sha256": "ed74477926b1ca167b09bdc1e77148ae9700ee7d7eaf56cb5fd95d132dd1a15e",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-sfd-red-real-conftest-r2-20261001/imports/2796585.json",
+      "archived": "results/a3-sfd-red-real-conftest-r2-20261001/imports/2796585.json",
+      "bytes": 1008,
+      "sha256": "328cc6921a0fb1a09a9ca855596fd6d091230a4ff5eface08cf7eaefe6d23a99",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-sfd-red-real-conftest-r2-20261001/imports/2796651.json",
+      "archived": "results/a3-sfd-red-real-conftest-r2-20261001/imports/2796651.json",
+      "bytes": 1373,
+      "sha256": "631e938104e998a0f9ea098752b7e166df682ff622d8d3ef3220a7d6e3380719",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-sfd-red-real-conftest-r2-20261001/junit.xml",
+      "archived": "results/a3-sfd-red-real-conftest-r2-20261001/junit.xml",
+      "bytes": 36006,
+      "sha256": "e3aa3c56abb749d7da072ba09f74c5006ef1638d92dcd4b576d5e87035095384",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-sfd-red-real-conftest-r2-20261001/run.json",
+      "archived": "results/a3-sfd-red-real-conftest-r2-20261001/run.json",
+      "bytes": 685,
+      "sha256": "445f79523895ad854e4ec72609189e09cdb9bffb71ccc8ad06eba0b016b7d47b",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-sfd-red-real-conftest-r2-20261001/stderr.log",
+      "archived": "results/a3-sfd-red-real-conftest-r2-20261001/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-sfd-red-real-conftest-r2-20261001/stdout.log",
+      "archived": "results/a3-sfd-red-real-conftest-r2-20261001/stdout.log",
+      "bytes": 31416,
+      "sha256": "1608eee37148f86b9fccd24e89cad09850e437e640079071edf2184cc268e287",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/a3-token-error-diagnosis-20261001/result.json",
+      "archived": "results/a3-token-error-diagnosis-20261001/result.json",
+      "bytes": 108447,
+      "sha256": "c0c0ddf2aaaf37c253a52b0af01be104480bc7b9d9887259f938297ed5dcbd8e",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "results/build-a3-a3sfdlatest3/run.json",
+      "archived": "results/build-a3-a3sfdlatest3/run.json",
+      "bytes": 549,
+      "sha256": "eac82a157d7e3a7b98aa6b811265f05c0c47d6a856dcab17608c2e5e1810cadc",
+      "byte_identical_to_verified_archive": true
+    },
+    {
+      "published": "frozen-harness/a3_model_e2e_mergefix_20261001.py.txt",
+      "archived": "tools/a3_model_e2e_mergefix_20261001.py",
+      "bytes": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea",
+      "byte_identical_to_verified_archive": true,
+      "extension_changed_only": true
+    },
+    {
+      "published": "frozen-harness/a3_granite_hybrid_e2e_20261001.py.txt",
+      "archived": "tools/a3_granite_hybrid_e2e_20261001.py",
+      "bytes": 8165,
+      "sha256": "a1d41f99bfe40d6aa1c0bb1bc34b45cf74b995381511fdf5521512b1b171f71f",
+      "byte_identical_to_verified_archive": true,
+      "extension_changed_only": true
+    },
+    {
+      "published": "frozen-harness/audit_a3_model_repair_r3_20261001.py.txt",
+      "archived": "tools/audit_a3_model_repair_r3_20261001.py",
+      "bytes": 4477,
+      "sha256": "f463c804f9a7258040d357b8f546bb7aeca45420081d4db013f85c20666101d1",
+      "byte_identical_to_verified_archive": true,
+      "extension_changed_only": true
+    },
+    {
+      "published": "frozen-harness/audit_a3_hybrid_e2e_r3_20261001.py.txt",
+      "archived": "tools/audit_a3_hybrid_e2e_r3_20261001.py",
+      "bytes": 5110,
+      "sha256": "3f4307883deacca9264a21f19e48c26c362e3b2b256d389cdbcf419d31499258",
+      "byte_identical_to_verified_archive": true,
+      "extension_changed_only": true
+    },
+    {
+      "published": "frozen-harness/a3_repair_import_probe_20261001.py.txt",
+      "archived": "tools/a3_repair_import_probe_20261001.py",
+      "bytes": 2077,
+      "sha256": "304665d9d55ddeccc9f8e975b2a30c958917878da3873e869b00e939ae54e9d3",
+      "byte_identical_to_verified_archive": true,
+      "extension_changed_only": true
+    },
+    {
+      "published": "frozen-harness/a3_red_import_probe_20261001.py.txt",
+      "archived": "tools/a3_red_import_probe_20261001.py",
+      "bytes": 2775,
+      "sha256": "0fd2586c45995579d23d54db0c0a2adc08a4102661d8e1b9a73748c0836990d1",
+      "byte_identical_to_verified_archive": true,
+      "extension_changed_only": true
+    },
+    {
+      "published": "frozen-harness/a3_repair_matrix_select_20261001.py.txt",
+      "archived": "tools/a3_repair_matrix_select_20261001.py",
+      "bytes": 1628,
+      "sha256": "0dc9823c8ce28b42491600dfb8327dd1e6495e08fb7cb9df9cab5b0e8314fa45",
+      "byte_identical_to_verified_archive": true,
+      "extension_changed_only": true
+    },
+    {
+      "published": "frozen-harness/run_a3_latest4_correctness_20261001.py.txt",
+      "archived": "tools/run_a3_latest4_correctness_20261001.py",
+      "bytes": 4079,
+      "sha256": "b8b6535b88875ca703d60a9f0e218f40f17137f25c862e6106f1b86a634b772d",
+      "byte_identical_to_verified_archive": true,
+      "extension_changed_only": true
+    },
+    {
+      "published": "frozen-harness/prepare_a3_latest4_20261001.py.txt",
+      "archived": "tools/prepare_a3_latest4_20261001.py",
+      "bytes": 3936,
+      "sha256": "7e3da9a7dc66634f2b555bbd24b58dd54a96b1a3a3405381f1c9bf4803ad4cd1",
+      "byte_identical_to_verified_archive": true,
+      "extension_changed_only": true
+    },
+    {
+      "published": "frozen-harness/run_a3_sfd_red_fixture_r2_20261001.py.txt",
+      "archived": "tools/run_a3_sfd_red_fixture_r2_20261001.py",
+      "bytes": 1902,
+      "sha256": "915fc880a1578fb3f8504322dc4382f82acabb94d57fab4340eaba9a645fa4b6",
+      "byte_identical_to_verified_archive": true,
+      "extension_changed_only": true
+    },
+    {
+      "published": "frozen-harness/diagnose_a3_merge_20261001.py.txt",
+      "archived": "tools/diagnose_a3_merge_20261001.py",
+      "bytes": 5462,
+      "sha256": "a0f87d707f7868df24938dc512d6534af862056f917ba50d28709bf39af47d7b",
+      "byte_identical_to_verified_archive": true,
+      "extension_changed_only": true
+    },
+    {
+      "published": "frozen-harness/diagnose_a3_layer_precision_20261001.py.txt",
+      "archived": "tools/diagnose_a3_layer_precision_20261001.py",
+      "bytes": 4327,
+      "sha256": "42a8026ecd31c9e784782db55bb0764529832dd88627c097e01fd07e7da714d8",
+      "byte_identical_to_verified_archive": true,
+      "extension_changed_only": true
+    },
+    {
+      "published": "frozen-harness/diagnose_a3_plain_d_r3_20261001.py.txt",
+      "archived": "tools/diagnose_a3_plain_d_r3_20261001.py",
+      "bytes": 5239,
+      "sha256": "69b6cd63bed792968b30dce995ea4984574ec2569cf42dc66e0522c769ea80d5",
+      "byte_identical_to_verified_archive": true,
+      "extension_changed_only": true
+    },
+    {
+      "published": "frozen-harness/diagnose_a3_dot_rounding_20261001.py.txt",
+      "archived": "tools/diagnose_a3_dot_rounding_20261001.py",
+      "bytes": 6097,
+      "sha256": "a02b258e07fc27dc8076a85603a89f0690b3c7d22564e9ad13250d28c41a58af",
+      "byte_identical_to_verified_archive": true,
+      "extension_changed_only": true
+    },
+    {
+      "published": "A3_REPAIR_MAC_TRANSPORT_20261001.json",
+      "local_record": "A3_REPAIR_MAC_TRANSPORT_20261001.json",
+      "bytes": 430,
+      "sha256": "4b4aa508c87051ed3ed22f719f3b9da5d12755e3306a9685ffe9273b13423240"
+    },
+    {
+      "published": "A3_REPAIR_LATEST_MAC_TRANSPORT_20261001.json",
+      "local_record": "A3_REPAIR_LATEST_MAC_TRANSPORT_20261001.json",
+      "bytes": 437,
+      "sha256": "31d1e5f48cd197caf6fe797a6cd4d72b391b8809b46f7ddc5cbe2dfb71d90301"
+    },
+    {
+      "published": "A3_REPAIR_FINAL_STATE_20261001.json",
+      "local_record": "A3_REPAIR_FINAL_STATE_20261001.json",
+      "bytes": 146,
+      "sha256": "804d3a45bf62175fe0150f8a94fca6d01960ab3dfc8973c2106282281d663054"
+    }
+  ]
+}

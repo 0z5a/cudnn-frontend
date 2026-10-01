@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Select ten explicit valid representative cases from the original test matrix."""
+import json
+import os
+from pathlib import Path
+
+
+def pytest_collection_modifyitems(config, items):
+    selected, deselected = [], []
+    for item in items:
+        if item.originalname not in ('test_grouped_gemm_swiglu_wrapper_fp4', 'test_grouped_gemm_swiglu_wrapper_fp8'):
+            selected.append(item)
+            continue
+        p = item.callspec.params
+        tile, cluster = p['mma_tiler_mn'], p['cluster_shape_mn']
+        fp8 = str(p['ab_dtype']) == 'torch.float8_e4m3fn'
+        keep = (
+            fp8 and tile == (256, 256) and cluster == (2, 1)
+            or not fp8 and str(p['sf_dtype']) == 'torch.float8_e8m0fnu' and (
+                str(p['d_dtype']) == 'torch.bfloat16' and p['sf_vec_size'] == 16 and ((tile, cluster) in (((256, 256), (2, 1)), ((128, 256), (1, 1))))
+                or str(p['d_dtype']) == 'torch.float32' and p['sf_vec_size'] == 32 and tile == (256, 256) and cluster == (2, 1)
+            )
+        )
+        (selected if keep else deselected).append(item)
+    items[:] = selected
+    if deselected:
+        config.hook.pytest_deselected(items=deselected)
+    path = Path(os.environ['A3_IMPORT_LOG'])
+    path.mkdir(exist_ok=True, parents=True)
+    (path / ('matrix-selection-' + str(os.getpid()) + '.json')).write_text(json.dumps([{'nodeid':i.nodeid,'params':{k:str(v) for k,v in i.callspec.params.items()}} for i in selected if hasattr(i,'callspec')],indent=2))

@@ -1,0 +1,314 @@
+===== cudnn-frontend conftest.py ====
+cuDNN Frontend Version: 1.31.0
+cuDNN Frontend Path: /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest2/python/cudnn/__init__.py
+cuDNN Backend Version: 92000
+GPU Name: NVIDIA Thor
+SM Arch Version: (11, 0)
+PyTorch Version: 2.13.0+cu130
+PyTorch Path: /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest2/lib/python3.12/site-packages/torch/__init__.py
+PyTorch CUDA Version: 13.0
+PyTorch cuDNN Version: 92000
+bringing up nodes...
+bringing up nodes...
+
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+______ test_swiglu_wrapper_outputs_and_amax_use_launch_stream[side-False] ______
+[gw0] linux -- Python 3.12.3 /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest2/bin/python
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xfffc8e366e40>
+warm = False, target = 'side'
+
+    @pytest.mark.parametrize('warm', [False, True])
+    @pytest.mark.parametrize('target', ['side', 'default'])
+    def test_swiglu_wrapper_outputs_and_amax_use_launch_stream(monkeypatch, warm, target):
+        if torch.cuda.get_device_capability()[0] < 10:
+            pytest.skip('SM100+ is required')
+        from cudnn.gemm.cutedsl.grouped.swiglu import api
+    
+        api._cache_of_GroupedGemmSwigluSm100Objects.clear()
+        inputs, counts, _, _ = _operands(4, 512, True)
+        launch = torch.cuda.Stream() if target == 'side' else torch.cuda.default_stream()
+        ambient = torch.cuda.Stream()
+        kwargs = dict(**inputs, sf_vec_size=32, c_dtype=torch.bfloat16, d_dtype=torch.bfloat16,
+                      mma_tiler_mn=(256,128),cluster_shape_mn=(2,1),m_aligned=256,
+                      current_stream=cuda.CUstream(launch.cuda_stream))
+        torch.cuda.synchronize()
+        if warm:
+            api.grouped_gemm_swiglu_wrapper_sm100(**kwargs)
+            torch.cuda.synchronize()
+        # Keep this storage live throughout. A mocked allocator removes cudaMalloc
+        # synchronization from the probe but retains the real per-call fill kernel.
+        amax_storage = torch.full((len(counts),1),float('inf'),dtype=torch.float32,device='cuda')
+        torch.cuda.synchronize()
+        allocations = []
+        original_empty, original_empty_strided, original_full = torch.empty, torch.empty_strided, torch.full
+    
+        def record(name):
+            stream = torch.cuda.current_stream(inputs['a_tensor'].device)
+            allocations.append((name,stream.cuda_stream,stream.device))
+    
+        def empty(*args,**kw):
+            record('empty')
+            return original_empty(*args,**kw)
+    
+        def empty_strided(*args,**kw):
+            record('empty_strided')
+            return original_empty_strided(*args,**kw)
+    
+        def full(size,fill_value,**kw):
+            record('full')
+            if tuple(size)==tuple(amax_storage.shape) and fill_value==-float('inf') and kw.get('dtype')==torch.float32:
+                amax_storage.fill_(fill_value)
+                return amax_storage
+            return original_full(size,fill_value,**kw)
+    
+        with monkeypatch.context() as patch:
+            patch.setattr(torch,'empty',empty)
+            patch.setattr(torch,'empty_strided',empty_strided)
+            patch.setattr(torch,'full',full)
+            with torch.cuda.stream(ambient):
+                if warm:
+                    # Bounded delay on a separate stream makes a misplaced AMAX
+                    # reset observable as a real output error, not a timing guess.
+                    torch.cuda._sleep(100_000_000)
+                result = api.grouped_gemm_swiglu_wrapper_sm100(**kwargs)
+                assert torch.cuda.current_stream().cuda_stream==ambient.cuda_stream
+        torch.cuda.synchronize()
+        assert allocations and any(name=='full' for name,_,_ in allocations)
+        live = torch.tensor([n>0 for n in counts],device='cuda')
+        assert torch.isfinite(result['amax_tensor'][live]).all()
+        assert (result['amax_tensor'][live]>0).all()
+        assert torch.isneginf(result['amax_tensor'][~live]).all()
+>       assert all(handle==launch.cuda_stream and device==launch.device for _,handle,device in allocations), allocations
+E       AssertionError: [('empty', 957159792, device(type='cuda', index=0)), ('empty', 957159792, device(type='cuda', index=0)), ('empty', 957...uda', index=0)), ('empty', 957159792, device(type='cuda', index=0)), ('full', 957159792, device(type='cuda', index=0))]
+E       assert False
+E        +  where False = all(<generator object test_swiglu_wrapper_outputs_and_amax_use_launch_stream.<locals>.<genexpr> at 0xfffc8e359d50>)
+
+test_swiglu_wrapper_launch_stream.py:74: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  GroupedGemmSwigluSm100:api_base.py:94 GroupedGemmSwigluSm100 is an experimental API
+______ test_swiglu_wrapper_outputs_and_amax_use_launch_stream[side-True] _______
+[gw0] linux -- Python 3.12.3 /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest2/bin/python
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xfffc8e259f70>
+warm = True, target = 'side'
+
+    @pytest.mark.parametrize('warm', [False, True])
+    @pytest.mark.parametrize('target', ['side', 'default'])
+    def test_swiglu_wrapper_outputs_and_amax_use_launch_stream(monkeypatch, warm, target):
+        if torch.cuda.get_device_capability()[0] < 10:
+            pytest.skip('SM100+ is required')
+        from cudnn.gemm.cutedsl.grouped.swiglu import api
+    
+        api._cache_of_GroupedGemmSwigluSm100Objects.clear()
+        inputs, counts, _, _ = _operands(4, 512, True)
+        launch = torch.cuda.Stream() if target == 'side' else torch.cuda.default_stream()
+        ambient = torch.cuda.Stream()
+        kwargs = dict(**inputs, sf_vec_size=32, c_dtype=torch.bfloat16, d_dtype=torch.bfloat16,
+                      mma_tiler_mn=(256,128),cluster_shape_mn=(2,1),m_aligned=256,
+                      current_stream=cuda.CUstream(launch.cuda_stream))
+        torch.cuda.synchronize()
+        if warm:
+            api.grouped_gemm_swiglu_wrapper_sm100(**kwargs)
+            torch.cuda.synchronize()
+        # Keep this storage live throughout. A mocked allocator removes cudaMalloc
+        # synchronization from the probe but retains the real per-call fill kernel.
+        amax_storage = torch.full((len(counts),1),float('inf'),dtype=torch.float32,device='cuda')
+        torch.cuda.synchronize()
+        allocations = []
+        original_empty, original_empty_strided, original_full = torch.empty, torch.empty_strided, torch.full
+    
+        def record(name):
+            stream = torch.cuda.current_stream(inputs['a_tensor'].device)
+            allocations.append((name,stream.cuda_stream,stream.device))
+    
+        def empty(*args,**kw):
+            record('empty')
+            return original_empty(*args,**kw)
+    
+        def empty_strided(*args,**kw):
+            record('empty_strided')
+            return original_empty_strided(*args,**kw)
+    
+        def full(size,fill_value,**kw):
+            record('full')
+            if tuple(size)==tuple(amax_storage.shape) and fill_value==-float('inf') and kw.get('dtype')==torch.float32:
+                amax_storage.fill_(fill_value)
+                return amax_storage
+            return original_full(size,fill_value,**kw)
+    
+        with monkeypatch.context() as patch:
+            patch.setattr(torch,'empty',empty)
+            patch.setattr(torch,'empty_strided',empty_strided)
+            patch.setattr(torch,'full',full)
+            with torch.cuda.stream(ambient):
+                if warm:
+                    # Bounded delay on a separate stream makes a misplaced AMAX
+                    # reset observable as a real output error, not a timing guess.
+                    torch.cuda._sleep(100_000_000)
+                result = api.grouped_gemm_swiglu_wrapper_sm100(**kwargs)
+                assert torch.cuda.current_stream().cuda_stream==ambient.cuda_stream
+        torch.cuda.synchronize()
+        assert allocations and any(name=='full' for name,_,_ in allocations)
+        live = torch.tensor([n>0 for n in counts],device='cuda')
+>       assert torch.isfinite(result['amax_tensor'][live]).all()
+E       AssertionError: assert tensor(False, device='cuda:0')
+E        +  where tensor(False, device='cuda:0') = <built-in method all of Tensor object at 0xfffc8c1103c0>()
+E        +    where <built-in method all of Tensor object at 0xfffc8c1103c0> = tensor([[False],\n        [False],\n        [False]], device='cuda:0').all
+E        +      where tensor([[False],\n        [False],\n        [False]], device='cuda:0') = <built-in method isfinite of type object at 0xfffce722d638>(tensor([[-inf],\n        [-inf],\n        [-inf]], device='cuda:0'))
+E        +        where <built-in method isfinite of type object at 0xfffce722d638> = torch.isfinite
+
+test_swiglu_wrapper_launch_stream.py:71: AssertionError
+____ test_swiglu_wrapper_outputs_and_amax_use_launch_stream[default-False] _____
+[gw0] linux -- Python 3.12.3 /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest2/bin/python
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xfffc84504b00>
+warm = False, target = 'default'
+
+    @pytest.mark.parametrize('warm', [False, True])
+    @pytest.mark.parametrize('target', ['side', 'default'])
+    def test_swiglu_wrapper_outputs_and_amax_use_launch_stream(monkeypatch, warm, target):
+        if torch.cuda.get_device_capability()[0] < 10:
+            pytest.skip('SM100+ is required')
+        from cudnn.gemm.cutedsl.grouped.swiglu import api
+    
+        api._cache_of_GroupedGemmSwigluSm100Objects.clear()
+        inputs, counts, _, _ = _operands(4, 512, True)
+        launch = torch.cuda.Stream() if target == 'side' else torch.cuda.default_stream()
+        ambient = torch.cuda.Stream()
+        kwargs = dict(**inputs, sf_vec_size=32, c_dtype=torch.bfloat16, d_dtype=torch.bfloat16,
+                      mma_tiler_mn=(256,128),cluster_shape_mn=(2,1),m_aligned=256,
+                      current_stream=cuda.CUstream(launch.cuda_stream))
+        torch.cuda.synchronize()
+        if warm:
+            api.grouped_gemm_swiglu_wrapper_sm100(**kwargs)
+            torch.cuda.synchronize()
+        # Keep this storage live throughout. A mocked allocator removes cudaMalloc
+        # synchronization from the probe but retains the real per-call fill kernel.
+        amax_storage = torch.full((len(counts),1),float('inf'),dtype=torch.float32,device='cuda')
+        torch.cuda.synchronize()
+        allocations = []
+        original_empty, original_empty_strided, original_full = torch.empty, torch.empty_strided, torch.full
+    
+        def record(name):
+            stream = torch.cuda.current_stream(inputs['a_tensor'].device)
+            allocations.append((name,stream.cuda_stream,stream.device))
+    
+        def empty(*args,**kw):
+            record('empty')
+            return original_empty(*args,**kw)
+    
+        def empty_strided(*args,**kw):
+            record('empty_strided')
+            return original_empty_strided(*args,**kw)
+    
+        def full(size,fill_value,**kw):
+            record('full')
+            if tuple(size)==tuple(amax_storage.shape) and fill_value==-float('inf') and kw.get('dtype')==torch.float32:
+                amax_storage.fill_(fill_value)
+                return amax_storage
+            return original_full(size,fill_value,**kw)
+    
+        with monkeypatch.context() as patch:
+            patch.setattr(torch,'empty',empty)
+            patch.setattr(torch,'empty_strided',empty_strided)
+            patch.setattr(torch,'full',full)
+            with torch.cuda.stream(ambient):
+                if warm:
+                    # Bounded delay on a separate stream makes a misplaced AMAX
+                    # reset observable as a real output error, not a timing guess.
+                    torch.cuda._sleep(100_000_000)
+                result = api.grouped_gemm_swiglu_wrapper_sm100(**kwargs)
+                assert torch.cuda.current_stream().cuda_stream==ambient.cuda_stream
+        torch.cuda.synchronize()
+        assert allocations and any(name=='full' for name,_,_ in allocations)
+        live = torch.tensor([n>0 for n in counts],device='cuda')
+        assert torch.isfinite(result['amax_tensor'][live]).all()
+        assert (result['amax_tensor'][live]>0).all()
+        assert torch.isneginf(result['amax_tensor'][~live]).all()
+>       assert all(handle==launch.cuda_stream and device==launch.device for _,handle,device in allocations), allocations
+E       AssertionError: [('empty', 957360656, device(type='cuda', index=0)), ('empty', 957360656, device(type='cuda', index=0)), ('empty', 957...uda', index=0)), ('empty', 957360656, device(type='cuda', index=0)), ('full', 957360656, device(type='cuda', index=0))]
+E       assert False
+E        +  where False = all(<generator object test_swiglu_wrapper_outputs_and_amax_use_launch_stream.<locals>.<genexpr> at 0xfffc8e359990>)
+
+test_swiglu_wrapper_launch_stream.py:74: AssertionError
+_____ test_swiglu_wrapper_outputs_and_amax_use_launch_stream[default-True] _____
+[gw0] linux -- Python 3.12.3 /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest2/bin/python
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xfffc8e21f530>
+warm = True, target = 'default'
+
+    @pytest.mark.parametrize('warm', [False, True])
+    @pytest.mark.parametrize('target', ['side', 'default'])
+    def test_swiglu_wrapper_outputs_and_amax_use_launch_stream(monkeypatch, warm, target):
+        if torch.cuda.get_device_capability()[0] < 10:
+            pytest.skip('SM100+ is required')
+        from cudnn.gemm.cutedsl.grouped.swiglu import api
+    
+        api._cache_of_GroupedGemmSwigluSm100Objects.clear()
+        inputs, counts, _, _ = _operands(4, 512, True)
+        launch = torch.cuda.Stream() if target == 'side' else torch.cuda.default_stream()
+        ambient = torch.cuda.Stream()
+        kwargs = dict(**inputs, sf_vec_size=32, c_dtype=torch.bfloat16, d_dtype=torch.bfloat16,
+                      mma_tiler_mn=(256,128),cluster_shape_mn=(2,1),m_aligned=256,
+                      current_stream=cuda.CUstream(launch.cuda_stream))
+        torch.cuda.synchronize()
+        if warm:
+            api.grouped_gemm_swiglu_wrapper_sm100(**kwargs)
+            torch.cuda.synchronize()
+        # Keep this storage live throughout. A mocked allocator removes cudaMalloc
+        # synchronization from the probe but retains the real per-call fill kernel.
+        amax_storage = torch.full((len(counts),1),float('inf'),dtype=torch.float32,device='cuda')
+        torch.cuda.synchronize()
+        allocations = []
+        original_empty, original_empty_strided, original_full = torch.empty, torch.empty_strided, torch.full
+    
+        def record(name):
+            stream = torch.cuda.current_stream(inputs['a_tensor'].device)
+            allocations.append((name,stream.cuda_stream,stream.device))
+    
+        def empty(*args,**kw):
+            record('empty')
+            return original_empty(*args,**kw)
+    
+        def empty_strided(*args,**kw):
+            record('empty_strided')
+            return original_empty_strided(*args,**kw)
+    
+        def full(size,fill_value,**kw):
+            record('full')
+            if tuple(size)==tuple(amax_storage.shape) and fill_value==-float('inf') and kw.get('dtype')==torch.float32:
+                amax_storage.fill_(fill_value)
+                return amax_storage
+            return original_full(size,fill_value,**kw)
+    
+        with monkeypatch.context() as patch:
+            patch.setattr(torch,'empty',empty)
+            patch.setattr(torch,'empty_strided',empty_strided)
+            patch.setattr(torch,'full',full)
+            with torch.cuda.stream(ambient):
+                if warm:
+                    # Bounded delay on a separate stream makes a misplaced AMAX
+                    # reset observable as a real output error, not a timing guess.
+                    torch.cuda._sleep(100_000_000)
+                result = api.grouped_gemm_swiglu_wrapper_sm100(**kwargs)
+                assert torch.cuda.current_stream().cuda_stream==ambient.cuda_stream
+        torch.cuda.synchronize()
+        assert allocations and any(name=='full' for name,_,_ in allocations)
+        live = torch.tensor([n>0 for n in counts],device='cuda')
+>       assert torch.isfinite(result['amax_tensor'][live]).all()
+E       AssertionError: assert tensor(False, device='cuda:0')
+E        +  where tensor(False, device='cuda:0') = <built-in method all of Tensor object at 0xfffc84553a70>()
+E        +    where <built-in method all of Tensor object at 0xfffc84553a70> = tensor([[False],\n        [False],\n        [False]], device='cuda:0').all
+E        +      where tensor([[False],\n        [False],\n        [False]], device='cuda:0') = <built-in method isfinite of type object at 0xfffce722d638>(tensor([[-inf],\n        [-inf],\n        [-inf]], device='cuda:0'))
+E        +        where <built-in method isfinite of type object at 0xfffce722d638> = torch.isfinite
+
+test_swiglu_wrapper_launch_stream.py:71: AssertionError
+- generated xml file: /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-launch-stream-red-20261001/junit.xml -
+=========================== short test summary info ============================
+FAILED test_swiglu_wrapper_launch_stream.py::test_swiglu_wrapper_outputs_and_amax_use_launch_stream[side-False]
+FAILED test_swiglu_wrapper_launch_stream.py::test_swiglu_wrapper_outputs_and_amax_use_launch_stream[side-True]
+FAILED test_swiglu_wrapper_launch_stream.py::test_swiglu_wrapper_outputs_and_amax_use_launch_stream[default-False]
+FAILED test_swiglu_wrapper_launch_stream.py::test_swiglu_wrapper_outputs_and_amax_use_launch_stream[default-True]
+4 failed in 9.66s

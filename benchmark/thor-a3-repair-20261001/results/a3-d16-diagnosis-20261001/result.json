@@ -1,0 +1,157 @@
+{
+  "stage": "DIAGNOSTIC_COMPLETE",
+  "scope": "Diagnostic only: separate GEMM, activation rounding and model integration.",
+  "rows": [
+    {
+      "backend": "reference",
+      "case": 0,
+      "vs_old_quantized_oracle": {
+        "max_abs": 7.3125,
+        "relative_l2": 0.199870303273201,
+        "argmax_equal_fraction": 0.835616409778595
+      },
+      "vs_fixed_quantized_oracle": null,
+      "vs_original_bf16": {
+        "max_abs": 11.28125,
+        "relative_l2": 0.20266051590442657,
+        "argmax_equal_fraction": 0.8082191944122314
+      },
+      "vs_normal_native": {
+        "max_abs": 7.03125,
+        "relative_l2": 0.1862463802099228,
+        "argmax_equal_fraction": 0.8493150472640991
+      },
+      "actual_native_calls": 0
+    },
+    {
+      "backend": "reference",
+      "case": 1,
+      "vs_old_quantized_oracle": {
+        "max_abs": 7.3125,
+        "relative_l2": 0.19305118918418884,
+        "argmax_equal_fraction": 0.8571428656578064
+      },
+      "vs_fixed_quantized_oracle": null,
+      "vs_original_bf16": {
+        "max_abs": 11.28125,
+        "relative_l2": 0.19811086356639862,
+        "argmax_equal_fraction": 0.8571428656578064
+      },
+      "vs_normal_native": {
+        "max_abs": 7.03125,
+        "relative_l2": 0.18160931766033173,
+        "argmax_equal_fraction": 0.8714285492897034
+      },
+      "actual_native_calls": 0
+    },
+    {
+      "backend": "reference",
+      "case": 2,
+      "vs_old_quantized_oracle": {
+        "max_abs": 4.75,
+        "relative_l2": 0.06921082735061646,
+        "argmax_equal_fraction": 0.9453125
+      },
+      "vs_fixed_quantized_oracle": null,
+      "vs_original_bf16": {
+        "max_abs": 4.9453125,
+        "relative_l2": 0.07783148437738419,
+        "argmax_equal_fraction": 0.94140625
+      },
+      "vs_normal_native": {
+        "max_abs": 5.21875,
+        "relative_l2": 0.07321158796548843,
+        "argmax_equal_fraction": 0.96484375
+      },
+      "actual_native_calls": 0
+    },
+    {
+      "backend": "native",
+      "case": 0,
+      "vs_old_quantized_oracle": {
+        "max_abs": 7.6875,
+        "relative_l2": 0.2036501169204712,
+        "argmax_equal_fraction": 0.8630136847496033
+      },
+      "vs_fixed_quantized_oracle": {
+        "max_abs": 8.21875,
+        "relative_l2": 0.18794791400432587,
+        "argmax_equal_fraction": 0.9041095972061157
+      },
+      "vs_original_bf16": {
+        "max_abs": 8.1171875,
+        "relative_l2": 0.2037636786699295,
+        "argmax_equal_fraction": 0.7945205569267273
+      },
+      "vs_normal_native": {
+        "max_abs": 10.6328125,
+        "relative_l2": 0.2114206850528717,
+        "argmax_equal_fraction": 0.8767123222351074
+      },
+      "actual_native_calls": 24
+    },
+    {
+      "backend": "native",
+      "case": 1,
+      "vs_old_quantized_oracle": {
+        "max_abs": 7.6875,
+        "relative_l2": 0.19886548817157745,
+        "argmax_equal_fraction": 0.8714285492897034
+      },
+      "vs_fixed_quantized_oracle": {
+        "max_abs": 8.21875,
+        "relative_l2": 0.17232973873615265,
+        "argmax_equal_fraction": 0.9142857193946838
+      },
+      "vs_original_bf16": {
+        "max_abs": 8.1171875,
+        "relative_l2": 0.19481788575649261,
+        "argmax_equal_fraction": 0.8285714387893677
+      },
+      "vs_normal_native": {
+        "max_abs": 10.6328125,
+        "relative_l2": 0.20938269793987274,
+        "argmax_equal_fraction": 0.8857142925262451
+      },
+      "actual_native_calls": 24
+    },
+    {
+      "backend": "native",
+      "case": 2,
+      "vs_old_quantized_oracle": {
+        "max_abs": 5.8125,
+        "relative_l2": 0.07289684563875198,
+        "argmax_equal_fraction": 0.94921875
+      },
+      "vs_fixed_quantized_oracle": {
+        "max_abs": 4.48046875,
+        "relative_l2": 0.06125400960445404,
+        "argmax_equal_fraction": 0.96484375
+      },
+      "vs_original_bf16": {
+        "max_abs": 6.375,
+        "relative_l2": 0.08088824152946472,
+        "argmax_equal_fraction": 0.9609375
+      },
+      "vs_normal_native": {
+        "max_abs": 4.875,
+        "relative_l2": 0.07441531866788864,
+        "argmax_equal_fraction": 0.9609375
+      },
+      "actual_native_calls": 24
+    }
+  ],
+  "activation_records": [],
+  "native_plans": {
+    "cudnn.gemm.cutedsl.grouped.glu.moe_blockscaled_grouped_gemm_glu_bias.BlockScaledMoEGroupedGemmGluBiasKernel": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_bias.py",
+      "sha256": "ac515fb8a81c89e13141fb788f6fd3e48b9722efd452d639a07b66ae938b3cf5"
+    }
+  },
+  "imports": {
+    "api": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+    "binding": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so"
+  },
+  "formal_performance": "NOT_RUN",
+  "source_head": "83374af96ec3f8e22dd159d278bdf25acab17a4e"
+}

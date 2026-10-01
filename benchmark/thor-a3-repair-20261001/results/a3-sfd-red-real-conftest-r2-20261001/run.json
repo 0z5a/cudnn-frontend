@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3wrappercontrol/bin/python",
+    "-m",
+    "pytest",
+    "-p",
+    "a3_red_import_probe_20261001",
+    "-o",
+    "addopts=",
+    "-q",
+    "--junitxml=/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-sfd-red-real-conftest-r2-20261001/junit.xml",
+    "test_grouped_swiglu_sfd_tiles.py"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3-sfd-red-fixture-r2-20261001",
+  "started_utc": "2026-10-01T05:14:08.702272+00:00",
+  "deadline_seconds": 1200.0,
+  "status": "EXITED",
+  "selected_env": {},
+  "returncode": 1,
+  "signal": null,
+  "elapsed_seconds": 37.97097800101619
+}

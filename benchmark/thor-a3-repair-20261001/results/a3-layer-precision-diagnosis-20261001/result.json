@@ -1,0 +1,988 @@
+{
+  "stage": "DIAGNOSTIC_COMPLETE",
+  "scope": "Diagnostic only: explicit layer precision ablation on the full Granite model.\n\nThis is not the original all-24-layer MXFP8 recipe. Nonselected layers execute\ntheir unchanged stock BF16 experts, and native call counts disclose the scope.\nThe original full-logit 1% oracle / 5% BF16 gates remain unchanged. No timing.\n",
+  "rows": [
+    {
+      "policy": "last_1",
+      "mxfp8_layers": [
+        23
+      ],
+      "bf16_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22
+      ],
+      "case": 0,
+      "input_tokens": 73,
+      "actual_native_calls": 1,
+      "quantized_oracle": {
+        "max_abs": 0.125,
+        "relative_l2": 0.0002668054949026555,
+        "argmax_equal_fraction": 1.0
+      },
+      "original_bf16": {
+        "max_abs": 1.203125,
+        "relative_l2": 0.04614469036459923,
+        "argmax_equal_fraction": 0.9452054500579834
+      },
+      "oracle_gate_pass": true,
+      "bf16_gate_pass": true
+    },
+    {
+      "policy": "last_1",
+      "mxfp8_layers": [
+        23
+      ],
+      "bf16_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22
+      ],
+      "case": 1,
+      "input_tokens": 70,
+      "actual_native_calls": 1,
+      "quantized_oracle": {
+        "max_abs": 0.125,
+        "relative_l2": 0.00029513525078073144,
+        "argmax_equal_fraction": 1.0
+      },
+      "original_bf16": {
+        "max_abs": 1.203125,
+        "relative_l2": 0.045057445764541626,
+        "argmax_equal_fraction": 0.9428571462631226
+      },
+      "oracle_gate_pass": true,
+      "bf16_gate_pass": true
+    },
+    {
+      "policy": "last_1",
+      "mxfp8_layers": [
+        23
+      ],
+      "bf16_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22
+      ],
+      "case": 2,
+      "input_tokens": 256,
+      "actual_native_calls": 1,
+      "quantized_oracle": {
+        "max_abs": 0.125,
+        "relative_l2": 0.0001314792170887813,
+        "argmax_equal_fraction": 1.0
+      },
+      "original_bf16": {
+        "max_abs": 4.71875,
+        "relative_l2": 0.02693737857043743,
+        "argmax_equal_fraction": 0.98828125
+      },
+      "oracle_gate_pass": true,
+      "bf16_gate_pass": true
+    },
+    {
+      "policy": "last_4",
+      "mxfp8_layers": [
+        20,
+        21,
+        22,
+        23
+      ],
+      "bf16_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "case": 0,
+      "input_tokens": 73,
+      "actual_native_calls": 4,
+      "quantized_oracle": {
+        "max_abs": 0.7578125,
+        "relative_l2": 0.019987614825367928,
+        "argmax_equal_fraction": 1.0
+      },
+      "original_bf16": {
+        "max_abs": 2.875,
+        "relative_l2": 0.06577097624540329,
+        "argmax_equal_fraction": 0.931506872177124
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "last_4",
+      "mxfp8_layers": [
+        20,
+        21,
+        22,
+        23
+      ],
+      "bf16_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "case": 1,
+      "input_tokens": 70,
+      "actual_native_calls": 4,
+      "quantized_oracle": {
+        "max_abs": 0.7578125,
+        "relative_l2": 0.018679380416870117,
+        "argmax_equal_fraction": 1.0
+      },
+      "original_bf16": {
+        "max_abs": 2.875,
+        "relative_l2": 0.06661875545978546,
+        "argmax_equal_fraction": 0.9428571462631226
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "last_4",
+      "mxfp8_layers": [
+        20,
+        21,
+        22,
+        23
+      ],
+      "bf16_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "case": 2,
+      "input_tokens": 256,
+      "actual_native_calls": 4,
+      "quantized_oracle": {
+        "max_abs": 1.75,
+        "relative_l2": 0.015199851244688034,
+        "argmax_equal_fraction": 0.9921875
+      },
+      "original_bf16": {
+        "max_abs": 4.1875,
+        "relative_l2": 0.03630831837654114,
+        "argmax_equal_fraction": 0.98828125
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": true
+    },
+    {
+      "policy": "last_8",
+      "mxfp8_layers": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "bf16_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "case": 0,
+      "input_tokens": 73,
+      "actual_native_calls": 8,
+      "quantized_oracle": {
+        "max_abs": 2.71875,
+        "relative_l2": 0.05092143267393112,
+        "argmax_equal_fraction": 0.9452054500579834
+      },
+      "original_bf16": {
+        "max_abs": 2.7109375,
+        "relative_l2": 0.09235070645809174,
+        "argmax_equal_fraction": 0.9452054500579834
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "last_8",
+      "mxfp8_layers": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "bf16_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "case": 1,
+      "input_tokens": 70,
+      "actual_native_calls": 8,
+      "quantized_oracle": {
+        "max_abs": 2.71875,
+        "relative_l2": 0.049415819346904755,
+        "argmax_equal_fraction": 0.9571428298950195
+      },
+      "original_bf16": {
+        "max_abs": 2.7109375,
+        "relative_l2": 0.08989052474498749,
+        "argmax_equal_fraction": 0.9714285731315613
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "last_8",
+      "mxfp8_layers": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "bf16_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "case": 2,
+      "input_tokens": 256,
+      "actual_native_calls": 8,
+      "quantized_oracle": {
+        "max_abs": 3.375,
+        "relative_l2": 0.027985436841845512,
+        "argmax_equal_fraction": 0.9921875
+      },
+      "original_bf16": {
+        "max_abs": 4.1875,
+        "relative_l2": 0.0459294356405735,
+        "argmax_equal_fraction": 0.96875
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": true
+    },
+    {
+      "policy": "last_12",
+      "mxfp8_layers": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "bf16_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "case": 0,
+      "input_tokens": 73,
+      "actual_native_calls": 12,
+      "quantized_oracle": {
+        "max_abs": 2.90625,
+        "relative_l2": 0.08464107662439346,
+        "argmax_equal_fraction": 0.9178082346916199
+      },
+      "original_bf16": {
+        "max_abs": 3.75,
+        "relative_l2": 0.12387987226247787,
+        "argmax_equal_fraction": 0.8904109597206116
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "last_12",
+      "mxfp8_layers": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "bf16_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "case": 1,
+      "input_tokens": 70,
+      "actual_native_calls": 12,
+      "quantized_oracle": {
+        "max_abs": 2.90625,
+        "relative_l2": 0.08414437621831894,
+        "argmax_equal_fraction": 0.9285714030265808
+      },
+      "original_bf16": {
+        "max_abs": 3.75,
+        "relative_l2": 0.1160956546664238,
+        "argmax_equal_fraction": 0.8999999761581421
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "last_12",
+      "mxfp8_layers": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "bf16_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "case": 2,
+      "input_tokens": 256,
+      "actual_native_calls": 12,
+      "quantized_oracle": {
+        "max_abs": 3.25,
+        "relative_l2": 0.041963715106248856,
+        "argmax_equal_fraction": 0.984375
+      },
+      "original_bf16": {
+        "max_abs": 4.375,
+        "relative_l2": 0.053898029029369354,
+        "argmax_equal_fraction": 0.96484375
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "middle_12",
+      "mxfp8_layers": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "bf16_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "case": 0,
+      "input_tokens": 73,
+      "actual_native_calls": 12,
+      "quantized_oracle": {
+        "max_abs": 4.37109375,
+        "relative_l2": 0.09528549015522003,
+        "argmax_equal_fraction": 0.9178082346916199
+      },
+      "original_bf16": {
+        "max_abs": 5.8125,
+        "relative_l2": 0.1382904201745987,
+        "argmax_equal_fraction": 0.8767123222351074
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "middle_12",
+      "mxfp8_layers": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "bf16_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "case": 1,
+      "input_tokens": 70,
+      "actual_native_calls": 12,
+      "quantized_oracle": {
+        "max_abs": 6.4921875,
+        "relative_l2": 0.11466237157583237,
+        "argmax_equal_fraction": 0.9571428298950195
+      },
+      "original_bf16": {
+        "max_abs": 5.8125,
+        "relative_l2": 0.12957604229450226,
+        "argmax_equal_fraction": 0.9142857193946838
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "middle_12",
+      "mxfp8_layers": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "bf16_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "case": 2,
+      "input_tokens": 256,
+      "actual_native_calls": 12,
+      "quantized_oracle": {
+        "max_abs": 5.125,
+        "relative_l2": 0.043876588344573975,
+        "argmax_equal_fraction": 0.99609375
+      },
+      "original_bf16": {
+        "max_abs": 4.7890625,
+        "relative_l2": 0.05873582884669304,
+        "argmax_equal_fraction": 0.984375
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "even_12",
+      "mxfp8_layers": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14,
+        16,
+        18,
+        20,
+        22
+      ],
+      "bf16_layers": [
+        1,
+        3,
+        5,
+        7,
+        9,
+        11,
+        13,
+        15,
+        17,
+        19,
+        21,
+        23
+      ],
+      "case": 0,
+      "input_tokens": 73,
+      "actual_native_calls": 12,
+      "quantized_oracle": {
+        "max_abs": 4.4375,
+        "relative_l2": 0.12690849602222443,
+        "argmax_equal_fraction": 0.8904109597206116
+      },
+      "original_bf16": {
+        "max_abs": 8.34375,
+        "relative_l2": 0.18710976839065552,
+        "argmax_equal_fraction": 0.8219178318977356
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "even_12",
+      "mxfp8_layers": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14,
+        16,
+        18,
+        20,
+        22
+      ],
+      "bf16_layers": [
+        1,
+        3,
+        5,
+        7,
+        9,
+        11,
+        13,
+        15,
+        17,
+        19,
+        21,
+        23
+      ],
+      "case": 1,
+      "input_tokens": 70,
+      "actual_native_calls": 12,
+      "quantized_oracle": {
+        "max_abs": 4.4375,
+        "relative_l2": 0.12138392776250839,
+        "argmax_equal_fraction": 0.8999999761581421
+      },
+      "original_bf16": {
+        "max_abs": 8.34375,
+        "relative_l2": 0.18444696068763733,
+        "argmax_equal_fraction": 0.8428571224212646
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "even_12",
+      "mxfp8_layers": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14,
+        16,
+        18,
+        20,
+        22
+      ],
+      "bf16_layers": [
+        1,
+        3,
+        5,
+        7,
+        9,
+        11,
+        13,
+        15,
+        17,
+        19,
+        21,
+        23
+      ],
+      "case": 2,
+      "input_tokens": 256,
+      "actual_native_calls": 12,
+      "quantized_oracle": {
+        "max_abs": 3.7158203125,
+        "relative_l2": 0.05035752058029175,
+        "argmax_equal_fraction": 0.98046875
+      },
+      "original_bf16": {
+        "max_abs": 4.625,
+        "relative_l2": 0.06659580022096634,
+        "argmax_equal_fraction": 0.96875
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "middle_16",
+      "mxfp8_layers": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "bf16_layers": [
+        0,
+        1,
+        2,
+        3,
+        20,
+        21,
+        22,
+        23
+      ],
+      "case": 0,
+      "input_tokens": 73,
+      "actual_native_calls": 16,
+      "quantized_oracle": {
+        "max_abs": 4.5,
+        "relative_l2": 0.12628717720508575,
+        "argmax_equal_fraction": 0.8630136847496033
+      },
+      "original_bf16": {
+        "max_abs": 6.466796875,
+        "relative_l2": 0.17783986032009125,
+        "argmax_equal_fraction": 0.9041095972061157
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "middle_16",
+      "mxfp8_layers": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "bf16_layers": [
+        0,
+        1,
+        2,
+        3,
+        20,
+        21,
+        22,
+        23
+      ],
+      "case": 1,
+      "input_tokens": 70,
+      "actual_native_calls": 16,
+      "quantized_oracle": {
+        "max_abs": 4.5,
+        "relative_l2": 0.12400835752487183,
+        "argmax_equal_fraction": 0.8714285492897034
+      },
+      "original_bf16": {
+        "max_abs": 6.23046875,
+        "relative_l2": 0.16225279867649078,
+        "argmax_equal_fraction": 0.9142857193946838
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "middle_16",
+      "mxfp8_layers": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "bf16_layers": [
+        0,
+        1,
+        2,
+        3,
+        20,
+        21,
+        22,
+        23
+      ],
+      "case": 2,
+      "input_tokens": 256,
+      "actual_native_calls": 16,
+      "quantized_oracle": {
+        "max_abs": 4.0440673828125,
+        "relative_l2": 0.05899173393845558,
+        "argmax_equal_fraction": 0.984375
+      },
+      "original_bf16": {
+        "max_abs": 4.546875,
+        "relative_l2": 0.06569474935531616,
+        "argmax_equal_fraction": 0.9765625
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    }
+  ],
+  "model_parameters": 1334628352,
+  "native_calls": 195,
+  "native_plans": {
+    "cudnn.gemm.cutedsl.grouped.glu.moe_blockscaled_grouped_gemm_glu_bias.BlockScaledMoEGroupedGemmGluBiasKernel": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/glu/moe_blockscaled_grouped_gemm_glu_bias.py",
+      "sha256": "ac515fb8a81c89e13141fb788f6fd3e48b9722efd452d639a07b66ae938b3cf5"
+    }
+  },
+  "imports": {
+    "api": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+    "binding": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappercontrol/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so"
+  },
+  "source_head": "83374af96ec3f8e22dd159d278bdf25acab17a4e",
+  "harness_sha256": "42a8026ecd31c9e784782db55bb0764529832dd88627c097e01fd07e7da714d8",
+  "adapter_sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea",
+  "formal_performance": "NOT_RUN"
+}

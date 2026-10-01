@@ -1,0 +1,96 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Diagnostic only: separate GEMM, activation rounding and model integration."""
+import fcntl
+import importlib.util
+import json
+from pathlib import Path
+import subprocess
+
+spec = importlib.util.spec_from_file_location('a3_e2e', Path(__file__).with_name('a3_model_e2e_mergefix_20261001.py'))
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+t = m.torch
+OUT = m.ROOT / 'results/a3-merge-diagnosis-20261001'
+OUT.mkdir(exist_ok=False)
+original = m.api.grouped_gemm_swiglu_wrapper_sm100
+records = []
+
+
+def native_c_torch_activation(**kw):
+    kw['c_dtype'] = t.float32
+    result = original(**kw)
+    c = result['c_tensor'].reshape(-1, kw['b_tensor'].shape[1] // 64, 2, 32)
+    plain = (m.F.silu(c[:, :, 0]) * c[:, :, 1]).reshape(result['d_tensor'].shape).to(t.bfloat16)
+    native = m.dequantize_wrapper_d_original(result, kw['norm_const_tensor'])
+    records.append({'call': len(records), 'native_d_vs_torch_d': m.difference(native, plain), 'bf16_d_mismatch_count': (native != plain).sum().item(), 'elements': plain.numel()})
+    result['torch_d'] = plain
+    return result
+
+
+m.dequantize_wrapper_d_original = m.dequantize_wrapper_d
+
+
+def bf16_forward(adapter):
+    def forward(x, index, prob):
+        padded, ends, destinations, order, token_ids, sizes, aligned = adapter.routing(x, index)
+        d = t.zeros((padded.shape[0], 512), device=x.device, dtype=x.dtype)
+        start = 0
+        for expert, n in enumerate(aligned):
+            if n:
+                c = m.F.linear(padded[start:start+n], adapter.expert.gate_up_proj[expert])
+                gate, up = c.chunk(2, -1)
+                d[start:start+n] = m.F.silu(gate) * up
+            start += n
+        live = d[destinations]
+        out = t.empty((order.numel(), adapter.h), device=x.device, dtype=x.dtype)
+        weights = prob.flatten()[order]
+        start = 0
+        for expert, n in enumerate(sizes):
+            if n:
+                y = m.F.linear(live[start:start+n], adapter.expert.down_proj[expert]) * weights[start:start+n, None]
+                out[start:start+n] = y.to(out.dtype)
+            start += n
+        unsorted = t.empty_like(out)
+        unsorted[order] = out
+        return unsorted.reshape(x.shape[0], index.shape[-1], adapter.h).sum(dim=1)
+    return forward
+
+
+t.set_num_threads(4)
+t.backends.cuda.matmul.allow_tf32 = False
+t.backends.cudnn.allow_tf32 = False
+t.set_float32_matmul_precision('highest')
+with open('/tmp/codex-thor-perf.lock', 'a') as lock:
+    fcntl.flock(lock, fcntl.LOCK_EX)
+    assert subprocess.run(['systemctl', 'is-active', 'vllm.service'], capture_output=True, text=True).stdout.strip() == 'inactive'
+    model = m.AutoModelForCausalLM.from_pretrained(m.MODEL, dtype=t.bfloat16, attn_implementation='sdpa', local_files_only=True, trust_remote_code=False).eval().cuda()
+    tokenizer = m.AutoTokenizer.from_pretrained(m.MODEL, local_files_only=True, trust_remote_code=False)
+    adapters = [m.A3ExpertAdapter(e, i, (256, 256)) for i, e in enumerate(model.modules()) if isinstance(e, m.GraniteMoeExperts)]
+    print(json.dumps({'model_experts_implementation': model.config._experts_implementation}), flush=True)
+    _, prompts, workloads = m.load_inputs(tokenizer)
+    saved = t.load(m.ROOT / 'results/a3-model-e2e-regression-20261001/control/outputs.pt', map_location='cpu', weights_only=True)
+    rows, tensors = [], {}
+    with t.inference_mode():
+        for backend in ('bf16_integration', 'reference', 'native', 'native_c_torch_activation'):
+            if backend == 'bf16_integration':
+                for a in adapters:
+                    a.expert.forward = bf16_forward(a)
+            elif backend in ('native', 'reference'):
+                m.attach(adapters, backend)
+            else:
+                m.attach(adapters, 'native')
+                m.api.grouped_gemm_swiglu_wrapper_sm100 = native_c_torch_activation
+                m.dequantize_wrapper_d = lambda result, norm: result['torch_d']
+            for case, ids in enumerate((prompts[0], prompts[1], workloads['256'])):
+                before = m.NATIVE_CALLS
+                y = model(input_ids=ids.cuda(), use_cache=False).logits.cpu()
+                calls = m.NATIVE_CALLS-before
+                assert calls == (24 if backend in ('native', 'native_c_torch_activation') else 0)
+                row = {'backend': backend, 'case': case, 'vs_old_quantized_oracle': m.difference(y, saved[f'forward_{case}_reference']), 'vs_fixed_quantized_oracle': m.difference(y, tensors[f'reference-{case}']) if f'reference-{case}' in tensors else None, 'vs_original_bf16': m.difference(y, saved[f'forward_{case}_stock']), 'vs_normal_native': m.difference(y, saved[f'forward_{case}_native']), 'actual_native_calls': calls}
+                rows.append(row)
+                tensors[f'{backend}-{case}'] = y
+                print(json.dumps(row), flush=True)
+    result = {'stage': 'DIAGNOSTIC_COMPLETE', 'scope': __doc__, 'rows': rows, 'activation_records': records, 'native_plans': m.NATIVE_PLANS, 'imports': {'api': m.api.__file__, 'binding': m._compiled_module.__file__}, 'formal_performance': 'NOT_RUN', 'source_head': subprocess.check_output(['git', '-C', str(m.ROOT/'a3wrappercontrol'), 'rev-parse', 'HEAD'], text=True).strip()}
+    t.save(tensors, OUT/'outputs.pt')
+    (OUT/'result.json').write_text(json.dumps(result, indent=2))

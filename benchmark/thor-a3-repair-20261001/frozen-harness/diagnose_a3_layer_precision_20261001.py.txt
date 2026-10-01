@@ -1,0 +1,66 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Diagnostic only: explicit layer precision ablation on the full Granite model.
+
+This is not the original all-24-layer MXFP8 recipe. Nonselected layers execute
+their unchanged stock BF16 experts, and native call counts disclose the scope.
+The original full-logit 1% oracle / 5% BF16 gates remain unchanged. No timing.
+"""
+import fcntl
+import importlib.util
+import json
+from pathlib import Path
+import subprocess
+
+spec = importlib.util.spec_from_file_location('a3_e2e', Path(__file__).with_name('a3_model_e2e_mergefix_20261001.py'))
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+t = m.torch
+out = m.ROOT / 'results/a3-layer-precision-diagnosis-20261001'
+out.mkdir(exist_ok=False)
+policies = {
+    'last_1': list(range(23, 24)),
+    'last_4': list(range(20, 24)),
+    'last_8': list(range(16, 24)),
+    'last_12': list(range(12, 24)),
+    'middle_12': list(range(6, 18)),
+    'even_12': list(range(0, 24, 2)),
+    'middle_16': list(range(4, 20)),
+}
+t.set_num_threads(4)
+t.backends.cuda.matmul.allow_tf32 = False
+t.backends.cudnn.allow_tf32 = False
+t.set_float32_matmul_precision('highest')
+with open('/tmp/codex-thor-perf.lock', 'a') as lock:
+    fcntl.flock(lock, fcntl.LOCK_EX)
+    assert subprocess.run(['systemctl', 'is-active', 'vllm.service'], capture_output=True, text=True).stdout.strip() == 'inactive'
+    model = m.AutoModelForCausalLM.from_pretrained(m.MODEL, dtype=t.bfloat16, attn_implementation='sdpa', local_files_only=True, trust_remote_code=False).eval().cuda()
+    tokenizer = m.AutoTokenizer.from_pretrained(m.MODEL, local_files_only=True, trust_remote_code=False)
+    experts = [e for e in model.modules() if isinstance(e, m.GraniteMoeExperts)]
+    assert len(experts) == 24 and sum(p.numel() for p in model.parameters()) == 1334628352
+    adapters = [m.A3ExpertAdapter(e, i, (256, 256)) for i, e in enumerate(experts)]
+    _, prompts, workloads = m.load_inputs(tokenizer)
+    rows, saved = [], {}
+    with t.inference_mode():
+        m.attach(adapters, 'stock')
+        for case, ids in enumerate((prompts[0], prompts[1], workloads['256'])):
+            saved[f'stock-{case}'] = model(input_ids=ids.cuda(), use_cache=False).logits.cpu()
+        for name, layers in policies.items():
+            for case, ids in enumerate((prompts[0], prompts[1], workloads['256'])):
+                results = {}
+                for backend in ('reference', 'native'):
+                    for a in adapters:
+                        a.attach(backend if a.index in layers else 'stock')
+                    before = m.NATIVE_CALLS
+                    results[backend] = model(input_ids=ids.cuda(), use_cache=False).logits.cpu()
+                    assert m.NATIVE_CALLS - before == (len(layers) if backend == 'native' else 0)
+                    saved[f'{name}-{case}-{backend}'] = results[backend]
+                oracle = m.difference(results['native'], results['reference'])
+                stock = m.difference(results['native'], saved[f'stock-{case}'])
+                row = {'policy':name, 'mxfp8_layers':layers, 'bf16_layers':[i for i in range(24) if i not in layers], 'case':case, 'input_tokens':ids.shape[-1], 'actual_native_calls':len(layers), 'quantized_oracle':oracle, 'original_bf16':stock, 'oracle_gate_pass':oracle['relative_l2'] <= .01, 'bf16_gate_pass':stock['relative_l2'] <= .05}
+                rows.append(row)
+                print(json.dumps(row), flush=True)
+    t.save(saved, out / 'outputs.pt')
+    result = {'stage':'DIAGNOSTIC_COMPLETE', 'scope':__doc__, 'rows':rows, 'model_parameters':1334628352, 'native_calls':m.NATIVE_CALLS, 'native_plans':m.NATIVE_PLANS, 'imports':{name:module.__file__ for name,module in [('api',m.api),('binding',m._compiled_module)]}, 'source_head':subprocess.check_output(['git','-C',str(m.ROOT/'a3wrappercontrol'),'rev-parse','HEAD'],text=True).strip(), 'harness_sha256':m.sha_file(__file__), 'adapter_sha256':m.sha_file(Path(__file__).with_name('a3_model_e2e_mergefix_20261001.py')), 'formal_performance':'NOT_RUN'}
+    (out / 'result.json').write_text(json.dumps(result, indent=2))
+    assert subprocess.run(['systemctl','is-active','vllm.service'],capture_output=True,text=True).stdout.strip() == 'inactive'
