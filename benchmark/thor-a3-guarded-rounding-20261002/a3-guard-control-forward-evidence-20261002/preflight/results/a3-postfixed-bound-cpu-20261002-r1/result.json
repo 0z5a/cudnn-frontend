@@ -1,0 +1,326 @@
+{
+  "stage": "CPU_POSTFIXED_ENCLOSURE_VALIDATED_NOT_NATIVE_PERFORMANCE",
+  "proof": "Each exact prefix <=S. With monotone alignment/normalization loss F(E)=N*(A(E)+U(E)), a postfixed E>=F(E) bounds every accumulated loss by induction. Upward FP64 evaluation and the stricter E>=2*F(E) check avoid relying on an empirical bias or target output. All-zero dots handled exactly.",
+  "synthetic": [
+    {
+      "group": 32,
+      "updates": 128,
+      "raw_delta": -12,
+      "count": 73,
+      "max_iterations": 1,
+      "serial_enclosed": true
+    },
+    {
+      "group": 32,
+      "updates": 128,
+      "raw_delta": 0,
+      "count": 73,
+      "max_iterations": 1,
+      "serial_enclosed": true
+    },
+    {
+      "group": 32,
+      "updates": 128,
+      "raw_delta": 6,
+      "count": 73,
+      "max_iterations": 1,
+      "serial_enclosed": true
+    },
+    {
+      "group": 32,
+      "updates": 128,
+      "raw_delta": 20,
+      "count": 73,
+      "max_iterations": 1,
+      "serial_enclosed": true
+    },
+    {
+      "group": 16,
+      "updates": 64,
+      "raw_delta": -12,
+      "count": 73,
+      "max_iterations": 1,
+      "serial_enclosed": true
+    },
+    {
+      "group": 16,
+      "updates": 64,
+      "raw_delta": 0,
+      "count": 73,
+      "max_iterations": 1,
+      "serial_enclosed": true
+    },
+    {
+      "group": 16,
+      "updates": 64,
+      "raw_delta": 6,
+      "count": 73,
+      "max_iterations": 1,
+      "serial_enclosed": true
+    },
+    {
+      "group": 16,
+      "updates": 64,
+      "raw_delta": 20,
+      "count": 73,
+      "max_iterations": 1,
+      "serial_enclosed": true
+    }
+  ],
+  "synthetic_count": 584,
+  "rows": [
+    {
+      "layer": 0,
+      "count": 9344,
+      "ambiguous": 9340,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 2,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 1,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 2,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 2,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 1,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 3,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 1,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 4,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 2,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 5,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 2,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 6,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 2,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 7,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 1,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 8,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 2,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 9,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 2,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 10,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 2,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 11,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 2,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 12,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 1,
+      "max_target_iterations": 1,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 13,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 1,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 14,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 1,
+      "max_target_iterations": 2,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 15,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 1,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 16,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 2,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 17,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 2,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 18,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 2,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 19,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 2,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 20,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 1,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 21,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 2,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 22,
+      "count": 9344,
+      "ambiguous": 9344,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 2,
+      "serial_bound_enclosed": true
+    },
+    {
+      "layer": 23,
+      "count": 9344,
+      "ambiguous": 9343,
+      "wrong_certified": 0,
+      "predicted_wrong_target": 0,
+      "max_native_iterations": 2,
+      "max_target_iterations": 1,
+      "serial_bound_enclosed": true
+    }
+  ],
+  "count": 224256,
+  "ambiguous": 224251,
+  "max_iterations": 2,
+  "wrong_certified": 0,
+  "cpu_predicted_wrong_target": 0,
+  "cuda_initialized": false,
+  "native_calls": 0,
+  "input_cpu_audit_sha256": "9c43866542889af1dd6fde8ccca217ea1026fdd81bf208681fd6c88f4f575ec3",
+  "input_guard_outputs_sha256": "fc131d551c6739d77bea05ba7621ef26d1ac4d398867b51b39bfe743b76cb462",
+  "checkpoint_sha256": "ac02591061f1344027a7e7b11dbb4143f75f166c47dc09b742f5de3ab1dde1d1",
+  "outputs_sha256": "9b1c1f4bb987548d69efa86ebfd4b787c66c0b9353960b2d5a21c023ea8ccafa",
+  "harness_sha256": "273483c41a0fde5775986caedb2bb68786a369c4bf3c6360f4482b887b19e0c7",
+  "limits": "Conditional raw-window arithmetic enclosure only, not official universal Thor ISA semantics. All224256 fixed normal-BF16-or-zero targets checked. Looser bound can increase recompute. No CUDA implementation/measurement, full-model feedback, generation/KV, accuracy acceptance or throughput gain."
+}

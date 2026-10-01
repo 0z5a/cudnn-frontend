@@ -1,0 +1,134 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Full24 Granite feedback for the costly native integer rounding control.
+
+Actual frozen MXFP8 Tensor Core C -> native encoded-input repair -> native
+plain BF16 D is consumed by all24 layers. Repair accepts no source BF16
+gate/up operand or oracle C. Its gate/up branch executes neither a Torch dot
+nor a BF16 Tensor Core dot; original BF16 down projection stays unchanged.
+This runtime selects the real serial/postfixed extension handle per arm.
+The qualified forward math/routes/stream are otherwise identical. This is a
+private measurement interface, not an accepted public precision knob.
+"""
+
+import json
+from pathlib import Path
+import subprocess
+import sys
+from types import MethodType, SimpleNamespace
+
+
+def prepare(args, out, boundary):
+    assert json.loads((boundary / "result.json").read_text())["stage"] == "NATIVE_ROUNDING_CONTROL_BOUNDARIES_COMPLETE_NOT_MODEL_OR_PERFORMANCE_SUCCESS"
+    q = sys.modules["a3_guard_boundary_quant"]
+    h = sys.modules["a3_guard_boundary_cuda"]
+    m, t = q.m, q.t
+    build_dir = m.ROOT / "results/a3-guarded-rounding-build-cpu-20261002-r4"
+    build = json.loads((build_dir / "result.json").read_text())
+    module = h.load_native(build["binary"]["path"], build["binary"]["sha256"])
+    before_main, before_repair, before_kernels = m.NATIVE_CALLS, h.POSTPROCESS_CALLS, h.POSTPROCESS_KERNEL_LAUNCHES
+    assert m.quantize_mxfp8 is q.quantize
+    assert m.sha_file(m.MODEL / "model.safetensors") == m.WEIGHT_SHA
+    source = Path(args.expected_source)
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == args.expected_head
+    baseline_dir = m.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    original_baseline_sha = "a997dac0bbd8b137ecbf7ddbefc5f356c2633d75a9d3cde1d035335cb028440f"
+    assert m.sha_file(baseline_dir / "outputs.pt") == original_baseline_sha
+    baseline_meta = json.loads((baseline_dir / "result.json").read_text())
+    assert baseline_meta["source_head"] == "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+    baseline = t.load(baseline_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    old_dir = m.ROOT / "results/a3-mxfp8-bf16-staged-full-model-20261001-r1"
+    prior_oracle_sha = "96dcdce434fd9efce3bc3045097725eb1024cdfeb68a68cadbddc78306b3babe"
+    assert m.sha_file(old_dir / "outputs.pt") == prior_oracle_sha
+    old_meta = json.loads((old_dir / "result.json").read_text())
+    assert old_meta["source_head"] == "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1" and old_meta["experimental_native_kernel"]["sha256"] == m.sha_file(
+        q.prototype_path
+    )
+    old = t.load(old_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    model, loading = m.AutoModelForCausalLM.from_pretrained(
+        m.MODEL, dtype=t.bfloat16, attn_implementation="sdpa", trust_remote_code=False, local_files_only=True, output_loading_info=True
+    )
+    assert not any(loading.values()) and sum(v.numel() for v in model.parameters()) == 1334628352
+    model = model.eval().cuda()
+    experts = [expert for expert in model.modules() if isinstance(expert, m.GraniteMoeExperts)]
+    assert len(experts) == 24
+    # The pinned chat template inserts today's date. Recreating text changes
+    # input IDs after midnight; use and hash-check the ORIGINAL baseline IDs.
+    input_file = baseline_dir / "input-token-ids.json"
+    original_ids = json.loads(input_file.read_text())
+    prompts = [t.tensor(ids, dtype=t.int64) for ids in original_ids["prompts"]]
+    workloads = {key: t.tensor(ids, dtype=t.int64) for key, ids in original_ids["workloads"].items()}
+    assert all(m.tensor_info(ids) == expected for ids, expected in zip(prompts, baseline_meta["inputs"]["prompts"], strict=True))
+    assert all(m.tensor_info(ids) == baseline_meta["inputs"]["workloads"][key] for key, ids in workloads.items())
+    cases = [prompts[0], prompts[1], workloads["256"]]
+    assert [ids.shape[-1] for ids in cases] == [73, 70, 256]
+
+    def forward(self, hidden, index, probability):
+        self.calls += 1
+        if self.mode == "reference":
+            return self.reference_staged(hidden, index, probability)
+        assert self.mode == "native" and m.quantize_mxfp8 is q.quantize
+        x, ends, destinations, order, token_ids, sizes, aligned = self.routing(hidden, index)
+        self.last_counts = sizes
+        a, sfa, sa, unused_effective = q.expanded_quantize(x, "A")
+        # Bound summaries are computed solely from the already encoded recipe.
+        xs = h.recipe_stats(a, sa, "A", destinations)
+        expert_ids = index.flatten()[order]
+        stream = t.cuda.current_stream()
+        actual = m.api.grouped_gemm_swiglu_wrapper_sm100(
+            a_tensor=a,
+            b_tensor=self.b,
+            sfa_tensor=sfa,
+            sfb_tensor=self.sfb,
+            padded_offsets=ends,
+            alpha_tensor=self.alpha,
+            norm_const_tensor=self.norm,
+            prob_tensor=None,
+            acc_dtype=t.float32,
+            c_dtype=t.float32,
+            d_dtype=t.bfloat16,
+            mma_tiler_mn=self.tile,
+            cluster_shape_mn=(2, 1),
+            sf_vec_size=32,
+            m_aligned=256,
+            current_stream=m.cuda.CUstream(stream.cuda_stream),
+        )
+        corrected = h.run(self.repair_module, a, self.b, sfa, self.sfb, actual["c_tensor"], destinations, expert_ids, xs, self.wstats, stream=stream)
+        self.flag_counts.append(t.stack([(corrected["flags"] == i).sum() for i in (0, 1, 2)]))
+        # The actually emitted native plain BF16 D is the model input here.
+        live = corrected["d"]
+        routes = t.empty((order.numel(), self.h), dtype=t.bfloat16, device=x.device)
+        weights = probability.flatten()[order]
+        start = 0
+        for expert_id, count in enumerate(sizes):
+            if count:
+                y = m.F.linear(live[start : start + count], self.expert.down_proj[expert_id])
+                routes[start : start + count] = (y * weights[start : start + count, None]).to(t.bfloat16)
+            start += count
+        unsorted = t.empty_like(routes)
+        unsorted[order] = routes
+        return unsorted.reshape(hidden.shape[0], index.shape[-1], self.h).sum(1)
+
+    adapters = []
+    with t.inference_mode():
+        for layer, expert in enumerate(experts):
+            adapter = q.make_adapter(m.A3ExpertAdapter, expert, layer, bf16_stage=True)
+            adapter.wstats = h.recipe_stats(adapter.b, adapter.bscale, "B")
+            adapter.flag_counts = []
+            adapter.repair_module = module
+            adapter.forward = MethodType(forward, adapter)
+            adapters.append(adapter)
+    return SimpleNamespace(
+        model=model,
+        adapters=adapters,
+        prompts=prompts,
+        workloads=workloads,
+        m=m,
+        t=t,
+        q=q,
+        h=h,
+        build=build,
+        baseline_meta=baseline_meta,
+        input_file=input_file,
+        module=module,
+    )

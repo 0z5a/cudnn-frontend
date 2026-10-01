@@ -1,0 +1,117 @@
+{
+  "files": [
+    {
+      "path": "results/a3-guard-pinned-generation-20261002-r1/admission.json",
+      "size": 111,
+      "sha256": "c7e37ccfd2b14b06fdfa330051a6300832cf6a6b0565eb86f88f3c838f652df0"
+    },
+    {
+      "path": "results/a3-guard-pinned-generation-20261002-r1/e2e/frozen_inputs.json",
+      "size": 1483,
+      "sha256": "b141e4e584024277e3c5c8858a3b9b05c73337bfc3f7f08f45e0bcc2533015e4"
+    },
+    {
+      "path": "results/a3-guard-pinned-generation-20261002-r1/e2e/partial.json",
+      "size": 7437,
+      "sha256": "67973f4f275df73d86bce44a73ebe614572183ff5791f72d34862748cd962ae9"
+    },
+    {
+      "path": "results/a3-guard-pinned-generation-20261002-r1/e2e/result.json",
+      "size": 11632,
+      "sha256": "d6587245eaa0df101824d4ef0d7c9eba264c9844b43b2d1994cafd205b8ffb22"
+    },
+    {
+      "path": "results/a3-guard-pinned-generation-20261002-r1/frozen_inputs.json",
+      "size": 30210,
+      "sha256": "85eca147db807539c897e5b212454cef01cba12b9501bb029770a04d7057b595"
+    },
+    {
+      "path": "results/a3-guard-pinned-generation-20261002-r1/result.json",
+      "size": 3529,
+      "sha256": "422092c1ac67f829b1faf2e03d933af7da6ad31cafb55496da43b3703cbbd6dd"
+    },
+    {
+      "path": "results/a3-guard-pinned-generation-20261002-r1-launch/run.json",
+      "size": 659,
+      "sha256": "521fe1d29d122d9de9808dc8ac780e2ea5123cf1b1273abbfb10d9f00a2b93fc"
+    },
+    {
+      "path": "results/a3-guard-pinned-generation-20261002-r1-launch/stderr.log",
+      "size": 612,
+      "sha256": "f23256e41df91dc7f9550d64872172e5b24fed56ce85e58271ee76100ce98705"
+    },
+    {
+      "path": "results/a3-guard-pinned-generation-20261002-r1-launch/stdout.log",
+      "size": 12304,
+      "sha256": "cbba8611ee88fad5719a817d77a0b2ef88ea66b6bb8d57e39bf3f00cdf882f23"
+    },
+    {
+      "path": "results/a3-guard-pinned-generation-cpu-audit-20261002-r1/result.json",
+      "size": 15986,
+      "sha256": "f36b8dd5c80dcaf13a3a96697b482e58ac4383b2f24874c06263616892aadc6c"
+    },
+    {
+      "path": "results/a3-guard-pinned-generation-cpu-audit-20261002-r1-launch/run.json",
+      "size": 790,
+      "sha256": "114fa1dbfaa5b41839238c9e502de6c2deca9837c8836727dcee3cbe460110be"
+    },
+    {
+      "path": "results/a3-guard-pinned-generation-cpu-audit-20261002-r1-launch/stderr.log",
+      "size": 419,
+      "sha256": "ecf8a195dadc95dda4a59c1fa23ff9d1bcfa6204c427433767cbaaf5d7b6e42b"
+    },
+    {
+      "path": "results/a3-guard-pinned-generation-cpu-audit-20261002-r1-launch/stdout.log",
+      "size": 2871,
+      "sha256": "7ced16d5659e3bdabba3e01299b6c964912032b4dced29991ce14a68c70bc3f6"
+    },
+    {
+      "path": "results/a3-model-repair-a3sfdlatest4-n256-20261001/input-token-ids.json",
+      "size": 21027,
+      "sha256": "0983f2e3e173eb5d6dd1fdb286b1bd96b513bff54b1f1a2724cc76bdc82122dc"
+    },
+    {
+      "path": "results/a3-model-repair-a3sfdlatest4-n256-20261001/result.json",
+      "size": 34298,
+      "sha256": "74e662122f4aa17a3f491584bef1194d42bdfb92420b6daadf36cea8f23c3063"
+    },
+    {
+      "path": "tools/a3_guard_pinned_generation_performance_20261002_r1.py",
+      "size": 14479,
+      "sha256": "3dd2123b59af255548cf78f5dfcfbd66d2bae44995c9433453aad5f1a190a241"
+    },
+    {
+      "path": "tools/a3_guard_pinned_generation_queued_20261002_r1.py",
+      "size": 7641,
+      "sha256": "8d290ac4749b00abf735bb72b717bcb77dfe2f5b3442f8921c57cb13653acb33"
+    },
+    {
+      "path": "tools/a3_guarded_rounding_model_runtime_20261002_r1.py",
+      "size": 6856,
+      "sha256": "87fc8f47a2ece9edc104c74474d2fcd15853b3ccf59e71802af25c6114f6e6bb"
+    },
+    {
+      "path": "tools/archive_a3_guard_generation_20261002_r1.py",
+      "size": 3895,
+      "sha256": "ad195d0b6e672e38cc4341c3f33f89003e85dd83f39c12c776e894a4e9ecc8e0"
+    },
+    {
+      "path": "tools/audit_a3_guard_pinned_generation_cpu_20261002_r1.py",
+      "size": 11762,
+      "sha256": "9a98875ecf0a4bb76346b35b243af44aec40a2f7d3ed26d8b7a98d84b6e3e53e"
+    },
+    {
+      "path": "TERMINAL_GENERATION_RUNS.json",
+      "size": 2284,
+      "sha256": "aa0f38f1b11114a235c0ec602eef6830bf6cfd6d1bad20aa4aadf817cac92b4b"
+    }
+  ],
+  "excluded": [
+    "cache",
+    "models",
+    "engines",
+    "PT",
+    "native/JIT binaries",
+    "Git bundle"
+  ]
+}

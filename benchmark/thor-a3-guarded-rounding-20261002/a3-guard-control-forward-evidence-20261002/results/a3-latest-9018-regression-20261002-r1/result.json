@@ -1,0 +1,91 @@
+{
+  "stage": "LATEST_NATIVE_REGRESSION_PASS_NOT_ALL24_MODEL_SUCCESS",
+  "head": "ce0e08a850962eaad039708aeb270c8cb6adf326",
+  "base": "90181b05fafa352de430c7244daaf855fa4063c5",
+  "passed": 31,
+  "skipped": 0,
+  "actual_native_calls": 61,
+  "fresh_binding": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+    "sha256": "f8e1555dcba3cd56f4e1f27736d67431b164308c7252b12a86626c1a7f286563"
+  },
+  "run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9018/bin/python",
+      "-m",
+      "pytest",
+      "-p",
+      "a3_repair_import_probe_20261001",
+      "-p",
+      "a3_repair_matrix_select_20261001",
+      "-o",
+      "addopts=",
+      "-q",
+      "--grouped-gemm-nkl=1024,1024,4",
+      "--junitxml=/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-9018-regression-20261002-r1/pytest/junit.xml",
+      "gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+      "gemm/cutedsl/test_swiglu_amax_per_call.py",
+      "gemm/cutedsl/test_swiglu_wrapper_launch_stream.py",
+      "gemm/cutedsl/test_grouped_gemm_swiglu.py::test_grouped_gemm_swiglu_wrapper_fp4",
+      "gemm/cutedsl/test_grouped_gemm_swiglu.py::test_grouped_gemm_swiglu_wrapper_fp8",
+      "gemm/cutedsl/test_grouped_gemm_canonical_layouts.py::test_grouped_gemm_swiglu_canonical_matches_legacy",
+      "gemm/cutedsl/test_grouped_gemm_canonical_layouts.py::test_grouped_gemm_swiglu_canonical_bf16_prob"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018/test/python",
+    "started_utc": "2026-10-01T21:05:19.200039+00:00",
+    "deadline_seconds": 1200.0,
+    "status": "EXITED",
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": "0"
+    },
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 63.097036981998826
+  },
+  "imports": [
+    {
+      "source_head": "ce0e08a850962eaad039708aeb270c8cb6adf326",
+      "cudnn": {
+        "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018/python/cudnn/__init__.py",
+        "sha256": "3f7bcedcf6d1666cab81c64c9e7c68c7a6898c4123201534a2409eb5ada64cf9"
+      },
+      "binding": {
+        "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+        "sha256": "f8e1555dcba3cd56f4e1f27736d67431b164308c7252b12a86626c1a7f286563"
+      },
+      "swiglu_api": {
+        "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+        "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+      },
+      "actual_native_calls": 0,
+      "pytest_exitstatus": 0,
+      "worker": null
+    },
+    {
+      "source_head": "ce0e08a850962eaad039708aeb270c8cb6adf326",
+      "cudnn": {
+        "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018/python/cudnn/__init__.py",
+        "sha256": "3f7bcedcf6d1666cab81c64c9e7c68c7a6898c4123201534a2409eb5ada64cf9"
+      },
+      "binding": {
+        "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+        "sha256": "f8e1555dcba3cd56f4e1f27736d67431b164308c7252b12a86626c1a7f286563"
+      },
+      "swiglu_api": {
+        "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+        "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+      },
+      "cudnn.gemm.cutedsl.grouped.swiglu.grouped_gemm_swiglu_quant.BlockScaledContiguousGroupedGemmKernel": {
+        "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+        "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+      },
+      "actual_native_calls": 61,
+      "pytest_exitstatus": 0,
+      "worker": "gw0"
+    }
+  ],
+  "harness_sha256": "a69c64244ec92adc7842251bf6fb8de91c9c09497484df633c4652dc49e9933e",
+  "formal_model_performance": "NOT_RUN",
+  "full24_model_success": false,
+  "service_final": "inactive"
+}

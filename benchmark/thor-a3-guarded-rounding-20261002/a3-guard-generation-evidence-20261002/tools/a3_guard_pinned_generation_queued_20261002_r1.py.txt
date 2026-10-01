@@ -1,0 +1,148 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Admit one qualified pinned-ID native generation/KV/timing job under shared flock.
+
+Requires actual latest31 and independently audited full24 forward pass. Never
+relabel boundary head5f, fixed oracle741 or original BF16 baseline7b.
+"""
+
+import argparse
+import fcntl
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import sys
+import time
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "ce0e08a850962eaad039708aeb270c8cb6adf326"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    tools = Path(__file__).parent
+    native = json.loads((ROOT / "results/a3-latest-9018-native-provenance-20261002.json").read_text())
+    regression = ROOT / "results/a3-latest-9018-regression-20261002-r1"
+    qualification = json.loads((regression / "result.json").read_text())
+    qr = json.loads(regression.with_name(regression.name + "-launch").joinpath("run.json").read_text())
+    inputs = ROOT / "results/a3-frozen-input-ids-audit-cpu-20261002-r1"
+    im = json.loads((inputs / "result.json").read_text())
+    ir = json.loads(inputs.with_name(inputs.name + "-launch").joinpath("run.json").read_text())
+    boundary = ROOT / "results/a3-latest-guard-verified-regression-model-20261002-r2/boundaries"
+    bm = json.loads((boundary / "result.json").read_text())
+    assert qr["status"] == ir["status"] == "EXITED" and qr["returncode"] == ir["returncode"] == 0
+    assert native["head"] == qualification["head"] == HEAD and native["native_build"] == "FRESH_RC0"
+    assert qualification["passed"] == 31 and qualification["skipped"] == 0 and qualification["actual_native_calls"] == 61
+    assert qualification["fresh_binding"]["sha256"] == native["binding"]["sha256"]
+    assert im["stage"] == "FROZEN_BASELINE_INPUT_IDS_VERIFIED_CURRENT_DATE_DRIFT" and im["all_nine_original_model_files_size_sha256_verified"]
+    assert bm["source_head"] == "5f1b6e17bbd741e3bbc2210a11434cb42bad3751" and bm["native_main_calls"] == 4
+    assert bm["stage"] == "NATIVE_ROUNDING_CONTROL_BOUNDARIES_COMPLETE_NOT_MODEL_OR_PERFORMANCE_SUCCESS"
+    assert bm["warm_side_completed_before_default"] and bm["rows"][0]["side_completed_before_default"]
+    control = ROOT / "results/a3-guard-pinned-model-cpu-audit-20261002-r1"
+    cm = json.loads((control / "result.json").read_text())
+    cr = json.loads(control.with_name(control.name + "-launch").joinpath("run.json").read_text())
+    assert cr["status"] == "EXITED" and cr["returncode"] == 0
+    assert cm["stage"] == "INDEPENDENT_FULL24_NATIVE_CONTROL_AUDIT_COMPLETE" and cm["quality_all_three_cases_both_gates"]
+    paths = [
+        Path(__file__),
+        tools / "a3_guard_pinned_generation_performance_20261002_r1.py",
+        tools / "a3_mxfp8_bf16_staged_full_model_worker_20261001.py",
+        tools / "a3_guarded_rounding_native_20261002_r3.py",
+        tools / "a3_all24_precision_probe_20261001.py",
+        tools / "a3_model_e2e_mergefix_20261001.py",
+        tools / "a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+        inputs / "result.json",
+        regression / "result.json",
+        boundary / "result.json",
+        ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001/input-token-ids.json",
+    ]
+    paths.extend([tools / "a3_guarded_rounding_model_runtime_20261002_r1.py", tools / "a3_guarded_rounding_full_model_20261002_r4.py", control / "result.json"])
+    frozen = {str(p): sha(p) for p in paths}
+    assert sha(ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001/input-token-ids.json") == im["fixed_inputs_json_sha256"]
+    (out / "frozen_inputs.json").write_text(
+        json.dumps({"files": frozen, "native": native, "qualification": qualification, "boundary_head": bm["source_head"], "input_audit": im}, indent=2) + "\n"
+    )
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        start = time.monotonic()
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - start > 30:
+                    (out / "admission.json").write_text(json.dumps({"stage": "NOT_RUN_SHARED_LOCK_BUSY", "torch_imported": False}) + "\n")
+                    return 75
+                time.sleep(1)
+        assert "torch" not in sys.modules
+        assert all(sha(p) == v for p, v in frozen.items())
+        assert all(sha(Path(native["source"]) / item["path"]) == item["sha256"] for item in native["native_input_digests"])
+        (out / "admission.json").write_text(
+            json.dumps(
+                {
+                    "stage": "LOCK_ADMITTED",
+                    "pid": os.getpid(),
+                    "wait_seconds": time.monotonic() - start,
+                    "cuda_module_loading": os.environ.get("CUDA_MODULE_LOADING"),
+                }
+            )
+            + "\n"
+        )
+        q = load("a3_guard_boundary_quant", paths[2])
+        h = load("a3_guard_boundary_cuda", paths[3])
+        m, t = q.m, q.t
+        t.set_num_threads(4)
+        t.backends.cuda.matmul.allow_tf32 = False
+        t.backends.cudnn.allow_tf32 = False
+        t.set_float32_matmul_precision("highest")
+        args.expected_source = native["source"]
+        args.expected_head = HEAD
+        args.expected_binding_sha = native["binding"]["sha256"]
+        for mod in (m.cudnn, m.api, m._compiled_module):
+            assert Path(mod.__file__).resolve().is_relative_to(Path(native["source"]) / "python")
+        assert sha(m._compiled_module.__file__) == args.expected_binding_sha
+        assert sha(m.api.__file__) == bm["imports"]["api"]["sha256"]
+        assert all(sha(p) == v for p, v in bm["files"].items())
+        assert m.NATIVE_CALLS == h.POSTPROCESS_CALLS == h.POSTPROCESS_KERNEL_LAUNCHES == 0
+        model = out / "e2e"
+        model.mkdir()
+        g = load("a3_guard_pinned_generation", paths[1])
+        g.execute(args, model, boundary)
+        assert all(sha(p) == v for p, v in frozen.items())
+        result = {
+            "stage": "LATEST_PINNED_GENERATION_KV_TIMING_TERMINAL",
+            "head": HEAD,
+            "base": native["base"],
+            "binding": native["binding"],
+            "boundary_test_head": bm["source_head"],
+            "model_stage": json.loads((model / "result.json").read_text())["stage"],
+            "model_result_sha256": sha(model / "result.json"),
+            "files": frozen,
+            "generation_kv": json.loads((model / "result.json").read_text())["quality_all_five_cases_pass"],
+            "formal_performance": "COMPLETE" if json.loads((model / "result.json").read_text())["timed"] else "NOT_RUN_QUALITY_FAILED",
+            "limits": "Actual all24 greedy/KV32 with pinned original inputs; quality must pass before frozen paired timings. Encoded-input integer repair remains a costly private control, not an accepted production feature.",
+        }
+        (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps(result), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

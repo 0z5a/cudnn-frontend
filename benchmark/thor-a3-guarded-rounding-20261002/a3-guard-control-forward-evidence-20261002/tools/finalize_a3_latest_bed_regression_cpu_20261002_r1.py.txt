@@ -1,0 +1,121 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Audit real bed94f7-based 31 GPU cases; preserve coordinator-check failure.
+
+No Torch import, GPU action or repeated test. Coordinator zero calls is
+required while the single native worker must have exactly 61 actual calls.
+"""
+
+import argparse
+from collections import Counter
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import xml.etree.ElementTree as ET
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "5f1b6e17bbd741e3bbc2210a11434cb42bad3751"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    directory = ROOT / "results/a3-latest-guard-regression-model-20261002-r2/regression"
+    outer = directory.parent.with_name(directory.parent.name + "-launch")
+    outer_run = json.loads((outer / "run.json").read_text())
+    assert outer_run["status"] == "EXITED" and outer_run["returncode"] == 1 and outer_run["signal"] is None
+    assert 'v["actual_native_calls"] > 0' in (outer / "stderr.log").read_text()
+    assert not (directory / "result.json").exists()
+    run = json.loads((directory / "pytest/run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    assert run["cwd"] == str(ROOT / "a3sfdlatestbed/test/python")
+    xml = ET.parse(directory / "pytest/junit.xml").getroot()
+    cases = list(xml.iter("testcase"))
+    assert len(cases) == 31 and not list(xml.iter("skipped")) and not list(xml.iter("failure")) and not list(xml.iter("error"))
+    counts = Counter(case.attrib["name"].split("[")[0] for case in cases)
+    assert dict(counts) == {
+        "test_narrow_sfd_matches_wide_and_independent_activation": 8,
+        "test_narrow_sfd_plan_reuse_preserves_previous_outputs": 2,
+        "test_narrow_sfd_graph_replay_changes_live_scales": 1,
+        "test_cached_swiglu_amax_is_per_call": 1,
+        "test_swiglu_wrapper_outputs_and_amax_use_launch_stream": 4,
+        "test_grouped_gemm_swiglu_wrapper_fp4": 6,
+        "test_grouped_gemm_swiglu_wrapper_fp8": 4,
+        "test_grouped_gemm_swiglu_canonical_matches_legacy": 4,
+        "test_grouped_gemm_swiglu_canonical_bf16_prob": 1,
+    }
+    assert len({(case.attrib["classname"], case.attrib["name"]) for case in cases}) == 31
+    imports = []
+    selections = []
+    for path in sorted((directory / "imports").glob("*.json")):
+        value = json.loads(path.read_text())
+        if path.name.startswith("matrix-selection-"):
+            assert len(value) == 28 and len({x["nodeid"] for x in value}) == 28
+            selections.append({"path": str(path), "sha256": sha(path), "count": len(value)})
+        else:
+            imports.append(value)
+    workers = [record for record in imports if record["worker"] is not None]
+    coordinators = [record for record in imports if record["worker"] is None]
+    assert len(workers) == len(coordinators) == len(selections) == 1
+    assert sum(record["actual_native_calls"] for record in workers) == 61
+    assert all(record["actual_native_calls"] == 0 for record in coordinators)
+    source = ROOT / "a3sfdlatestbed"
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == HEAD
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    native = json.loads((ROOT / "results/a3-latest-bed-native-provenance-20261002.json").read_text())
+    assert native["native_build"] == "FRESH_RC0" and native["head"] == HEAD and native["build_run"]["returncode"] == 0
+    assert sha(native["binding"]["path"]) == native["binding"]["sha256"]
+    for record in native["native_input_digests"]:
+        assert sha(source / record["path"]) == record["sha256"]
+    for record in imports:
+        assert record["source_head"] == HEAD and record["pytest_exitstatus"] == 0
+        assert record["binding"]["sha256"] == native["binding"]["sha256"]
+        for entry in record.values():
+            if isinstance(entry, dict) and "path" in entry and "sha256" in entry:
+                assert Path(entry["path"]).resolve().is_relative_to(source / "python")
+                assert sha(entry["path"]) == entry["sha256"]
+    kernel_key = "cudnn.gemm.cutedsl.grouped.swiglu.grouped_gemm_swiglu_quant.BlockScaledContiguousGroupedGemmKernel"
+    assert kernel_key in workers[0] and kernel_key not in coordinators[0]
+    service = subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip()
+    assert service == "inactive"
+    result = {
+        "stage": "INDEPENDENT_CPU_FINALIZATION_LATEST_NATIVE_31_PASS_NOT_MODEL_SUCCESS",
+        "head": HEAD,
+        "base": native["base"],
+        "passed": 31,
+        "skipped": 0,
+        "actual_native_calls": 61,
+        "test_function_counts": dict(counts),
+        "pytest_run": run,
+        "original_driver_run": outer_run,
+        "original_driver_rc": 1,
+        "driver_failure": "Post-test audit incorrectly required xdist coordinator to execute kernels; coordinator nativecalls0 is expected. Real test process rc0, native worker61 calls and all31 JUnit cases verified independently.",
+        "driver_source_sha256": sha(ROOT / "tools/run_a3_latest_bed_regression_locked_20261002_r1.py"),
+        "fresh_binding": native["binding"],
+        "imports": imports,
+        "selections": selections,
+        "junit_sha256": sha(directory / "pytest/junit.xml"),
+        "harness_sha256": sha(__file__),
+        "GPU_tests_repeated": False,
+        "torch_imported": False,
+        "new_native_calls": 0,
+        "full24_model_success": False,
+        "formal_performance": "NOT_RUN",
+        "service_final": service,
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "passed": 31, "native_calls": 61, "preserved_driver_rc": 1}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

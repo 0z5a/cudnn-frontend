@@ -1,0 +1,69 @@
+{
+  "stage": "LATEST29_NATIVE_FORWARD_GENERATION_PAIR_TERMINAL",
+  "head": "a24a7401bb7d26d42d88d98b316f634ef487301c",
+  "base": "29a06d9cdc8843e33c5e374846be3bb0560a0711",
+  "binding": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest29a0/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+    "sha256": "f8e1555dcba3cd56f4e1f27736d67431b164308c7252b12a86626c1a7f286563"
+  },
+  "native_binding_reused_only_after_all114_inputs_match": true,
+  "production_gpu_passed": 31,
+  "forward_all_three_gates": true,
+  "all_five_generation_numeric_gates": true,
+  "all_five_application_answers": false,
+  "comparisons": [
+    {
+      "case": "prefix256",
+      "median_ms": {
+        "serial": {
+          "prefill_ms": 21507.646656999998,
+          "decode_ms": 5283.722704,
+          "request_ms": 26791.369361
+        },
+        "postfixed": {
+          "prefill_ms": 6056.659767,
+          "decode_ms": 2545.8685,
+          "request_ms": 8602.528267000002
+        }
+      },
+      "serial_over_postfixed_request_ratio": 3.114359933436531
+    },
+    {
+      "case": "prefix1024",
+      "median_ms": {
+        "serial": {
+          "prefill_ms": 85350.579833,
+          "decode_ms": 5353.416954,
+          "request_ms": 90703.996787
+        },
+        "postfixed": {
+          "prefill_ms": 23544.992353499998,
+          "decode_ms": 2545.09937,
+          "request_ms": 26090.0917235
+        }
+      },
+      "serial_over_postfixed_request_ratio": 3.4765687199673825
+    }
+  ],
+  "files": {
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latest29_postfixed_full_pipeline_queued_20261002_r1.py": "45c55a6550c6a5fe125cc32ea0932c7e119747aa9ccfddf32118f03d777bf99f",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/run_a3_latest_29a0_regression_queued_20261002_r1.py": "0aebb215160959b645a5691581fa722b5dc8fda642c072f37b43e6c6bc2a4cc0",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_postfixed_full_generation_pair_20261002_r1.py": "e520df2cc96a14a3c62c25db6fec4d6da2a784836d98a53f7b4cbeeaf1ca63c6",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_request_runtime_20261002_r1.py": "46de925460bab5bac56e3c3db846deb70efc112d18809b2dbde2780b20537476",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_model_runtime_20261002_r2.py": "d974ed685f76dfad962d03aba67b811fd17e597fdb8ecf94e3a775e1fe27b29c",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_full_model_20261002_r5.py": "db5e7a24694bf73dd5720e804fd9039b49c7b6860520f11f82c980d74fe68311",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_mxfp8_bf16_staged_full_model_worker_20261001.py": "62304d6cc59fc2b604a19efe1c60c075e0737c6898de191404e4bbb6baf057d1",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r4.py": "7de4a50b53f3b3dd56b220bca242cf0537e459ba74a4ddbdcab94d0d9a865728",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r3.py": "922fe6c6f6501129cf125e5b5599171969bb7fc02a0fb5e1705694c5e6470701",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_all24_precision_probe_20261001.py": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_model_e2e_mergefix_20261001.py": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3"
+  },
+  "regression_result_sha256": "b82de834dcaa1478c7465f30275214a19944e538b2c558a50392c8d792a67456",
+  "forward_result_sha256": "5ab037d06565b3a08f1b1c5b02347f223457849cc3040d18f58863f8a154e705",
+  "e2e_result_sha256": "6c1ae5ed825c8f947afb0d3db8567f025e95500a8af43204fd3272da9d30c763",
+  "boundary_test_head": "ce0e08a850962eaad039708aeb270c8cb6adf326",
+  "production_feature_accepted": false,
+  "service_final": "inactive",
+  "limits": "Current actual31/latest full24+32-token evidence; old boundary head preserved. Known original-stock refusal remains an application failure. Paired whole-model cost of private rounding controls, not original BF16/defaultK1024 production speedup or completed optimization goal."
+}

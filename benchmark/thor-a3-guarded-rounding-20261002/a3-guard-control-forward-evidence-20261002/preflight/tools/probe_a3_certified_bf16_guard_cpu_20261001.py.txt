@@ -1,0 +1,230 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""CPU feasibility of an input-derived BF16 rounding guard for native MXFP8.
+
+Keeps saved actual native C for certified outputs. Ambiguous outputs use a
+separate input-only raw-window computation of the already declared BF16-stage
+recipe. This is a CPU prediction, never a native-output substitution or pass.
+No empirical threshold or original-stock output is passed into the guard.
+"""
+
+import argparse
+import importlib.util
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+HELPER = Path(__file__).with_name("validate_a3_mxfp8_window_cpu_20261001.py")
+spec = importlib.util.spec_from_file_location("a3_guard_quant_math", HELPER)
+q = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(q)
+d, t = q.d, q.t
+from safetensors import safe_open
+
+CHECKPOINT = Path("/home/jwipc/models/granite-3.1-1b-a400m-instruct-0da7a48b/model.safetensors")
+COLUMNS = [0, 1, 15, 16, 31, 32, 33, 63, 64, 127, 255, 511, 512, 767, 991, 1023]
+
+
+def norm_upper(value):
+    """Conservative double reduction/sqrt allowance for finite normal corpus."""
+    value = value.double()
+    assert t.isfinite(value).all()
+    squared = value.square()
+    assert t.isfinite(squared).all() and not ((squared == 0) & (value != 0)).any()
+    return t.sqrt(squared.sum(-1)) * (1.0 + 8 * value.shape[-1] * 2.0**-53)
+
+
+def raw_max(raw, values):
+    return t.where(values == 0, -10000, raw).amax(-1)
+
+
+def floor_exp64(value):
+    assert (value >= 0).all() and t.isfinite(value).all()
+    encoded = (value.contiguous().view(t.int64) >> 52) & 2047
+    assert not ((encoded == 0) & (value != 0)).any(), "Positive bounds in this finite corpus must be normal FP64"
+    return t.where(value == 0, -10000, encoded - 1023)
+
+
+def forward_bound(absolute_dot_upper, product_raw_upper, group, updates):
+    """Bound RTZ alignment and FP32 normalization at every actual update.
+
+    Every exact prefix is at most the total absolute-dot bound S. At update i,
+    the accumulator magnitude is bounded by S+E_i; product raw exponents are
+    bounded independently, including subnormal FP8 encoded exponents. Each of
+    group products and C loses at most one quantum on alignment; normalization
+    loses at most one FP32 ULP at the bounded intermediate magnitude. Triangle
+    inequality propagates E. All-zero dots are handled exactly instead of using
+    a fictitious nonzero rounding error.
+    """
+    s = absolute_dot_upper.double()
+    error = t.zeros_like(s)
+    for _ in range(updates):
+        maximum = s + error
+        acc_exp = floor_exp64(maximum)
+        quantum_exp = t.maximum(acc_exp, product_raw_upper) - 25
+        quantum_exp = t.where(s == 0, 0, quantum_exp)
+        quantum = t.ldexp(t.ones_like(s), quantum_exp)
+        alignment = (group + 1) * quantum
+        intermediate = s + error + alignment
+        output_exp = floor_exp64(intermediate)
+        ulp_exp = t.clamp(output_exp - 23, min=-149)
+        ulp = t.ldexp(t.ones_like(s), ulp_exp)
+        error = t.where(s == 0, 0.0, error + alignment + ulp)
+    # Extra allowance for floating arithmetic used to evaluate the upper bound.
+    return error * (1.0 + 16 * updates * 2.0**-53)
+
+
+def certified_mask(native, bound):
+    low, high = native.double() - bound, native.double() + bound
+    lower, upper = low.float(), high.float()
+    lower = t.where(lower.double() > low, t.nextafter(lower, t.full_like(lower, -t.inf)), lower)
+    upper = t.where(upper.double() < high, t.nextafter(upper, t.full_like(upper, t.inf)), upper)
+    return lower.to(t.bfloat16).view(t.int16) == upper.to(t.bfloat16).view(t.int16)
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--expected-quant-helper-sha", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized() and d.sha(HELPER) == args.expected_quant_helper_sha
+    assert d.sha(q.HELPER) == "91533128b0e22ec3d65b5778c61aed4a9c4bf0d2d0cd4fccfa9d2d0579d84c97"
+    prior = d.ROOT / "results/a3-residual-staging-20261001-r1"
+    actual = d.ROOT / "results/a3-all24-actual-c-stage-20261001-r2"
+    assert d.sha(prior / "outputs.pt") == "34be866726f1e7c30c66af3d1009e07070b88ea045e8966d037772dd9d240ed1"
+    assert d.sha(actual / "outputs.pt") == "846d6a3778850d9fde1fe8dfa3cc2329d5aec053a77f318f6f972507b2c96190"
+    assert d.sha(CHECKPOINT) == "ac02591061f1344027a7e7b11dbb4143f75f166c47dc09b742f5de3ab1dde1d1"
+    captured = t.load(prior / "outputs.pt", map_location="cpu", weights_only=True)
+    native = t.load(actual / "outputs.pt", map_location="cpu", weights_only=True)
+    columns = t.tensor(COLUMNS)
+    rows, saved = [], {}
+    with safe_open(str(CHECKPOINT), framework="pt", device="cpu") as checkpoint:
+        for layer in range(24):
+            hidden, index = captured[f"stock_input/{layer}"]["original"], captured[f"stock_route/{layer}"]["index"]
+            order = t.argsort(index.flatten(), stable=True)
+            experts = index.flatten()[order]
+            x = hidden[order // 8]
+            original = checkpoint.get_tensor(f"model.layers.{layer}.block_sparse_moe.input_linear.weight")
+            gate, up = original.chunk(2, 1)
+            packed = t.stack((gate.reshape(32, -1, 32, 1024), up.reshape(32, -1, 32, 1024)), 2).reshape(32, 1024, 1024)
+            weight = packed[:, columns]
+            _, ax, ar, _, ax_combined = q.expanded(x, "A")
+            _, wx, wr, _, wx_combined = q.expanded(weight, "B")
+            # The declared staged oracle recasts the reconstructed logical inputs.
+            xr, wref = ax_combined.to(t.bfloat16), wx_combined.to(t.bfloat16)
+            nx, nw = norm_upper(xr), norm_upper(wref)
+            nmx, nmw = norm_upper(ax), norm_upper(wx)
+            target_s = nx[:, None] * nw[experts]
+            native_s = nmx[:, None] * nmw[experts]
+            raw_native = raw_max(ar, ax)[:, None] + raw_max(wr, wx)[experts]
+            raw_reference = raw_max(d.raw_exp(xr.float()), xr)[:, None] + raw_max(d.raw_exp(wref.float()), wref)[experts]
+            native_error = forward_bound(native_s, raw_native, 32, 128)
+            reference_error = forward_bound(target_s, raw_reference, 16, 64)
+            dx = norm_upper(ax_combined.double() - xr.double())
+            dw = norm_upper(wx_combined.double() - wref.double())
+            reconstruction_error = dx[:, None] * nw[experts] + nx[:, None] * dw[experts] + dx[:, None] * dw[experts]
+            total_bound = (native_error + reference_error + reconstruction_error) * (1.0 + 64 * 2.0**-53)
+            c = native[f"{layer}/torch.bfloat16/c"][:, columns].contiguous()
+            assert t.isfinite(c).all()
+            certified = certified_mask(c, total_bound)
+            # Independent target computation is for validation only; never passed
+            # into the mask or its bound. No original-stock C is used until here.
+            products = (xr[:, None, :].double() * wref[experts].double()).reshape(-1, 1024)
+            exponent = (d.raw_exp(xr.float())[:, None, :] + d.raw_exp(wref[experts].float())).reshape(-1, 1024)
+            exponent = t.where(products == 0, -10000, exponent)
+            desired = d.fixed_window(products, exponent, 25).reshape(584, 16)
+            measured = (c.double() - desired.double()).abs()
+            assert (measured <= total_bound).all(), "Analytic bound must cover every held-out value"
+            wrong = c.to(t.bfloat16).view(t.int16) != desired.to(t.bfloat16).view(t.int16)
+            assert not (certified & wrong).any(), "No wrong BF16 output may be certified"
+            repaired = t.where(certified, c, desired)
+            assert t.equal(repaired.to(t.bfloat16).view(t.int16), desired.to(t.bfloat16).view(t.int16))
+            stock = captured[f"local/{layer}"]["original_bf16_local"]["c"][:, columns].contiguous()
+            oracle_stock_different = desired.to(t.bfloat16).view(t.int16) != stock.view(t.int16)
+            heldout = experts != 0 if layer == 0 else t.ones(584, dtype=t.bool)
+            row = {
+                "layer": layer,
+                "count": c.numel(),
+                "certified_kept_native_count": certified.sum().item(),
+                "ambiguous_recompute_count": (~certified).sum().item(),
+                "ambiguous_fraction": (~certified).double().mean().item(),
+                "native_bf16_wrong_vs_declared_staged_target": wrong.sum().item(),
+                "wrong_certified": 0,
+                "repaired_bf16_wrong_vs_target": 0,
+                "declared_staged_target_bf16_wrong_vs_original_stock": oracle_stock_different.sum().item(),
+                "heldout_count": heldout.sum().item() * 16,
+                "heldout_wrong_certified": 0,
+                "max_total_bound": total_bound.max().item(),
+                "max_actual_c_difference": measured.max().item(),
+                "max_bound_actual_ratio_nonzero": (total_bound[measured > 0] / measured[measured > 0]).max().item() if (measured > 0).any() else None,
+                "max_logical_input_reconstruction_difference": (ax_combined.double() - x.double()).abs().max().item(),
+                "max_logical_weight_reconstruction_difference": (wx_combined.double() - weight.double()).abs().max().item(),
+            }
+            rows.append(row)
+            saved.update(
+                {
+                    f"{layer}/certified": certified,
+                    f"{layer}/bound": total_bound,
+                    f"{layer}/native_c": c,
+                    f"{layer}/desired_input_only_c": desired,
+                    f"{layer}/cpu_predicted_repaired_c": repaired,
+                    f"{layer}/original_stock_bf16": stock,
+                }
+            )
+            print(json.dumps(row), flush=True)
+            (out / "partial.json").write_text(json.dumps({"stage": "CPU_GUARD_FEASIBILITY_RUNNING", "rows": rows}, indent=2) + "\n")
+            del original, packed, weight, ax, ar, wx, wr, products, exponent
+    t.save(saved, out / "outputs.pt")
+    assert not t.cuda.is_initialized()
+    total = sum(r["count"] for r in rows)
+    ambiguous = sum(r["ambiguous_recompute_count"] for r in rows)
+    result = {
+        "stage": "CPU_CERTIFIED_GUARD_FEASIBILITY_COMPLETE_NOT_NATIVE_REPAIR",
+        "cuda_initialized": False,
+        "native_calls": 0,
+        "scope": "All24 original fixed-input layer trajectories/all584routes/16 fixed columns. Candidate consumes actual MXFP8 native C and bounds/target derived only from reconstructed input operands; no empirical bias or original-stock oracle input.",
+        "total_count": total,
+        "total_heldout_count": sum(r["heldout_count"] for r in rows),
+        "total_ambiguous_count": ambiguous,
+        "ambiguous_fraction": ambiguous / total,
+        "native_wrong_target_total": sum(r["native_bf16_wrong_vs_declared_staged_target"] for r in rows),
+        "wrong_certified_total": 0,
+        "cpu_predicted_repair_wrong_target_total": 0,
+        "target_wrong_stock_total": sum(r["declared_staged_target_bf16_wrong_vs_original_stock"] for r in rows),
+        "rows": rows,
+        "input_outputs_sha256": d.sha(prior / "outputs.pt"),
+        "native_outputs_sha256": d.sha(actual / "outputs.pt"),
+        "checkpoint_sha256": d.sha(CHECKPOINT),
+        "quant_helper_sha256": d.sha(HELPER),
+        "window_helper_sha256": d.sha(q.HELPER),
+        "outputs_sha256": d.sha(out / "outputs.pt"),
+        "harness_sha256": d.sha(Path(__file__)),
+        "torch": t.__version__,
+        "limits": "CPU mask/corrector feasibility only. Actual native guard/repair kernels are not implemented or run. Bound validity uses the raw-window model validated on frozen Thor data, not an official universal hardware contract. No whole-model feedback, native output substitution, generation/KV/performance or production feature accepted.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(
+        json.dumps(
+            {
+                k: result[k]
+                for k in (
+                    "stage",
+                    "total_count",
+                    "total_ambiguous_count",
+                    "ambiguous_fraction",
+                    "native_wrong_target_total",
+                    "wrong_certified_total",
+                    "target_wrong_stock_total",
+                )
+            }
+        ),
+        flush=True,
+    )
+
+
+if __name__ == "__main__":
+    main()

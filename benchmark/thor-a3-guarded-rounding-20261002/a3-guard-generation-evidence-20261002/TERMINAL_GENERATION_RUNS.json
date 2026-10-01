@@ -1,0 +1,51 @@
+{
+  "runs": [
+    {
+      "name": "a3-guard-pinned-generation-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9018/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guard_pinned_generation_queued_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guard-pinned-generation-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018",
+        "started_utc": "2026-10-01T21:47:31.160472+00:00",
+        "deadline_seconds": 1800.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": "0"
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 193.2988653650027
+      }
+    },
+    {
+      "name": "a3-guard-pinned-generation-cpu-audit-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9018/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_guard_pinned_generation_cpu_20261002_r1.py",
+          "--input",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guard-pinned-generation-20261002-r1",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guard-pinned-generation-cpu-audit-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018",
+        "started_utc": "2026-10-01T21:54:23.449626+00:00",
+        "deadline_seconds": 600.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 5.941168619996461
+      }
+    }
+  ],
+  "prior_forward_evidence_is_separate": true,
+  "native_gpu_work_admitted": true,
+  "limits": "Actual five pinned full24 32-token greedy/KV requests and independent50 saved-tensor audit. All original numeric gates and oracle/stock token parity pass; passcode83 application answer fails identically in original BF16. Preserve that failure, whole-model paired performance NOT_RUN. Precision control not accepted optimization."
+}

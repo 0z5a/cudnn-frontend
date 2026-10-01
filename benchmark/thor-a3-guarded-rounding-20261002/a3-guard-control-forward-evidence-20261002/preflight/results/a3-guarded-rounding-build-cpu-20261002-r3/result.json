@@ -1,0 +1,21 @@
+{
+  "stage": "NATIVE_SM110_COMPILE_ONLY_COMPLETE_NOT_GPU_TEST",
+  "cuda_initialized": false,
+  "native_calls": 0,
+  "gpu_hidden": true,
+  "torch": "2.13.0+cu130",
+  "torch_git": "cf30153c4c131c8164ee7798e5022d810682e2cb",
+  "cuda_arch": "11.0",
+  "max_jobs": 2,
+  "sources": {
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r3.cpp": "1a05345ca9b3c5d45da888fede0a87f4e48e1fa8e14dc132ba4e2af72fe57f6b",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r3.cu": "1ea84be77d382d0b0545ef29b9ac9b9620534073b9f9811b1564278e8100bddc",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r3.py": "922fe6c6f6501129cf125e5b5599171969bb7fc02a0fb5e1705694c5e6470701"
+  },
+  "binary": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guarded-rounding-build-cpu-20261002-r3/extension/a3_guarded_rounding_20261002_r3.so",
+    "sha256": "bfb40e36c3dd692004c9beee6d47b6f16f2f13d7f50707738aed2810ed7c2d0b"
+  },
+  "harness_sha256": "c83a9d6fe7855a8933817cc569d91b593482aa365eec6a4d80292aa1a8872a29",
+  "limits": "Native build only; no CUDA initialization/launch, model result or performance acceptance. Conservative repair remains an expensive precision control until whole-model quality and faster guard/recompute work are verified."
+}

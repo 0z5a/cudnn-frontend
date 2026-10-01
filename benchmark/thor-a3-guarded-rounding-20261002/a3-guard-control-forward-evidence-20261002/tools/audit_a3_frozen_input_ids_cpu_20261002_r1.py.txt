@@ -1,0 +1,99 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Audit actually saved token IDs; no regenerated prompt replaces the baseline."""
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+import torch as t
+from transformers import AutoTokenizer
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+BASE = ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+CURRENT = ROOT / "results/a3-latest-guard-verified-regression-model-20261002-r2/model/partial_outputs.pt"
+MODEL = Path("/home/jwipc/models/granite-3.1-1b-a400m-instruct-0da7a48b")
+
+
+def sha(path):
+    h = hashlib.sha256()
+    with Path(path).open("rb") as f:
+        for b in iter(lambda: f.read(4194304), b""):
+            h.update(b)
+    return h.hexdigest()
+
+
+def info(x):
+    return {"shape": list(x.shape), "dtype": str(x.dtype), "sha256": hashlib.sha256(x.flatten().view(t.uint8).numpy().tobytes()).hexdigest()}
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", required=True)
+    args = ap.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    meta = json.loads((BASE / "result.json").read_text())
+    fixed = json.loads((BASE / "input-token-ids.json").read_text())
+    checked = []
+    for i, ids in enumerate(fixed["prompts"]):
+        x = t.tensor(ids, dtype=t.int64)
+        assert info(x) == meta["inputs"]["prompts"][i]
+        checked.append(info(x))
+    for k, ids in fixed["workloads"].items():
+        x = t.tensor(ids, dtype=t.int64)
+        assert info(x) == meta["inputs"]["workloads"][k]
+        checked.append(info(x))
+    files = meta["checkpoint"]["files"]
+    for f in files:
+        p = MODEL / f["name"]
+        assert p.stat().st_size == f["size"] and sha(p) == f["sha256"]
+    config = json.loads((MODEL / "tokenizer_config.json").read_text())
+    assert "strftime_now('%B %d, %Y')" in config["chat_template"]
+    current = t.load(CURRENT, map_location="cpu", weights_only=True)["0/input_ids"]
+    old = t.tensor(fixed["prompts"][0], dtype=t.int64)
+    assert current.shape == old.shape == (1, 73)
+    coords = t.nonzero(current != old).tolist()
+    assert coords, "Expected real saved-ID drift, not a speculation"
+    tokenizer = AutoTokenizer.from_pretrained(MODEL, local_files_only=True, trust_remote_code=False)
+    texts = {name: tokenizer.decode(x[0]) for name, x in [("fixed", old), ("current", current)]}
+    dates = {k: re.search(r"Today's Date: ([^\n]+)", v).group(1) for k, v in texts.items()}
+    assert dates["fixed"] != dates["current"]
+    changed = [
+        {
+            "coordinate": c,
+            "old_id": int(old[tuple(c)]),
+            "current_id": int(current[tuple(c)]),
+            "old_text": tokenizer.decode([int(old[tuple(c)])]),
+            "current_text": tokenizer.decode([int(current[tuple(c)])]),
+        }
+        for c in coords
+    ]
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "FROZEN_BASELINE_INPUT_IDS_VERIFIED_CURRENT_DATE_DRIFT",
+        "baseline_head": meta["source_head"],
+        "fixed_inputs_json_sha256": sha(BASE / "input-token-ids.json"),
+        "baseline_result_sha256": sha(BASE / "result.json"),
+        "baseline_tokens": checked,
+        "current_tokens": info(current),
+        "changed_token_count": len(coords),
+        "changed_tokens": changed,
+        "decoded_dates": dates,
+        "tokenizer_config_sha256": sha(MODEL / "tokenizer_config.json"),
+        "all_nine_original_model_files_size_sha256_verified": True,
+        "cuda_initialized": False,
+        "native_calls": 0,
+        "harness_sha256": sha(__file__),
+        "limits": "Different actual inputs explain why comparison to old logits is invalid. Pinned-input GPU oracle/model must still be rerun and independently audited; no numerical/model/performance success claimed.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "changed_tokens": changed, "dates": dates}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

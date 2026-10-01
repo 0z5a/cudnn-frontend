@@ -1,0 +1,199 @@
+{
+  "stage": "CPU_SAVED_INPUT_AND_ORACLE_DIAGNOSIS",
+  "rows": [
+    {
+      "case": "saved_first_expert",
+      "operand": "A",
+      "different_words": 0,
+      "different_values": 0,
+      "max_abs": 0.0,
+      "all_differences_are_signed_zero": true,
+      "examples": []
+    },
+    {
+      "case": "saved_first_expert",
+      "operand": "B",
+      "different_words": 0,
+      "different_values": 0,
+      "max_abs": 0.0,
+      "all_differences_are_signed_zero": true,
+      "examples": []
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "operand": "A",
+      "different_words": 0,
+      "different_values": 0,
+      "max_abs": 0.0,
+      "all_differences_are_signed_zero": true,
+      "examples": []
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "operand": "B",
+      "different_words": 0,
+      "different_values": 0,
+      "max_abs": 0.0,
+      "all_differences_are_signed_zero": true,
+      "examples": []
+    },
+    {
+      "case": "ragged_e31_n128",
+      "operand": "A",
+      "different_words": 0,
+      "different_values": 0,
+      "max_abs": 0.0,
+      "all_differences_are_signed_zero": true,
+      "examples": []
+    },
+    {
+      "case": "ragged_e31_n128",
+      "operand": "B",
+      "different_words": 0,
+      "different_values": 0,
+      "max_abs": 0.0,
+      "all_differences_are_signed_zero": true,
+      "examples": []
+    },
+    {
+      "case": "ragged_e33_n256",
+      "operand": "A",
+      "different_words": 0,
+      "different_values": 0,
+      "max_abs": 0.0,
+      "all_differences_are_signed_zero": true,
+      "examples": []
+    },
+    {
+      "case": "ragged_e33_n256",
+      "operand": "B",
+      "different_words": 1,
+      "different_values": 0,
+      "max_abs": 0.0,
+      "all_differences_are_signed_zero": true,
+      "examples": [
+        {
+          "index": [
+            31,
+            193,
+            223
+          ],
+          "observed_word": 0,
+          "saved_effective_word": -2147483648
+        }
+      ]
+    }
+  ],
+  "model": {
+    "fresh_dtype": "torch.bfloat16",
+    "fixed_dtype": "torch.bfloat16",
+    "original_dtype": "torch.bfloat16",
+    "fresh_vs_fixed": {
+      "byte_equal": false,
+      "different_values": 2367087,
+      "count": 3588315,
+      "max_abs": 7.28125,
+      "relative_l2_fp32": 0.10814934968948364,
+      "relative_l2_fp64": 0.10818532355803588
+    },
+    "fresh_vs_original": {
+      "byte_equal": false,
+      "different_values": 2367087,
+      "count": 3588315,
+      "max_abs": 7.28125,
+      "relative_l2_fp32": 0.10814934968948364,
+      "relative_l2_fp64": 0.10818532355803588
+    },
+    "fixed_vs_original": {
+      "byte_equal": true,
+      "different_values": 0,
+      "count": 3588315,
+      "max_abs": 0.0,
+      "relative_l2_fp32": 0.0,
+      "relative_l2_fp64": 0.0
+    },
+    "input_ids": [
+      [
+        49152,
+        2946,
+        49153,
+        39558,
+        390,
+        17071,
+        2821,
+        44,
+        30468,
+        225,
+        36,
+        34,
+        36,
+        38,
+        32,
+        203,
+        23669,
+        1182,
+        2821,
+        44,
+        31457,
+        225,
+        34,
+        36,
+        30,
+        225,
+        36,
+        34,
+        36,
+        40,
+        32,
+        203,
+        4282,
+        884,
+        8080,
+        278,
+        659,
+        30,
+        18909,
+        810,
+        25697,
+        32,
+        2448,
+        884,
+        312,
+        17247,
+        19551,
+        47330,
+        32,
+        0,
+        203,
+        49152,
+        496,
+        49153,
+        8197,
+        438,
+        225,
+        36,
+        474,
+        225,
+        36,
+        49,
+        23574,
+        623,
+        2258,
+        322,
+        1451,
+        32,
+        0,
+        203,
+        49152,
+        17594,
+        49153
+      ]
+    ]
+  },
+  "cuda_initialized": false,
+  "native_calls": 0,
+  "harness_sha256": "ce7b62cfc6fd766872afa4f86a824304e0bf7cf36fa1b37a3a33b4acda12c76b",
+  "auditor_source_sha256": "362db647d02af3833cc5fade4d03436f8dcae01b7f74a342950dd384fc0db967",
+  "boundary_outputs_sha256": "ae22e256b2c59293229e18e81f8dfe584754d4c811ffab2be3d2707e92ca4de1",
+  "fresh_partial_outputs_sha256": "da10d3c707a540932e77330719c7065bfe150e60a2923d052a26c7808192c716"
+}

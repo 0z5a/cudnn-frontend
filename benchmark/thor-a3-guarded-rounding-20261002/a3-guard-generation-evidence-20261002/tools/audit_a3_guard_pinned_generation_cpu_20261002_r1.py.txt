@@ -1,0 +1,215 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Independent CPU audit of saved generation tensors, gates, KV and paired costs."""
+
+import argparse
+import hashlib
+import json
+import math
+import os
+from pathlib import Path
+import statistics
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+import torch as t
+from transformers import AutoTokenizer
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def info(value):
+    return {
+        "shape": list(value.shape),
+        "dtype": str(value.dtype),
+        "sha256": hashlib.sha256(value.contiguous().flatten().view(t.uint8).numpy().tobytes()).hexdigest(),
+    }
+
+
+def equal(a, b):
+    return t.equal(a.contiguous().flatten().view(t.uint8), b.contiguous().flatten().view(t.uint8))
+
+
+def metrics(a, b):
+    af, bf, ad, bd = a.float(), b.float(), a.double(), b.double()
+    assert t.isfinite(ad).all() and t.isfinite(bd).all()
+    return {
+        "max_abs": float((af - bf).abs().max()),
+        "relative_l2": float(t.linalg.vector_norm(af - bf) / t.linalg.vector_norm(bf).clamp_min(1e-12)),
+        "relative_l2_fp64": float(t.linalg.vector_norm(ad - bd) / t.linalg.vector_norm(bd)),
+        "argmax_equal_fraction": float((a.argmax(-1) == b.argmax(-1)).float().mean()),
+        "byte_equal": equal(a, b),
+    }
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--input", required=True)
+    p.add_argument("--out", required=True)
+    args = p.parse_args()
+    src, out = Path(args.input), Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    run = json.loads(src.with_name(src.name + "-launch").joinpath("run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    folder = src / "e2e"
+    producer = json.loads((folder / "result.json").read_text())
+    assert producer["head"] == "ce0e08a850962eaad039708aeb270c8cb6adf326"
+    assert (
+        producer["model_parameters"],
+        producer["layers"],
+        producer["experts"],
+        producer["topk"],
+        producer["hidden"],
+        producer["intermediate"],
+        producer["gemm_k"],
+    ) == (1334628352, 24, 32, 8, 1024, 512, 4096)
+    assert not producer["original_forward_baseline_replaced"] and not producer["oracle_replaced"] and not producer["production_feature_accepted"]
+    assert producer["native_forward_byte_identical_to_g4"] and producer["native_flag_instrumentation_included_in_timing"]
+    for path, digest in producer["files"].items():
+        assert sha(path) == digest
+    for value in producer["imports"].values():
+        assert sha(value["path"]) == value["sha256"] and Path(value["path"]).resolve().is_relative_to(Path(producer["source"]) / "python")
+    source_text = lambda name: (ROOT / "tools" / name).read_text().split("    def forward(", 1)[1].split("\n    adapters = []", 1)[0]
+    assert source_text("a3_guarded_rounding_model_runtime_20261002_r1.py") == source_text("a3_guarded_rounding_full_model_20261002_r4.py")
+    baseline = ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    assert (
+        sha(baseline / "input-token-ids.json")
+        == producer["original_input_tokens_json_sha256"]
+        == "0983f2e3e173eb5d6dd1fdb286b1bd96b513bff54b1f1a2724cc76bdc82122dc"
+    )
+    assert sha(baseline / "outputs.pt") == "a997dac0bbd8b137ecbf7ddbefc5f356c2633d75a9d3cde1d035335cb028440f"
+    fixed = json.loads((baseline / "input-token-ids.json").read_text())
+    model_dir = Path("/home/jwipc/models/granite-3.1-1b-a400m-instruct-0da7a48b")
+    tokenizer = AutoTokenizer.from_pretrained(model_dir, local_files_only=True, trust_remote_code=False)
+    assert sha(folder / "outputs.pt") == producer["outputs_sha256"]
+    values = t.load(folder / "outputs.pt", map_location="cpu", weights_only=True)
+    assert len(values) == 50
+    cases = [
+        ("math73", fixed["prompts"][0]),
+        ("sky70", fixed["prompts"][1]),
+        ("passcode83", fixed["prompts"][2]),
+        ("prefix256", fixed["workloads"]["256"]),
+        ("prefix1024", fixed["workloads"]["1024"]),
+    ]
+    rows = []
+    for i, (name, ids) in enumerate(cases):
+        original = t.tensor(ids, dtype=t.int64)
+        assert equal(values[name + "/input_ids"], original)
+        row = producer["quality"][i]
+        assert row["case"] == name and row["new_tokens"] == 32 and row["input_tokens"] == original.shape[-1] and row["ids"] == info(original)
+        native, oracle, stock_teacher = [values[name + "/" + mode + "/logits"] for mode in ("native", "reference", "stock_teacher")]
+        assert native.shape == oracle.shape == stock_teacher.shape == (1, 32, 49155)
+        ni, oi, si = [values[name + "/" + mode + "/ids"] for mode in ("native", "reference", "stock")]
+        assert ni.shape == oi.shape == si.shape == (1, 32) and ni.dtype == oi.dtype == si.dtype == t.int64
+        for mode in ("native", "reference", "stock", "stock_teacher"):
+            logits, generated = values[name + "/" + mode + "/logits"], values[name + "/" + mode + "/ids"]
+            assert equal(generated, logits.argmax(-1)) and t.isfinite(logits).all()
+        oe, be = metrics(native, oracle), metrics(native, stock_teacher)
+        for actual, expected in ((oe, row["native_oracle"]), (be, row["native_original_bf16_same_context"])):
+            assert all(actual[k] == expected[k] for k in ("max_abs", "relative_l2", "argmax_equal_fraction"))
+        same = equal(ni, oi)
+        assert row["same_context_for_numeric_gates"] == row["native_oracle_ids_byte_equal"] == same
+        assert row["native_oracle_logits_byte_equal"] == oe["byte_equal"] and row["native_stock_greedy_ids_byte_equal"] == equal(ni, si)
+        flags = values[name + "/native/flags"]
+        assert flags.shape == (24, 32, 3) and flags.dtype == t.int64 and (flags >= 0).all() and (flags[:, :, 2] == 0).all()
+        assert (flags[:, 0].sum(-1) == original.shape[-1] * 8 * 1024).all() and (flags[:, 1:].sum(-1) == 8 * 1024).all()
+        assert flags.sum((0, 1)).tolist() == row["flag_totals"]
+        decoded = {}
+        for mode in ("native", "reference", "stock"):
+            tokens = values[name + "/" + mode + "/ids"][0].tolist()
+            if tokenizer.eos_token_id in tokens:
+                tokens = tokens[: tokens.index(tokenizer.eos_token_id)]
+            decoded[mode] = tokenizer.decode(tokens, skip_special_tokens=True).strip()
+        assert decoded == row["texts"]
+        expected = "4" if name == "math73" else "cobalt" if name in ("passcode83", "prefix256", "prefix1024") else None
+        answer = bool(decoded["native"]) and (expected is None or expected in decoded["native"].lower())
+        assert row["answer_pass"] == answer and row["expected"] == expected
+        op, bp = same and oe["relative_l2"] <= 0.01, same and be["relative_l2"] <= 0.05
+        assert row["oracle_gate_pass"] == op and row["bf16_gate_pass"] == bp and row["pass"] == (op and bp and answer)
+        assert (same and oe["relative_l2_fp64"] <= 0.01) == op and (same and be["relative_l2_fp64"] <= 0.05) == bp
+        assert row["native_main_calls"] == row["native_repair_calls"] == 768 and row["native_postprocess_kernel_launches"] == 1536
+        assert row["cache_object_reused"] and row["cache_final_tokens"] == original.shape[-1] + 31
+        rows.append(
+            {
+                "case": name,
+                "input_tokens": original.shape[-1],
+                "native_oracle": oe,
+                "native_bf16_same_context": be,
+                "native_oracle_tokens_equal": same,
+                "answer_pass": answer,
+                "pass": row["pass"],
+                "native_text": decoded["native"],
+                "cache_final_tokens": row["cache_final_tokens"],
+                "flags": row["flag_totals"],
+            }
+        )
+    passed = all(row["pass"] for row in rows)
+    assert producer["quality_all_five_cases_pass"] == passed
+    timed, warmups = producer["timed"], producer["warmups"]
+    comparisons = []
+    if passed:
+        assert len(timed) == 16 and len(warmups) == 4
+        for i, row in enumerate(timed):
+            length = 256 if i < 8 else 1024
+            block, pos = divmod(i % 8, 4)
+            expected_mode = (("stock", "native", "native", "stock"), ("native", "stock", "stock", "native"))[block][pos]
+            assert row["input_tokens"] == length and row["mode"] == expected_mode and row["repeat"] == block and row["position"] == pos
+            assert row["new_tokens"] == 32 and row["cache_final_tokens"] == length + 31 and row["outputs_byte_equal_to_quality"]
+            assert row["native_main_calls"] == row["native_repair_calls"] == (768 if row["mode"] == "native" else 0)
+            assert all(math.isfinite(row[k]) and row[k] > 0 for k in ("prefill_ms", "decode_ms", "request_ms"))
+            assert math.isclose(row["request_ms"], row["prefill_ms"] + row["decode_ms"], rel_tol=1e-12)
+        for i, name in enumerate(("prefix256", "prefix1024")):
+            medians = {
+                mode: {
+                    key: statistics.median(row[key] for row in timed if row["case"] == name and row["mode"] == mode)
+                    for key in ("prefill_ms", "decode_ms", "request_ms")
+                }
+                for mode in ("stock", "native")
+            }
+            expected = {
+                "case": name,
+                "median_ms": medians,
+                "stock_over_native_request_ratio": medians["stock"]["request_ms"] / medians["native"]["request_ms"],
+                "native_faster": medians["native"]["request_ms"] < medians["stock"]["request_ms"],
+            }
+            assert expected == producer["comparisons"][i]
+            comparisons.append(expected)
+    else:
+        assert not timed and not warmups and not producer["comparisons"]
+    native_requests = 5 + sum(row["mode"] == "native" for row in warmups) + sum(row["mode"] == "native" for row in timed)
+    assert (
+        producer["native_main_calls"] == producer["native_repair_calls"] == native_requests * 768
+        and producer["native_postprocess_kernel_launches"] == native_requests * 1536
+    )
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "INDEPENDENT_GENERATION_KV_TIMING_AUDIT_COMPLETE",
+        "quality_all_five_cases_pass": passed,
+        "rows": rows,
+        "comparisons": comparisons,
+        "head": producer["head"],
+        "producer_run": run,
+        "producer_result_sha256": sha(folder / "result.json"),
+        "producer_outputs_sha256": producer["outputs_sha256"],
+        "tensor_count": len(values),
+        "tensors": {k: info(v) for k, v in values.items()},
+        "native_main_calls": producer["native_main_calls"],
+        "native_repair_calls": producer["native_repair_calls"],
+        "native_postprocess_kernel_launches": producer["native_postprocess_kernel_launches"],
+        "original_input_ids_sha256": producer["original_input_tokens_json_sha256"],
+        "cuda_initialized": False,
+        "new_native_calls": 0,
+        "harness_sha256": sha(__file__),
+        "accepted_optimization": False,
+        "limits": "Independent all50 saved tensor/context/gate/greedy-token/decoded-answer/KV metadata/count/source/binding audit. New stock generation reference, original full-forward baseline untouched. Paired prototype cost includes diagnostics; no accepted production feature or unobserved gain claim.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "quality_all_five_cases_pass": passed, "rows": rows, "comparisons": comparisons}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

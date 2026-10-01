@@ -1,0 +1,206 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Latest-source full32 KV parity and serial/postfixed whole-model ABBA pairs.
+
+Explicit private module3/module4 selection changes only the conservative bound.
+Actual MXFP8 main and encoded-only integer repair remain in both native arms.
+Original 1%/5% numeric gates and all five original IDs stay unchanged. Original
+stock's passcode83 refusal is preserved as an application failure, not relabelled.
+This measures the private precision control, never production K1024 speedup.
+"""
+
+import importlib.util
+import json
+from pathlib import Path
+import statistics
+import sys
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def execute(args, out, boundary):
+    tools = Path(__file__).parent
+    folder = out / "runtime"
+    folder.mkdir()
+    factory = load("a3_postfixed_request_factory", tools / "a3_guarded_rounding_request_runtime_20261002_r1.py")
+    setup = factory.prepare(args, folder, boundary)
+    r, request = setup["r"], setup["request"]
+    m, t, h = r.m, r.t, r.h
+    prior_dir = m.ROOT / "results/a3-guard-pinned-generation-20261002-r1/e2e"
+    prior = json.loads((prior_dir / "result.json").read_text())
+    assert m.sha_file(prior_dir / "outputs.pt") == prior["outputs_sha256"] == "d52a9368a7ec96718a0419e50b53e27470ecd5f556fdf82af754f74952c49ded"
+    oracle = t.load(prior_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    old_build = json.loads((m.ROOT / "results/a3-guarded-rounding-build-cpu-20261002-r3/result.json").read_text())
+    oldh = load("a3_full_pair_serial_native_loader", tools / "a3_guarded_rounding_native_20261002_r3.py")
+    old_module = oldh.load_native(old_build["binary"]["path"], old_build["binary"]["sha256"])
+    modules = {"serial": old_module, "postfixed": r.module}
+    paths = [
+        Path(__file__),
+        Path(factory.__file__),
+        tools / "a3_guarded_rounding_model_runtime_20261002_r2.py",
+        Path(oldh.__file__),
+        *setup["paths"],
+        prior_dir / "result.json",
+    ]
+    frozen = {str(path): m.sha_file(path) for path in paths}
+    saved, quality, observations = {}, [], []
+    bm, br, bk = m.NATIVE_CALLS, h.POSTPROCESS_CALLS, h.POSTPROCESS_KERNEL_LAUNCHES
+
+    def equal(a, b):
+        return t.equal(a.contiguous().flatten().view(t.uint8), b.contiguous().flatten().view(t.uint8))
+
+    def run(ids, implementation):
+        for adapter in r.adapters:
+            adapter.repair_module = modules[implementation]
+        value = request(ids, "native")
+        value["implementation"] = implementation
+        return value
+
+    def flush():
+        t.save(saved, out / "partial_outputs.pt")
+        (out / "partial.json").write_text(json.dumps({"quality": quality, "observations": observations}, indent=2) + "\n")
+
+    with t.inference_mode():
+        for name, ids in setup["cases"]:
+            value = run(ids, "postfixed")
+            saved[name + "/input_ids"] = ids
+            for key in ("ids", "logits", "flags"):
+                saved[name + "/" + key] = value[key]
+            assert equal(ids, oracle[name + "/input_ids"])
+            same = equal(value["ids"], oracle[name + "/reference/ids"])
+            oe, be = m.difference(value["logits"], oracle[name + "/reference/logits"]), m.difference(value["logits"], oracle[name + "/stock_teacher/logits"])
+            application = next(row for row in prior["quality"] if row["case"] == name)
+            decoded = setup["text"](value["ids"])
+            row = {
+                "case": name,
+                "input_tokens": ids.shape[-1],
+                "new_tokens": 32,
+                "implementation": "postfixed",
+                "native_oracle": oe,
+                "native_original_bf16_same_context": be,
+                "same_context_for_numeric_gates": same,
+                "oracle_gate_pass": same and oe["relative_l2"] <= 0.01,
+                "bf16_gate_pass": same and be["relative_l2"] <= 0.05,
+                "oracle_logits_byte_equal": equal(value["logits"], oracle[name + "/reference/logits"]),
+                "oracle_ids_byte_equal": same,
+                "original_stock_greedy_ids_byte_equal": equal(value["ids"], oracle[name + "/stock/ids"]),
+                "text": decoded,
+                "prior_original_stock_text": application["texts"]["stock"],
+                "application_answer_pass": bool(decoded) and (application["expected"] is None or application["expected"] in decoded.lower()),
+                "application_answer_unchanged_from_prior": decoded == application["texts"]["native"],
+                "flag_totals": value["flags"].sum((0, 1)).tolist(),
+                "native_main_calls": value["native_main_calls"],
+                "native_repair_calls": value["native_repair_calls"],
+                "native_postprocess_kernel_launches": value["native_postprocess_kernel_launches"],
+                "cache_type": value["cache_type"],
+                "cache_final_tokens": value["cache_final_tokens"],
+                "cache_object_reused": value["cache_object_reused"],
+                "timing": value["timing"],
+            }
+            quality.append(row)
+            flush()
+            print(json.dumps({"stage": "POSTFIXED_FULL32_QUALITY", **row}), flush=True)
+        numeric = all(row["oracle_gate_pass"] and row["bf16_gate_pass"] and row["application_answer_unchanged_from_prior"] for row in quality)
+        # Qualify unchanged numerical/behavior semantics, not the known baseline
+        # refusal. All application flags remain separately reported as actually run.
+        if numeric:
+            for name, ids in setup["cases"][3:]:
+                for stage, order in (("warmup", ("serial", "postfixed")), ("timed", ("serial", "postfixed", "postfixed", "serial"))):
+                    for position, implementation in enumerate(order):
+                        value = run(ids, implementation)
+                        assert equal(value["ids"], oracle[name + "/reference/ids"]) and equal(value["logits"], oracle[name + "/reference/logits"])
+                        key = f"{name}/{stage}/{position}"
+                        for field in ("ids", "logits", "flags"):
+                            saved[key + "/" + field] = value[field]
+                        observations.append(
+                            {
+                                "case": name,
+                                "input_tokens": ids.shape[-1],
+                                "new_tokens": 32,
+                                "stage": stage,
+                                "position": position,
+                                "implementation": implementation,
+                                **value["timing"],
+                                "native_main_calls": value["native_main_calls"],
+                                "native_repair_calls": value["native_repair_calls"],
+                                "native_postprocess_kernel_launches": value["native_postprocess_kernel_launches"],
+                                "cache_final_tokens": value["cache_final_tokens"],
+                                "cache_object_reused": value["cache_object_reused"],
+                                "oracle_logits_ids_byte_equal": True,
+                                "binary_sha256": (old_build if implementation == "serial" else r.build)["binary"]["sha256"],
+                            }
+                        )
+                        flush()
+                        print(json.dumps({"stage": "FULL_MODEL_PAIR_OBSERVATION", **observations[-1]}), flush=True)
+        m.attach(r.adapters, "stock")
+    comparisons = []
+    if numeric:
+        for name, ids in setup["cases"][3:]:
+            arms = {
+                implementation: [row for row in observations if row["stage"] == "timed" and row["case"] == name and row["implementation"] == implementation]
+                for implementation in ("serial", "postfixed")
+            }
+            assert all(len(rows) == 2 for rows in arms.values())
+            medians = {
+                implementation: {key: statistics.median(row[key] for row in rows) for key in ("prefill_ms", "decode_ms", "request_ms")}
+                for implementation, rows in arms.items()
+            }
+            comparisons.append(
+                {
+                    "case": name,
+                    "median_ms": medians,
+                    "serial_over_postfixed_request_ratio": medians["serial"]["request_ms"] / medians["postfixed"]["request_ms"],
+                }
+            )
+    assert {str(path): m.sha_file(path) for path in paths} == frozen
+    for build in (old_build, r.build):
+        assert m.sha_file(build["binary"]["path"]) == build["binary"]["sha256"] and all(m.sha_file(path) == digest for path, digest in build["sources"].items())
+    t.save(saved, out / "outputs.pt")
+    result = {
+        "stage": "POSTFIXED_FULL32_KV_AND_WHOLE_MODEL_PAIR_COMPLETE" if numeric else "POSTFIXED_FULL32_NUMERIC_OR_BEHAVIOR_FAILED_PAIR_NOT_RUN",
+        "scope": __doc__,
+        "head": args.expected_head,
+        "source": args.expected_source,
+        "quality_all_five_numeric_gates_pass": numeric,
+        "application_all_five_answers_pass": all(row["application_answer_pass"] for row in quality),
+        "quality": quality,
+        "observations": observations,
+        "comparisons": comparisons,
+        "native_main_calls": m.NATIVE_CALLS - bm,
+        "native_repair_calls": h.POSTPROCESS_CALLS - br,
+        "native_postprocess_kernel_launches": h.POSTPROCESS_KERNEL_LAUNCHES - bk,
+        "model_parameters": 1334628352,
+        "layers": 24,
+        "experts": 32,
+        "topk": 8,
+        "hidden": 1024,
+        "intermediate": 512,
+        "gemm_k": 4096,
+        "files": frozen,
+        "outputs_sha256": m.sha_file(out / "outputs.pt"),
+        "prior_frozen_generation_outputs_sha256": prior["outputs_sha256"],
+        "old_native_build": old_build,
+        "new_native_build": r.build,
+        "diagnostic_flag_reductions_included_in_both_arms": True,
+        "paired_reference": "private_serial_integer_control_same_numerical_recipe",
+        "original_forward_baseline_replaced": False,
+        "oracle_replaced": False,
+        "production_feature_accepted": False,
+        "service_final": "inactive",
+        "imports": {
+            name: {"path": imported.__file__, "sha256": m.sha_file(imported.__file__)}
+            for name, imported in (("cudnn", m.cudnn), ("api", m.api), ("binding", m._compiled_module))
+        },
+        "limits": "All5 actual full32 greedy/KV cases preserve original numerical gates and responses; known original-stock passcode83 refusal stays failed. Four timed ABBA observations at each256/1024 (two per private arm) after one warmup per arm. Whole-model latency comparison of private rounding controls only, not original BF16/productionK1024 gain or accepted production feature.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(
+        json.dumps({key: result[key] for key in ("stage", "quality_all_five_numeric_gates_pass", "application_all_five_answers_pass", "comparisons")}),
+        flush=True,
+    )

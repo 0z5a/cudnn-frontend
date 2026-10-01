@@ -1,0 +1,79 @@
+{
+  "stage": "FROZEN_BASELINE_INPUT_IDS_VERIFIED_CURRENT_DATE_DRIFT",
+  "baseline_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "fixed_inputs_json_sha256": "0983f2e3e173eb5d6dd1fdb286b1bd96b513bff54b1f1a2724cc76bdc82122dc",
+  "baseline_result_sha256": "74e662122f4aa17a3f491584bef1194d42bdfb92420b6daadf36cea8f23c3063",
+  "baseline_tokens": [
+    {
+      "shape": [
+        1,
+        73
+      ],
+      "dtype": "torch.int64",
+      "sha256": "56c14c262593bfa8f451fa0a770d7858957ffb7d088c8bd5e2f319d6934505d0"
+    },
+    {
+      "shape": [
+        1,
+        70
+      ],
+      "dtype": "torch.int64",
+      "sha256": "56ec30c6e1e958545632bb743d2a9de10981386ea77924249ffec764021e6a41"
+    },
+    {
+      "shape": [
+        1,
+        83
+      ],
+      "dtype": "torch.int64",
+      "sha256": "1a48b6c74cdac2f8041ed8bb74c794c707129e5d983f17c9680cc3876a0c4210"
+    },
+    {
+      "shape": [
+        1,
+        256
+      ],
+      "dtype": "torch.int64",
+      "sha256": "fccfd4f25a32012c90d9c140d9ed2f5f3c2abb39ac9d3e824a888fb4466f2ed8"
+    },
+    {
+      "shape": [
+        1,
+        1024
+      ],
+      "dtype": "torch.int64",
+      "sha256": "5bf7b758df8e3db071dd21e34a67f1a38b382319fa565557c605ebced6ec359f"
+    }
+  ],
+  "current_tokens": {
+    "shape": [
+      1,
+      73
+    ],
+    "dtype": "torch.int64",
+    "sha256": "855f7bcc8298c57bc3ea39dbb262c050d3d893fdc19e69b5c638762d1a711e8a"
+  },
+  "changed_token_count": 1,
+  "changed_tokens": [
+    {
+      "coordinate": [
+        0,
+        23
+      ],
+      "old_id": 35,
+      "current_id": 36,
+      "old_text": "1",
+      "current_text": "2"
+    }
+  ],
+  "decoded_dates": {
+    "fixed": "October 01, 2026.",
+    "current": "October 02, 2026."
+  },
+  "tokenizer_config_sha256": "ab17e0d532ecf47e9d8451939dd81f25dd98c5fba4b6742584549bbf9c1f06b9",
+  "all_nine_original_model_files_size_sha256_verified": true,
+  "cuda_initialized": false,
+  "native_calls": 0,
+  "harness_sha256": "995c57b90e9a30278e4f784d122f2c6a4608c69cf301256ac06654cf9efd1724",
+  "limits": "Different actual inputs explain why comparison to old logits is invalid. Pinned-input GPU oracle/model must still be rerun and independently audited; no numerical/model/performance success claimed."
+}

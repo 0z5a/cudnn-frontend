@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestbed/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latest_guard_regression_and_model_queued_20261002_r1.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-guard-regression-model-20261002-r1"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed",
+  "started_utc": "2026-10-01T19:45:49.529487+00:00",
+  "deadline_seconds": 2400.0,
+  "status": "EXITED",
+  "selected_env": {},
+  "returncode": 75,
+  "signal": null,
+  "elapsed_seconds": 600.1849864329997
+}

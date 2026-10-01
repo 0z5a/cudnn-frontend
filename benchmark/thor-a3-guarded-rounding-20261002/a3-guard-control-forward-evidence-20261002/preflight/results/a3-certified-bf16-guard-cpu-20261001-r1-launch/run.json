@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/probe_a3_certified_bf16_guard_cpu_20261001.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-certified-bf16-guard-cpu-20261001-r1",
+    "--expected-quant-helper-sha",
+    "28277feb56f6fd2f254b9f54301dd68d477703a0caf3c4c34e0acc1e27b7617f"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+  "started_utc": "2026-10-01T15:32:00.447204+00:00",
+  "deadline_seconds": 600.0,
+  "status": "EXITED",
+  "selected_env": {},
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 15.27701622099994
+}

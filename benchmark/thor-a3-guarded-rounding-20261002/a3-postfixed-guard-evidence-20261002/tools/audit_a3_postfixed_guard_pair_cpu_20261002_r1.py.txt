@@ -1,0 +1,133 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Independent audit of 584 actual enclosures and80 frozen CUDA wrapper pairs."""
+
+import argparse
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import statistics
+import sys
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+import torch as t
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def equal(a, b):
+    return t.equal(a.contiguous().flatten().view(t.uint8), b.contiguous().flatten().view(t.uint8))
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--out", required=True)
+    args = p.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    src = ROOT / "results/a3-postfixed-guard-20261002-r1"
+    run = json.loads(src.with_name(src.name + "-launch").joinpath("run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0
+    src = src / "candidate"
+    producer = json.loads((src / "pair.json").read_text())
+    audit = ROOT / "results/a3-postfixed-guard-boundary-cpu-audit-20261002-r1"
+    arun = json.loads(audit.with_name(audit.name + "-launch").joinpath("run.json").read_text())
+    metadata = json.loads((audit / "result.json").read_text())
+    assert arun["status"] == "EXITED" and arun["returncode"] == 0 and metadata["all_c_count"] == 79872
+    assert sha(audit / "independent_fp32_targets.pt") == metadata["independent_fp32_targets_sha256"]
+    targets = t.load(audit / "independent_fp32_targets.pt", map_location="cpu", weights_only=True)
+    assert sha(src / "pair_outputs.pt") == producer["outputs_sha256"]
+    values = t.load(src / "pair_outputs.pt", map_location="cpu", weights_only=True)
+    assert len(values) == 360 and len(producer["paired"]) == 80
+    bmeta = json.loads((src / "boundaries/result.json").read_text())
+    assert sha(src / "boundaries/outputs.pt") == bmeta["outputs_sha256"]
+    baseline = t.load(src / "boundaries/outputs.pt", map_location="cpu", weights_only=True)
+    helper = ROOT / "tools/probe_a3_postfixed_bound_cpu_20261002_r1.py"
+    spec = importlib.util.spec_from_file_location("a3_independent_postfixed_tensor_reference", helper)
+    q = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = q
+    spec.loader.exec_module(q)
+    checked = 0
+    for row in producer["synthetic"]:
+        key = f"bounds/{row['group']}/{row['raw_delta']}"
+        s, raw, actual = [values[key + "/" + field] for field in ("s", "raw", "actual")]
+        expected, iterations = q.postfixed(s, raw, row["group"], row["updates"])
+        serial = q.serial(s, raw, row["group"], row["updates"])
+        assert equal(actual, expected) and equal(values[key + "/expected"], expected) and equal(values[key + "/serial"], serial) and (actual >= serial).all()
+        checked += actual.numel()
+    assert checked == producer["synthetic_count"] == 584
+    words = t.arange(65536, dtype=t.int32).to(t.int16)
+    bf = words.view(t.bfloat16)
+    valid = t.isfinite(bf)
+    assert t.equal((((bf.float().view(t.int32) >> 23) & 255).clamp(min=1) - 127)[valid], ((((words.int() >> 7) & 255).clamp(min=1)) - 127)[valid])
+    assert int(valid.sum()) == producer["bf16_exponents_checked"] == 65280
+    counts = 0
+    for i, row in enumerate(producer["paired"]):
+        local = i % 20
+        repeat, position = divmod(local, 4)
+        order = ("serial", "postfixed", "postfixed", "serial") if repeat % 2 == 0 else ("postfixed", "serial", "serial", "postfixed")
+        assert row["repeat"] == repeat and row["position"] == position and row["mode"] == order[position] and row["gpu_wrapper_ms"] > 0
+        name = row["case"]
+        saved = {key: values[f"{name}/{repeat}/{position}/{key}"] for key in ("c", "d", "amax", "flags")}
+        original = baseline[name]
+        keep, repaired = saved["flags"] == 0, saved["flags"] == 1
+        assert (keep | repaired).all()
+        assert equal(saved["c"][keep], original["native_c"][original["destinations"]][keep])
+        assert equal(saved["c"][repaired], targets[name][repaired])
+        assert (
+            equal(saved["c"].to(t.bfloat16), original["reference_c_bf16"])
+            and equal(saved["d"], original["reference_d"])
+            and equal(saved["amax"], original["reference_amax"])
+        )
+        assert row["flags"] == [int((saved["flags"] == i).sum()) for i in (0, 1, 2)]
+        counts += saved["c"].numel()
+    comparisons = []
+    for case in bmeta["rows"]:
+        name = case["name"]
+        medians = {
+            mode: statistics.median(row["gpu_wrapper_ms"] for row in producer["paired"] if row["case"] == name and row["mode"] == mode)
+            for mode in ("serial", "postfixed")
+        }
+        assert all(sum(row["case"] == name and row["mode"] == mode for row in producer["paired"]) == 10 for mode in ("serial", "postfixed"))
+        comparisons.append({"case": name, "median_wrapper_ms": medians, "serial_over_postfixed_ratio": medians["serial"] / medians["postfixed"]})
+    for path, digest in producer["files"].items():
+        assert sha(path) == digest
+    for field in ("old_build", "new_build"):
+        build = producer[field]
+        assert sha(build["binary"]["path"]) == build["binary"]["sha256"]
+        assert all(sha(path) == digest for path, digest in build["sources"].items())
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "INDEPENDENT_POSTFIXED_BOUND_PAIR_AUDIT_COMPLETE",
+        "synthetic_count": checked,
+        "bf16_exponents_checked": 65280,
+        "paired_observations": 80,
+        "tensor_count": 360,
+        "actual_c_words_checked": counts,
+        "comparisons": comparisons,
+        "producer_run": run,
+        "producer_result_sha256": sha(src / "pair.json"),
+        "producer_outputs_sha256": producer["outputs_sha256"],
+        "boundary_audit_sha256": sha(audit / "result.json"),
+        "harness_sha256": sha(__file__),
+        "cpu_postfixed_reference_sha256": sha(helper),
+        "cuda_initialized": False,
+        "new_native_calls": 0,
+        "whole_model_performance": "NOT_RUN",
+        "new_candidate_generation_kv": "NOT_RUN",
+        "accepted_optimization": False,
+        "limits": "All584 actual CUDA bounds match independent frozen tensor CPU enclosure and enclose serial recurrence; every80 paired output C/flags/D/AMAX is independently checked against raw-integer targets and real input references. Faster repair-wrapper cost only, not whole-model throughput or completed A3 goal. BF16 exponent expression is valid even for subnormals; no native subnormal/ISA-universality claim.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "comparisons": comparisons, "actual_c_words_checked": counts}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

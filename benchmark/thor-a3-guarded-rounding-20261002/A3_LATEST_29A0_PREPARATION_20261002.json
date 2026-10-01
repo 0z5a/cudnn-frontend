@@ -1,0 +1,14 @@
+{
+  "head": "a24a7401bb7d26d42d88d98b316f634ef487301c",
+  "base": "29a06d9cdc8843e33c5e374846be3bb0560a0711",
+  "old_head": "ce0e08a850962eaad039708aeb270c8cb6adf326",
+  "branch": "codex/a3-sfd-latest-29a0-20261002",
+  "source": "/Users/0z5a/Documents/infra/artifacts/cudnn-sm110-a1-a3-20260928/a3sfdlatest29a0-oct2",
+  "all_native_input_digests_unchanged": 114,
+  "all_a3_code_tests_unchanged": 6,
+  "bundle_sha256": "19fb597c9ac15c933113716e2ea107b6257bf0f14a450177fbf55a2b9ad11145",
+  "native_build": "NOT_RUN_BINDING_REUSE_TO_VERIFY",
+  "gpu_tests": "NOT_RUN",
+  "first_merge_failed_stash_clean_clone": true,
+  "retry_after_index_refresh": true
+}

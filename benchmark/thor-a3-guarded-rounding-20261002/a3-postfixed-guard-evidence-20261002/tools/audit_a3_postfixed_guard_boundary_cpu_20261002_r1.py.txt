@@ -1,0 +1,184 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""CPU independent physical-code/native-boundary audit and frozen oracle comparison.
+
+No CUDA module/model/producer import or oracle replacement. Uses the frozen
+independent raw-window hypothesis on normal BF16/zero operands only.
+"""
+
+import argparse
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+import torch as t
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HELPER = ROOT / "tools/diagnose_a3_fixed_window_cpu_20261001.py"
+
+
+def sha(path):
+    h = hashlib.sha256()
+    with Path(path).open("rb") as f:
+        for b in iter(lambda: f.read(4194304), b""):
+            h.update(b)
+    return h.hexdigest()
+
+
+def byte_equal(a, b):
+    return t.equal(a.contiguous().flatten().view(t.uint8), b.contiguous().flatten().view(t.uint8))
+
+
+def metrics(a, b):
+    af, bf = a.float(), b.float()
+    ad, bd = a.double(), b.double()
+    assert t.isfinite(ad).all() and t.isfinite(bd).all()
+    return {
+        "byte_equal": byte_equal(a, b),
+        "different_values": int((a != b).sum()),
+        "count": a.numel(),
+        "max_abs": float((ad - bd).abs().max()),
+        "relative_l2_fp32": float(t.linalg.vector_norm(af - bf) / t.linalg.vector_norm(bf)),
+        "relative_l2_fp64": float(t.linalg.vector_norm(ad - bd) / t.linalg.vector_norm(bd)),
+    }
+
+
+def unpack(codes, physical, logical, operand):
+    rows = codes.shape[-2]
+    batches = 1 if codes.ndim == 2 else codes.shape[0]
+    assert codes.dtype == t.uint8 and codes.shape[-1] == 4096 and rows % 128 == 0
+    assert not ((codes & 127) == 127).any()
+    r = t.arange(rows)[:, None]
+    c = t.arange(128)[None, :]
+    batch = t.arange(batches)[:, None, None]
+    index = ((((batch * (rows // 128) + r // 128) * 32 + c // 4) * 32 + r % 32) * 4 + (r % 128) // 32) * 4 + c % 4
+    scales = physical.flatten()[index]
+    assert (scales < 255).all()
+    values = t.ldexp(t.ones(scales.shape, dtype=t.float32), scales.int() - 127)
+    assert byte_equal(values.reshape(logical.shape), logical)
+    encoded = ((codes.int() >> 3) & 15).reshape(batches, rows, 4096)
+    mantissa = ((codes.int() & 7) + t.where(((codes.int() >> 3) & 15) == 0, 0, 8)).reshape(batches, rows, 4096)
+    # Preserve encoded negative zero by applying sign after conversion to float.
+    floating_mantissa = mantissa.float()
+    floating_mantissa = t.where((codes.reshape(batches, rows, 4096) & 128) != 0, -floating_mantissa, floating_mantissa)
+    effective = t.ldexp(floating_mantissa, encoded.clamp(min=1) - 10 + scales.int().repeat_interleave(32, -1) - 127)
+    blocks = effective.reshape(batches, rows, 32, 4, 32)
+    high = blocks[:, :, :, 0].reshape(batches, rows, 1024)
+    low = blocks[:, :, :, 2 if operand == "A" else 1].reshape(batches, rows, 1024)
+    reconstructed = high + low
+    return reconstructed[0] if codes.ndim == 2 else reconstructed
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", required=True)
+    a = ap.parse_args()
+    out = Path(a.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized()
+    assert sha(HELPER) == "91533128b0e22ec3d65b5778c61aed4a9c4bf0d2d0cd4fccfa9d2d0579d84c97"
+    spec = importlib.util.spec_from_file_location("a3_independent_guard_window", HELPER)
+    d = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(d)
+    source = ROOT / "results/a3-postfixed-guard-20261002-r1"
+    outer = json.loads(source.with_name(source.name + "-launch").joinpath("run.json").read_text())
+    assert outer["status"] == "EXITED" and outer["returncode"] == 0 and outer["signal"] is None
+    bm = json.loads((source / "candidate/boundaries/result.json").read_text())
+    assert bm["source_head"] == "ce0e08a850962eaad039708aeb270c8cb6adf326"
+    assert bm["warm_side_completed_before_default"] and bm["rows"][0]["side_completed_before_default"]
+    assert sha(source / "candidate/boundaries/outputs.pt") == bm["outputs_sha256"]
+    saved = t.load(source / "candidate/boundaries/outputs.pt", map_location="cpu", weights_only=True)
+    rows, scalars, targets = [], [], {}
+    for case in bm["rows"]:
+        name = case["name"]
+        v = saved[name]
+        xa = unpack(v["a_codes"], v["sfa"], v["sa"], "A")
+        wb = unpack(v["b_codes"], v["sfb"], v["sb"], "B")
+        assert byte_equal(xa, v["effective_a"]) and byte_equal(wb, v["effective_b"])
+        x = xa[v["destinations"]].to(t.bfloat16).float()
+        w = wb.to(t.bfloat16).float()
+        for z in (x, w):
+            encoded = (z.contiguous().view(t.int32) >> 23) & 255
+            assert not ((encoded == 0) & (z != 0)).any(), "Corpus limited to normal BF16/zero"
+        live, n = v["c"].shape
+        predicted = t.empty_like(v["c"])
+        for begin in range(0, live * n, 2048):
+            coords = t.arange(begin, min(begin + 2048, live * n))
+            route = coords // n
+            col = coords % n
+            xr = x[route]
+            wr = w[v["experts"][route], col]
+            products = xr.double() * wr.double()
+            raw = d.raw_exp(xr) + d.raw_exp(wr)
+            raw = t.where(products == 0, -10000, raw)
+            predicted.flatten()[coords] = d.fixed_window(products, raw, 25)
+        assert byte_equal(predicted.to(t.bfloat16), v["reference_c_bf16"])
+        assert byte_equal(v["c"].to(t.bfloat16), v["reference_c_bf16"])
+        keep = v["flags"] == 0
+        repair = v["flags"] == 1
+        assert (keep | repair).all()
+        assert byte_equal(v["c"][repair], predicted[repair])
+        assert byte_equal(v["c"][keep], v["native_c"][v["destinations"]][keep])
+        assert byte_equal(v["d"], v["reference_d"]) and byte_equal(v["amax"], v["reference_amax"])
+        split = v["reference_c_bf16"].reshape(live, -1, 2, 32)
+        activation = split[:, :, 0].float() / (1.0 + t.exp(-split[:, :, 0].float()))
+        dc = (activation.to(t.bfloat16) * split[:, :, 1]).reshape(live, n // 2)
+        activation_cpu_different = int((dc != v["d"]).sum())
+        am = t.full_like(v["amax"], -t.inf)
+        for expert in range(case["experts"]):
+            mask = v["experts"] == expert
+            if mask.any():
+                am[expert] = v["d"][mask].float().abs().max()
+        assert byte_equal(am, v["amax"])
+        xb = x.to(t.bfloat16).view(t.int16).int() & 65535
+        ww = w.to(t.bfloat16).view(t.int16).int() & 65535
+        coords = t.randperm(live * n, generator=t.Generator().manual_seed(2026100210 + case["experts"]))[:16].tolist()
+        for pos in coords:
+            row, col = divmod(pos, n)
+            ex = int(v["experts"][row])
+            word = d.scalar_prediction(xb[row].tolist(), ww[ex, col].tolist(), 25)
+            assert word == (int(predicted.view(t.int32)[row, col]) & 0xFFFFFFFF)
+            scalars.append({"case": name, "row": row, "column": col, "fp32_word": word})
+        targets[name] = predicted
+        rec = {
+            "case": name,
+            "count": live * n,
+            "repaired_fp32_words_verified": int(repair.sum()),
+            "retained_native_words_verified": int(keep.sum()),
+            "all_c_bf16_reference_byte_equal": True,
+            "all_d_and_amax_reference_byte_equal": True,
+            "independent_cpu_activation_different_values": activation_cpu_different,
+            "independent_amax_byte_equal": True,
+            "physical_scale_unpack_and_high_low_reconstruction_byte_equal": True,
+        }
+        rows.append(rec)
+        print(json.dumps(rec), flush=True)
+    assert not t.cuda.is_initialized()
+    t.save(targets, out / "independent_fp32_targets.pt")
+    result = {
+        "independent_fp32_targets_sha256": sha(out / "independent_fp32_targets.pt"),
+        "stage": "INDEPENDENT_POSTFIXED_NATIVE_BOUNDARY_CPU_AUDIT_COMPLETE",
+        "source_head": bm["source_head"],
+        "producer_outer_status": outer,
+        "boundary_result_sha256": sha(source / "candidate/boundaries/result.json"),
+        "boundary_outputs_sha256": bm["outputs_sha256"],
+        "rows": rows,
+        "all_c_count": sum(v["count"] for v in rows),
+        "fresh_scalar_count": len(scalars),
+        "scalar_coordinates": scalars,
+        "cuda_initialized": False,
+        "new_native_calls": 0,
+        "harness_sha256": sha(__file__),
+        "window_helper_sha256": sha(HELPER),
+        "limits": "New postfixed guard actual four native boundary/physical paths, independent integer repair and64 scalar coordinates. Current finite normal-BF16/zero corpus; no universal ISA or completed optimization/model-throughput claim. Full24 model and paired wrapper cost are audited separately.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "count": result["all_c_count"], "scalars": len(scalars)}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

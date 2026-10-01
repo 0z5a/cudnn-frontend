@@ -1,0 +1,71 @@
+{
+  "stage": "INDEPENDENT_POSTFIXED_BOUND_PAIR_AUDIT_COMPLETE",
+  "synthetic_count": 584,
+  "bf16_exponents_checked": 65280,
+  "paired_observations": 80,
+  "tensor_count": 360,
+  "actual_c_words_checked": 1597440,
+  "comparisons": [
+    {
+      "case": "saved_first_expert",
+      "median_wrapper_ms": {
+        "serial": 15.654592037200928,
+        "postfixed": 4.298223972320557
+      },
+      "serial_over_postfixed_ratio": 3.6421070977251127
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "median_wrapper_ms": {
+        "serial": 16.056960105895996,
+        "postfixed": 4.399631977081299
+      },
+      "serial_over_postfixed_ratio": 3.6496143744614136
+    },
+    {
+      "case": "ragged_e31_n128",
+      "median_wrapper_ms": {
+        "serial": 0.3163679987192154,
+        "postfixed": 0.1478400006890297
+      },
+      "serial_over_postfixed_ratio": 2.1399350462982727
+    },
+    {
+      "case": "ragged_e33_n256",
+      "median_wrapper_ms": {
+        "serial": 1.9960480332374573,
+        "postfixed": 0.6102239787578583
+      },
+      "serial_over_postfixed_ratio": 3.2710088471130123
+    }
+  ],
+  "producer_run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9018/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_postfixed_guard_queued_20261002_r1.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-postfixed-guard-20261002-r1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018",
+    "started_utc": "2026-10-01T22:07:51.420581+00:00",
+    "deadline_seconds": 1800.0,
+    "status": "EXITED",
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": "0"
+    },
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 58.55368491200352
+  },
+  "producer_result_sha256": "1d5d537ba44b28033b66eeb77199b34452ec890a2a1d9c241a378dd7922589d8",
+  "producer_outputs_sha256": "54f29b7b4f521cb5edfaebcf0ff0c3d3bac682d782c810d4b4d1067159aefc45",
+  "boundary_audit_sha256": "30f200683f7fcdb95af62ea54d4a7b3b0983d152237aea16c4184ff4a930d6aa",
+  "harness_sha256": "620d624108353dc51900d5c1fee1fda964e6da0ede05fffdc6f80c83532cf862",
+  "cpu_postfixed_reference_sha256": "273483c41a0fde5775986caedb2bb68786a369c4bf3c6360f4482b887b19e0c7",
+  "cuda_initialized": false,
+  "new_native_calls": 0,
+  "whole_model_performance": "NOT_RUN",
+  "new_candidate_generation_kv": "NOT_RUN",
+  "accepted_optimization": false,
+  "limits": "All584 actual CUDA bounds match independent frozen tensor CPU enclosure and enclose serial recurrence; every80 paired output C/flags/D/AMAX is independently checked against raw-integer targets and real input references. Faster repair-wrapper cost only, not whole-model throughput or completed A3 goal. BF16 exponent expression is valid even for subnormals; no native subnormal/ISA-universality claim."
+}

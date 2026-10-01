@@ -1,0 +1,18 @@
+{
+  "archive": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guard-generation-archive-20261002-r1/a3-guard-generation-evidence-20261002.tar.gz",
+    "sha256": "0b7ca6045655b43a4dad408cbc1aaa45c6a2c0485d12be88ca6d47ad945eea3e",
+    "size": 41331,
+    "manifest_entries": 21,
+    "file_count": 22,
+    "runs": 2
+  },
+  "all_manifest_files_verified": true,
+  "excluded": [
+    "cache",
+    "models",
+    "engines",
+    ".pt",
+    "native_binaries"
+  ]
+}

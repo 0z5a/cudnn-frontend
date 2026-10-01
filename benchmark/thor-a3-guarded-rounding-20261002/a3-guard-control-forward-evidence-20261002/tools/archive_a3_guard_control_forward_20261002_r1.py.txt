@@ -1,0 +1,132 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Archive terminal actual guard/latest/full24 evidence; no PT/cache/binaries."""
+
+import hashlib
+import json
+from pathlib import Path
+import shutil
+import tarfile
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+NAME = "a3-guard-control-forward-evidence-20261002"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def main():
+    destination = ROOT / "results/a3-guard-control-forward-archive-20261002-r1"
+    destination.mkdir(exist_ok=False)
+    tree = destination / NAME
+    tree.mkdir()
+    names = [
+        "a3-latest-guard-regression-model-20261002-r2",
+        "a3-latest-bed-regression-cpu-finalize-20261002-r1",
+        "a3-latest-guard-verified-regression-model-20261002-r1",
+        "a3-latest-guard-verified-regression-model-20261002-r2",
+        "a3-latest-9018-regression-20261002-r1",
+        "a3-guard-native-oracle-cpu-audit-20261002-r1",
+        "a3-guard-native-oracle-cpu-audit-20261002-r2",
+        "a3-guard-saved-input-diagnosis-cpu-20261002-r1",
+        "a3-frozen-input-ids-audit-cpu-20261002-r1",
+        "a3-guard-pinned-model-20261002-r1",
+        "a3-guard-pinned-model-cpu-audit-20261002-r1",
+    ]
+    wanted, runs = [], []
+    for name in names:
+        folder = ROOT / "results" / name
+        launch = folder.with_name(name + "-launch")
+        run = json.loads((launch / "run.json").read_text())
+        assert run["status"] == "EXITED" and run["returncode"] in (0, 1) and run["signal"] is None
+        runs.append({"name": name, "run": run})
+        wanted.extend(
+            p
+            for p in folder.rglob("*")
+            if p.is_file() and p.suffix in (".json", ".log", ".xml") and not any(v in p.parts for v in ("cache", "__pycache__", "extension"))
+        )
+        wanted.extend(p for p in launch.iterdir() if p.is_file() and p.suffix in (".json", ".log"))
+    for name in ("prepare-build-a3-latest-9018-20261002-r1-launch", "build-a3-latest-9018-20261002-r1"):
+        folder = ROOT / "results" / name
+        run = json.loads((folder / "run.json").read_text())
+        assert run["status"] == "EXITED" and run["returncode"] == 0
+        runs.append({"name": name, "run": run})
+        wanted.extend(p for p in folder.iterdir() if p.is_file() and p.suffix in (".json", ".log"))
+    wanted.extend(ROOT / "results" / name for name in ("a3-latest-9018-prebuild-20261002.json", "a3-latest-9018-native-provenance-20261002.json"))
+    baseline = ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    wanted.extend((baseline / "input-token-ids.json", baseline / "result.json"))
+    sources = [
+        "a3_latest_guard_from_verified_regression_queued_20261002_r1.py",
+        "a3_latest_guard_from_verified_regression_queued_20261002_r2.py",
+        "a3_guarded_rounding_boundary_queued_20261002_r3.py",
+        "a3_guarded_rounding_full_model_20261002_r3.py",
+        "a3_guarded_rounding_full_model_20261002_r4.py",
+        "prepare_build_a3_latest_9018_20261002_r1.py",
+        "run_a3_latest_9018_regression_queued_20261002_r1.py",
+        "finalize_a3_latest_bed_regression_cpu_20261002_r1.py",
+        "audit_a3_guard_native_and_oracle_cpu_20261002_r1.py",
+        "audit_a3_guard_native_and_oracle_cpu_20261002_r2.py",
+        "diagnose_a3_guard_saved_inputs_cpu_20261002_r1.py",
+        "audit_a3_frozen_input_ids_cpu_20261002_r1.py",
+        "a3_guard_pinned_model_queued_20261002_r1.py",
+        "audit_a3_guard_pinned_model_cpu_20261002_r1.py",
+        Path(__file__).name,
+    ]
+    wanted.extend(ROOT / "tools" / name for name in sources)
+    manifest = []
+    for path in sorted(set(wanted)):
+        assert path.is_file() and path.suffix in (".py", ".json", ".log", ".xml")
+        relative = path.relative_to(ROOT)
+        target = tree / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(path, target)
+        assert sha(target) == sha(path)
+        manifest.append({"path": str(relative), "size": path.stat().st_size, "sha256": sha(path)})
+    preflight = ROOT / "results/a3-guarded-rounding-preflight-archive-20261002-r1/a3-guarded-rounding-preflight-evidence-20261002"
+    previous = json.loads((preflight / "MANIFEST.json").read_text())
+    for item in previous["files"]:
+        path = preflight / item["path"]
+        assert path.stat().st_size == item["size"] and sha(path) == item["sha256"]
+    for path in preflight.rglob("*"):
+        if path.is_file():
+            assert path.suffix in (".py", ".cu", ".cpp", ".json", ".log")
+            relative = Path("preflight") / path.relative_to(preflight)
+            target = tree / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(path, target)
+            manifest.append({"path": str(relative), "size": path.stat().st_size, "sha256": sha(path)})
+    status = tree / "TERMINAL_FORWARD_RUNS.json"
+    status.write_text(
+        json.dumps(
+            {
+                "runs": runs,
+                "preflight_is_historical_separate_scope": True,
+                "native_gpu_work_admitted": True,
+                "limits": "Actual latest31 and all3 full24 control forwards, independent physical/integer/activation/logits audits. Preserve all rc1 failures and older rc75 admissions. This archive does not contain generation/KV or paired model timings; the control is not an accepted efficient production feature.",
+            },
+            indent=2,
+        )
+        + "\n"
+    )
+    manifest.append({"path": status.name, "size": status.stat().st_size, "sha256": sha(status)})
+    (tree / "MANIFEST.json").write_text(
+        json.dumps({"files": manifest, "excluded": ["cache", "models", "engines", "PT", "native/JIT binaries", "Git bundle"]}, indent=2) + "\n"
+    )
+    tar = destination / (NAME + ".tar.gz")
+    with tarfile.open(tar, "w:gz") as archive:
+        archive.add(tree, arcname=NAME)
+    result = {
+        "path": str(tar),
+        "sha256": sha(tar),
+        "size": tar.stat().st_size,
+        "manifest_entries": len(manifest),
+        "file_count": len(manifest) + 1,
+        "runs": len(runs),
+    }
+    (destination / "archive.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result), flush=True)
+
+
+if __name__ == "__main__":
+    main()

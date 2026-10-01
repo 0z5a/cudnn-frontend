@@ -1,0 +1,47 @@
+{
+  "files": {
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_boundary_queued_20261002_r3.py": "27f5a64c0308b7a556043ef542a2e134468cbe244b6f46cc9cdcb49eea7d8bc7",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r3.py": "922fe6c6f6501129cf125e5b5599171969bb7fc02a0fb5e1705694c5e6470701",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_mxfp8_bf16_staged_full_model_worker_20261001.py": "62304d6cc59fc2b604a19efe1c60c075e0737c6898de191404e4bbb6baf057d1",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_all24_precision_probe_20261001.py": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_model_e2e_mergefix_20261001.py": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3"
+  },
+  "build": {
+    "stage": "NATIVE_SM110_COMPILE_ONLY_COMPLETE_NOT_GPU_TEST",
+    "cuda_initialized": false,
+    "native_calls": 0,
+    "gpu_hidden": true,
+    "torch": "2.13.0+cu130",
+    "torch_git": "cf30153c4c131c8164ee7798e5022d810682e2cb",
+    "cuda_arch": "11.0",
+    "max_jobs": 2,
+    "sources": {
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r3.cpp": "1a05345ca9b3c5d45da888fede0a87f4e48e1fa8e14dc132ba4e2af72fe57f6b",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r3.cu": "1ea84be77d382d0b0545ef29b9ac9b9620534073b9f9811b1564278e8100bddc",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r3.py": "922fe6c6f6501129cf125e5b5599171969bb7fc02a0fb5e1705694c5e6470701"
+    },
+    "binary": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guarded-rounding-build-cpu-20261002-r3/extension/a3_guarded_rounding_20261002_r3.so",
+      "sha256": "bfb40e36c3dd692004c9beee6d47b6f16f2f13d7f50707738aed2810ed7c2d0b"
+    },
+    "harness_sha256": "c83a9d6fe7855a8933817cc569d91b593482aa365eec6a4d80292aa1a8872a29",
+    "limits": "Native build only; no CUDA initialization/launch, model result or performance acceptance. Conservative repair remains an expensive precision control until whole-model quality and faster guard/recompute work are verified."
+  },
+  "build_status": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/build_a3_guarded_rounding_cpu_20261002_r3.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guarded-rounding-build-cpu-20261002-r3"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+    "started_utc": "2026-10-01T16:23:56.629945+00:00",
+    "deadline_seconds": 600.0,
+    "status": "EXITED",
+    "selected_env": {},
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 28.281621812002413
+  }
+}

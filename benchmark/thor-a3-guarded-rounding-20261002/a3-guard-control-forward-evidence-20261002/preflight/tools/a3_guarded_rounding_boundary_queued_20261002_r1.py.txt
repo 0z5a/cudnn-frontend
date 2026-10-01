@@ -1,0 +1,357 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Actual MXFP8 TC plus separate integer-ALU rounding control: boundary checks.
+
+The main dot remains the frozen K4096 four-component MXFP8 kernel. The native
+repair receives only its actual C, encoded A/B, scales and input summaries.
+Independent BF16 input-stage reference is used for comparison only. This is a
+costly precision control, never an accepted optimization or model success.
+"""
+
+import argparse
+import fcntl
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    h = hashlib.sha256()
+    with Path(path).open("rb") as f:
+        for part in iter(lambda: f.read(4194304), b""):
+            h.update(part)
+    return h.hexdigest()
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def execute(args, out):
+    assert "torch" not in sys.modules
+    tools = Path(__file__).parent
+    q = load("a3_guard_boundary_quant", tools / "a3_mxfp8_bf16_staged_full_model_worker_20261001.py")
+    m, t = q.m, q.t
+    hpath = tools / "a3_guarded_rounding_native_20261002_r3.py"
+    h = load("a3_guard_boundary_cuda", hpath)
+    build_dir = ROOT / "results/a3-guarded-rounding-build-cpu-20261002-r3"
+    build = json.loads((build_dir / "result.json").read_text())
+    build_status = json.loads(build_dir.with_name(build_dir.name + "-launch").joinpath("run.json").read_text())
+    assert build_status["status"] == "EXITED" and build_status["returncode"] == 0
+    assert build["cuda_initialized"] is False and build["native_calls"] == 0
+    for file, digest in build["sources"].items():
+        assert sha(file) == digest
+    module = h.load_native(build["binary"]["path"], build["binary"]["sha256"])
+    source = Path(args.expected_source).resolve()
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == args.expected_head
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    for imported in (m.cudnn, m.api, m._compiled_module):
+        assert Path(imported.__file__).resolve().is_relative_to(source / "python")
+    assert sha(m._compiled_module.__file__) == "37e7c4e0d16bd0a952ade77ccd577ccadae1888f166a4c897c9e98a104606c2a"
+    assert sha(q.prototype_path) == "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3"
+    frozen_paths = [Path(__file__), hpath, Path(q.__file__), Path(q.PROBE), Path(q.p.BASE), q.prototype_path]
+    frozen = {str(p): sha(p) for p in frozen_paths}
+    (out / "frozen_inputs.json").write_text(json.dumps({"files": frozen, "build": build, "build_status": build_status}, indent=2) + "\n")
+    t.set_num_threads(4)
+    t.backends.cuda.matmul.allow_tf32 = False
+    t.backends.cudnn.allow_tf32 = False
+    t.set_float32_matmul_precision("highest")
+    assert t.cuda.get_device_capability() == (11, 0)
+    assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+    saved, rows = {}, []
+
+    def cpu(tensor):
+        return tensor.detach().cpu().contiguous()
+
+    def equal(a, b):
+        return t.equal(cpu(a).flatten().view(t.uint8), cpu(b).flatten().view(t.uint8))
+
+    def run_case(name, x, weight, counts, cold_stream=False):
+        e, n, k = weight.shape
+        assert k == 1024 and len(counts) == e and sum(counts) > 0
+        aligned = [((c + 255) // 256) * 256 for c in counts]
+        assert x.shape == (sum(aligned), 1024)
+        offsets, destinations, expert_ids, start = [], [], [], 0
+        for expert, (count, padding) in enumerate(zip(counts, aligned)):
+            destinations.extend(range(start, start + count))
+            expert_ids.extend([expert] * count)
+            start += padding
+            offsets.append(start)
+        dest = t.tensor(destinations, dtype=t.int64, device="cuda")
+        expert = t.tensor(expert_ids, dtype=t.int64, device="cuda")
+        ends = t.tensor(offsets, dtype=t.int32, device="cuda")
+        a, sfa, sa, effective_a = q.expanded_quantize(x, "A")
+        b, sfb, sb, effective_b = q.expanded_quantize(weight, "B")
+        xs, ws = h.recipe_stats(a, sa, "A", dest), h.recipe_stats(b, sb, "B")
+        before = m.NATIVE_CALLS
+        actual = m.api.grouped_gemm_swiglu_wrapper_sm100(
+            a_tensor=a,
+            b_tensor=b,
+            sfa_tensor=sfa,
+            sfb_tensor=sfb,
+            padded_offsets=ends,
+            alpha_tensor=t.ones(e, dtype=t.float32, device="cuda"),
+            norm_const_tensor=t.ones(1, dtype=t.float32, device="cuda"),
+            prob_tensor=None,
+            acc_dtype=t.float32,
+            c_dtype=t.float32,
+            d_dtype=t.bfloat16,
+            mma_tiler_mn=(256, 256),
+            cluster_shape_mn=(2, 1),
+            sf_vec_size=32,
+            m_aligned=256,
+            current_stream=m.cuda.CUstream(t.cuda.current_stream().cuda_stream),
+        )
+        assert m.NATIVE_CALLS - before == 1
+        native_c = actual["c_tensor"].squeeze(-1)
+        expected_c = t.zeros((x.shape[0], n), dtype=t.bfloat16, device="cuda")
+        start = 0
+        for expert_id, padding in enumerate(aligned):
+            if padding:
+                expected_c[start : start + padding] = m.F.linear(effective_a[start : start + padding].to(t.bfloat16), effective_b[expert_id].to(t.bfloat16))
+            start += padding
+        expected_c = expected_c[dest]
+        split = expected_c.reshape(sum(counts), -1, 2, 32)
+        expected_d = (m.F.silu(split[:, :, 0]) * split[:, :, 1]).reshape(sum(counts), n // 2)
+        expected_amax = t.full((e,), -t.inf, dtype=t.float32, device="cuda")
+        for expert_id in range(e):
+            mask = expert == expert_id
+            if bool(mask.any()):
+                expected_amax[expert_id] = expected_d[mask].float().abs().max()
+        t.cuda.synchronize()
+        expected_c_cpu, expected_d_cpu, expected_amax_cpu = cpu(expected_c), cpu(expected_d), cpu(expected_amax)
+        inputs = (a, b, sfa, sfb, native_c, dest, expert, xs, ws)
+        default = t.cuda.current_stream()
+        if cold_stream:
+            side = t.cuda.Stream()
+            t.cuda._sleep(2_000_000_000)
+            assert not default.query()
+            corrected = h.run(module, *inputs, stream=side)
+            assert t.cuda.current_stream() == default
+            side.synchronize()
+            with t.cuda.stream(side):
+                snapshots = {key: cpu(value) for key, value in corrected.items()}
+            side_finished_before_default = not default.query()
+            default.synchronize()
+            assert all(equal(corrected[key], value) for key, value in snapshots.items()), "Late default-stream reset changed output"
+        else:
+            corrected = h.run(module, *inputs)
+            snapshots = {key: cpu(value) for key, value in corrected.items()}
+            side_finished_before_default = None
+        c_equal = equal(snapshots["c"].to(t.bfloat16), expected_c_cpu)
+        d_equal = equal(snapshots["d"], expected_d_cpu)
+        amax_equal = equal(snapshots["amax"], expected_amax_cpu)
+        row = {
+            "name": name,
+            "experts": e,
+            "n": n,
+            "live_rows": sum(counts),
+            "padded_rows": sum(aligned),
+            "counts": counts,
+            "native_main_calls": 1,
+            "native_repair_calls": 1,
+            "flags": {str(i): int((snapshots["flags"] == i).sum()) for i in (0, 1, 2)},
+            "c_bf16_reference_byte_equal": c_equal,
+            "d_reference_byte_equal": d_equal,
+            "amax_reference_byte_equal": amax_equal,
+            "c_bf16_different_values": int((snapshots["c"].to(t.bfloat16) != expected_c_cpu).sum()),
+            "d_different_values": int((snapshots["d"] != expected_d_cpu).sum()),
+            "explicit_cold_stream": cold_stream,
+            "side_completed_before_default": side_finished_before_default,
+        }
+        if name == "saved_first_expert":
+            row["crossing_witness"] = {
+                "row": 15,
+                "packed_column": 695,
+                "native_c_fp32_word": int(cpu(native_c)[15, 695].view(t.int32)),
+                "corrected_c_fp32_word": int(snapshots["c"][15, 695].view(t.int32)),
+                "native_c_bf16": float(cpu(native_c)[15, 695].to(t.bfloat16)),
+                "corrected_c_bf16": float(snapshots["c"][15, 695].to(t.bfloat16)),
+                "reference_bf16": float(expected_c_cpu[15, 695]),
+                "flag": int(snapshots["flags"][15, 695]),
+            }
+        rows.append(row)
+        saved[name] = {
+            **snapshots,
+            "native_c": cpu(native_c),
+            "reference_c_bf16": expected_c_cpu,
+            "reference_d": expected_d_cpu,
+            "reference_amax": expected_amax_cpu,
+            "a_codes": cpu(a.view(t.uint8)),
+            "b_codes": cpu(b.view(t.uint8)),
+            "sfa": cpu(sfa.view(t.uint8)),
+            "sfb": cpu(sfb.view(t.uint8)),
+            "sa": cpu(sa),
+            "sb": cpu(sb),
+            "xstats": cpu(xs),
+            "wstats": cpu(ws),
+            "destinations": cpu(dest),
+            "experts": cpu(expert),
+            "effective_a": cpu(effective_a),
+            "effective_b": cpu(effective_b),
+        }
+        print(json.dumps(row), flush=True)
+        (out / "partial.json").write_text(json.dumps({"rows": rows}, indent=2) + "\n")
+        t.save(saved, out / "partial_outputs.pt")
+        assert not (snapshots["flags"] == 2).any()
+        assert c_equal, "Native repair did not match declared BF16 input-stage dot"
+        assert d_equal, "Native activation did not match fixed BF16 SiLU/product nodes"
+        assert amax_equal, "AMAX or empty-expert state differs"
+        if cold_stream:
+            assert side_finished_before_default, "Stream check must complete while default stream is still delayed"
+        return inputs, corrected, snapshots
+
+    stock = ROOT / "results/a3-stock-dot-ncu-20261001-r3/target/outputs.pt"
+    assert sha(stock) == "0aafa01f30a4d4bcc4941ac0d507da94b28d7fa76417e034067dd58ee1d13ab6"
+    capture = t.load(stock, map_location="cpu", weights_only=True)
+    with t.inference_mode():
+        first_inputs, first_result, first_snapshot = run_case(
+            "saved_first_expert", capture["input_bf16"].cuda(), capture["weight_bf16"].cuda().unsqueeze(0), [36], cold_stream=True
+        )
+        changed_x = capture["input_bf16"].cuda().clone()
+        changed_x[:37] = (changed_x[:37].float() * 1.5).to(t.bfloat16)
+        changed_x[36] = changed_x[0]
+        changed_weight = (capture["weight_bf16"].cuda().float() * -0.5).to(t.bfloat16).unsqueeze(0)
+        changed_inputs, changed_result, changed_snapshot = run_case("changed_input_weight_and_live_rows", changed_x, changed_weight, [37])
+        assert all(equal(first_result[key], value) for key, value in first_snapshot.items()), "Output ownership/reuse changed earlier result"
+        assert all(first_result[key].data_ptr() != changed_result[key].data_ptr() for key in first_result)
+        for e, n, counts in ((31, 128, [1] + [0] * 29 + [3]), (33, 256, [0, 17] + [0] * 30 + [1])):
+            rng = t.Generator(device="cuda").manual_seed(229000 + e)
+            padding = sum(((c + 255) // 256) * 256 for c in counts)
+            x = (t.randn((padding, 1024), generator=rng, device="cuda") * 0.125).to(t.bfloat16)
+            weight = (t.randn((e, n, 1024), generator=rng, device="cuda") * 0.015625).to(t.bfloat16)
+            x[0] = 0
+            weight[0, 0] = 0
+            run_case(f"ragged_e{e}_n{n}", x, weight, counts)
+        a, b, sfa, sfb, native_c, dest, expert, xs, ws = first_inputs
+        before_kernels = h.POSTPROCESS_KERNEL_LAUNCHES
+        empty = h.run(module, a, b, sfa, sfb, native_c, dest[:0], expert[:0], xs[:0], ws)
+        assert empty["c"].shape == (0, 1024) and empty["d"].shape == (0, 512)
+        assert h.POSTPROCESS_KERNEL_LAUNCHES == before_kernels and t.isneginf(empty["amax"]).all()
+        saved["empty"] = {key: cpu(value) for key, value in empty.items()}
+        invalid_results = []
+        for value in (-1, 1, 2**32, -(2**32)):
+            bad = h.run(module, a, b, sfa, sfb, native_c, dest, t.full_like(expert, value), xs, ws)
+            assert (bad["flags"] == 2).all() and t.isnan(bad["c"]).all() and t.isnan(bad["d"]).all()
+            assert t.isneginf(bad["amax"]).all()
+            invalid_results.append({"kind": "expert", "value": value, "flag2_all": True, "amax_empty": True})
+        for value in (-1, 256, 2**32, -(2**32)):
+            bad = h.run(module, a, b, sfa, sfb, native_c, t.full_like(dest, value), expert, xs, ws)
+            assert (bad["flags"] == 2).all() and t.isnan(bad["c"]).all() and t.isnan(bad["d"]).all() and t.isnan(bad["amax"]).all()
+            invalid_results.append({"kind": "destination", "value": value, "flag2_all": True, "amax_nan": True})
+        poisoned = native_c.clone()
+        poisoned[dest[0], 0] = t.inf
+        bad = h.run(module, a, b, sfa, sfb, poisoned, dest, expert, xs, ws)
+        assert int((bad["flags"] == 2).sum()) == 1 and int(bad["flags"][0, 0]) == 2 and t.isnan(bad["amax"]).all()
+        saved["nonfinite_c"] = {key: cpu(value) for key, value in bad.items()}
+        rejects = []
+        buffers = (first_result["c"], first_result["flags"], first_result["d"], first_result["amax"])
+        for label, arguments in (
+            ("wrong_K", (a[:, :2048].contiguous(), b, sfa, sfb, native_c, dest, expert, xs, ws)),
+            ("wrong_native_C_dtype", (a, b, sfa, sfb, native_c.half(), dest, expert, xs, ws)),
+            ("wrong_stats_dtype", (a, b, sfa, sfb, native_c, dest, expert, xs.float(), ws)),
+            ("wrong_route_dtype", (a, b, sfa, sfb, native_c, dest.int(), expert, xs, ws)),
+            ("noncontiguous_C", (a, b, sfa, sfb, native_c.t(), dest, expert, xs, ws)),
+        ):
+            try:
+                module.run(*arguments, *buffers)
+            except RuntimeError as error:
+                rejects.append({"case": label, "exception": str(error)})
+            else:
+                raise AssertionError(f"Expected static decline for {label}")
+        assert all(equal(first_result[key], value) for key, value in first_snapshot.items())
+        default, side = t.cuda.current_stream(), t.cuda.Stream()
+        t.cuda.synchronize()
+        t.cuda._sleep(2_000_000_000)
+        assert not default.query()
+        warm = h.run(module, *changed_inputs, stream=side)
+        assert t.cuda.current_stream() == default
+        side.synchronize()
+        with t.cuda.stream(side):
+            warm_cpu = {key: cpu(value) for key, value in warm.items()}
+        warm_side_before_default = not default.query()
+        assert warm_side_before_default, "Warm stream check must overlap delayed default stream"
+        assert all(equal(warm_cpu[key], value) for key, value in changed_snapshot.items())
+        default.synchronize()
+        assert all(equal(warm[key], value) for key, value in warm_cpu.items())
+        saved["warm_stream"] = warm_cpu
+    assert m.NATIVE_CALLS == 4
+    assert {str(p): sha(p) for p in frozen_paths} == frozen
+    assert all(sha(path) == digest for path, digest in build["sources"].items())
+    assert sha(build["binary"]["path"]) == build["binary"]["sha256"]
+    assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    t.save(saved, out / "outputs.pt")
+    result = {
+        "stage": "NATIVE_ROUNDING_CONTROL_BOUNDARIES_COMPLETE_NOT_MODEL_OR_PERFORMANCE_SUCCESS",
+        "rows": rows,
+        "invalid_route_tests": invalid_results,
+        "static_declines": rejects,
+        "nonfinite_c_flags2": 1,
+        "zero_live_no_kernel_launch": True,
+        "fresh_output_ownership_and_old_outputs_stable": True,
+        "warm_explicit_stream_byte_equal": True,
+        "warm_side_completed_before_default": warm_side_before_default,
+        "native_main_calls": m.NATIVE_CALLS,
+        "native_plans": m.NATIVE_PLANS,
+        "native_repair_calls": h.POSTPROCESS_CALLS,
+        "native_postprocess_kernel_launches": h.POSTPROCESS_KERNEL_LAUNCHES,
+        "source": str(source),
+        "source_head": args.expected_head,
+        "imports": {
+            name: {"path": mod.__file__, "sha256": sha(mod.__file__)} for name, mod in (("cudnn", m.cudnn), ("api", m.api), ("binding", m._compiled_module))
+        },
+        "files": frozen,
+        "native_build_result_sha256": sha(build_dir / "result.json"),
+        "native_binary": build["binary"],
+        "stock_input_sha256": sha(stock),
+        "outputs_sha256": sha(out / "outputs.pt"),
+        "service_final": "inactive",
+        "production_source_modified": False,
+        "formal_performance": "NOT_RUN",
+        "limits": "Finite, internally generated K4096 double-MXFP8 recipe only. Raw-window arithmetic is an experimentally validated Thor numerical model, not an official universal ISA contract. Conservative guard/recompute is an expensive precision control; no native BF16 Tensor Core GEMM or Torch dot executes in its branch. No whole-model feedback, generation, KV or accepted optimization.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({key: result[key] for key in ("stage", "native_main_calls", "native_repair_calls", "native_postprocess_kernel_launches")}), flush=True)
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--expected-source", required=True)
+    parser.add_argument("--expected-head", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        start = time.monotonic()
+        (out / "admission_wait.json").write_text(json.dumps({"stage": "WAITING_FOR_SHARED_LOCK", "pid": os.getpid(), "torch_imported": False}) + "\n")
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - start > 120:
+                    (out / "admission.json").write_text(json.dumps({"stage": "NOT_RUN_SHARED_LOCK_BUSY", "torch_imported": False}) + "\n")
+                    return 75
+                time.sleep(1)
+        (out / "admission.json").write_text(
+            json.dumps({"stage": "LOCK_ADMITTED", "pid": os.getpid(), "torch_imported": False, "wait_seconds": time.monotonic() - start}) + "\n"
+        )
+        execute(args, out)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

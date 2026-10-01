@@ -1,0 +1,11 @@
+{
+  "verified": true,
+  "archive": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest29-full-pipeline-evidence-20261002.tar.gz",
+  "archive_sha256": "4d4a1f418d1203132cae4cdae7cf92779dc6569e23ec0670561f2c817a4398ce",
+  "archive_bytes": 73772,
+  "files_verified": 45,
+  "file_count": 46,
+  "extracted": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest29-full-pipeline-evidence-20261002",
+  "head": "a24a7401bb7d26d42d88d98b316f634ef487301c",
+  "scope": "Terminal latest 31 GPU tests, 3 full forwards, 5 cached generations, private 256/1024 serial/postfixed pairs and 2 independent CPU audits. Application83 remains false."
+}

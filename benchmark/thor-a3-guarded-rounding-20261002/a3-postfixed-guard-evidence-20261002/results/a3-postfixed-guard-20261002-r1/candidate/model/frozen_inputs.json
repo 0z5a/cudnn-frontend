@@ -1,0 +1,32 @@
+{
+  "files": {
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_full_model_20261002_r5.py": "db5e7a24694bf73dd5720e804fd9039b49c7b6860520f11f82c980d74fe68311",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_mxfp8_bf16_staged_full_model_worker_20261001.py": "62304d6cc59fc2b604a19efe1c60c075e0737c6898de191404e4bbb6baf057d1",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_all24_precision_probe_20261001.py": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_model_e2e_mergefix_20261001.py": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r4.py": "7de4a50b53f3b3dd56b220bca242cf0537e459ba74a4ddbdcab94d0d9a865728"
+  },
+  "build": {
+    "stage": "NATIVE_SM110_COMPILE_ONLY_COMPLETE_NOT_GPU_TEST",
+    "cuda_initialized": false,
+    "native_calls": 0,
+    "gpu_hidden": true,
+    "torch": "2.13.0+cu130",
+    "torch_git": "cf30153c4c131c8164ee7798e5022d810682e2cb",
+    "cuda_arch": "11.0",
+    "max_jobs": 2,
+    "sources": {
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r4.cpp": "c29b6b645a620466dc31dceea18acf5b9ffcd49b913994700ebc8e41f12cf81c",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r4.cu": "35cd2bf3207504f45c8325d68f6d453276d3c93076df52329c77a82414495d26",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r4.py": "7de4a50b53f3b3dd56b220bca242cf0537e459ba74a4ddbdcab94d0d9a865728"
+    },
+    "binary": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guarded-rounding-build-cpu-20261002-r4/extension/a3_guarded_rounding_20261002_r4.so",
+      "sha256": "e692d0783bf0339d62f736b7bb7a3d247dbdc0c23e4d7d8cba9d3e3f54315fd4"
+    },
+    "harness_sha256": "2dd86afbe8ecfeb607cbfe20c147af987bda799d601ff84e07d5b5ebe7b71e76",
+    "limits": "Native build only; no CUDA initialization/launch, model result or performance acceptance. Conservative repair remains an expensive precision control until whole-model quality and faster guard/recompute work are verified."
+  },
+  "boundary_result_sha256": "6e31a63d9939d4756cffc5a5eb133419aee67359a2b6e6ce6d86cd02cc3cae13"
+}

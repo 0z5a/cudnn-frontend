@@ -1,0 +1,605 @@
+{
+  "stage": "INDEPENDENT_GENERATION_KV_TIMING_AUDIT_COMPLETE",
+  "quality_all_five_cases_pass": false,
+  "rows": [
+    {
+      "case": "math73",
+      "input_tokens": 73,
+      "native_oracle": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "relative_l2_fp64": 0.0,
+        "argmax_equal_fraction": 1.0,
+        "byte_equal": true
+      },
+      "native_bf16_same_context": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "relative_l2_fp64": 0.0,
+        "argmax_equal_fraction": 1.0,
+        "byte_equal": true
+      },
+      "native_oracle_tokens_equal": true,
+      "answer_pass": true,
+      "pass": true,
+      "native_text": "2 + 2 = 4",
+      "cache_final_tokens": 104,
+      "flags": [
+        436144,
+        20011088,
+        0
+      ]
+    },
+    {
+      "case": "sky70",
+      "input_tokens": 70,
+      "native_oracle": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "relative_l2_fp64": 0.0,
+        "argmax_equal_fraction": 1.0,
+        "byte_equal": true
+      },
+      "native_bf16_same_context": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "relative_l2_fp64": 0.0,
+        "argmax_equal_fraction": 1.0,
+        "byte_equal": true
+      },
+      "native_oracle_tokens_equal": true,
+      "answer_pass": true,
+      "pass": true,
+      "native_text": "The sky appears blue because of a process called Rayleigh scattering, where shorter-wavelength light, like blue and violet, is scattered",
+      "cache_final_tokens": 101,
+      "flags": [
+        408061,
+        19449347,
+        0
+      ]
+    },
+    {
+      "case": "passcode83",
+      "input_tokens": 83,
+      "native_oracle": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "relative_l2_fp64": 0.0,
+        "argmax_equal_fraction": 1.0,
+        "byte_equal": true
+      },
+      "native_bf16_same_context": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "relative_l2_fp64": 0.0,
+        "argmax_equal_fraction": 1.0,
+        "byte_equal": true
+      },
+      "native_oracle_tokens_equal": true,
+      "answer_pass": false,
+      "pass": false,
+      "native_text": "I'm sorry for any confusion, but as a responsible AI, I don't have the ability to read or remember passcodes. I can only generate responses based",
+      "cache_final_tokens": 114,
+      "flags": [
+        454848,
+        21958464,
+        0
+      ]
+    },
+    {
+      "case": "prefix256",
+      "input_tokens": 256,
+      "native_oracle": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "relative_l2_fp64": 0.0,
+        "argmax_equal_fraction": 1.0,
+        "byte_equal": true
+      },
+      "native_bf16_same_context": {
+        "max_abs": 1.305267333984375,
+        "relative_l2": 0.026805587112903595,
+        "relative_l2_fp64": 0.026817428448752564,
+        "argmax_equal_fraction": 1.0,
+        "byte_equal": false
+      },
+      "native_oracle_tokens_equal": true,
+      "answer_pass": true,
+      "pass": true,
+      "native_text": "The passcode is cobalt.",
+      "cache_final_tokens": 287,
+      "flags": [
+        1288448,
+        55138048,
+        0
+      ]
+    },
+    {
+      "case": "prefix1024",
+      "input_tokens": 1024,
+      "native_oracle": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "relative_l2_fp64": 0.0,
+        "argmax_equal_fraction": 1.0,
+        "byte_equal": true
+      },
+      "native_bf16_same_context": {
+        "max_abs": 1.515625,
+        "relative_l2": 0.03322562575340271,
+        "relative_l2_fp64": 0.033239165619457514,
+        "argmax_equal_fraction": 1.0,
+        "byte_equal": false
+      },
+      "native_oracle_tokens_equal": true,
+      "answer_pass": true,
+      "pass": true,
+      "native_text": "The passcode is cobalt.",
+      "cache_final_tokens": 1055,
+      "flags": [
+        4803339,
+        202618101,
+        0
+      ]
+    }
+  ],
+  "comparisons": [],
+  "head": "ce0e08a850962eaad039708aeb270c8cb6adf326",
+  "producer_run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9018/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guard_pinned_generation_queued_20261002_r1.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guard-pinned-generation-20261002-r1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018",
+    "started_utc": "2026-10-01T21:47:31.160472+00:00",
+    "deadline_seconds": 1800.0,
+    "status": "EXITED",
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": "0"
+    },
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 193.2988653650027
+  },
+  "producer_result_sha256": "d6587245eaa0df101824d4ef0d7c9eba264c9844b43b2d1994cafd205b8ffb22",
+  "producer_outputs_sha256": "d52a9368a7ec96718a0419e50b53e27470ecd5f556fdf82af754f74952c49ded",
+  "tensor_count": 50,
+  "tensors": {
+    "math73/input_ids": {
+      "shape": [
+        1,
+        73
+      ],
+      "dtype": "torch.int64",
+      "sha256": "56c14c262593bfa8f451fa0a770d7858957ffb7d088c8bd5e2f319d6934505d0"
+    },
+    "math73/reference/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "65a2274ec47fad452ee607a85a7f6a2399758501b26abb70cfe8b1a4e7a385e6"
+    },
+    "math73/reference/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "fcb72808d26561e8c55489449af25b4c150465792b8f2f8906082ed3fe8e77bf"
+    },
+    "math73/native/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "65a2274ec47fad452ee607a85a7f6a2399758501b26abb70cfe8b1a4e7a385e6"
+    },
+    "math73/native/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "fcb72808d26561e8c55489449af25b4c150465792b8f2f8906082ed3fe8e77bf"
+    },
+    "math73/native/flags": {
+      "shape": [
+        24,
+        32,
+        3
+      ],
+      "dtype": "torch.int64",
+      "sha256": "627551e020d07f66c8dd02460314de9cf8a480e9dae36a7626d7d4c71c59f5f9"
+    },
+    "math73/stock/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "65a2274ec47fad452ee607a85a7f6a2399758501b26abb70cfe8b1a4e7a385e6"
+    },
+    "math73/stock/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "fcb72808d26561e8c55489449af25b4c150465792b8f2f8906082ed3fe8e77bf"
+    },
+    "math73/stock_teacher/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "fcb72808d26561e8c55489449af25b4c150465792b8f2f8906082ed3fe8e77bf"
+    },
+    "math73/stock_teacher/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "65a2274ec47fad452ee607a85a7f6a2399758501b26abb70cfe8b1a4e7a385e6"
+    },
+    "sky70/input_ids": {
+      "shape": [
+        1,
+        70
+      ],
+      "dtype": "torch.int64",
+      "sha256": "56ec30c6e1e958545632bb743d2a9de10981386ea77924249ffec764021e6a41"
+    },
+    "sky70/reference/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "256daa4a3728d49a9c13d73d1dfb945ba5fa358e983d20cf2ced835940ccca68"
+    },
+    "sky70/reference/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "dd1afd1e3bd6a8236afdfde374ea0350b7b1998ba974426640f5569aa36023e1"
+    },
+    "sky70/native/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "256daa4a3728d49a9c13d73d1dfb945ba5fa358e983d20cf2ced835940ccca68"
+    },
+    "sky70/native/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "dd1afd1e3bd6a8236afdfde374ea0350b7b1998ba974426640f5569aa36023e1"
+    },
+    "sky70/native/flags": {
+      "shape": [
+        24,
+        32,
+        3
+      ],
+      "dtype": "torch.int64",
+      "sha256": "7164f174dc4fd43743066fee98e75bab5c2b67da900c310dff66207bc90a122c"
+    },
+    "sky70/stock/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "256daa4a3728d49a9c13d73d1dfb945ba5fa358e983d20cf2ced835940ccca68"
+    },
+    "sky70/stock/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "dd1afd1e3bd6a8236afdfde374ea0350b7b1998ba974426640f5569aa36023e1"
+    },
+    "sky70/stock_teacher/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "dd1afd1e3bd6a8236afdfde374ea0350b7b1998ba974426640f5569aa36023e1"
+    },
+    "sky70/stock_teacher/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "256daa4a3728d49a9c13d73d1dfb945ba5fa358e983d20cf2ced835940ccca68"
+    },
+    "passcode83/input_ids": {
+      "shape": [
+        1,
+        83
+      ],
+      "dtype": "torch.int64",
+      "sha256": "1a48b6c74cdac2f8041ed8bb74c794c707129e5d983f17c9680cc3876a0c4210"
+    },
+    "passcode83/reference/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "744e8f8fa8bc5b9bc2399004aa8990cb16c7d84052e9b4163b96cedef3c0e543"
+    },
+    "passcode83/reference/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "048ec8a60548f59746460dcc44166615244404d7fd4a304b59a9bdc94a04e641"
+    },
+    "passcode83/native/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "744e8f8fa8bc5b9bc2399004aa8990cb16c7d84052e9b4163b96cedef3c0e543"
+    },
+    "passcode83/native/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "048ec8a60548f59746460dcc44166615244404d7fd4a304b59a9bdc94a04e641"
+    },
+    "passcode83/native/flags": {
+      "shape": [
+        24,
+        32,
+        3
+      ],
+      "dtype": "torch.int64",
+      "sha256": "43c8e8cf026a31e8ff9f991d5ef6fdfab88ad9a5714c38e43d0b14a4c26a1b77"
+    },
+    "passcode83/stock/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "744e8f8fa8bc5b9bc2399004aa8990cb16c7d84052e9b4163b96cedef3c0e543"
+    },
+    "passcode83/stock/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "048ec8a60548f59746460dcc44166615244404d7fd4a304b59a9bdc94a04e641"
+    },
+    "passcode83/stock_teacher/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "048ec8a60548f59746460dcc44166615244404d7fd4a304b59a9bdc94a04e641"
+    },
+    "passcode83/stock_teacher/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "744e8f8fa8bc5b9bc2399004aa8990cb16c7d84052e9b4163b96cedef3c0e543"
+    },
+    "prefix256/input_ids": {
+      "shape": [
+        1,
+        256
+      ],
+      "dtype": "torch.int64",
+      "sha256": "fccfd4f25a32012c90d9c140d9ed2f5f3c2abb39ac9d3e824a888fb4466f2ed8"
+    },
+    "prefix256/reference/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "74ca2fef8293b476859f524249eb60dc727fb6bbf33a889e13bb4f0b8a005770"
+    },
+    "prefix256/reference/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "47c8a412e78e4244bc41ca5ee2bf33eb2a716e5acfdee23a899110565cba4c14"
+    },
+    "prefix256/native/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "74ca2fef8293b476859f524249eb60dc727fb6bbf33a889e13bb4f0b8a005770"
+    },
+    "prefix256/native/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "47c8a412e78e4244bc41ca5ee2bf33eb2a716e5acfdee23a899110565cba4c14"
+    },
+    "prefix256/native/flags": {
+      "shape": [
+        24,
+        32,
+        3
+      ],
+      "dtype": "torch.int64",
+      "sha256": "cd35e1e9c2cec866b5ec5776c5626f20f027741f64e37c5bb8da900bf34a3714"
+    },
+    "prefix256/stock/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "74ca2fef8293b476859f524249eb60dc727fb6bbf33a889e13bb4f0b8a005770"
+    },
+    "prefix256/stock/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "39af9c15e9ae27a18da8c1315a4b45ad1a29b68f7fe5bcae1c2a7585bc956d75"
+    },
+    "prefix256/stock_teacher/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "39af9c15e9ae27a18da8c1315a4b45ad1a29b68f7fe5bcae1c2a7585bc956d75"
+    },
+    "prefix256/stock_teacher/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "74ca2fef8293b476859f524249eb60dc727fb6bbf33a889e13bb4f0b8a005770"
+    },
+    "prefix1024/input_ids": {
+      "shape": [
+        1,
+        1024
+      ],
+      "dtype": "torch.int64",
+      "sha256": "5bf7b758df8e3db071dd21e34a67f1a38b382319fa565557c605ebced6ec359f"
+    },
+    "prefix1024/reference/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "783b9116216e1626ca58929d4839922310132c57ee2c83373541deffaa301d2f"
+    },
+    "prefix1024/reference/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "46a47848f967bcab2dcfc28df061654b8e0f9928f588c859078a7efcb90b0b28"
+    },
+    "prefix1024/native/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "783b9116216e1626ca58929d4839922310132c57ee2c83373541deffaa301d2f"
+    },
+    "prefix1024/native/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "46a47848f967bcab2dcfc28df061654b8e0f9928f588c859078a7efcb90b0b28"
+    },
+    "prefix1024/native/flags": {
+      "shape": [
+        24,
+        32,
+        3
+      ],
+      "dtype": "torch.int64",
+      "sha256": "12e3471d79bd25e10d94c303c414dcfad008e905cbb6a6796d311822629ffa55"
+    },
+    "prefix1024/stock/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "783b9116216e1626ca58929d4839922310132c57ee2c83373541deffaa301d2f"
+    },
+    "prefix1024/stock/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "3c56d1ecf49e9cfeddeacbf0681cf9ff0a82356b7599d03ea67ca079f48d1dc8"
+    },
+    "prefix1024/stock_teacher/logits": {
+      "shape": [
+        1,
+        32,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "3c56d1ecf49e9cfeddeacbf0681cf9ff0a82356b7599d03ea67ca079f48d1dc8"
+    },
+    "prefix1024/stock_teacher/ids": {
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "torch.int64",
+      "sha256": "783b9116216e1626ca58929d4839922310132c57ee2c83373541deffaa301d2f"
+    }
+  },
+  "native_main_calls": 3840,
+  "native_repair_calls": 3840,
+  "native_postprocess_kernel_launches": 7680,
+  "original_input_ids_sha256": "0983f2e3e173eb5d6dd1fdb286b1bd96b513bff54b1f1a2724cc76bdc82122dc",
+  "cuda_initialized": false,
+  "new_native_calls": 0,
+  "harness_sha256": "9a98875ecf0a4bb76346b35b243af44aec40a2f7d3ed26d8b7a98d84b6e3e53e",
+  "accepted_optimization": false,
+  "limits": "Independent all50 saved tensor/context/gate/greedy-token/decoded-answer/KV metadata/count/source/binding audit. New stock generation reference, original full-forward baseline untouched. Paired prototype cost includes diagnostics; no accepted production feature or unobserved gain claim."
+}

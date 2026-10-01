@@ -1,0 +1,79 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""One shared-lock window: meaningful boundaries first, then full24 feedback."""
+
+import argparse
+import fcntl
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import sys
+import time
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--expected-source", required=True)
+    parser.add_argument("--expected-head", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    tools = Path(__file__).parent
+    paths = [Path(__file__), tools / "a3_guarded_rounding_boundary_queued_20261002_r1.py", tools / "a3_guarded_rounding_full_model_20261002_r1.py"]
+    before = {str(path): sha(path) for path in paths}
+    (out / "queue_frozen_sources.json").write_text(json.dumps(before, indent=2) + "\n")
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        start = time.monotonic()
+        (out / "admission_wait.json").write_text(json.dumps({"stage": "WAITING_FOR_SHARED_LOCK", "pid": os.getpid(), "torch_imported": False}) + "\n")
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - start > 600:
+                    (out / "admission.json").write_text(json.dumps({"stage": "NOT_RUN_SHARED_LOCK_BUSY", "torch_imported": False}) + "\n")
+                    return 75
+                time.sleep(1)
+        assert "torch" not in sys.modules and {str(path): sha(path) for path in paths} == before
+        (out / "admission.json").write_text(
+            json.dumps({"stage": "LOCK_ADMITTED", "pid": os.getpid(), "torch_imported": False, "wait_seconds": time.monotonic() - start}) + "\n"
+        )
+        boundary = out / "boundaries"
+        boundary.mkdir()
+        b = load("a3_native_guard_boundaries", paths[1])
+        b.execute(args, boundary)
+        model = out / "model"
+        model.mkdir()
+        g = load("a3_native_guard_full_model", paths[2])
+        g.execute(args, model, boundary)
+        assert {str(path): sha(path) for path in paths} == before
+        result = {
+            "stage": "NATIVE_ROUNDING_CONTROL_BOUNDARIES_AND_MODEL_TERMINAL",
+            "boundaries_result_sha256": sha(boundary / "result.json"),
+            "model_result_sha256": sha(model / "result.json"),
+            "frozen_sources": before,
+            "model_stage": json.loads((model / "result.json").read_text())["stage"],
+            "limits": "Costly precision control only. No generation/KV/formal performance or production acceptance.",
+        }
+        (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps(result), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

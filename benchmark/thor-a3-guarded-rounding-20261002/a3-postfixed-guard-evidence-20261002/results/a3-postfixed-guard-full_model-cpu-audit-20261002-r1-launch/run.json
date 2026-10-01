@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9018/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_postfixed_guard_full_model_cpu_20261002_r1.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-postfixed-guard-full_model-cpu-audit-20261002-r1",
+    "--input",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-postfixed-guard-20261002-r1"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018",
+  "started_utc": "2026-10-01T22:17:07.336049+00:00",
+  "deadline_seconds": 600.0,
+  "status": "EXITED",
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": ""
+  },
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 2.484020463001798
+}

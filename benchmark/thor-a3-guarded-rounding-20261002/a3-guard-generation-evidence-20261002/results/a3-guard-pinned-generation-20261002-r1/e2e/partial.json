@@ -1,0 +1,246 @@
+{
+  "quality": [
+    {
+      "case": "math73",
+      "input_tokens": 73,
+      "new_tokens": 32,
+      "ids": {
+        "shape": [
+          1,
+          73
+        ],
+        "dtype": "torch.int64",
+        "sha256": "56c14c262593bfa8f451fa0a770d7858957ffb7d088c8bd5e2f319d6934505d0"
+      },
+      "native_oracle": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_bf16_same_context": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "oracle_gate_pass": true,
+      "bf16_gate_pass": true,
+      "same_context_for_numeric_gates": true,
+      "native_oracle_logits_byte_equal": true,
+      "native_oracle_ids_byte_equal": true,
+      "native_stock_greedy_ids_byte_equal": true,
+      "texts": {
+        "reference": "2 + 2 = 4",
+        "native": "2 + 2 = 4",
+        "stock": "2 + 2 = 4"
+      },
+      "expected": "4",
+      "answer_pass": true,
+      "flag_totals": [
+        436144,
+        20011088,
+        0
+      ],
+      "native_main_calls": 768,
+      "native_repair_calls": 768,
+      "native_postprocess_kernel_launches": 1536,
+      "cache_type": "DynamicCache",
+      "cache_final_tokens": 104,
+      "cache_object_reused": true,
+      "pass": true
+    },
+    {
+      "case": "sky70",
+      "input_tokens": 70,
+      "new_tokens": 32,
+      "ids": {
+        "shape": [
+          1,
+          70
+        ],
+        "dtype": "torch.int64",
+        "sha256": "56ec30c6e1e958545632bb743d2a9de10981386ea77924249ffec764021e6a41"
+      },
+      "native_oracle": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_bf16_same_context": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "oracle_gate_pass": true,
+      "bf16_gate_pass": true,
+      "same_context_for_numeric_gates": true,
+      "native_oracle_logits_byte_equal": true,
+      "native_oracle_ids_byte_equal": true,
+      "native_stock_greedy_ids_byte_equal": true,
+      "texts": {
+        "reference": "The sky appears blue because of a process called Rayleigh scattering, where shorter-wavelength light, like blue and violet, is scattered",
+        "native": "The sky appears blue because of a process called Rayleigh scattering, where shorter-wavelength light, like blue and violet, is scattered",
+        "stock": "The sky appears blue because of a process called Rayleigh scattering, where shorter-wavelength light, like blue and violet, is scattered"
+      },
+      "expected": null,
+      "answer_pass": true,
+      "flag_totals": [
+        408061,
+        19449347,
+        0
+      ],
+      "native_main_calls": 768,
+      "native_repair_calls": 768,
+      "native_postprocess_kernel_launches": 1536,
+      "cache_type": "DynamicCache",
+      "cache_final_tokens": 101,
+      "cache_object_reused": true,
+      "pass": true
+    },
+    {
+      "case": "passcode83",
+      "input_tokens": 83,
+      "new_tokens": 32,
+      "ids": {
+        "shape": [
+          1,
+          83
+        ],
+        "dtype": "torch.int64",
+        "sha256": "1a48b6c74cdac2f8041ed8bb74c794c707129e5d983f17c9680cc3876a0c4210"
+      },
+      "native_oracle": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_bf16_same_context": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "oracle_gate_pass": true,
+      "bf16_gate_pass": true,
+      "same_context_for_numeric_gates": true,
+      "native_oracle_logits_byte_equal": true,
+      "native_oracle_ids_byte_equal": true,
+      "native_stock_greedy_ids_byte_equal": true,
+      "texts": {
+        "reference": "I'm sorry for any confusion, but as a responsible AI, I don't have the ability to read or remember passcodes. I can only generate responses based",
+        "native": "I'm sorry for any confusion, but as a responsible AI, I don't have the ability to read or remember passcodes. I can only generate responses based",
+        "stock": "I'm sorry for any confusion, but as a responsible AI, I don't have the ability to read or remember passcodes. I can only generate responses based"
+      },
+      "expected": "cobalt",
+      "answer_pass": false,
+      "flag_totals": [
+        454848,
+        21958464,
+        0
+      ],
+      "native_main_calls": 768,
+      "native_repair_calls": 768,
+      "native_postprocess_kernel_launches": 1536,
+      "cache_type": "DynamicCache",
+      "cache_final_tokens": 114,
+      "cache_object_reused": true,
+      "pass": false
+    },
+    {
+      "case": "prefix256",
+      "input_tokens": 256,
+      "new_tokens": 32,
+      "ids": {
+        "shape": [
+          1,
+          256
+        ],
+        "dtype": "torch.int64",
+        "sha256": "fccfd4f25a32012c90d9c140d9ed2f5f3c2abb39ac9d3e824a888fb4466f2ed8"
+      },
+      "native_oracle": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_bf16_same_context": {
+        "max_abs": 1.305267333984375,
+        "relative_l2": 0.026805587112903595,
+        "argmax_equal_fraction": 1.0
+      },
+      "oracle_gate_pass": true,
+      "bf16_gate_pass": true,
+      "same_context_for_numeric_gates": true,
+      "native_oracle_logits_byte_equal": true,
+      "native_oracle_ids_byte_equal": true,
+      "native_stock_greedy_ids_byte_equal": true,
+      "texts": {
+        "reference": "The passcode is cobalt.",
+        "native": "The passcode is cobalt.",
+        "stock": "The passcode is cobalt."
+      },
+      "expected": "cobalt",
+      "answer_pass": true,
+      "flag_totals": [
+        1288448,
+        55138048,
+        0
+      ],
+      "native_main_calls": 768,
+      "native_repair_calls": 768,
+      "native_postprocess_kernel_launches": 1536,
+      "cache_type": "DynamicCache",
+      "cache_final_tokens": 287,
+      "cache_object_reused": true,
+      "pass": true
+    },
+    {
+      "case": "prefix1024",
+      "input_tokens": 1024,
+      "new_tokens": 32,
+      "ids": {
+        "shape": [
+          1,
+          1024
+        ],
+        "dtype": "torch.int64",
+        "sha256": "5bf7b758df8e3db071dd21e34a67f1a38b382319fa565557c605ebced6ec359f"
+      },
+      "native_oracle": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_bf16_same_context": {
+        "max_abs": 1.515625,
+        "relative_l2": 0.03322562575340271,
+        "argmax_equal_fraction": 1.0
+      },
+      "oracle_gate_pass": true,
+      "bf16_gate_pass": true,
+      "same_context_for_numeric_gates": true,
+      "native_oracle_logits_byte_equal": true,
+      "native_oracle_ids_byte_equal": true,
+      "native_stock_greedy_ids_byte_equal": true,
+      "texts": {
+        "reference": "The passcode is cobalt.",
+        "native": "The passcode is cobalt.",
+        "stock": "The passcode is cobalt."
+      },
+      "expected": "cobalt",
+      "answer_pass": true,
+      "flag_totals": [
+        4803339,
+        202618101,
+        0
+      ],
+      "native_main_calls": 768,
+      "native_repair_calls": 768,
+      "native_postprocess_kernel_launches": 1536,
+      "cache_type": "DynamicCache",
+      "cache_final_tokens": 1055,
+      "cache_object_reused": true,
+      "pass": true
+    }
+  ],
+  "warmups": [],
+  "timed": []
+}

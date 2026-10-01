@@ -1,0 +1,238 @@
+{
+  "stage": "INDEPENDENT_FULL24_NATIVE_CONTROL_AUDIT_COMPLETE",
+  "quality_all_three_cases_both_gates": true,
+  "head": "a24a7401bb7d26d42d88d98b316f634ef487301c",
+  "producer_run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latest29_postfixed_full_pipeline_queued_20261002_r1.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest29-postfixed-full-pipeline-20261002-r1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest29a0",
+    "started_utc": "2026-10-01T22:34:49.570892+00:00",
+    "deadline_seconds": 2400.0,
+    "status": "EXITED",
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": "0"
+    },
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 609.8494330920003
+  },
+  "producer_result_sha256": "5ab037d06565b3a08f1b1c5b02347f223457849cc3040d18f58863f8a154e705",
+  "producer_outputs_sha256": "13ef0c67ff7ea4e24ffbcd17ff34fe8bcf4fc47bd6ac6058fbf085afd7303345",
+  "tensor_count": 12,
+  "tensors": {
+    "0/input_ids": {
+      "shape": [
+        1,
+        73
+      ],
+      "dtype": "torch.int64",
+      "sha256": "56c14c262593bfa8f451fa0a770d7858957ffb7d088c8bd5e2f319d6934505d0"
+    },
+    "0/reference": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d821f2ba2944f24a4bbd62604d4fdc0249efba46529f018f7ceed0b0faf25c03"
+    },
+    "0/native": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d821f2ba2944f24a4bbd62604d4fdc0249efba46529f018f7ceed0b0faf25c03"
+    },
+    "0/flag_counts": {
+      "shape": [
+        24,
+        3
+      ],
+      "dtype": "torch.int64",
+      "sha256": "777cbe85824367012c33b331b5f30c74fd2d2cbb468280249346493a8722856e"
+    },
+    "1/input_ids": {
+      "shape": [
+        1,
+        70
+      ],
+      "dtype": "torch.int64",
+      "sha256": "56ec30c6e1e958545632bb743d2a9de10981386ea77924249ffec764021e6a41"
+    },
+    "1/reference": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "11ecfe7300f0a2e2c8d26b5983344bec3c14117d141f794d948bf7f8ef5a1129"
+    },
+    "1/native": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "11ecfe7300f0a2e2c8d26b5983344bec3c14117d141f794d948bf7f8ef5a1129"
+    },
+    "1/flag_counts": {
+      "shape": [
+        24,
+        3
+      ],
+      "dtype": "torch.int64",
+      "sha256": "149b2abaf0e0e7a1223cdcb0816b45f2f8b69e378ce4752c2d269ab49c64dd36"
+    },
+    "2/input_ids": {
+      "shape": [
+        1,
+        256
+      ],
+      "dtype": "torch.int64",
+      "sha256": "fccfd4f25a32012c90d9c140d9ed2f5f3c2abb39ac9d3e824a888fb4466f2ed8"
+    },
+    "2/reference": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "c63e951c109fbc68847fb04f95760a7946eb8c23e96b1a94a8969229fca6c05c"
+    },
+    "2/native": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "c63e951c109fbc68847fb04f95760a7946eb8c23e96b1a94a8969229fca6c05c"
+    },
+    "2/flag_counts": {
+      "shape": [
+        24,
+        3
+      ],
+      "dtype": "torch.int64",
+      "sha256": "566b2f547fe68e3f300b0a74288f7df66a690e3d511569f6f634cefdf45c1882"
+    }
+  },
+  "rows": [
+    {
+      "case": 0,
+      "input_tokens": 73,
+      "native_oracle": {
+        "byte_equal": true,
+        "different_values": 0,
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "relative_l2_fp64": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_bf16": {
+        "byte_equal": true,
+        "different_values": 0,
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "relative_l2_fp64": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "oracle_gate_pass": true,
+      "bf16_gate_pass": true,
+      "oracle_byte_equal_to_original_fixed": true,
+      "flags": [
+        380,
+        14352004,
+        0
+      ],
+      "ambiguous_fraction": 0.9999735235623574,
+      "native_main_calls": 24,
+      "native_repair_calls": 24
+    },
+    {
+      "case": 1,
+      "input_tokens": 70,
+      "native_oracle": {
+        "byte_equal": true,
+        "different_values": 0,
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "relative_l2_fp64": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_bf16": {
+        "byte_equal": true,
+        "different_values": 0,
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "relative_l2_fp64": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "oracle_gate_pass": true,
+      "bf16_gate_pass": true,
+      "oracle_byte_equal_to_original_fixed": true,
+      "flags": [
+        335,
+        13762225,
+        0
+      ],
+      "ambiguous_fraction": 0.9999756585984003,
+      "native_main_calls": 24,
+      "native_repair_calls": 24
+    },
+    {
+      "case": 2,
+      "input_tokens": 256,
+      "native_oracle": {
+        "byte_equal": true,
+        "different_values": 0,
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "relative_l2_fp64": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_original_bf16": {
+        "byte_equal": false,
+        "different_values": 4635359,
+        "max_abs": 4.3671875,
+        "relative_l2": 0.040057141333818436,
+        "relative_l2_fp64": 0.0400102271756583,
+        "argmax_equal_fraction": 0.98046875
+      },
+      "oracle_gate_pass": true,
+      "bf16_gate_pass": true,
+      "oracle_byte_equal_to_original_fixed": true,
+      "flags": [
+        844,
+        50330804,
+        0
+      ],
+      "ambiguous_fraction": 0.9999832312266032,
+      "native_main_calls": 24,
+      "native_repair_calls": 24
+    }
+  ],
+  "native_main_calls": 72,
+  "native_repair_calls": 72,
+  "native_postprocess_kernel_launches": 144,
+  "cuda_initialized": false,
+  "new_native_calls": 0,
+  "harness_sha256": "35e17bb273bc7ec7847f1788797927542a7a4443df0e3ffebc348bf6f74056fa",
+  "original_baseline_outputs_sha256": "a997dac0bbd8b137ecbf7ddbefc5f356c2633d75a9d3cde1d035335cb028440f",
+  "original_fixed_oracle_outputs_sha256": "96dcdce434fd9efce3bc3045097725eb1024cdfeb68a68cadbddc78306b3babe",
+  "original_token_ids_json_sha256": "0983f2e3e173eb5d6dd1fdb286b1bd96b513bff54b1f1a2724cc76bdc82122dc",
+  "generation_kv": "NOT_RUN",
+  "formal_performance": "NOT_RUN",
+  "accepted_optimization": false,
+  "limits": "Independent full12 saved tensor/hash/metrics/gate audit of actual whole-logit input forward. Boundary tests were separately at5f, original baseline7b/fixed oracle741 unchanged. Actual native integer repair can be costly; success here is not generation/KV, throughput, efficient/public feature or completed A3 optimization."
+}

@@ -1,0 +1,18 @@
+{
+  "source_head": "a24a7401bb7d26d42d88d98b316f634ef487301c",
+  "cudnn": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest29a0/python/cudnn/__init__.py",
+    "sha256": "3f7bcedcf6d1666cab81c64c9e7c68c7a6898c4123201534a2409eb5ada64cf9"
+  },
+  "binding": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest29a0/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+    "sha256": "f8e1555dcba3cd56f4e1f27736d67431b164308c7252b12a86626c1a7f286563"
+  },
+  "swiglu_api": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest29a0/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+    "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+  },
+  "actual_native_calls": 0,
+  "pytest_exitstatus": 0,
+  "worker": null
+}

@@ -1,0 +1,114 @@
+{
+  "runs": [
+    {
+      "name": "a3-guarded-rounding-build-cpu-20261002-r4",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9018/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/build_a3_guarded_rounding_cpu_20261002_r4.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guarded-rounding-build-cpu-20261002-r4"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018",
+        "started_utc": "2026-10-01T22:01:18.570620+00:00",
+        "deadline_seconds": 600.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 24.52816694899957
+      }
+    },
+    {
+      "name": "a3-postfixed-guard-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9018/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_postfixed_guard_queued_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-postfixed-guard-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018",
+        "started_utc": "2026-10-01T22:07:51.420581+00:00",
+        "deadline_seconds": 1800.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": "0"
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 58.55368491200352
+      }
+    },
+    {
+      "name": "a3-postfixed-guard-boundary-cpu-audit-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9018/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_postfixed_guard_boundary_cpu_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-postfixed-guard-boundary-cpu-audit-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018",
+        "started_utc": "2026-10-01T22:17:07.336127+00:00",
+        "deadline_seconds": 600.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 3.3352784919989062
+      }
+    },
+    {
+      "name": "a3-postfixed-guard-full_model-cpu-audit-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9018/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_postfixed_guard_full_model_cpu_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-postfixed-guard-full_model-cpu-audit-20261002-r1",
+          "--input",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-postfixed-guard-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018",
+        "started_utc": "2026-10-01T22:17:07.336049+00:00",
+        "deadline_seconds": 600.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 2.484020463001798
+      }
+    },
+    {
+      "name": "a3-postfixed-guard-pair-cpu-audit-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9018/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_postfixed_guard_pair_cpu_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-postfixed-guard-pair-cpu-audit-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018",
+        "started_utc": "2026-10-01T22:20:16.322633+00:00",
+        "deadline_seconds": 600.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 2.7681511629998568
+      }
+    }
+  ],
+  "prior_forward_evidence_is_separate": true,
+  "native_gpu_work_admitted": true,
+  "limits": "Actual postfixed CUDA candidate/whole24 three forward gates/584 bound comparisons/80 wrapper pairs; all independentCPUaudits0. No new candidate generation/whole-model paired timing in this archived scope, no accepted production feature."
+}

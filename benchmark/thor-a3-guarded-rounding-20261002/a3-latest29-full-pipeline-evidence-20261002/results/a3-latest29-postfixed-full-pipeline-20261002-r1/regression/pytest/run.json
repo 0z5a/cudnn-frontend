@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+    "-m",
+    "pytest",
+    "-p",
+    "a3_repair_import_probe_20261001",
+    "-p",
+    "a3_repair_matrix_select_20261001",
+    "-o",
+    "addopts=",
+    "-q",
+    "--grouped-gemm-nkl=1024,1024,4",
+    "--junitxml=/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest29-postfixed-full-pipeline-20261002-r1/regression/pytest/junit.xml",
+    "gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+    "gemm/cutedsl/test_swiglu_amax_per_call.py",
+    "gemm/cutedsl/test_swiglu_wrapper_launch_stream.py",
+    "gemm/cutedsl/test_grouped_gemm_swiglu.py::test_grouped_gemm_swiglu_wrapper_fp4",
+    "gemm/cutedsl/test_grouped_gemm_swiglu.py::test_grouped_gemm_swiglu_wrapper_fp8",
+    "gemm/cutedsl/test_grouped_gemm_canonical_layouts.py::test_grouped_gemm_swiglu_canonical_matches_legacy",
+    "gemm/cutedsl/test_grouped_gemm_canonical_layouts.py::test_grouped_gemm_swiglu_canonical_bf16_prob"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest29a0/test/python",
+  "started_utc": "2026-10-01T22:34:49.682441+00:00",
+  "deadline_seconds": 1200.0,
+  "status": "EXITED",
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": "0"
+  },
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 63.554816202995426
+}

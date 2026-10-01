@@ -1,0 +1,103 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Archive terminal actual guard/latest/full24 evidence; no PT/cache/binaries."""
+
+import hashlib
+import json
+from pathlib import Path
+import shutil
+import tarfile
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+NAME = "a3-postfixed-guard-evidence-20261002"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def main():
+    destination = ROOT / "results/a3-postfixed-guard-archive-20261002-r1"
+    destination.mkdir(exist_ok=False)
+    tree = destination / NAME
+    tree.mkdir()
+    names = [
+        "a3-guarded-rounding-build-cpu-20261002-r4",
+        "a3-postfixed-guard-20261002-r1",
+        "a3-postfixed-guard-boundary-cpu-audit-20261002-r1",
+        "a3-postfixed-guard-full_model-cpu-audit-20261002-r1",
+        "a3-postfixed-guard-pair-cpu-audit-20261002-r1",
+    ]
+    wanted, runs = [], []
+    for name in names:
+        folder = ROOT / "results" / name
+        launch = folder.with_name(name + "-launch")
+        run = json.loads((launch / "run.json").read_text())
+        assert run["status"] == "EXITED" and run["returncode"] in (0, 1) and run["signal"] is None
+        runs.append({"name": name, "run": run})
+        wanted.extend(
+            p
+            for p in folder.rglob("*")
+            if p.is_file() and p.suffix in (".json", ".log", ".xml") and not any(v in p.parts for v in ("cache", "__pycache__", "extension"))
+        )
+        wanted.extend(p for p in launch.iterdir() if p.is_file() and p.suffix in (".json", ".log"))
+    baseline = ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    wanted.extend((baseline / "input-token-ids.json", baseline / "result.json"))
+    sources = [
+        "a3_postfixed_guard_queued_20261002_r1.py",
+        "a3_postfixed_guard_boundary_pair_model_20261002_r1.py",
+        "a3_guarded_rounding_boundary_queued_20261002_r4.py",
+        "a3_guarded_rounding_full_model_20261002_r5.py",
+        "a3_guarded_rounding_native_20261002_r4.cpp",
+        "a3_guarded_rounding_native_20261002_r4.cu",
+        "a3_guarded_rounding_native_20261002_r4.py",
+        "build_a3_guarded_rounding_cpu_20261002_r4.py",
+        "audit_a3_postfixed_guard_boundary_cpu_20261002_r1.py",
+        "audit_a3_postfixed_guard_full_model_cpu_20261002_r1.py",
+        "audit_a3_postfixed_guard_pair_cpu_20261002_r1.py",
+        Path(__file__).name,
+    ]
+    wanted.extend(ROOT / "tools" / name for name in sources)
+    manifest = []
+    for path in sorted(set(wanted)):
+        assert path.is_file() and path.suffix in (".py", ".cpp", ".cu", ".json", ".log", ".xml")
+        relative = path.relative_to(ROOT)
+        target = tree / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(path, target)
+        assert sha(target) == sha(path)
+        manifest.append({"path": str(relative), "size": path.stat().st_size, "sha256": sha(path)})
+    status = tree / "TERMINAL_POSTFIXED_RUNS.json"
+    status.write_text(
+        json.dumps(
+            {
+                "runs": runs,
+                "prior_forward_evidence_is_separate": True,
+                "native_gpu_work_admitted": True,
+                "limits": "Actual postfixed CUDA candidate/whole24 three forward gates/584 bound comparisons/80 wrapper pairs; all independentCPUaudits0. No new candidate generation/whole-model paired timing in this archived scope, no accepted production feature.",
+            },
+            indent=2,
+        )
+        + "\n"
+    )
+    manifest.append({"path": status.name, "size": status.stat().st_size, "sha256": sha(status)})
+    (tree / "MANIFEST.json").write_text(
+        json.dumps({"files": manifest, "excluded": ["cache", "models", "engines", "PT", "native/JIT binaries", "Git bundle"]}, indent=2) + "\n"
+    )
+    tar = destination / (NAME + ".tar.gz")
+    with tarfile.open(tar, "w:gz") as archive:
+        archive.add(tree, arcname=NAME)
+    result = {
+        "path": str(tar),
+        "sha256": sha(tar),
+        "size": tar.stat().st_size,
+        "manifest_entries": len(manifest),
+        "file_count": len(manifest) + 1,
+        "runs": len(runs),
+    }
+    (destination / "archive.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result), flush=True)
+
+
+if __name__ == "__main__":
+    main()

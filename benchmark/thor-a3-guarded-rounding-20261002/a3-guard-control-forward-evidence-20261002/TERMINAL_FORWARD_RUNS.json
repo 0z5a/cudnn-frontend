@@ -1,0 +1,284 @@
+{
+  "runs": [
+    {
+      "name": "a3-latest-guard-regression-model-20261002-r2",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestbed/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latest_guard_regression_and_model_queued_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-guard-regression-model-20261002-r2"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed",
+        "started_utc": "2026-10-01T20:31:48.696567+00:00",
+        "deadline_seconds": 2400.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": "0"
+        },
+        "returncode": 1,
+        "signal": null,
+        "elapsed_seconds": 63.510238524999295
+      }
+    },
+    {
+      "name": "a3-latest-bed-regression-cpu-finalize-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestbed/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/finalize_a3_latest_bed_regression_cpu_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-bed-regression-cpu-finalize-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed",
+        "started_utc": "2026-10-01T20:39:05.312672+00:00",
+        "deadline_seconds": 120.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 0.1141551780019654
+      }
+    },
+    {
+      "name": "a3-latest-guard-verified-regression-model-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestbed/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latest_guard_from_verified_regression_queued_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-guard-verified-regression-model-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed",
+        "started_utc": "2026-10-01T20:39:35.160508+00:00",
+        "deadline_seconds": 1800.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": "0"
+        },
+        "returncode": 1,
+        "signal": null,
+        "elapsed_seconds": 9.789133872000093
+      }
+    },
+    {
+      "name": "a3-latest-guard-verified-regression-model-20261002-r2",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestbed/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latest_guard_from_verified_regression_queued_20261002_r2.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-guard-verified-regression-model-20261002-r2"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed",
+        "started_utc": "2026-10-01T20:49:47.027743+00:00",
+        "deadline_seconds": 1800.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": "0"
+        },
+        "returncode": 1,
+        "signal": null,
+        "elapsed_seconds": 46.334505373000866
+      }
+    },
+    {
+      "name": "a3-latest-9018-regression-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9018/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/run_a3_latest_9018_regression_queued_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-9018-regression-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018",
+        "started_utc": "2026-10-01T21:05:19.103306+00:00",
+        "deadline_seconds": 1800.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": "0"
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 63.30157998499635
+      }
+    },
+    {
+      "name": "a3-guard-native-oracle-cpu-audit-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestbed/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_guard_native_and_oracle_cpu_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guard-native-oracle-cpu-audit-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed",
+        "started_utc": "2026-10-01T21:02:13.792068+00:00",
+        "deadline_seconds": 600.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 1,
+        "signal": null,
+        "elapsed_seconds": 3.231330722999701
+      }
+    },
+    {
+      "name": "a3-guard-native-oracle-cpu-audit-20261002-r2",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestbed/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_guard_native_and_oracle_cpu_20261002_r2.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guard-native-oracle-cpu-audit-20261002-r2"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed",
+        "started_utc": "2026-10-01T21:14:23.157928+00:00",
+        "deadline_seconds": 600.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 4.184318055995391
+      }
+    },
+    {
+      "name": "a3-guard-saved-input-diagnosis-cpu-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestbed/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_guard_saved_inputs_cpu_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guard-saved-input-diagnosis-cpu-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed",
+        "started_utc": "2026-10-01T21:08:26.603174+00:00",
+        "deadline_seconds": 180.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 3.42687229099829
+      }
+    },
+    {
+      "name": "a3-frozen-input-ids-audit-cpu-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestbed/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_frozen_input_ids_cpu_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-frozen-input-ids-audit-cpu-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed",
+        "started_utc": "2026-10-01T21:20:08.271386+00:00",
+        "deadline_seconds": 180.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 8.421583755000029
+      }
+    },
+    {
+      "name": "a3-guard-pinned-model-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9018/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guard_pinned_model_queued_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guard-pinned-model-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018",
+        "started_utc": "2026-10-01T21:22:30.184506+00:00",
+        "deadline_seconds": 2400.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": "0"
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 53.50196076800057
+      }
+    },
+    {
+      "name": "a3-guard-pinned-model-cpu-audit-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9018/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_guard_pinned_model_cpu_20261002_r1.py",
+          "--input",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guard-pinned-model-20261002-r1",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guard-pinned-model-cpu-audit-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018",
+        "started_utc": "2026-10-01T21:27:39.798498+00:00",
+        "deadline_seconds": 600.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 3.5430940800069948
+      }
+    },
+    {
+      "name": "prepare-build-a3-latest-9018-20261002-r1-launch",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestbed/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_build_a3_latest_9018_20261002_r1.py"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed",
+        "started_utc": "2026-10-01T20:52:56.041305+00:00",
+        "deadline_seconds": 4200.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 184.56477352499496
+      }
+    },
+    {
+      "name": "build-a3-latest-9018-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9018/bin/python",
+          "-m",
+          "pip",
+          "install",
+          "--no-deps",
+          "--no-build-isolation",
+          "-e",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018",
+        "started_utc": "2026-10-01T20:53:00.010810+00:00",
+        "deadline_seconds": 3600.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 178.6662667119963
+      }
+    }
+  ],
+  "preflight_is_historical_separate_scope": true,
+  "native_gpu_work_admitted": true,
+  "limits": "Actual latest31 and all3 full24 control forwards, independent physical/integer/activation/logits audits. Preserve all rc1 failures and older rc75 admissions. This archive does not contain generation/KV or paired model timings; the control is not an accepted efficient production feature."
+}

@@ -1,0 +1,301 @@
+{
+  "stage": "NATIVE_ROUNDING_CONTROL_BOUNDARIES_COMPLETE_NOT_MODEL_OR_PERFORMANCE_SUCCESS",
+  "rows": [
+    {
+      "name": "saved_first_expert",
+      "experts": 1,
+      "n": 1024,
+      "live_rows": 36,
+      "padded_rows": 256,
+      "counts": [
+        36
+      ],
+      "native_main_calls": 1,
+      "native_repair_calls": 1,
+      "flags": {
+        "0": 2089,
+        "1": 34775,
+        "2": 0
+      },
+      "c_bf16_reference_byte_equal": true,
+      "d_reference_byte_equal": true,
+      "amax_reference_byte_equal": true,
+      "c_bf16_different_values": 0,
+      "d_different_values": 0,
+      "explicit_cold_stream": true,
+      "side_completed_before_default": true,
+      "crossing_witness": {
+        "row": 15,
+        "packed_column": 695,
+        "native_c_fp32_word": 1063419903,
+        "corrected_c_fp32_word": 1063419908,
+        "native_c_bf16": 0.8828125,
+        "corrected_c_bf16": 0.88671875,
+        "reference_bf16": 0.88671875,
+        "flag": 1
+      }
+    },
+    {
+      "name": "changed_input_weight_and_live_rows",
+      "experts": 1,
+      "n": 1024,
+      "live_rows": 37,
+      "padded_rows": 256,
+      "counts": [
+        37
+      ],
+      "native_main_calls": 1,
+      "native_repair_calls": 1,
+      "flags": {
+        "0": 2613,
+        "1": 35275,
+        "2": 0
+      },
+      "c_bf16_reference_byte_equal": true,
+      "d_reference_byte_equal": true,
+      "amax_reference_byte_equal": true,
+      "c_bf16_different_values": 0,
+      "d_different_values": 0,
+      "explicit_cold_stream": false,
+      "side_completed_before_default": null
+    },
+    {
+      "name": "ragged_e31_n128",
+      "experts": 31,
+      "n": 128,
+      "live_rows": 4,
+      "padded_rows": 512,
+      "counts": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3
+      ],
+      "native_main_calls": 1,
+      "native_repair_calls": 1,
+      "flags": {
+        "0": 134,
+        "1": 378,
+        "2": 0
+      },
+      "c_bf16_reference_byte_equal": true,
+      "d_reference_byte_equal": true,
+      "amax_reference_byte_equal": true,
+      "c_bf16_different_values": 0,
+      "d_different_values": 0,
+      "explicit_cold_stream": false,
+      "side_completed_before_default": null
+    },
+    {
+      "name": "ragged_e33_n256",
+      "experts": 33,
+      "n": 256,
+      "live_rows": 18,
+      "padded_rows": 512,
+      "counts": [
+        0,
+        17,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "native_main_calls": 1,
+      "native_repair_calls": 1,
+      "flags": {
+        "0": 287,
+        "1": 4321,
+        "2": 0
+      },
+      "c_bf16_reference_byte_equal": true,
+      "d_reference_byte_equal": true,
+      "amax_reference_byte_equal": true,
+      "c_bf16_different_values": 0,
+      "d_different_values": 0,
+      "explicit_cold_stream": false,
+      "side_completed_before_default": null
+    }
+  ],
+  "invalid_route_tests": [
+    {
+      "kind": "expert",
+      "value": -1,
+      "flag2_all": true,
+      "amax_empty": true
+    },
+    {
+      "kind": "expert",
+      "value": 1,
+      "flag2_all": true,
+      "amax_empty": true
+    },
+    {
+      "kind": "expert",
+      "value": 4294967296,
+      "flag2_all": true,
+      "amax_empty": true
+    },
+    {
+      "kind": "expert",
+      "value": -4294967296,
+      "flag2_all": true,
+      "amax_empty": true
+    },
+    {
+      "kind": "destination",
+      "value": -1,
+      "flag2_all": true,
+      "amax_nan": true
+    },
+    {
+      "kind": "destination",
+      "value": 256,
+      "flag2_all": true,
+      "amax_nan": true
+    },
+    {
+      "kind": "destination",
+      "value": 4294967296,
+      "flag2_all": true,
+      "amax_nan": true
+    },
+    {
+      "kind": "destination",
+      "value": -4294967296,
+      "flag2_all": true,
+      "amax_nan": true
+    }
+  ],
+  "static_declines": [
+    {
+      "case": "wrong_K",
+      "exception": "A must be padded K4096 four-component recipe"
+    },
+    {
+      "case": "wrong_native_C_dtype",
+      "exception": "native C must be MxN FP32"
+    },
+    {
+      "case": "wrong_stats_dtype",
+      "exception": "input-only bound summaries invalid"
+    },
+    {
+      "case": "wrong_route_dtype",
+      "exception": "routes must be matching int64 vectors"
+    },
+    {
+      "case": "noncontiguous_C",
+      "exception": "all tensors must be contiguous on one CUDA device"
+    }
+  ],
+  "nonfinite_c_flags2": 1,
+  "zero_live_no_kernel_launch": true,
+  "fresh_output_ownership_and_old_outputs_stable": true,
+  "warm_explicit_stream_byte_equal": true,
+  "stream_detector": {
+    "cuda_module_loading": "EAGER",
+    "torch_allocation_pool_primed_on_actual_side_stream": true,
+    "native_repair_primed_before_first_test": false,
+    "default_delay_cycles": 16000000000,
+    "requires_side_finish_before_delayed_default": true
+  },
+  "warm_side_completed_before_default": true,
+  "native_main_calls": 4,
+  "native_plans": {
+    "a3_bf16_staged_experimental_native.BlockScaledContiguousGroupedGemmKernel": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+      "sha256": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3"
+    }
+  },
+  "native_repair_calls": 15,
+  "native_postprocess_kernel_launches": 28,
+  "source": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed",
+  "source_head": "5f1b6e17bbd741e3bbc2210a11434cb42bad3751",
+  "imports": {
+    "cudnn": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed/python/cudnn/__init__.py",
+      "sha256": "3f7bcedcf6d1666cab81c64c9e7c68c7a6898c4123201534a2409eb5ada64cf9"
+    },
+    "api": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+      "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+    },
+    "binding": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+      "sha256": "62eb85f7ad394b662a107b23263bce36f4dcca2bbb88b21c0989787d6100041d"
+    }
+  },
+  "files": {
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_boundary_queued_20261002_r3.py": "27f5a64c0308b7a556043ef542a2e134468cbe244b6f46cc9cdcb49eea7d8bc7",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r3.py": "922fe6c6f6501129cf125e5b5599171969bb7fc02a0fb5e1705694c5e6470701",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_mxfp8_bf16_staged_full_model_worker_20261001.py": "62304d6cc59fc2b604a19efe1c60c075e0737c6898de191404e4bbb6baf057d1",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_all24_precision_probe_20261001.py": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_model_e2e_mergefix_20261001.py": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3"
+  },
+  "native_build_result_sha256": "2bbafc6fccfd4a0c5a6bca2cbf3d9c739270032ce6b4abd5d693261d49460bc8",
+  "native_binary": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guarded-rounding-build-cpu-20261002-r3/extension/a3_guarded_rounding_20261002_r3.so",
+    "sha256": "bfb40e36c3dd692004c9beee6d47b6f16f2f13d7f50707738aed2810ed7c2d0b"
+  },
+  "stock_input_sha256": "0aafa01f30a4d4bcc4941ac0d507da94b28d7fa76417e034067dd58ee1d13ab6",
+  "outputs_sha256": "ae22e256b2c59293229e18e81f8dfe584754d4c811ffab2be3d2707e92ca4de1",
+  "service_final": "inactive",
+  "production_source_modified": false,
+  "formal_performance": "NOT_RUN",
+  "limits": "Finite, internally generated K4096 double-MXFP8 recipe only. Raw-window arithmetic is an experimentally validated Thor numerical model, not an official universal ISA contract. Conservative guard/recompute is an expensive precision control; no native BF16 Tensor Core GEMM or Torch dot executes in its branch. No whole-model feedback, generation, KV or accepted optimization."
+}

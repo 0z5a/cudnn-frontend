@@ -1,0 +1,17 @@
+{
+  "stage": "POSTFIXED_BOUNDARY_PAIR_FULL24_TERMINAL",
+  "head": "ce0e08a850962eaad039708aeb270c8cb6adf326",
+  "boundary_result_sha256": "6e31a63d9939d4756cffc5a5eb133419aee67359a2b6e6ce6d86cd02cc3cae13",
+  "model_stage": "ALL_THREE_FORWARD_GATES_PASS_COSTLY_PRECISION_CONTROL",
+  "pair_result_sha256": "1d5d537ba44b28033b66eeb77199b34452ec890a2a1d9c241a378dd7922589d8",
+  "files": {
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_postfixed_guard_boundary_pair_model_20261002_r1.py": "c5c0b595e9a4f33540fc467d33a691f153bf860c305567d9b78464adcf5842e2",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_boundary_queued_20261002_r4.py": "cd3da84b6a658e7c879f7b7e0abec555d3db22c6302b0138ddfbc0dcf378ac47",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r3.py": "922fe6c6f6501129cf125e5b5599171969bb7fc02a0fb5e1705694c5e6470701",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_full_model_20261002_r5.py": "db5e7a24694bf73dd5720e804fd9039b49c7b6860520f11f82c980d74fe68311"
+  },
+  "generation_kv": "NOT_RUN_NEW_CANDIDATE",
+  "paired_whole_model_performance": "NOT_RUN",
+  "accepted_optimization": false,
+  "limits": "Actual new conservative bound, native boundaries, 584 enclosure comparisons, 80 paired repair-wrapper observations and original3 full24 forwards. Wrapper timing is not whole-model throughput or completion; prior application passcode83 failure remains recorded."
+}

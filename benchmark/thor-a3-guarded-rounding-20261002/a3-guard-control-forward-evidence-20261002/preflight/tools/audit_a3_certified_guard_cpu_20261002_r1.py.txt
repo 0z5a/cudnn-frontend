@@ -1,0 +1,178 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""CPU-only independent audit of frozen guard feasibility, not native success.
+
+Checks all144 saved tensors against actual prior native/stock captures, every
+stored bound and mask decision, and fresh predeclared integer-scalar target
+coordinates. Producer and native CUDA module are never imported.
+"""
+
+import argparse
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HELPER = Path(__file__).with_name("validate_a3_mxfp8_window_cpu_20261001.py")
+spec = importlib.util.spec_from_file_location("a3_guard_audit_quant", HELPER)
+q = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(q)
+d, t = q.d, q.t
+from safetensors import safe_open
+
+COLUMNS = [0, 1, 15, 16, 31, 32, 33, 63, 64, 127, 255, 511, 512, 767, 991, 1023]
+
+
+def sha(path):
+    h = hashlib.sha256()
+    with Path(path).open("rb") as f:
+        for chunk in iter(lambda: f.read(4194304), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def tensor_info(tensor):
+    tensor = tensor.contiguous()
+    return {"shape": list(tensor.shape), "dtype": str(tensor.dtype), "sha256": hashlib.sha256(tensor.flatten().view(t.uint8).numpy().tobytes()).hexdigest()}
+
+
+def words(value):
+    return value.contiguous().view(t.int32)
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized()
+    assert sha(HELPER) == "28277feb56f6fd2f254b9f54301dd68d477703a0caf3c4c34e0acc1e27b7617f"
+    assert sha(q.HELPER) == "91533128b0e22ec3d65b5778c61aed4a9c4bf0d2d0cd4fccfa9d2d0579d84c97"
+    producer = ROOT / "results/a3-certified-bf16-guard-cpu-20261001-r1"
+    status = json.loads(producer.with_name(producer.name + "-launch").joinpath("run.json").read_text())
+    meta = json.loads((producer / "result.json").read_text())
+    assert status["status"] == "EXITED" and status["returncode"] == 0 and status["signal"] is None
+    assert meta["stage"] == "CPU_CERTIFIED_GUARD_FEASIBILITY_COMPLETE_NOT_NATIVE_REPAIR"
+    assert not meta["cuda_initialized"] and meta["native_calls"] == 0
+    assert sha(ROOT / "tools/probe_a3_certified_bf16_guard_cpu_20261001.py") == meta["harness_sha256"]
+    assert sha(producer / "outputs.pt") == meta["outputs_sha256"]
+    stock_dir = ROOT / "results/a3-residual-staging-20261001-r1"
+    native_dir = ROOT / "results/a3-all24-actual-c-stage-20261001-r2"
+    checkpoint = Path("/home/jwipc/models/granite-3.1-1b-a400m-instruct-0da7a48b/model.safetensors")
+    assert sha(stock_dir / "outputs.pt") == meta["input_outputs_sha256"] == "34be866726f1e7c30c66af3d1009e07070b88ea045e8966d037772dd9d240ed1"
+    assert sha(native_dir / "outputs.pt") == meta["native_outputs_sha256"] == "846d6a3778850d9fde1fe8dfa3cc2329d5aec053a77f318f6f972507b2c96190"
+    assert sha(checkpoint) == meta["checkpoint_sha256"] == "ac02591061f1344027a7e7b11dbb4143f75f166c47dc09b742f5de3ab1dde1d1"
+    values = t.load(producer / "outputs.pt", map_location="cpu", weights_only=True)
+    stock = t.load(stock_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    native = t.load(native_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    assert len(values) == 144 and len(meta["rows"]) == 24
+    columns = t.tensor(COLUMNS)
+    rows, scalar = [], []
+    with safe_open(str(checkpoint), framework="pt", device="cpu") as weights:
+        for layer in range(24):
+            prefix = f"{layer}/"
+            observed = values[prefix + "native_c"]
+            desired = values[prefix + "desired_input_only_c"]
+            corrected = values[prefix + "cpu_predicted_repaired_c"]
+            original = values[prefix + "original_stock_bf16"]
+            certificate = values[prefix + "certified"]
+            bound = values[prefix + "bound"]
+            assert observed.shape == desired.shape == corrected.shape == original.shape == certificate.shape == bound.shape == (584, 16)
+            assert t.equal(words(observed), words(native[f"{layer}/torch.bfloat16/c"][:, columns]))
+            assert t.equal(original.view(t.int16), stock[f"local/{layer}"]["original_bf16_local"]["c"][:, columns].contiguous().view(t.int16))
+            assert t.isfinite(bound).all() and (bound >= 0).all()
+            assert ((observed.double() - desired.double()).abs() <= bound).all()
+            low, high = observed.double() - bound, observed.double() + bound
+            lower, upper = low.float(), high.float()
+            lower = t.where(lower.double() > low, t.nextafter(lower, t.full_like(lower, -t.inf)), lower)
+            upper = t.where(upper.double() < high, t.nextafter(upper, t.full_like(upper, t.inf)), upper)
+            expected_certificate = lower.to(t.bfloat16).view(t.int16) == upper.to(t.bfloat16).view(t.int16)
+            assert t.equal(certificate, expected_certificate)
+            wrong = observed.to(t.bfloat16).view(t.int16) != desired.to(t.bfloat16).view(t.int16)
+            assert not (certificate & wrong).any()
+            assert t.equal(words(corrected), words(t.where(certificate, observed, desired)))
+            assert t.equal(corrected.to(t.bfloat16).view(t.int16), desired.to(t.bfloat16).view(t.int16))
+            assert t.equal(desired.to(t.bfloat16).view(t.int16), original.view(t.int16))
+            hidden = stock[f"stock_input/{layer}"]["original"]
+            index = stock[f"stock_route/{layer}"]["index"]
+            order = t.argsort(index.flatten(), stable=True)
+            experts = index.flatten()[order]
+            original_weight = weights.get_tensor(f"model.layers.{layer}.block_sparse_moe.input_linear.weight")
+            gate, up = original_weight.chunk(2, 1)
+            packed = t.stack((gate.reshape(32, -1, 32, 1024), up.reshape(32, -1, 32, 1024)), 2).reshape(32, 1024, 1024)[:, columns]
+            _, _, _, _, effective_x = q.expanded(hidden[order // 8], "A")
+            _, _, _, _, effective_w = q.expanded(packed, "B")
+            xbits = effective_x.to(t.bfloat16).view(t.int16).to(t.int32) & 65535
+            wbits = effective_w.to(t.bfloat16).view(t.int16).to(t.int32) & 65535
+            coordinates = t.randperm(584 * 16, generator=t.Generator().manual_seed(2026100201 + layer))[:8].tolist()
+            for coordinate in coordinates:
+                row, column = divmod(coordinate, 16)
+                expert = int(experts[row])
+                prediction = d.scalar_prediction(xbits[row].tolist(), wbits[expert, column].tolist(), 25)
+                assert prediction == (int(words(desired)[row, column]) & 0xFFFFFFFF)
+                scalar.append({"layer": layer, "route": row, "expert": expert, "packed_column": COLUMNS[column], "fp32_word": prediction})
+            heldout = experts != 0 if layer == 0 else t.ones(584, dtype=t.bool)
+            record = {
+                "layer": layer,
+                "count": observed.numel(),
+                "heldout_count": int(heldout.sum()) * 16,
+                "ambiguous": int((~certificate).sum()),
+                "native_wrong_target": int(wrong.sum()),
+                "wrong_certified": 0,
+                "predicted_repair_wrong_target": 0,
+                "target_wrong_actual_stock_bf16": 0,
+                "new_scalar_coordinates": 8,
+            }
+            producer_row = meta["rows"][layer]
+            assert record["count"] == producer_row["count"] and record["heldout_count"] == producer_row["heldout_count"]
+            assert (
+                record["ambiguous"] == producer_row["ambiguous_recompute_count"]
+                and record["native_wrong_target"] == producer_row["native_bf16_wrong_vs_declared_staged_target"]
+            )
+            rows.append(record)
+            print(json.dumps(record), flush=True)
+    count = sum(row["count"] for row in rows)
+    ambiguous = sum(row["ambiguous"] for row in rows)
+    assert count == meta["total_count"] == 224256 and ambiguous == meta["total_ambiguous_count"] == 220051
+    assert sum(row["heldout_count"] for row in rows) == meta["total_heldout_count"] == 223680
+    assert sum(row["native_wrong_target"] for row in rows) == meta["native_wrong_target_total"] == 24
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "CPU_GUARD_FEASIBILITY_INDEPENDENTLY_AUDITED_NOT_NATIVE_SUCCESS",
+        "producer_status": status,
+        "producer_outputs_sha256": sha(producer / "outputs.pt"),
+        "producer_result_sha256": sha(producer / "result.json"),
+        "tensor_count": len(values),
+        "tensors": {name: tensor_info(tensor) for name, tensor in values.items()},
+        "rows": rows,
+        "count": count,
+        "heldout_count": 223680,
+        "ambiguous": ambiguous,
+        "ambiguous_fraction": ambiguous / count,
+        "native_wrong_target": 24,
+        "wrong_certified": 0,
+        "predicted_repair_wrong_target": 0,
+        "target_wrong_actual_stock_bf16": 0,
+        "new_scalar_count": len(scalar),
+        "scalar_coordinates": scalar,
+        "cuda_initialized": False,
+        "new_native_calls": 0,
+        "harness_sha256": sha(__file__),
+        "quant_helper_sha256": sha(HELPER),
+        "window_helper_sha256": sha(q.HELPER),
+        "input_outputs_sha256": sha(stock_dir / "outputs.pt"),
+        "native_outputs_sha256": sha(native_dir / "outputs.pt"),
+        "checkpoint_sha256": sha(checkpoint),
+        "limits": "All144 saved CPU feasibility tensors audited against frozen actual native/stock data, all224256 values and192 fresh independently implemented scalar targets. This is not an official hardware-contract proof, new GPU result, actual native repair or full-model/performance success. Bound is far too loose (~98% recompute) for promotion.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({key: result[key] for key in ("stage", "tensor_count", "count", "ambiguous", "new_scalar_count", "new_native_calls")}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

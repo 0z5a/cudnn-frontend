@@ -1,0 +1,30 @@
+{
+  "stage": "LATEST_POSTFIXED_GUARD_CANDIDATE_TERMINAL",
+  "head": "ce0e08a850962eaad039708aeb270c8cb6adf326",
+  "base": "90181b05fafa352de430c7244daaf855fa4063c5",
+  "binding": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+    "sha256": "f8e1555dcba3cd56f4e1f27736d67431b164308c7252b12a86626c1a7f286563"
+  },
+  "boundary_test_head": "5f1b6e17bbd741e3bbc2210a11434cb42bad3751",
+  "model_stage": "POSTFIXED_BOUNDARY_PAIR_FULL24_TERMINAL",
+  "model_result_sha256": "a7a42ccad80ccafbb7a4a3b5f98effdca69d42903e4a9739f2545ac0d2af59e9",
+  "files": {
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_postfixed_guard_queued_20261002_r1.py": "360d8175f655590c812a27a1e1d60714abc5deee1547aa90783310e9acd51214",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_postfixed_guard_boundary_pair_model_20261002_r1.py": "c5c0b595e9a4f33540fc467d33a691f153bf860c305567d9b78464adcf5842e2",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_mxfp8_bf16_staged_full_model_worker_20261001.py": "62304d6cc59fc2b604a19efe1c60c075e0737c6898de191404e4bbb6baf057d1",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r4.py": "7de4a50b53f3b3dd56b220bca242cf0537e459ba74a4ddbdcab94d0d9a865728",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_all24_precision_probe_20261001.py": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_model_e2e_mergefix_20261001.py": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-frozen-input-ids-audit-cpu-20261002-r1/result.json": "549a2a8176bc444b281d0bbab937c1c1a0c35c971428d5afad55c37f724b9dbb",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-9018-regression-20261002-r1/result.json": "c30cd5217ea83eebd3342a357d9f097eae4cfb90d1e2afd1d514fa3d86aaa5ac",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-guard-verified-regression-model-20261002-r2/boundaries/result.json": "dea2d398bb691ffeaaedbef660e1d0f9c1ad77e124a61853ace69b098a0de741",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-model-repair-a3sfdlatest4-n256-20261001/input-token-ids.json": "0983f2e3e173eb5d6dd1fdb286b1bd96b513bff54b1f1a2724cc76bdc82122dc",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_boundary_queued_20261002_r4.py": "cd3da84b6a658e7c879f7b7e0abec555d3db22c6302b0138ddfbc0dcf378ac47",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_full_model_20261002_r5.py": "db5e7a24694bf73dd5720e804fd9039b49c7b6860520f11f82c980d74fe68311"
+  },
+  "generation_kv": "NOT_RUN",
+  "formal_performance": "NOT_RUN",
+  "limits": "New postfixed candidate with actual boundaries, repair-wrapper pairs and3 original full24 forwards. Generation and paired whole-model performance pending; no accepted feature or completion."
+}

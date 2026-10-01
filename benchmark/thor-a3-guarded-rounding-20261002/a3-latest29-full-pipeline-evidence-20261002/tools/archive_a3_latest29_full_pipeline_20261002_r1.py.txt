@@ -1,0 +1,113 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Archive completed latest-head native/Granite evidence without tensors or binaries."""
+
+import hashlib
+import json
+from pathlib import Path
+import shutil
+import tarfile
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+NAME = "a3-latest29-full-pipeline-evidence-20261002"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def main():
+    destination = ROOT / "results/a3-latest29-full-pipeline-archive-20261002-r1"
+    destination.mkdir(exist_ok=False)
+    tree = destination / NAME
+    tree.mkdir()
+    names = [
+        "a3-latest29-postfixed-full-pipeline-20261002-r1",
+        "a3-latest29-forward-cpu-audit-20261002-r1",
+        "a3-latest29-generation_pair-cpu-audit-20261002-r1",
+    ]
+    wanted, runs = [], []
+    for name in names:
+        folder = ROOT / "results" / name
+        launch = folder.with_name(name + "-launch")
+        run = json.loads((launch / "run.json").read_text())
+        assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+        runs.append({"name": name, "run": run})
+        wanted.extend(
+            p
+            for p in folder.rglob("*")
+            if p.is_file() and p.suffix in (".json", ".log", ".xml") and not any(v in p.parts for v in ("cache", "__pycache__", "extension"))
+        )
+        wanted.extend(p for p in launch.iterdir() if p.is_file() and p.suffix in (".json", ".log"))
+    preparation = ROOT / "results/prepare-reuse-a3-latest-29a0-20261002-r1-launch"
+    prepared_run = json.loads((preparation / "run.json").read_text())
+    assert prepared_run["status"] == "EXITED" and prepared_run["returncode"] == 0 and prepared_run["signal"] is None
+    runs.append({"name": preparation.name, "run": prepared_run})
+    wanted.extend(p for p in preparation.iterdir() if p.is_file() and p.suffix in (".json", ".log"))
+    wanted.append(ROOT / "results/a3-latest-29a0-native-provenance-20261002.json")
+    baseline = ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    wanted.extend((baseline / "input-token-ids.json", baseline / "result.json"))
+    sources = [
+        "prepare_reuse_a3_latest_29a0_20261002_r1.py",
+        "run_a3_latest_29a0_regression_queued_20261002_r1.py",
+        "a3_guarded_rounding_model_runtime_20261002_r2.py",
+        "a3_guarded_rounding_request_runtime_20261002_r1.py",
+        "a3_postfixed_full_generation_pair_20261002_r1.py",
+        "a3_latest29_postfixed_full_pipeline_queued_20261002_r1.py",
+        "audit_a3_latest29_forward_cpu_20261002_r1.py",
+        "audit_a3_latest29_generation_pair_cpu_20261002_r1.py",
+        "a3_guarded_rounding_full_model_20261002_r5.py",
+        Path(__file__).name,
+    ]
+    wanted.extend(ROOT / "tools" / name for name in sources)
+    manifest = []
+    for path in sorted(set(wanted)):
+        assert path.is_file() and path.suffix in (".py", ".json", ".log", ".xml")
+        relative = path.relative_to(ROOT)
+        target = tree / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(path, target)
+        assert sha(target) == sha(path)
+        manifest.append({"path": str(relative), "size": path.stat().st_size, "sha256": sha(path)})
+    status = tree / "TERMINAL_LATEST29_RUNS.json"
+    status.write_text(
+        json.dumps(
+            {
+                "runs": runs,
+                "head": "a24a7401bb7d26d42d88d98b316f634ef487301c",
+                "upstream": "29a06d9cdc8843e33c5e374846be3bb0560a0711",
+                "native_binding_reused_after_all_114_inputs_identical": True,
+                "production_native_tests_passed": 31,
+                "complete_forward_numeric_cases_passed": 3,
+                "cached_generation_numeric_cases_passed": 5,
+                "application_answers_passed": 4,
+                "application_answers_checked": 5,
+                "private_control_paired_lengths": [256, 1024],
+                "raw_factory_byte_identity_label_stale_and_preserved": True,
+                "limits": "Private serial-integer versus postfixed-integer controls, with unchanged MXFP8 main/oracle/gates. Not a stock BF16/default K1024 speedup or accepted production feature. Original 83-token application check fails identically in stock, oracle and native.",
+            },
+            indent=2,
+        )
+        + "\n"
+    )
+    manifest.append({"path": status.name, "size": status.stat().st_size, "sha256": sha(status)})
+    (tree / "MANIFEST.json").write_text(
+        json.dumps({"files": manifest, "excluded": ["cache", "models", "engines", "PT", "native/JIT binaries", "Git bundle"]}, indent=2) + "\n"
+    )
+    tar = destination / (NAME + ".tar.gz")
+    with tarfile.open(tar, "w:gz") as archive:
+        archive.add(tree, arcname=NAME)
+    result = {
+        "path": str(tar),
+        "sha256": sha(tar),
+        "size": tar.stat().st_size,
+        "manifest_entries": len(manifest),
+        "file_count": len(manifest) + 1,
+        "runs": len(runs),
+    }
+    (destination / "archive.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result), flush=True)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,119 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Native control boundaries/model after independently audited 31 production checks.
+
+Shared lock is acquired before any GPU import; prior source/binding stays
+frozen. No other job interruption, service, timer, clock or power change.
+"""
+
+import argparse
+import fcntl
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import sys
+import time
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "5f1b6e17bbd741e3bbc2210a11434cb42bad3751"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    tools = Path(__file__).parent
+    paths = [
+        Path(__file__),
+        tools / "finalize_a3_latest_bed_regression_cpu_20261002_r1.py",
+        ROOT / "results/a3-latest-bed-regression-cpu-finalize-20261002-r1/result.json",
+        ROOT / "results/a3-latest-bed-regression-cpu-finalize-20261002-r1-launch/run.json",
+        tools / "a3_guarded_rounding_boundary_queued_20261002_r3.py",
+        tools / "a3_guarded_rounding_full_model_20261002_r3.py",
+        tools / "a3_repair_import_probe_20261001.py",
+        tools / "a3_repair_matrix_select_20261001.py",
+    ]
+    before = {str(path): sha(path) for path in paths}
+    native = json.loads((ROOT / "results/a3-latest-bed-native-provenance-20261002.json").read_text())
+    assert native["native_build"] == "FRESH_RC0" and native["head"] == HEAD and native["base"] == "bed94f7e8362d3d0714fe40ab5aeb099c323949b"
+    assert native["build_run"]["returncode"] == 0 and native["build_run"]["status"] == "EXITED"
+    assert sha(native["binding"]["path"]) == native["binding"]["sha256"]
+    args.expected_source = native["source"]
+    args.expected_head = HEAD
+    args.expected_binding_sha = native["binding"]["sha256"]
+    (out / "queue_frozen_sources.json").write_text(json.dumps({"files": before, "native": native}, indent=2) + "\n")
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        start = time.monotonic()
+        (out / "admission_wait.json").write_text(json.dumps({"stage": "WAITING_FOR_SHARED_LOCK", "pid": os.getpid(), "torch_imported": False}) + "\n")
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - start > 30:
+                    (out / "admission.json").write_text(json.dumps({"stage": "NOT_RUN_SHARED_LOCK_BUSY", "torch_imported": False}) + "\n")
+                    return 75
+                time.sleep(1)
+        assert "torch" not in sys.modules and {str(path): sha(path) for path in paths} == before
+        assert all(sha(Path(args.expected_source) / item["path"]) == item["sha256"] for item in native["native_input_digests"])
+        (out / "admission.json").write_text(
+            json.dumps({"stage": "LOCK_ADMITTED", "pid": os.getpid(), "torch_imported": False, "wait_seconds": time.monotonic() - start}) + "\n"
+        )
+        os.environ["A3_LATEST_GUARD_LOCK_ADMITTED"] = "1"
+        qualified = json.loads(paths[2].read_text())
+        audit_run = json.loads(paths[3].read_text())
+        assert audit_run["status"] == "EXITED" and audit_run["returncode"] == 0 and audit_run["signal"] is None
+        assert qualified["head"] == HEAD and qualified["base"] == native["base"]
+        assert qualified["passed"] == 31 and qualified["skipped"] == 0 and qualified["actual_native_calls"] == 61
+        assert qualified["GPU_tests_repeated"] is False and qualified["new_native_calls"] == 0 and qualified["original_driver_rc"] == 1
+        assert qualified["pytest_run"]["status"] == "EXITED" and qualified["pytest_run"]["returncode"] == 0
+        assert qualified["fresh_binding"]["sha256"] == native["binding"]["sha256"]
+        assert sha(paths[1]) == qualified["harness_sha256"]
+        (out / "regression_prerequisite.json").write_text(
+            json.dumps({"qualified": qualified, "audit_run": audit_run, "result_sha256": sha(paths[2]), "GPU_tests_repeated": False}, indent=2) + "\n"
+        )
+        boundary = out / "boundaries"
+        boundary.mkdir()
+        b = load("a3_latest_native_guard_boundaries", paths[4])
+        b.execute(args, boundary)
+        model = out / "model"
+        model.mkdir()
+        g = load("a3_latest_native_guard_model", paths[5])
+        g.execute(args, model, boundary)
+        assert {str(path): sha(path) for path in paths} == before
+        result = {
+            "stage": "LATEST_REGRESSION_AND_NATIVE_ROUNDING_CONTROL_TERMINAL",
+            "source_head": HEAD,
+            "base": native["base"],
+            "binding": native["binding"],
+            "independently_verified_prior_regression_result_sha256": sha(paths[2]),
+            "GPU_tests_repeated": False,
+            "boundaries_result_sha256": sha(boundary / "result.json"),
+            "model_result_sha256": sha(model / "result.json"),
+            "frozen_sources": before,
+            "model_stage": json.loads((model / "result.json").read_text())["stage"],
+            "limits": "Costly precision control only. No generation/KV/formal performance or production precision acceptance.",
+        }
+        (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps(result), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

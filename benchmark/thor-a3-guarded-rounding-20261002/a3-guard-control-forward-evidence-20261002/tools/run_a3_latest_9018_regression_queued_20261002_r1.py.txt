@@ -1,0 +1,146 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Frozen latest-head native regression with bounded admission before GPU use."""
+
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import time
+import xml.etree.ElementTree as ET
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "ce0e08a850962eaad039708aeb270c8cb6adf326"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def execute(out):
+    source = ROOT / "a3sfdlatest9018"
+    python = ROOT / "venvs/a3sfdlatest9018/bin/python"
+    out.mkdir(exist_ok=False)
+    native = json.loads((ROOT / "results/a3-latest-9018-native-provenance-20261002.json").read_text())
+    assert native["native_build"] == "FRESH_RC0" and native["head"] == HEAD
+    assert sha(native["binding"]["path"]) == native["binding"]["sha256"]
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == HEAD
+    for record in native["native_input_digests"]:
+        assert sha(source / record["path"]) == record["sha256"]
+    env = os.environ.copy()
+    env.update(PYTHONPATH=str(ROOT / "tools"), A3_EXPECT_SOURCE=str(source), A3_EXPECT_HEAD=HEAD, A3_IMPORT_LOG=str(out / "imports"))
+    tests = [
+        "gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+        "gemm/cutedsl/test_swiglu_amax_per_call.py",
+        "gemm/cutedsl/test_swiglu_wrapper_launch_stream.py",
+        "gemm/cutedsl/test_grouped_gemm_swiglu.py::test_grouped_gemm_swiglu_wrapper_fp4",
+        "gemm/cutedsl/test_grouped_gemm_swiglu.py::test_grouped_gemm_swiglu_wrapper_fp8",
+        "gemm/cutedsl/test_grouped_gemm_canonical_layouts.py::test_grouped_gemm_swiglu_canonical_matches_legacy",
+        "gemm/cutedsl/test_grouped_gemm_canonical_layouts.py::test_grouped_gemm_swiglu_canonical_bf16_prob",
+    ]
+    assert os.environ.get("A3_LATEST_GUARD_LOCK_ADMITTED") == "1"
+    assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+    logger = "/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py"
+    test_out = out / "pytest"
+    rc = subprocess.run(
+        [
+            str(python),
+            logger,
+            "--out",
+            str(test_out),
+            "--cwd",
+            str(source / "test/python"),
+            "--timeout",
+            "1200",
+            "--",
+            str(python),
+            "-m",
+            "pytest",
+            "-p",
+            "a3_repair_import_probe_20261001",
+            "-p",
+            "a3_repair_matrix_select_20261001",
+            "-o",
+            "addopts=",
+            "-q",
+            "--grouped-gemm-nkl=1024,1024,4",
+            "--junitxml=" + str(test_out / "junit.xml"),
+            *tests,
+        ],
+        env=env,
+    ).returncode
+    if rc:
+        return rc
+    run = json.loads((test_out / "run.json").read_text())
+    assert run["returncode"] == 0 and run["status"] == "EXITED"
+    xml = ET.parse(test_out / "junit.xml").getroot()
+    cases = list(xml.iter("testcase"))
+    assert len(cases) == 31 and (not list(xml.iter("skipped"))) and (not list(xml.iter("failure"))) and (not list(xml.iter("error")))
+    imports = [json.loads(p.read_text()) for p in (out / "imports").glob("*.json") if not p.name.startswith("matrix-selection-")]
+    assert imports and all(v["source_head"] == HEAD and v["pytest_exitstatus"] == 0 for v in imports)
+    workers = [v for v in imports if v["worker"] is not None]
+    coordinators = [v for v in imports if v["worker"] is None]
+    assert len(workers) == len(coordinators) == 1
+    assert sum(v["actual_native_calls"] for v in workers) == 61
+    assert all(v["actual_native_calls"] == 0 for v in coordinators)
+    for v in imports:
+        assert v["binding"]["sha256"] == native["binding"]["sha256"]
+        for item in v.values():
+            if isinstance(item, dict) and "path" in item and "sha256" in item:
+                assert Path(item["path"]).resolve().is_relative_to(source / "python")
+                assert sha(item["path"]) == item["sha256"]
+    assert all(sha(source / item["path"]) == item["sha256"] for item in native["native_input_digests"])
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+    result = {
+        "stage": "LATEST_NATIVE_REGRESSION_PASS_NOT_ALL24_MODEL_SUCCESS",
+        "head": HEAD,
+        "base": native["base"],
+        "passed": len(cases),
+        "skipped": 0,
+        "actual_native_calls": sum((v["actual_native_calls"] for v in imports)),
+        "fresh_binding": native["binding"],
+        "run": run,
+        "imports": imports,
+        "harness_sha256": sha(__file__),
+        "formal_model_performance": "NOT_RUN",
+        "full24_model_success": False,
+        "service_final": "inactive",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "head": HEAD, "passed": 31, "skipped": 0}), flush=True)
+    return 0
+
+
+def main():
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    a = parser.parse_args()
+    out = Path(a.out)
+    assert not out.exists()
+    admission = out.with_name(out.name + "-admission")
+    admission.mkdir(exist_ok=False)
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        start = time.monotonic()
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - start > 30:
+                    (admission / "result.json").write_text(json.dumps({"stage": "NOT_RUN_SHARED_LOCK_BUSY", "torch_imported": False}) + "\n")
+                    return 75
+                time.sleep(1)
+        (admission / "result.json").write_text(
+            json.dumps({"stage": "LOCK_ADMITTED", "pid": os.getpid(), "torch_imported": False, "wait_seconds": time.monotonic() - start}) + "\n"
+        )
+        os.environ["A3_LATEST_GUARD_LOCK_ADMITTED"] = "1"
+        return execute(out)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

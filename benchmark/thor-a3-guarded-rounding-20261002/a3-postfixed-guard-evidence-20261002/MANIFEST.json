@@ -1,0 +1,242 @@
+{
+  "files": [
+    {
+      "path": "results/a3-guarded-rounding-build-cpu-20261002-r4/frozen_inputs.json",
+      "size": 520,
+      "sha256": "8d35765e3f0a2fc16c41f65cd8e7fb7c6af62326c23365212ca2cf2e13a2d282"
+    },
+    {
+      "path": "results/a3-guarded-rounding-build-cpu-20261002-r4/result.json",
+      "size": 1390,
+      "sha256": "bcae2f32c358e735b6c8529ae0adbd3f83e07cb5aba02b02563fb8ded3366113"
+    },
+    {
+      "path": "results/a3-guarded-rounding-build-cpu-20261002-r4-launch/run.json",
+      "size": 656,
+      "sha256": "4eea40f6dcaa50350517e9032be1e8683ce43e2eeb19978abdfc2567331e3770"
+    },
+    {
+      "path": "results/a3-guarded-rounding-build-cpu-20261002-r4-launch/stderr.log",
+      "size": 197,
+      "sha256": "ce7e0baf2738ec442479a27dcce3b9e2c1a4dcd457f015a08319fb9c4c3d3632"
+    },
+    {
+      "path": "results/a3-guarded-rounding-build-cpu-20261002-r4-launch/stdout.log",
+      "size": 3288,
+      "sha256": "501e4a7830282d9eb53363a7b3bfbce9445a8a0de05d1d124fa697e07e66fdd0"
+    },
+    {
+      "path": "results/a3-model-repair-a3sfdlatest4-n256-20261001/input-token-ids.json",
+      "size": 21027,
+      "sha256": "0983f2e3e173eb5d6dd1fdb286b1bd96b513bff54b1f1a2724cc76bdc82122dc"
+    },
+    {
+      "path": "results/a3-model-repair-a3sfdlatest4-n256-20261001/result.json",
+      "size": 34298,
+      "sha256": "74e662122f4aa17a3f491584bef1194d42bdfb92420b6daadf36cea8f23c3063"
+    },
+    {
+      "path": "results/a3-postfixed-guard-20261002-r1/admission.json",
+      "size": 110,
+      "sha256": "7101982796d2b773fb67082a8c4cf941ea7c0a76c0796489d191933485e6cbea"
+    },
+    {
+      "path": "results/a3-postfixed-guard-20261002-r1/candidate/boundaries/frozen_inputs.json",
+      "size": 3225,
+      "sha256": "8a35b087e6df399db7972acff64b6265d4c324a86e40486f194492f91f9aeabc"
+    },
+    {
+      "path": "results/a3-postfixed-guard-20261002-r1/candidate/boundaries/partial.json",
+      "size": 3340,
+      "sha256": "f280824e3282778b0ff435065567ac279016c7bf71f19d5818e1777a494df013"
+    },
+    {
+      "path": "results/a3-postfixed-guard-20261002-r1/candidate/boundaries/result.json",
+      "size": 8798,
+      "sha256": "6e31a63d9939d4756cffc5a5eb133419aee67359a2b6e6ce6d86cd02cc3cae13"
+    },
+    {
+      "path": "results/a3-postfixed-guard-20261002-r1/candidate/model/frozen_inputs.json",
+      "size": 2607,
+      "sha256": "00f5ac799f3bf641cc55c7b7c99945104a1e265d42589c809a1c030e07b44ee3"
+    },
+    {
+      "path": "results/a3-postfixed-guard-20261002-r1/candidate/model/partial.json",
+      "size": 8436,
+      "sha256": "b06666d6afb43c147ba88d3eb38f8ee8b73308cd3b4216ea608440ba6c735788"
+    },
+    {
+      "path": "results/a3-postfixed-guard-20261002-r1/candidate/model/result.json",
+      "size": 22574,
+      "sha256": "f9cc8ae1f4c55f3d2fe804309424db938e08859c8675e9d7ef765d2d9ce2b109"
+    },
+    {
+      "path": "results/a3-postfixed-guard-20261002-r1/candidate/pair.json",
+      "size": 26910,
+      "sha256": "1d5d537ba44b28033b66eeb77199b34452ec890a2a1d9c241a378dd7922589d8"
+    },
+    {
+      "path": "results/a3-postfixed-guard-20261002-r1/candidate/result.json",
+      "size": 1512,
+      "sha256": "a7a42ccad80ccafbb7a4a3b5f98effdca69d42903e4a9739f2545ac0d2af59e9"
+    },
+    {
+      "path": "results/a3-postfixed-guard-20261002-r1/frozen_inputs.json",
+      "size": 30014,
+      "sha256": "1f11cb38dcfbbe2d9f14ee1a44f66c24c4485ffe60d9bbefce969a22d5a25aa3"
+    },
+    {
+      "path": "results/a3-postfixed-guard-20261002-r1/result.json",
+      "size": 3293,
+      "sha256": "82b34eff06dff44db9e6bd3fbc7c2e5a0c75542afdf9e93b7d3c1d0ee8085e62"
+    },
+    {
+      "path": "results/a3-postfixed-guard-20261002-r1-launch/run.json",
+      "size": 643,
+      "sha256": "dfcba7182f486cd80ee6c37fb0adcb6c56d72135518facf92596ff22df7d30e3"
+    },
+    {
+      "path": "results/a3-postfixed-guard-20261002-r1-launch/stderr.log",
+      "size": 193,
+      "sha256": "52cdf4b8a7f17a63bdde0ec2cf59f134b435368d5f109e60daa58f5d9b9a73ff"
+    },
+    {
+      "path": "results/a3-postfixed-guard-20261002-r1-launch/stdout.log",
+      "size": 11430,
+      "sha256": "cb1f1328c6b06b76c6690807557f88583aadaa87bb2d43766b39556dc655dd79"
+    },
+    {
+      "path": "results/a3-postfixed-guard-boundary-cpu-audit-20261002-r1/result.json",
+      "size": 11042,
+      "sha256": "30f200683f7fcdb95af62ea54d4a7b3b0983d152237aea16c4184ff4a930d6aa"
+    },
+    {
+      "path": "results/a3-postfixed-guard-boundary-cpu-audit-20261002-r1-launch/run.json",
+      "size": 673,
+      "sha256": "df29070c30973ddb23086b866d1f676fcb091bca78a953aee92d4605e64b7f7b"
+    },
+    {
+      "path": "results/a3-postfixed-guard-boundary-cpu-audit-20261002-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-postfixed-guard-boundary-cpu-audit-20261002-r1-launch/stdout.log",
+      "size": 1571,
+      "sha256": "dd112a35ac5ba0b010a71db3857f05f6e223fc747d9261c42d65a643a4cc553d"
+    },
+    {
+      "path": "results/a3-postfixed-guard-full_model-cpu-audit-20261002-r1/result.json",
+      "size": 6893,
+      "sha256": "ae797ae77b09237836820d31d185b5d97c3d105a6a8ab9b5c3ffc349ab66cb55"
+    },
+    {
+      "path": "results/a3-postfixed-guard-full_model-cpu-audit-20261002-r1-launch/run.json",
+      "size": 788,
+      "sha256": "bd005a6d150ec881f4c53a7a6a3c7bc9fa42251160b3b788e9952414cffc5e8d"
+    },
+    {
+      "path": "results/a3-postfixed-guard-full_model-cpu-audit-20261002-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-postfixed-guard-full_model-cpu-audit-20261002-r1-launch/stdout.log",
+      "size": 1846,
+      "sha256": "14581fb94152fedd8c4eb0b95b3f6a369570f0ef9cc0b4e2db53957e6b73612e"
+    },
+    {
+      "path": "results/a3-postfixed-guard-pair-cpu-audit-20261002-r1/result.json",
+      "size": 2894,
+      "sha256": "95f857d03e0133c90fb2f20d128976b8e7120fef89149a90a121416ff9d0a27e"
+    },
+    {
+      "path": "results/a3-postfixed-guard-pair-cpu-audit-20261002-r1-launch/run.json",
+      "size": 665,
+      "sha256": "0384c5e9d87b55ef2718fab6d3374766f3ace4876ad5ec29de4d7098507117d9"
+    },
+    {
+      "path": "results/a3-postfixed-guard-pair-cpu-audit-20261002-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-postfixed-guard-pair-cpu-audit-20261002-r1-launch/stdout.log",
+      "size": 797,
+      "sha256": "b727da11c645cb3f0da11b873999fb960283fe0fc4f7b884b869916309543368"
+    },
+    {
+      "path": "tools/a3_guarded_rounding_boundary_queued_20261002_r4.py",
+      "size": 20332,
+      "sha256": "cd3da84b6a658e7c879f7b7e0abec555d3db22c6302b0138ddfbc0dcf378ac47"
+    },
+    {
+      "path": "tools/a3_guarded_rounding_full_model_20261002_r5.py",
+      "size": 13385,
+      "sha256": "db5e7a24694bf73dd5720e804fd9039b49c7b6860520f11f82c980d74fe68311"
+    },
+    {
+      "path": "tools/a3_guarded_rounding_native_20261002_r4.cpp",
+      "size": 1113,
+      "sha256": "c29b6b645a620466dc31dceea18acf5b9ffcd49b913994700ebc8e41f12cf81c"
+    },
+    {
+      "path": "tools/a3_guarded_rounding_native_20261002_r4.cu",
+      "size": 16802,
+      "sha256": "35cd2bf3207504f45c8325d68f6d453276d3c93076df52329c77a82414495d26"
+    },
+    {
+      "path": "tools/a3_guarded_rounding_native_20261002_r4.py",
+      "size": 4195,
+      "sha256": "7de4a50b53f3b3dd56b220bca242cf0537e459ba74a4ddbdcab94d0d9a865728"
+    },
+    {
+      "path": "tools/a3_postfixed_guard_boundary_pair_model_20261002_r1.py",
+      "size": 9696,
+      "sha256": "c5c0b595e9a4f33540fc467d33a691f153bf860c305567d9b78464adcf5842e2"
+    },
+    {
+      "path": "tools/a3_postfixed_guard_queued_20261002_r1.py",
+      "size": 6333,
+      "sha256": "360d8175f655590c812a27a1e1d60714abc5deee1547aa90783310e9acd51214"
+    },
+    {
+      "path": "tools/archive_a3_postfixed_guard_20261002_r1.py",
+      "size": 4398,
+      "sha256": "1a3bebfb7136fd4c0ca6e9f57deca0200b4d9d39a0fe48cfe2efb54aff026960"
+    },
+    {
+      "path": "tools/audit_a3_postfixed_guard_boundary_cpu_20261002_r1.py",
+      "size": 8972,
+      "sha256": "178b25123ea5c90ce7f84ad6f6ebb53c6c83b016c6d1ab099f0ae5a74794db6b"
+    },
+    {
+      "path": "tools/audit_a3_postfixed_guard_full_model_cpu_20261002_r1.py",
+      "size": 7614,
+      "sha256": "afa2ac0a4e1d2a6470e2387dbbc3f8cd3caf6cb6d07697f9d609336285c10977"
+    },
+    {
+      "path": "tools/audit_a3_postfixed_guard_pair_cpu_20261002_r1.py",
+      "size": 6977,
+      "sha256": "620d624108353dc51900d5c1fee1fda964e6da0ede05fffdc6f80c83532cf862"
+    },
+    {
+      "path": "tools/build_a3_guarded_rounding_cpu_20261002_r4.py",
+      "size": 2416,
+      "sha256": "2dd86afbe8ecfeb607cbfe20c147af987bda799d601ff84e07d5b5ebe7b71e76"
+    },
+    {
+      "path": "TERMINAL_POSTFIXED_RUNS.json",
+      "size": 4736,
+      "sha256": "e146b0da3b4de01c6d506df36c30d0b2e188c79601c055ad8e9929a3f468db18"
+    }
+  ],
+  "excluded": [
+    "cache",
+    "models",
+    "engines",
+    "PT",
+    "native/JIT binaries",
+    "Git bundle"
+  ]
+}

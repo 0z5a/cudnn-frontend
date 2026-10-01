@@ -1,0 +1,224 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""CPU proof/check of a postfixed enclosure replacing serial bound recurrence.
+
+For S bounding every exact prefix, A(E) alignment and U(E) normalization
+loss, an E satisfying E >= N*(A(E)+U(E)) bounds every one of N updates by
+induction. Upward FP64 operations and an extra factor2 margin are used here.
+This changes only an input-derived conservative bound, never target arithmetic.
+No CUDA-module import, GPU launch or native/performance acceptance.
+"""
+
+import argparse
+import importlib.util
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+HELPER = Path(__file__).with_name("validate_a3_mxfp8_window_cpu_20261001.py")
+spec = importlib.util.spec_from_file_location("a3_postfixed_quant", HELPER)
+q = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(q)
+d, t = q.d, q.t
+from safetensors import safe_open
+
+
+def up(x):
+    # All operations here are nonnegative. In the stated normal FP64 domain,
+    # zero is exact; do not turn an exact zero bound into a signed-zero tie.
+    return t.where(x == 0, 0.0, t.nextafter(x, t.full_like(x, t.inf)))
+
+
+def exponent(x):
+    bits = (x.contiguous().view(t.int64) >> 52) & 2047
+    assert t.isfinite(x).all() and (x > 0).all() and (bits > 0).all()
+    return bits - 1023
+
+
+def step(s, e, raw, group):
+    upper = up(s + e)
+    quantum = t.maximum(exponent(upper), raw) - 25
+    alignment = (group + 1) * t.ldexp(t.ones_like(s), quantum)
+    intermediate = up(upper + alignment)
+    ulp = t.ldexp(t.ones_like(s), (exponent(intermediate) - 23).clamp(min=-149))
+    return up(alignment + ulp)
+
+
+def postfixed(s, raw, group, updates):
+    zero = s == 0
+    safe_s = t.where(zero, 1.0, s)
+    error = up(4.0 * updates * step(safe_s, t.zeros_like(safe_s), raw, group))
+    iterations = t.zeros_like(raw)
+    for iteration in range(1, 9):
+        rhs = up(updates * step(safe_s, error, raw, group))
+        certified = error >= up(2.0 * rhs)
+        iterations = t.where((iterations == 0) & certified, iteration, iterations)
+        if bool(certified.all()):
+            break
+        error = t.where(certified, error, up(error * 2.0))
+    assert certified.all(), "No unproven candidate enclosure may be returned"
+    assert (error >= rhs).all()
+    return t.where(zero, 0.0, error), t.where(zero, 0, iterations)
+
+
+def serial(s, raw, group, updates):
+    # Independent validation comparator: original per-instruction recurrence.
+    zero = s == 0
+    safe_s = t.where(zero, 1.0, s)
+    error = t.zeros_like(s)
+    for _ in range(updates):
+        error = up(error + step(safe_s, error, raw, group))
+    return t.where(zero, 0.0, error)
+
+
+def norm(value):
+    value = value.double()
+    return up(value.square().sum(-1).sqrt() * (1 + 8 * value.shape[-1] * 2.0**-53))
+
+
+def product(a, b):
+    v = a * b
+    return t.where((a == 0) | (b == 0), 0.0, up(v))
+
+
+def summary(effective, raw, operand):
+    shape = effective.shape[:-1]
+    blocks = effective.reshape(*shape, 32, 4, 32)
+    high = blocks[..., 0, :].reshape(*shape, 1024)
+    low = blocks[..., 2 if operand == "A" else 1, :].reshape(*shape, 1024)
+    target = (high + low).to(t.bfloat16)
+    word = target.view(t.int16).to(t.int32) & 65535
+    encoded = (word >> 7) & 255
+    assert not ((encoded == 0) & (target != 0)).any(), "Current held-out corpus is normal BF16 or zero; no subnormal hardware claim"
+    target_raw = t.where(target == 0, -10000, encoded.clamp(min=1) - 127).amax(-1)
+    native_raw = t.where(effective == 0, -10000, raw).amax(-1)
+    delta = high.double() + low.double() - target.double()
+    return norm(target), norm(effective), norm(delta), target_raw, native_raw
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized()
+    assert d.sha(HELPER) == "28277feb56f6fd2f254b9f54301dd68d477703a0caf3c4c34e0acc1e27b7617f"
+    assert d.sha(q.HELPER) == "91533128b0e22ec3d65b5778c61aed4a9c4bf0d2d0cd4fccfa9d2d0579d84c97"
+    # Predeclared powers and their adjacent FP64 numbers, including cancellation
+    # enclosures with an intentionally loose product raw-exponent bound.
+    base = t.ldexp(
+        t.ones(24, dtype=t.float64), t.tensor([-298, -252, -149, -126, -64, -32, -16, -8, -4, -2, -1, 0, 1, 2, 4, 8, 16, 32, 64, 96, 126, 127, 192, 254])
+    )
+    s = t.cat([t.zeros(1, dtype=t.float64), base, t.nextafter(base, t.zeros_like(base)), up(base)])
+    nonzero_exp = exponent(t.where(s == 0, 1.0, s))
+    synthetic = []
+    for group, updates in ((32, 128), (16, 64)):
+        for raw_delta in (-12, 0, 6, 20):
+            raw = nonzero_exp + raw_delta
+            bound, iterations = postfixed(s, raw, group, updates)
+            compare = serial(s, raw, group, updates)
+            assert (bound >= compare).all()
+            synthetic.append(
+                {
+                    "group": group,
+                    "updates": updates,
+                    "raw_delta": raw_delta,
+                    "count": s.numel(),
+                    "max_iterations": int(iterations.max()),
+                    "serial_enclosed": True,
+                }
+            )
+    prior = d.ROOT / "results/a3-residual-staging-20261001-r1"
+    guard = d.ROOT / "results/a3-certified-bf16-guard-cpu-20261001-r1"
+    audit = d.ROOT / "results/a3-certified-guard-independent-cpu-audit-20261002-r1"
+    audited = json.loads((audit / "result.json").read_text())
+    assert audited["tensor_count"] == 144 and audited["new_scalar_count"] == 192 and not audited["cuda_initialized"]
+    assert d.sha(guard / "outputs.pt") == audited["producer_outputs_sha256"]
+    captured = t.load(prior / "outputs.pt", map_location="cpu", weights_only=True)
+    checked = t.load(guard / "outputs.pt", map_location="cpu", weights_only=True)
+    checkpoint = Path("/home/jwipc/models/granite-3.1-1b-a400m-instruct-0da7a48b/model.safetensors")
+    assert d.sha(checkpoint) == audited["checkpoint_sha256"]
+    columns = t.tensor([0, 1, 15, 16, 31, 32, 33, 63, 64, 127, 255, 511, 512, 767, 991, 1023])
+    saved, rows = {}, []
+    with safe_open(str(checkpoint), framework="pt", device="cpu") as weights:
+        for layer in range(24):
+            hidden, index = captured[f"stock_input/{layer}"]["original"], captured[f"stock_route/{layer}"]["index"]
+            order = t.argsort(index.flatten(), stable=True)
+            experts = index.flatten()[order]
+            w = weights.get_tensor(f"model.layers.{layer}.block_sparse_moe.input_linear.weight")
+            gate, up_weight = w.chunk(2, 1)
+            packed = t.stack((gate.reshape(32, -1, 32, 1024), up_weight.reshape(32, -1, 32, 1024)), 2).reshape(32, 1024, 1024)[:, columns]
+            _, ax, ar, _, _ = q.expanded(hidden[order // 8], "A")
+            _, bx, br, _, _ = q.expanded(packed, "B")
+            nx, nmx, dx, rx, rmx = summary(ax, ar, "A")
+            nw, nmw, dw, rw, rmw = summary(bx, br, "B")
+            target_s, native_s = product(nx[:, None], nw[experts]), product(nmx[:, None], nmw[experts])
+            raw_native, raw_target = rmx[:, None] + rmw[experts], rx[:, None] + rw[experts]
+            en, ni = postfixed(native_s, raw_native, 32, 128)
+            er, ri = postfixed(target_s, raw_target, 16, 64)
+            assert (en >= serial(native_s, raw_native, 32, 128)).all() and (er >= serial(target_s, raw_target, 16, 64)).all()
+            reconstruction = up(product(dx[:, None], nw[experts]) + product(nx[:, None], dw[experts]) + product(dx[:, None], dw[experts]))
+            total = up(en + er + reconstruction)
+            native, target = checked[f"{layer}/native_c"], checked[f"{layer}/desired_input_only_c"]
+            assert ((native.double() - target.double()).abs() <= total).all()
+            low, high = native.double() - total, native.double() + total
+            lo, hi = low.float(), high.float()
+            lo = t.where(lo.double() > low, t.nextafter(lo, t.full_like(lo, -t.inf)), lo)
+            hi = t.where(hi.double() < high, t.nextafter(hi, t.full_like(hi, t.inf)), hi)
+            mask = lo.to(t.bfloat16).view(t.int16) == hi.to(t.bfloat16).view(t.int16)
+            wrong = native.to(t.bfloat16).view(t.int16) != target.to(t.bfloat16).view(t.int16)
+            assert not (mask & wrong).any()
+            predicted = t.where(mask, native, target)
+            assert t.equal(predicted.to(t.bfloat16).view(t.int16), target.to(t.bfloat16).view(t.int16))
+            row = {
+                "layer": layer,
+                "count": mask.numel(),
+                "ambiguous": int((~mask).sum()),
+                "wrong_certified": 0,
+                "predicted_wrong_target": 0,
+                "max_native_iterations": int(ni.max()),
+                "max_target_iterations": int(ri.max()),
+                "serial_bound_enclosed": True,
+            }
+            rows.append(row)
+            saved.update(
+                {
+                    f"{layer}/bound": total,
+                    f"{layer}/mask": mask,
+                    f"{layer}/native_iterations": ni,
+                    f"{layer}/target_iterations": ri,
+                    f"{layer}/predicted": predicted,
+                }
+            )
+            print(json.dumps(row), flush=True)
+    t.save(saved, out / "outputs.pt")
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "CPU_POSTFIXED_ENCLOSURE_VALIDATED_NOT_NATIVE_PERFORMANCE",
+        "proof": "Each exact prefix <=S. With monotone alignment/normalization loss F(E)=N*(A(E)+U(E)), a postfixed E>=F(E) bounds every accumulated loss by induction. Upward FP64 evaluation and the stricter E>=2*F(E) check avoid relying on an empirical bias or target output. All-zero dots handled exactly.",
+        "synthetic": synthetic,
+        "synthetic_count": sum(row["count"] for row in synthetic),
+        "rows": rows,
+        "count": sum(row["count"] for row in rows),
+        "ambiguous": sum(row["ambiguous"] for row in rows),
+        "max_iterations": max(max(row["max_native_iterations"], row["max_target_iterations"]) for row in rows),
+        "wrong_certified": 0,
+        "cpu_predicted_wrong_target": 0,
+        "cuda_initialized": False,
+        "native_calls": 0,
+        "input_cpu_audit_sha256": d.sha(audit / "result.json"),
+        "input_guard_outputs_sha256": d.sha(guard / "outputs.pt"),
+        "checkpoint_sha256": d.sha(checkpoint),
+        "outputs_sha256": d.sha(out / "outputs.pt"),
+        "harness_sha256": d.sha(Path(__file__)),
+        "limits": "Conditional raw-window arithmetic enclosure only, not official universal Thor ISA semantics. All224256 fixed normal-BF16-or-zero targets checked. Looser bound can increase recompute. No CUDA implementation/measurement, full-model feedback, generation/KV, accuracy acceptance or throughput gain.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({key: result[key] for key in ("stage", "count", "ambiguous", "max_iterations", "synthetic_count")}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

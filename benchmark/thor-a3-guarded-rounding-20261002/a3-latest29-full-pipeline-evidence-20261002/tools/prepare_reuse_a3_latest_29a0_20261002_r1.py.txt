@@ -1,0 +1,103 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Independent latest-upstream checkout; reuse only after all native inputs match."""
+
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "a24a7401bb7d26d42d88d98b316f634ef487301c"
+BASE = "29a06d9cdc8843e33c5e374846be3bb0560a0711"
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    old, source = ROOT / "a3sfdlatest9018", ROOT / "a3sfdlatest29a0"
+    bundle = ROOT / "tools/a3-latest-29a0-20261002.bundle"
+    assert sha(bundle) == "19fb597c9ac15c933113716e2ea107b6257bf0f14a450177fbf55a2b9ad11145"
+    assert not source.exists()
+    subprocess.run(["git", "clone", "--shared", "--no-checkout", str(old), str(source)], check=True)
+    subprocess.run(["git", "-C", str(source), "bundle", "verify", str(bundle)], check=True)
+    subprocess.run(["git", "-C", str(source), "fetch", str(bundle), "codex/a3-sfd-latest-29a0-20261002"], check=True)
+    subprocess.run(["git", "-C", str(source), "checkout", "--detach", HEAD], check=True)
+    assert subprocess.check_output(["git", "-C", str(source), "merge-base", "HEAD", BASE], text=True).strip() == BASE
+    files = subprocess.check_output(["git", "-C", str(source), "ls-files"], text=True).splitlines()
+    native = [
+        p
+        for p in files
+        if p.startswith(("include/", "cmake/"))
+        or p in ("CMakeLists.txt", "setup.py", "pyproject.toml")
+        or (p.startswith("python/") and Path(p).suffix in (".h", ".hpp", ".cpp", ".cc", ".cu", ".c"))
+    ]
+    changed = [p for p in native if not (old / p).exists() or (old / p).read_bytes() != (source / p).read_bytes()]
+    assert not changed, "Cannot reuse a binding after native input changes"
+    envdir = ROOT / "venvs/a3sfdlatest29a0"
+    assert not envdir.exists()
+    subprocess.run(["python3", "-m", "venv", str(envdir)], check=True)
+    oldsite = ROOT / "venvs/a3sfdlatest9018/lib/python3.12/site-packages"
+    site = envdir / "lib/python3.12/site-packages"
+    for p in oldsite.iterdir():
+        destination = site / p.name
+        if destination.exists() or p.name == "__pycache__":
+            continue
+        if p.name.startswith("__editable__"):
+            assert p.is_file()
+            destination.write_text(p.read_text().replace(str(old), str(source)))
+        elif p.name.startswith("nvidia_cudnn_frontend"):
+            if p.is_dir():
+                shutil.copytree(p, destination, symlinks=True)
+            else:
+                shutil.copyfile(p, destination)
+        elif p.suffix == ".pth":
+            destination.write_bytes(p.read_bytes())
+        else:
+            destination.symlink_to(p, target_is_directory=p.is_dir())
+    old_provenance = json.loads((ROOT / "results/a3-latest-9018-native-provenance-20261002.json").read_text())
+    assert old_provenance["head"] == "ce0e08a850962eaad039708aeb270c8cb6adf326"
+    assert len(native) == len(old_provenance["native_input_digests"])
+    assert all(sha(source / item["path"]) == item["sha256"] for item in old_provenance["native_input_digests"])
+    previous = Path(old_provenance["binding"]["path"])
+    assert sha(previous) == old_provenance["binding"]["sha256"]
+    binding = source / previous.relative_to(old)
+    shutil.copyfile(previous, binding)
+    python = envdir / "bin/python"
+    code = "import os,json,torch,cudnn;from cudnn import _compiled_module as b;assert os.environ['CUDA_VISIBLE_DEVICES']=='' and not torch.cuda.is_initialized();print(json.dumps({'cudnn_path':cudnn.__file__,'binding_path':b.__file__,'cuda_initialized':False}))"
+    validation = json.loads(subprocess.check_output([str(python), "-c", code], cwd=source, env=os.environ, text=True))
+    assert Path(validation["cudnn_path"]).resolve().is_relative_to(source / "python") and Path(validation["binding_path"]).resolve() == binding.resolve()
+    assert sha(binding) == sha(previous)
+    assert subprocess.check_output(["git", "-C", str(old), "rev-parse", "HEAD"], text=True).strip() == old_provenance["head"]
+    assert not subprocess.check_output(["git", "-C", str(old), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    record = {
+        "head": HEAD,
+        "base": BASE,
+        "source": str(source),
+        "native_build": "REUSED_BYTE_IDENTICAL_ALL_NATIVE_INPUTS_UNCHANGED",
+        "changed_native_inputs": changed,
+        "native_input_digests": [{"path": p, "sha256": sha(source / p)} for p in native],
+        "binding": {"path": str(binding), "sha256": sha(binding)},
+        "prior_fresh_native_build": old_provenance["build_run"],
+        "prior_native_provenance_sha256": sha(ROOT / "results/a3-latest-9018-native-provenance-20261002.json"),
+        "old_source_unchanged": True,
+        "import_validation": validation,
+        "harness_sha256": sha(Path(__file__)),
+        "bundle_sha256": sha(bundle),
+        "cuda_initialized": False,
+        "new_native_calls": 0,
+        "GPU_tests": "NOT_RUN",
+    }
+    (ROOT / "results/a3-latest-29a0-native-provenance-20261002.json").write_text(json.dumps(record, indent=2) + "\n")
+    print(json.dumps({k: record[k] for k in ["head", "base", "native_build", "binding", "GPU_tests"]}), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

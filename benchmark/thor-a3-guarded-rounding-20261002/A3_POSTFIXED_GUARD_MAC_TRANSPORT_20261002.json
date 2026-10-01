@@ -1,0 +1,10 @@
+{
+  "verified": true,
+  "archive": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-postfixed-guard-evidence-20261002.tar.gz",
+  "archive_sha256": "61d9b2b27ec5e0b8b64318e8be5035b43e342cb985763037191e44bfcd90087d",
+  "archive_bytes": 67740,
+  "files_verified": 46,
+  "file_count": 47,
+  "extracted": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-postfixed-guard-evidence-20261002",
+  "scope": "Actual postfixed CUDA boundary, wrapper pairs, three full forwards and three independent CPU audits; generation covered in separate latest archive."
+}

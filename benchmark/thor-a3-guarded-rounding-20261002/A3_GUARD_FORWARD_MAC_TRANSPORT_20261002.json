@@ -1,0 +1,19 @@
+{
+  "archive": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guard-control-forward-archive-20261002-r1/a3-guard-control-forward-evidence-20261002.tar.gz",
+    "sha256": "e56589cf6a7c89ed0740c6ebdf9bcd7972e012e72f44981102075d5d3e4f8780",
+    "size": 232254,
+    "manifest_entries": 189,
+    "file_count": 190,
+    "runs": 13
+  },
+  "all_manifest_files_verified": true,
+  "excluded": [
+    "cache",
+    "engines",
+    "models",
+    ".pt",
+    "native_binaries",
+    "Git bundle"
+  ]
+}

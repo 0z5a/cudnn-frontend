@@ -1,0 +1,156 @@
+{
+  "qualified": {
+    "stage": "INDEPENDENT_CPU_FINALIZATION_LATEST_NATIVE_31_PASS_NOT_MODEL_SUCCESS",
+    "head": "5f1b6e17bbd741e3bbc2210a11434cb42bad3751",
+    "base": "bed94f7e8362d3d0714fe40ab5aeb099c323949b",
+    "passed": 31,
+    "skipped": 0,
+    "actual_native_calls": 61,
+    "test_function_counts": {
+      "test_narrow_sfd_matches_wide_and_independent_activation": 8,
+      "test_narrow_sfd_plan_reuse_preserves_previous_outputs": 2,
+      "test_narrow_sfd_graph_replay_changes_live_scales": 1,
+      "test_cached_swiglu_amax_is_per_call": 1,
+      "test_swiglu_wrapper_outputs_and_amax_use_launch_stream": 4,
+      "test_grouped_gemm_swiglu_wrapper_fp4": 6,
+      "test_grouped_gemm_swiglu_wrapper_fp8": 4,
+      "test_grouped_gemm_swiglu_canonical_matches_legacy": 4,
+      "test_grouped_gemm_swiglu_canonical_bf16_prob": 1
+    },
+    "pytest_run": {
+      "argv": [
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestbed/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "a3_repair_import_probe_20261001",
+        "-p",
+        "a3_repair_matrix_select_20261001",
+        "-o",
+        "addopts=",
+        "-q",
+        "--grouped-gemm-nkl=1024,1024,4",
+        "--junitxml=/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-guard-regression-model-20261002-r2/regression/pytest/junit.xml",
+        "gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+        "gemm/cutedsl/test_swiglu_amax_per_call.py",
+        "gemm/cutedsl/test_swiglu_wrapper_launch_stream.py",
+        "gemm/cutedsl/test_grouped_gemm_swiglu.py::test_grouped_gemm_swiglu_wrapper_fp4",
+        "gemm/cutedsl/test_grouped_gemm_swiglu.py::test_grouped_gemm_swiglu_wrapper_fp8",
+        "gemm/cutedsl/test_grouped_gemm_canonical_layouts.py::test_grouped_gemm_swiglu_canonical_matches_legacy",
+        "gemm/cutedsl/test_grouped_gemm_canonical_layouts.py::test_grouped_gemm_swiglu_canonical_bf16_prob"
+      ],
+      "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed/test/python",
+      "started_utc": "2026-10-01T20:31:48.808799+00:00",
+      "deadline_seconds": 1200.0,
+      "status": "EXITED",
+      "selected_env": {
+        "CUDA_VISIBLE_DEVICES": "0"
+      },
+      "returncode": 0,
+      "signal": null,
+      "elapsed_seconds": 63.355298893999134
+    },
+    "original_driver_run": {
+      "argv": [
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestbed/bin/python",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latest_guard_regression_and_model_queued_20261002_r1.py",
+        "--out",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-guard-regression-model-20261002-r2"
+      ],
+      "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed",
+      "started_utc": "2026-10-01T20:31:48.696567+00:00",
+      "deadline_seconds": 2400.0,
+      "status": "EXITED",
+      "selected_env": {
+        "CUDA_VISIBLE_DEVICES": "0"
+      },
+      "returncode": 1,
+      "signal": null,
+      "elapsed_seconds": 63.510238524999295
+    },
+    "original_driver_rc": 1,
+    "driver_failure": "Post-test audit incorrectly required xdist coordinator to execute kernels; coordinator nativecalls0 is expected. Real test process rc0, native worker61 calls and all31 JUnit cases verified independently.",
+    "driver_source_sha256": "5a477d877b169284cd7efb5734d5cddce3a7a02391f867f806acdc90f5d73650",
+    "fresh_binding": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+      "sha256": "62eb85f7ad394b662a107b23263bce36f4dcca2bbb88b21c0989787d6100041d"
+    },
+    "imports": [
+      {
+        "source_head": "5f1b6e17bbd741e3bbc2210a11434cb42bad3751",
+        "cudnn": {
+          "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed/python/cudnn/__init__.py",
+          "sha256": "3f7bcedcf6d1666cab81c64c9e7c68c7a6898c4123201534a2409eb5ada64cf9"
+        },
+        "binding": {
+          "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+          "sha256": "62eb85f7ad394b662a107b23263bce36f4dcca2bbb88b21c0989787d6100041d"
+        },
+        "swiglu_api": {
+          "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+          "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+        },
+        "actual_native_calls": 0,
+        "pytest_exitstatus": 0,
+        "worker": null
+      },
+      {
+        "source_head": "5f1b6e17bbd741e3bbc2210a11434cb42bad3751",
+        "cudnn": {
+          "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed/python/cudnn/__init__.py",
+          "sha256": "3f7bcedcf6d1666cab81c64c9e7c68c7a6898c4123201534a2409eb5ada64cf9"
+        },
+        "binding": {
+          "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+          "sha256": "62eb85f7ad394b662a107b23263bce36f4dcca2bbb88b21c0989787d6100041d"
+        },
+        "swiglu_api": {
+          "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+          "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+        },
+        "cudnn.gemm.cutedsl.grouped.swiglu.grouped_gemm_swiglu_quant.BlockScaledContiguousGroupedGemmKernel": {
+          "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+          "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+        },
+        "actual_native_calls": 61,
+        "pytest_exitstatus": 0,
+        "worker": "gw0"
+      }
+    ],
+    "selections": [
+      {
+        "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-guard-regression-model-20261002-r2/regression/imports/matrix-selection-395600.json",
+        "sha256": "984ab995e403dd86e650bb5bc055224d846f48f57d8071ce71a5c68a75408ae6",
+        "count": 28
+      }
+    ],
+    "junit_sha256": "a2b0eac158408290a1d2036a4dd06bf925bae95e592f9a1c694699d677a72dd5",
+    "harness_sha256": "7b874668a4c02748bb983464dbc7c62e73aac54ef3b98177c3319ec82ecc1f22",
+    "GPU_tests_repeated": false,
+    "torch_imported": false,
+    "new_native_calls": 0,
+    "full24_model_success": false,
+    "formal_performance": "NOT_RUN",
+    "service_final": "inactive"
+  },
+  "audit_run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestbed/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/finalize_a3_latest_bed_regression_cpu_20261002_r1.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-bed-regression-cpu-finalize-20261002-r1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestbed",
+    "started_utc": "2026-10-01T20:39:05.312672+00:00",
+    "deadline_seconds": 120.0,
+    "status": "EXITED",
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 0.1141551780019654
+  },
+  "result_sha256": "ef098c1c79629854d9383a8779fda1233c054d26c7e7e446cf3f8a36c62c75dc",
+  "GPU_tests_repeated": false
+}

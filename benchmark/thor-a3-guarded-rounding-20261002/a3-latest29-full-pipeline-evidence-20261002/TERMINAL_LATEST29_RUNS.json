@@ -1,0 +1,102 @@
+{
+  "runs": [
+    {
+      "name": "a3-latest29-postfixed-full-pipeline-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latest29_postfixed_full_pipeline_queued_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest29-postfixed-full-pipeline-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest29a0",
+        "started_utc": "2026-10-01T22:34:49.570892+00:00",
+        "deadline_seconds": 2400.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": "0"
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 609.8494330920003
+      }
+    },
+    {
+      "name": "a3-latest29-forward-cpu-audit-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_latest29_forward_cpu_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest29-forward-cpu-audit-20261002-r1",
+          "--input",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest29-postfixed-full-pipeline-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest29a0",
+        "started_utc": "2026-10-01T23:07:51.394138+00:00",
+        "deadline_seconds": 600.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 2.377843648995622
+      }
+    },
+    {
+      "name": "a3-latest29-generation_pair-cpu-audit-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_latest29_generation_pair_cpu_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest29-generation_pair-cpu-audit-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest29a0",
+        "started_utc": "2026-10-01T23:07:51.394682+00:00",
+        "deadline_seconds": 600.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 6.136482919006085
+      }
+    },
+    {
+      "name": "prepare-reuse-a3-latest-29a0-20261002-r1-launch",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9018/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_reuse_a3_latest_29a0_20261002_r1.py"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9018",
+        "started_utc": "2026-10-01T22:28:18.953807+00:00",
+        "deadline_seconds": 600.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 5.229112465000071
+      }
+    }
+  ],
+  "head": "a24a7401bb7d26d42d88d98b316f634ef487301c",
+  "upstream": "29a06d9cdc8843e33c5e374846be3bb0560a0711",
+  "native_binding_reused_after_all_114_inputs_identical": true,
+  "production_native_tests_passed": 31,
+  "complete_forward_numeric_cases_passed": 3,
+  "cached_generation_numeric_cases_passed": 5,
+  "application_answers_passed": 4,
+  "application_answers_checked": 5,
+  "private_control_paired_lengths": [
+    256,
+    1024
+  ],
+  "raw_factory_byte_identity_label_stale_and_preserved": true,
+  "limits": "Private serial-integer versus postfixed-integer controls, with unchanged MXFP8 main/oracle/gates. Not a stock BF16/default K1024 speedup or accepted production feature. Original 83-token application check fails identically in stock, oracle and native."
+}

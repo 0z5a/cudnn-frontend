@@ -1,0 +1,142 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""One shared-lock admission: actual latest31, full24 forward and full32 pairs."""
+
+import argparse
+import fcntl
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "a24a7401bb7d26d42d88d98b316f634ef487301c"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--out", required=True)
+    args = p.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    tools = Path(__file__).parent
+    native = json.loads((ROOT / "results/a3-latest-29a0-native-provenance-20261002.json").read_text())
+    assert native["head"] == HEAD and native["native_build"] == "REUSED_BYTE_IDENTICAL_ALL_NATIVE_INPUTS_UNCHANGED"
+    assert native["changed_native_inputs"] == [] and len(native["native_input_digests"]) == 114
+    assert sha(native["binding"]["path"]) == native["binding"]["sha256"]
+    qualification = {}
+    for kind in ("boundary", "full_model", "pair"):
+        folder = ROOT / ("results/a3-postfixed-guard-" + kind + "-cpu-audit-20261002-r1")
+        metadata = json.loads((folder / "result.json").read_text())
+        run = json.loads(folder.with_name(folder.name + "-launch").joinpath("run.json").read_text())
+        assert run["status"] == "EXITED" and run["returncode"] == 0
+        qualification[kind] = {"result_sha256": sha(folder / "result.json"), "metadata": metadata, "run": run}
+    assert qualification["full_model"]["metadata"]["quality_all_three_cases_both_gates"]
+    assert qualification["boundary"]["metadata"]["all_c_count"] == 79872 and qualification["pair"]["metadata"]["paired_observations"] == 80
+    files = [
+        Path(__file__),
+        tools / "run_a3_latest_29a0_regression_queued_20261002_r1.py",
+        tools / "a3_postfixed_full_generation_pair_20261002_r1.py",
+        tools / "a3_guarded_rounding_request_runtime_20261002_r1.py",
+        tools / "a3_guarded_rounding_model_runtime_20261002_r2.py",
+        tools / "a3_guarded_rounding_full_model_20261002_r5.py",
+        tools / "a3_mxfp8_bf16_staged_full_model_worker_20261001.py",
+        tools / "a3_guarded_rounding_native_20261002_r4.py",
+        tools / "a3_guarded_rounding_native_20261002_r3.py",
+        tools / "a3_all24_precision_probe_20261001.py",
+        tools / "a3_model_e2e_mergefix_20261001.py",
+        tools / "a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+    ]
+    frozen = {str(path): sha(path) for path in files}
+    (out / "frozen_inputs.json").write_text(json.dumps({"files": frozen, "native": native, "qualification": qualification}, indent=2) + "\n")
+    boundary = ROOT / "results/a3-postfixed-guard-20261002-r1/candidate/boundaries"
+    assert json.loads((boundary / "result.json").read_text())["source_head"] == "ce0e08a850962eaad039708aeb270c8cb6adf326"
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        start = time.monotonic()
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - start > 600:
+                    (out / "admission.json").write_text(json.dumps({"stage": "NOT_RUN_SHARED_LOCK_BUSY", "torch_imported": False}) + "\n")
+                    return 75
+                time.sleep(1)
+        assert "torch" not in sys.modules and {str(path): sha(path) for path in files} == frozen
+        assert all(sha(Path(native["source"]) / item["path"]) == item["sha256"] for item in native["native_input_digests"])
+        (out / "admission.json").write_text(json.dumps({"stage": "LOCK_ADMITTED", "pid": os.getpid(), "wait_seconds": time.monotonic() - start}) + "\n")
+        args.expected_source, args.expected_head, args.expected_binding_sha = native["source"], HEAD, native["binding"]["sha256"]
+        os.environ["A3_LATEST_GUARD_LOCK_ADMITTED"] = "1"
+        regression = load("a3_actual_latest29_native_regression", files[1])
+        rc = regression.execute(out / "regression")
+        if rc:
+            return rc
+        assert "torch" not in sys.modules
+        q = load("a3_guard_boundary_quant", files[6])
+        h = load("a3_guard_boundary_cuda", files[7])
+        m, t = q.m, q.t
+        t.set_num_threads(4)
+        t.backends.cuda.matmul.allow_tf32 = t.backends.cudnn.allow_tf32 = False
+        t.set_float32_matmul_precision("highest")
+        for module in (m.cudnn, m.api, m._compiled_module):
+            assert Path(module.__file__).resolve().is_relative_to(Path(native["source"]) / "python")
+        assert sha(m._compiled_module.__file__) == args.expected_binding_sha
+        forward = out / "forward"
+        forward.mkdir()
+        g = load("a3_latest29_original_full_forward", files[5])
+        g.execute(args, forward, boundary)
+        forward_result = json.loads((forward / "result.json").read_text())
+        if not forward_result["all_three_cases_both_gates"]:
+            return 1
+        e2e = out / "e2e"
+        e2e.mkdir()
+        worker = load("a3_latest29_postfixed_full_generation_pair", files[2])
+        worker.execute(args, e2e, boundary)
+        e2e_result = json.loads((e2e / "result.json").read_text())
+        assert {str(path): sha(path) for path in files} == frozen
+        assert all(sha(Path(native["source"]) / item["path"]) == item["sha256"] for item in native["native_input_digests"])
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        assert not subprocess.check_output(["git", "-C", native["source"], "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+        result = {
+            "stage": "LATEST29_NATIVE_FORWARD_GENERATION_PAIR_TERMINAL",
+            "head": HEAD,
+            "base": native["base"],
+            "binding": native["binding"],
+            "native_binding_reused_only_after_all114_inputs_match": True,
+            "production_gpu_passed": 31,
+            "forward_all_three_gates": True,
+            "all_five_generation_numeric_gates": e2e_result["quality_all_five_numeric_gates_pass"],
+            "all_five_application_answers": e2e_result["application_all_five_answers_pass"],
+            "comparisons": e2e_result["comparisons"],
+            "files": frozen,
+            "regression_result_sha256": sha(out / "regression/result.json"),
+            "forward_result_sha256": sha(forward / "result.json"),
+            "e2e_result_sha256": sha(e2e / "result.json"),
+            "boundary_test_head": "ce0e08a850962eaad039708aeb270c8cb6adf326",
+            "production_feature_accepted": False,
+            "service_final": "inactive",
+            "limits": "Current actual31/latest full24+32-token evidence; old boundary head preserved. Known original-stock refusal remains an application failure. Paired whole-model cost of private rounding controls, not original BF16/defaultK1024 production speedup or completed optimization goal.",
+        }
+        (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps(result), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

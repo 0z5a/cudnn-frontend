@@ -1,0 +1,17 @@
+// SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES.
+// All rights reserved. SPDX-License-Identifier: Apache-2.0
+#include <torch/extension.h>
+
+void guarded_rounding_cuda(const at::Tensor &, const at::Tensor &,
+                           const at::Tensor &, const at::Tensor &,
+                           const at::Tensor &, const at::Tensor &,
+                           const at::Tensor &, const at::Tensor &,
+                           const at::Tensor &, const at::Tensor &,
+                           const at::Tensor &, const at::Tensor &,
+                           const at::Tensor &);
+
+PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
+  m.def("run", &guarded_rounding_cuda,
+        "Private input-MXFP8 integer rounding repair and native BF16-stage "
+        "activation");
+}

@@ -1,0 +1,94 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Diagnose saved reconstruction bytes and unexpected model oracle; CPU only."""
+
+import argparse
+import importlib.util
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+P = Path(__file__).with_name("audit_a3_guard_native_and_oracle_cpu_20261002_r1.py")
+spec = importlib.util.spec_from_file_location("a3_guard_saved_diagnostic", P)
+a = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(a)
+t = a.t
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", required=True)
+    args = ap.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    root = a.ROOT / "results/a3-latest-guard-verified-regression-model-20261002-r2"
+    values = t.load(root / "boundaries/outputs.pt", map_location="cpu", weights_only=True)
+    meta = json.loads((root / "boundaries/result.json").read_text())
+    rows = []
+    for c in meta["rows"]:
+        v = values[c["name"]]
+        for kind, codes, physical, logical, key in [
+            ("A", v["a_codes"], v["sfa"], v["sa"], "effective_a"),
+            ("B", v["b_codes"], v["sfb"], v["sb"], "effective_b"),
+        ]:
+            actual = a.unpack(codes, physical, logical, kind)
+            reference = v[key]
+            different = actual.contiguous().view(t.int32) != reference.contiguous().view(t.int32)
+            coords = t.nonzero(different)[:8].tolist()
+            row = {
+                "case": c["name"],
+                "operand": kind,
+                "different_words": int(different.sum()),
+                "different_values": int((actual != reference).sum()),
+                "max_abs": float((actual - reference).abs().max()),
+                "all_differences_are_signed_zero": bool(((actual == 0) & (reference == 0))[different].all()),
+                "examples": [
+                    {
+                        "index": coord,
+                        "observed_word": int(actual.view(t.int32)[tuple(coord)]),
+                        "saved_effective_word": int(reference.view(t.int32)[tuple(coord)]),
+                    }
+                    for coord in coords
+                ],
+            }
+            rows.append(row)
+            print(json.dumps(row), flush=True)
+    current = t.load(root / "model/partial_outputs.pt", map_location="cpu", weights_only=True)
+    old = a.ROOT / "results/a3-mxfp8-bf16-staged-full-model-20261001-r1/outputs.pt"
+    b = a.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001/outputs.pt"
+    assert a.sha(old) == "96dcdce434fd9efce3bc3045097725eb1024cdfeb68a68cadbddc78306b3babe"
+    assert a.sha(b) == "a997dac0bbd8b137ecbf7ddbefc5f356c2633d75a9d3cde1d035335cb028440f"
+    ov = t.load(old, map_location="cpu", weights_only=True)
+    bv = t.load(b, map_location="cpu", weights_only=True)
+    fresh = current["0/reference"]
+    fixed = ov["k32_mxfp8_dot_bf16_stage/0/reference"]
+    base = bv["forward_0_stock"]
+    model = {
+        "fresh_dtype": str(fresh.dtype),
+        "fixed_dtype": str(fixed.dtype),
+        "original_dtype": str(base.dtype),
+        "fresh_vs_fixed": a.metrics(fresh, fixed),
+        "fresh_vs_original": a.metrics(fresh, base),
+        "fixed_vs_original": a.metrics(fixed, base),
+        "input_ids": current["0/input_ids"].tolist(),
+    }
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "CPU_SAVED_INPUT_AND_ORACLE_DIAGNOSIS",
+        "rows": rows,
+        "model": model,
+        "cuda_initialized": False,
+        "native_calls": 0,
+        "harness_sha256": a.sha(__file__),
+        "auditor_source_sha256": a.sha(P),
+        "boundary_outputs_sha256": a.sha(root / "boundaries/outputs.pt"),
+        "fresh_partial_outputs_sha256": a.sha(root / "model/partial_outputs.pt"),
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(model), flush=True)
+
+
+if __name__ == "__main__":
+    main()
