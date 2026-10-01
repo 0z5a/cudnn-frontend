@@ -1,0 +1,252 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Diagnostic: all24 fused FP16 D consumed by FP32 down projection.
+
+All parameters/layers and original 1% oracle / 5% original-BF16 gates remain.
+No support-gate changes, failure fallback or formal performance measurement.
+"""
+
+import argparse
+import fcntl
+import importlib.util
+import json
+from pathlib import Path
+import subprocess
+
+BASE = Path(__file__).with_name("a3_model_e2e_mergefix_20261001.py")
+spec = importlib.util.spec_from_file_location("a3_precision_base", BASE)
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+t = m.torch
+
+
+def decode_float32(result, norm):
+    d, sf = result["d_tensor"], result["sfd_row_tensor"]
+    assert d.dtype == t.float16 and sf is not None
+    rows, cols = d.shape
+    raw = sf.view(t.uint8).reshape(1, rows // 128, cols // 128, 32, 4, 4)
+    codes = raw.permute(0, 1, 4, 3, 2, 5).contiguous().reshape(rows, cols // 32)
+    scale = t.pow(2.0, codes.int() - 127)
+    return (d.float().reshape(rows, cols // 32, 32) * scale.unsqueeze(-1) / norm).reshape(rows, cols)
+
+
+def reference_fp16_round(activation):
+    """Independent power-of-two normalized FP16 staging of FP32 activation.
+
+    Scale choice does not affect normal FP16 significands. Use an independent
+    ceil power-of-two scale; do not read or copy native output/scale values.
+    """
+    blocks = activation.reshape(activation.shape[0], -1, 32)
+    maximum = blocks.abs().amax(-1)
+    exponent = t.where(maximum > 0, t.ceil(t.log2(maximum)), 0).clamp(-126, 127)
+    scale = t.pow(2.0, exponent)
+    return ((blocks / scale.unsqueeze(-1)).to(t.float16).float() * scale.unsqueeze(-1)).reshape(activation.shape)
+
+
+class PrecisionAdapter(m.A3ExpertAdapter):
+    def __init__(self, expert, index, tile):
+        super().__init__(expert, index, tile)
+        self.down32 = expert.down_proj.detach().float()
+        self.policy = "route_bf16"
+
+    def forward(self, hidden_states, top_k_index, top_k_weights):
+        self.calls += 1
+        x, ends, destinations, order, token_ids, sizes, aligned = self.routing(hidden_states, top_k_index)
+        self.last_counts = sizes
+        a, sfa, ascale = m.quantize_mxfp8(x)
+        if self.mode == "native":
+            result = m.api.grouped_gemm_swiglu_wrapper_sm100(
+                a_tensor=a,
+                b_tensor=self.b,
+                sfa_tensor=sfa,
+                sfb_tensor=self.sfb,
+                padded_offsets=ends,
+                alpha_tensor=self.alpha,
+                norm_const_tensor=self.norm,
+                prob_tensor=None,
+                acc_dtype=t.float32,
+                c_dtype=t.bfloat16,
+                d_dtype=t.float16,
+                mma_tiler_mn=self.tile,
+                cluster_shape_mn=(2, 1),
+                sf_vec_size=32,
+                m_aligned=256,
+                current_stream=m.cuda.CUstream(t.cuda.current_stream().cuda_stream),
+            )
+            d = decode_float32(result, self.norm)
+        elif self.mode in ("reference", "reference_fp32"):
+            if self.bref is None:
+                self.bref = m.dequantize(self.b, self.bscale)
+            adeq = m.dequantize(a, ascale)
+            d = t.zeros((x.shape[0], self.i), dtype=t.float32, device=x.device)
+            start = 0
+            for expert, n in enumerate(aligned):
+                if n:
+                    c = m.F.linear(adeq[start : start + n], self.bref[expert]).reshape(n, -1, 2, 32)
+                    activation = (m.F.silu(c[:, :, 0]) * c[:, :, 1]).reshape(n, self.i)
+                    d[start : start + n] = reference_fp16_round(activation) if self.mode == "reference" else activation
+                start += n
+        else:
+            raise RuntimeError(self.mode)
+        live = d[destinations]
+        dtype = t.bfloat16 if self.policy == "route_bf16" else t.float32
+        routes = t.empty((order.numel(), self.h), dtype=dtype, device=x.device)
+        weights = top_k_weights.flatten()[order].float()
+        start = 0
+        for expert, n in enumerate(sizes):
+            if n:
+                y = m.F.linear(live[start : start + n], self.down32[expert])
+                routes[start : start + n] = (y * weights[start : start + n, None]).to(dtype)
+            start += n
+        unsorted = t.empty_like(routes)
+        unsorted[order] = routes
+        return unsorted.reshape(hidden_states.shape[0], top_k_index.shape[-1], self.h).sum(dim=1).to(hidden_states.dtype)
+
+
+def trace_model(model, adapters, ids, backend):
+    captured = {}
+    m.attach(adapters, backend)
+    for adapter in adapters:
+        original = adapter.expert.forward
+
+        def traced(x, index, prob, original=original, layer=adapter.index):
+            y = original(x, index, prob)
+            captured[layer] = {"x": x.detach().clone(), "index": index.detach().clone(), "prob": prob.detach().clone(), "y": y.detach().clone()}
+            return y
+
+        adapter.expert.forward = traced
+    before = m.NATIVE_CALLS
+    logits = model(input_ids=ids.cuda(), use_cache=False).logits.cpu()
+    assert m.NATIVE_CALLS - before == (24 if backend == "native" else 0)
+    assert len(captured) == 24
+    return logits, {layer: {name: tensor.cpu() for name, tensor in values.items()} for layer, values in captured.items()}
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--expected-source", required=True)
+    parser.add_argument("--expected-head", required=True)
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    source = Path(args.expected_source).resolve()
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == args.expected_head
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    for module in (m.cudnn, m.api, m._compiled_module):
+        assert Path(module.__file__).resolve().is_relative_to(source / "python"), module.__file__
+    t.set_num_threads(4)
+    t.backends.cuda.matmul.allow_tf32 = False
+    t.backends.cudnn.allow_tf32 = False
+    t.set_float32_matmul_precision("highest")
+    rows, trace_rows, saved = [], [], {}
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        model, loading = m.AutoModelForCausalLM.from_pretrained(
+            m.MODEL, dtype=t.bfloat16, attn_implementation="sdpa", local_files_only=True, trust_remote_code=False, output_loading_info=True
+        )
+        assert not any(loading.values()), loading
+        assert sum(p.numel() for p in model.parameters()) == 1334628352
+        model = model.eval().cuda()
+        experts = [e for e in model.modules() if isinstance(e, m.GraniteMoeExperts)]
+        assert len(experts) == 24
+        tokenizer = m.AutoTokenizer.from_pretrained(m.MODEL, local_files_only=True, trust_remote_code=False)
+        _, prompts, workloads = m.load_inputs(tokenizer)
+        cases = [prompts[0], prompts[1], workloads["256"]]
+        baseline_dir = m.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+        baseline_meta = json.loads((baseline_dir / "result.json").read_text())
+        assert baseline_meta["source_head"] == args.expected_head
+        baseline = t.load(baseline_dir / "outputs.pt", map_location="cpu", weights_only=True)
+        base_adapters = [m.A3ExpertAdapter(e, i, (256, 256)) for i, e in enumerate(experts)]
+        with t.inference_mode():
+            traces = {}
+            for backend in ("reference", "native"):
+                logits, traces[backend] = trace_model(model, base_adapters, cases[0], backend)
+                assert t.equal(logits.view(t.uint8), baseline[f"forward_0_{backend}"].view(t.uint8)), "Trace changed baseline output"
+                saved["baseline_" + backend] = traces[backend]
+            for layer in range(24):
+                a, b = traces["native"][layer], traces["reference"][layer]
+                padded_rows = ((a["x"].shape[0] + 127) // 128) * 128
+                quantized = {}
+                for backend, values in (("native", a), ("reference", b)):
+                    x = t.zeros((padded_rows, 1024), dtype=values["x"].dtype)
+                    x[: values["x"].shape[0]] = values["x"]
+                    q, sf, scale = m.quantize_mxfp8(x)
+                    quantized[backend] = (q.view(t.uint8), scale)
+                qa, sa = quantized["native"]
+                qb, sb = quantized["reference"]
+                row = {
+                    "layer": layer,
+                    "hidden_input": m.difference(a["x"], b["x"]),
+                    "expert_output": m.difference(a["y"], b["y"]),
+                    "route_slots_differ": (a["index"] != b["index"]).sum().item(),
+                    "tokens_route_set_differ": (a["index"].sort(-1).values != b["index"].sort(-1).values).any(-1).sum().item(),
+                    "input_fp8_codes_differ": (qa != qb).sum().item(),
+                    "input_scale_blocks_differ": (sa != sb).sum().item(),
+                }
+                trace_rows.append(row)
+                print(json.dumps({"stage": "BASELINE_LAYER_TRACE", **row}), flush=True)
+            m.attach(base_adapters, "stock")
+            adapters = [PrecisionAdapter(e, i, (256, 256)) for i, e in enumerate(experts)]
+            for policy in ("route_bf16", "merge_fp32"):
+                for adapter in adapters:
+                    adapter.policy = policy
+                for case, ids in enumerate(cases):
+                    outputs = {}
+                    for backend in ("reference", "reference_fp32", "native"):
+                        m.attach(adapters, backend)
+                        before = m.NATIVE_CALLS
+                        outputs[backend] = model(input_ids=ids.cuda(), use_cache=False).logits.cpu()
+                        assert m.NATIVE_CALLS - before == (24 if backend == "native" else 0)
+                        saved[f"{policy}_{case}_{backend}"] = outputs[backend]
+                    oracle = m.difference(outputs["native"], outputs["reference"])
+                    stock = m.difference(outputs["native"], baseline[f"forward_{case}_stock"])
+                    row = {
+                        "policy": policy,
+                        "case": case,
+                        "input_tokens": ids.shape[-1],
+                        "mxfp8_layers": list(range(24)),
+                        "fused_d_dtype": "float16",
+                        "decoded_d_and_down_projection_dtype": "float32",
+                        "native_calls": 24,
+                        "quantized_oracle": oracle,
+                        "ideal_fp32_activation_oracle": m.difference(outputs["native"], outputs["reference_fp32"]),
+                        "original_bf16": stock,
+                        "oracle_gate_pass": oracle["relative_l2"] <= 0.01,
+                        "bf16_gate_pass": stock["relative_l2"] <= 0.05,
+                    }
+                    rows.append(row)
+                    print(json.dumps({"stage": "PRECISION_POLICY", **row}), flush=True)
+                    (out / "partial.json").write_text(json.dumps({"trace_rows": trace_rows, "rows": rows}, indent=2))
+        t.save(saved, out / "outputs.pt")
+        assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+        result = {
+            "stage": "DIAGNOSTIC_COMPLETE",
+            "scope": __doc__,
+            "source_head": args.expected_head,
+            "source": str(source),
+            "model_parameters": 1334628352,
+            "checkpoint": baseline_meta["checkpoint"],
+            "trace_baseline_bytes_unchanged": True,
+            "trace_rows": trace_rows,
+            "rows": rows,
+            "native_calls": m.NATIVE_CALLS,
+            "native_plans": m.NATIVE_PLANS,
+            "imports": {
+                name: {"path": module.__file__, "sha256": m.sha_file(module.__file__)}
+                for name, module in (("cudnn", m.cudnn), ("api", m.api), ("binding", m._compiled_module))
+            },
+            "harness_sha256": m.sha_file(__file__),
+            "base_adapter_sha256": m.sha_file(BASE),
+            "formal_performance": "NOT_RUN",
+            "service_final": "inactive",
+        }
+        assert m.NATIVE_CALLS == 168
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        (out / "result.json").write_text(json.dumps(result, indent=2))
+        print(json.dumps({"stage": result["stage"], "native_calls": m.NATIVE_CALLS}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

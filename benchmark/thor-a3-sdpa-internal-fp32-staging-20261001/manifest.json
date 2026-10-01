@@ -1,0 +1,123 @@
+{
+  "stage": "COMPLETED_AND_CPU_AUDITED_NOT_FULL24_SUCCESS",
+  "scope": "SDPA-internal-only FP32 staging, frozen independent oracle/all24/full model unchanged, both short oracle compatibility bounds fail/native not run, long24nativecalls failoracle1%; all4full logits independently audited; production unchanged",
+  "files": [
+    {
+      "path": "results/a3-latest-e2-native-provenance-20261001.json",
+      "size": 18959,
+      "sha256": "30ea6cd6a09d73b01d22215d98c2d7a5964d04d97489f64b876fa979013b3840"
+    },
+    {
+      "path": "results/a3-sdpa-internal-fp32-mxfp8-staged-20261001-r1-launch/run.json",
+      "size": 802,
+      "sha256": "a80196004494cd582d572730ddbb80cd9d45d3863cd098db59409de068b28f19"
+    },
+    {
+      "path": "results/a3-sdpa-internal-fp32-mxfp8-staged-20261001-r1-launch/stderr.log",
+      "size": 193,
+      "sha256": "1c05b273f40b4efbaf72726216d14fee41e07f277348633943ab5c36c1d0f4a7"
+    },
+    {
+      "path": "results/a3-sdpa-internal-fp32-mxfp8-staged-20261001-r1-launch/stdout.log",
+      "size": 1851,
+      "sha256": "11e29ae4c2fac6d9226cf6a12a8967171081e1f1da7887ef683f28a7856f8cd9"
+    },
+    {
+      "path": "results/a3-sdpa-internal-fp32-mxfp8-staged-20261001-r1/admission.json",
+      "size": 106,
+      "sha256": "a9bc469fb380ebabab4657fc0381668bcd93b7f185fc70df9526684a3ef1e8e2"
+    },
+    {
+      "path": "results/a3-sdpa-internal-fp32-mxfp8-staged-20261001-r1/admission_wait.json",
+      "size": 76,
+      "sha256": "35fd631e10f35d2cacef45f28f8f0b61f1937118a1f24618ebc913b070d88c74"
+    },
+    {
+      "path": "results/a3-sdpa-internal-fp32-mxfp8-staged-20261001-r1/partial.json",
+      "size": 3011,
+      "sha256": "73ff313dc28262cd9c640daa4508ffaffb8de59b41165da7fd263705156b4463"
+    },
+    {
+      "path": "results/a3-sdpa-internal-fp32-mxfp8-staged-20261001-r1/result.json",
+      "size": 15745,
+      "sha256": "bf0664f8f7a0a504af173ab0955f1019f05d852dd5bce95e901aa5baaae0f18a"
+    },
+    {
+      "path": "results/a3-sdpa-internal-fp32-mxfp8-staged-cpu-audit-20261001-r1-launch/run.json",
+      "size": 641,
+      "sha256": "76de2cf0d997492dee374a42128e029f059ae14b0459357cd558527b11974d81"
+    },
+    {
+      "path": "results/a3-sdpa-internal-fp32-mxfp8-staged-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-sdpa-internal-fp32-mxfp8-staged-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 146,
+      "sha256": "76a468301417e4643b1f8a58442b4415475657d2e5b622c45fbe28a44b04331f"
+    },
+    {
+      "path": "results/a3-sdpa-internal-fp32-mxfp8-staged-cpu-audit-20261001-r1/result.json",
+      "size": 4451,
+      "sha256": "eee58fe1b9dc1f605d32e5db55363f50178b53982336870a996df8e81c44e454"
+    },
+    {
+      "path": "runtime/sdpa_attention.py",
+      "size": 8846,
+      "sha256": "53c7229daca9ade4c5df874194448938c1edc925abbc71809f9750dd66381e6f"
+    },
+    {
+      "path": "tools/a3_all24_precision_probe_20261001.py",
+      "size": 12896,
+      "sha256": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5"
+    },
+    {
+      "path": "tools/a3_model_e2e_mergefix_20261001.py",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "path": "tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+      "size": 131629,
+      "sha256": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3"
+    },
+    {
+      "path": "tools/a3_sdpa_internal_fp32_mxfp8_staged_queued_20261001.py",
+      "size": 1639,
+      "sha256": "a0f0d015a492604aecd863888ee8f39286c106ece7a4178190d5a27b086c4244"
+    },
+    {
+      "path": "tools/a3_sdpa_internal_fp32_mxfp8_staged_worker_20261001.py",
+      "size": 14841,
+      "sha256": "115ea098ce9dd0476f5d4f510f43bdee3b29971964af8584f074261d3799f2db"
+    },
+    {
+      "path": "tools/archive_a3_sdpa_internal_fp32_mxfp8_staged_20261001.py",
+      "size": 3874,
+      "sha256": "8e5d1620e300f7715e52c4fb1dee342245a8b0b45ae41979555726d7f8400e09"
+    },
+    {
+      "path": "tools/audit_a3_precision_followup_r2_20261001.py",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "tools/audit_a3_sdpa_internal_fp32_mxfp8_staged_20261001.py",
+      "size": 8203,
+      "sha256": "fb9fc5b76ee8342565ebf12c377da0b78e1095576c718fb748c4cc4caac1e32b"
+    },
+    {
+      "path": "tools/run_logged.py",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    }
+  ],
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    ".pt outputs",
+    "native binaries"
+  ]
+}

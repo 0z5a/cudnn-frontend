@@ -1,0 +1,121 @@
+{
+  "stage": "CPU_AUDITED_SDPA_INTERNAL_FP32_MXFP8_STAGE_COMPLETE_POLICY_REJECTED",
+  "head": "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1",
+  "run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_sdpa_internal_fp32_mxfp8_staged_queued_20261001.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-sdpa-internal-fp32-mxfp8-staged-20261001-r1",
+      "--expected-source",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+      "--expected-head",
+      "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+    "started_utc": "2026-10-01T13:39:39.904185+00:00",
+    "deadline_seconds": 5400.0,
+    "status": "EXITED",
+    "selected_env": {},
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 14.513240681999378
+  },
+  "rows": [
+    {
+      "policy": "k32_sdpa_internal_fp32_mxfp8_bf16_stage",
+      "case": 0,
+      "oracle_bf16_fp64": {
+        "max_abs": 7.0,
+        "relative_l2": 0.1536618644226273,
+        "argmax_equal_fraction": 0.8767123287671232
+      },
+      "native_bf16_lower_bound": 0.14365437705724587
+    },
+    {
+      "policy": "k32_sdpa_internal_fp32_mxfp8_bf16_stage",
+      "case": 1,
+      "oracle_bf16_fp64": {
+        "max_abs": 7.0,
+        "relative_l2": 0.1527985846528218,
+        "argmax_equal_fraction": 0.9
+      },
+      "native_bf16_lower_bound": 0.14280205739073346
+    },
+    {
+      "policy": "k32_sdpa_internal_fp32_mxfp8_bf16_stage",
+      "case": 2,
+      "oracle_bf16_fp64": {
+        "max_abs": 4.46875,
+        "relative_l2": 0.04972367427196046,
+        "argmax_equal_fraction": 0.9765625
+      },
+      "native_bf16_lower_bound": 0.039681462184572934,
+      "native_oracle_fp64": {
+        "max_abs": 3.6875,
+        "relative_l2": 0.042079435961664344,
+        "argmax_equal_fraction": 0.97265625
+      },
+      "native_bf16_fp64": {
+        "max_abs": 4.21875,
+        "relative_l2": 0.04478271367425934,
+        "argmax_equal_fraction": 0.9765625
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": true
+    }
+  ],
+  "all_three_cases_both_gates": {
+    "k32_sdpa_internal_fp32_mxfp8_bf16_stage": false
+  },
+  "native_calls_observed": 24,
+  "new_native_calls": 0,
+  "cuda_initialized": false,
+  "tensor_count": 4,
+  "tensors": {
+    "k32_sdpa_internal_fp32_mxfp8_bf16_stage/0/reference": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "5429c5546900fe5e6c861e0adf86c8d58232b98d3841a9dd0204c1bcd051982f"
+    },
+    "k32_sdpa_internal_fp32_mxfp8_bf16_stage/1/reference": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "7936dad34ee5aff2b88a5b92b879aa1cc1ddc76ade4c55c2e7f3e74a5b89320a"
+    },
+    "k32_sdpa_internal_fp32_mxfp8_bf16_stage/2/reference": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "8cf8484a54efd8e07e79ddb121bd2d513944e807900af20507431023d0ebc397"
+    },
+    "k32_sdpa_internal_fp32_mxfp8_bf16_stage/2/native": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "8350068a82177fd8fef48bebdb654401804ee8e140e8afa59da6d649baddf623"
+    }
+  },
+  "producer_outputs_sha256": "7e9ab7d2453399ddfdaa53c48d6d732db579ba03a23d90f54f40de7815fa6c35",
+  "baseline_outputs_sha256": "a997dac0bbd8b137ecbf7ddbefc5f356c2633d75a9d3cde1d035335cb028440f",
+  "harness_sha256": "fb9fc5b76ee8342565ebf12c377da0b78e1095576c718fb748c4cc4caac1e32b",
+  "worker_sha256": "115ea098ce9dd0476f5d4f510f43bdee3b29971964af8584f074261d3799f2db",
+  "wrapper_sha256": "a0f0d015a492604aecd863888ee8f39286c106ece7a4178190d5a27b086c4244",
+  "cpu_helper_sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944",
+  "formal_performance": "NOT_RUN",
+  "limits": "All4 saved full-logit tensors audited. Only SDPA internal QKV operands are FP32, with original BF16 QKV projections/rotary/output projection/router/rest and actual native MXFP8/BF16 stage unchanged. Both short fixed-oracle compatibility bounds fail, no native short execution; long24actualnativecalls fail1%oracle. Complete policy rejected. No accepted feature, generation/KV or performance claim."
+}

@@ -1,0 +1,123 @@
+{
+  "stage": "COMPLETED_AND_CPU_AUDITED_NOT_FULL24_SUCCESS",
+  "scope": "Passive actual router/attention/residual trajectories atall24, 72nativecalls,1590tensors CPUaudited, full-logits byteidentical frozencontrol; attention divergence before expertsetschange, margin/tie/reversal classification andresidual formulas verified; noquality/performance fix",
+  "files": [
+    {
+      "path": "results/a3-latest-e2-native-provenance-20261001.json",
+      "size": 18959,
+      "sha256": "30ea6cd6a09d73b01d22215d98c2d7a5964d04d97489f64b876fa979013b3840"
+    },
+    {
+      "path": "results/a3-router-stage-trajectory-20261001-r1-launch/run.json",
+      "size": 785,
+      "sha256": "104b376a310c5fd1e2be96317c206970975acd63df7244efcdb53ad9cb8e34e0"
+    },
+    {
+      "path": "results/a3-router-stage-trajectory-20261001-r1-launch/stderr.log",
+      "size": 193,
+      "sha256": "284af168f0ff39f594ccd70d40eccf500cb8348e4b8e451fa583921525a190c0"
+    },
+    {
+      "path": "results/a3-router-stage-trajectory-20261001-r1-launch/stdout.log",
+      "size": 100336,
+      "sha256": "0203bc3150f14ccd195815a184f3bfc333e78d57f1a3cb12db05ad360c5a6d60"
+    },
+    {
+      "path": "results/a3-router-stage-trajectory-20261001-r1/admission.json",
+      "size": 106,
+      "sha256": "e5e5c69222b5107ba759206db1df99bc05da7f3bc6ca4d06981d4ec652cafd7f"
+    },
+    {
+      "path": "results/a3-router-stage-trajectory-20261001-r1/admission_wait.json",
+      "size": 76,
+      "sha256": "d578f5fde93e3292709aaf5b68d83a11653c002c06cf5e2a2df6e209192bc08a"
+    },
+    {
+      "path": "results/a3-router-stage-trajectory-20261001-r1/partial.json",
+      "size": 158792,
+      "sha256": "6f0b8d63ae5782a00e1b6caa4dd0d6c57a658af4db6302ad5cbd2444d4b50840"
+    },
+    {
+      "path": "results/a3-router-stage-trajectory-20261001-r1/result.json",
+      "size": 172607,
+      "sha256": "426a3a4b4c3d9a19a89b2e4ae8baeb293886ee72e88993b61a40611b92b43d6e"
+    },
+    {
+      "path": "results/a3-router-stage-trajectory-cpu-audit-20261001-r1-launch/run.json",
+      "size": 625,
+      "sha256": "517a239d1ba6f94346eaf336b4c43f5e4d2bf24c5623bc9e301ffb7454c4e8db"
+    },
+    {
+      "path": "results/a3-router-stage-trajectory-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-router-stage-trajectory-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 136,
+      "sha256": "c3249e62b53606444be4a117a7c24787379cf85e8228a5ffde7e7b44e094d828"
+    },
+    {
+      "path": "results/a3-router-stage-trajectory-cpu-audit-20261001-r1/result.json",
+      "size": 920937,
+      "sha256": "c052c01a2495b64e0dbf70f6cfb3b33700e0b10c6b5dc63f15ca7a389b7b64a9"
+    },
+    {
+      "path": "runtime/modeling_granitemoe.py",
+      "size": 29657,
+      "sha256": "0288f149b1beca4bd1b19bc866886115963a6c11abc2c7e022f417acb2eacd79"
+    },
+    {
+      "path": "tools/a3_all24_precision_probe_20261001.py",
+      "size": 12896,
+      "sha256": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5"
+    },
+    {
+      "path": "tools/a3_model_e2e_mergefix_20261001.py",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "path": "tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+      "size": 131629,
+      "sha256": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3"
+    },
+    {
+      "path": "tools/a3_router_stage_trajectory_queued_20261001.py",
+      "size": 1631,
+      "sha256": "4c85765ae62189993d514ae0e6f9292fa8bdbab93ed9738e992fd86860b27913"
+    },
+    {
+      "path": "tools/a3_router_stage_trajectory_worker_20261001.py",
+      "size": 19294,
+      "sha256": "6af07f5ae6ed17884406fc9df708afc166886b18a7a8e2e099f862fb82a5b1be"
+    },
+    {
+      "path": "tools/archive_a3_router_stage_trajectory_20261001.py",
+      "size": 3853,
+      "sha256": "c1ac8a25c614bab304887b56720841f9ff4daa31779dbf06da22a425946f71a8"
+    },
+    {
+      "path": "tools/audit_a3_precision_followup_r2_20261001.py",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "tools/audit_a3_router_stage_trajectory_20261001.py",
+      "size": 19520,
+      "sha256": "4e1273d7638eb973493506b086df4fbf3ca3cc92c0f5e073e6840684c2a8ccb9"
+    },
+    {
+      "path": "tools/run_logged.py",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    }
+  ],
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    ".pt outputs",
+    "native binaries"
+  ]
+}

@@ -1,0 +1,41 @@
+"""Admit the new full24 BF16-staged native candidate before importing any GPU library."""
+
+import fcntl
+import importlib.util
+import json
+import os
+from pathlib import Path
+import sys
+import time
+
+
+def main():
+    out = Path(sys.argv[sys.argv.index("--out") + 1])
+    out.mkdir(exist_ok=False)
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        start = time.monotonic()
+        (out / "admission_wait.json").write_text(json.dumps({"stage": "WAITING_FOR_SHARED_LOCK", "pid": os.getpid(), "torch_imported": False}))
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - start > 3600:
+                    (out / "admission.json").write_text(json.dumps({"stage": "NOT_RUN_SHARED_LOCK_BUSY", "torch_imported": False}))
+                    return 75
+                time.sleep(1)
+        assert "torch" not in sys.modules
+        (out / "admission.json").write_text(
+            json.dumps({"stage": "LOCK_ADMITTED", "pid": os.getpid(), "wait_seconds": time.monotonic() - start, "torch_imported": False})
+        )
+        os.environ["A3_BF16_STAGE_LOCK_ADMITTED"] = "1"
+        worker = Path(__file__).with_name("a3_router_stage_trajectory_worker_20261001.py")
+        spec = importlib.util.spec_from_file_location("a3_bf16_stage_worker", worker)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        result = module.main()
+        return 0 if result is None else result
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
