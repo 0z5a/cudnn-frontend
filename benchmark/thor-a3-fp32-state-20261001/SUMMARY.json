@@ -1,0 +1,17 @@
+{
+  "native_calls": 120,
+  "saved_tensors_audited": 35,
+  "policies": 5,
+  "complete_three_case_policy_pass": false,
+  "single_long_case_both_gate_pass": true,
+  "native_short_cases": "NOT_RUN_FIXED_ORACLE_INCOMPATIBLE",
+  "source_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "gpu_run_seconds": [
+    571.1361023070058,
+    38.3862863429822
+  ],
+  "cpu_run_seconds": [
+    4.62123268598225,
+    3.88988147204509
+  ]
+}

@@ -1,0 +1,130 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""CPU audit of full Granite FP32 state with original BF16 router recipes; no model imports."""
+
+import argparse
+import importlib.util
+import json
+import math
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+HELPER = Path(__file__).with_name("audit_a3_precision_followup_r2_20261001.py")
+spec = importlib.util.spec_from_file_location("cpu_precision_audit", HELPER)
+a = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(a)
+t = a.torch
+POLICIES = ("fp32_residual_bf16_linears_bf16_router", "fp32_non_quantized_math_bf16_router")
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--input", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    directory = Path(args.input)
+    recorded = json.loads((directory / "result.json").read_text())
+    expected_calls = sum(row["native_calls"] for row in recorded["rows"])
+    meta, run = a.provenance(directory, expected_calls)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized()
+    baseline_dir = a.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    assert a.sha_file(baseline_dir / "outputs.pt") == meta["baseline_outputs_sha256"]
+    baseline_meta = json.loads((baseline_dir / "result.json").read_text())
+    assert baseline_meta["checkpoint"] == meta["checkpoint"]
+    assert baseline_meta["source_head"] == a.HEAD
+    baseline = t.load(baseline_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    values = t.load(directory / "outputs.pt", map_location="cpu", weights_only=True)
+    tensors = a.flatten_tensors(values)
+    assert [row["policy"] for row in meta["policies"]] == list(POLICIES)
+    for row in meta["policies"]:
+        assert row["gemm_k"] == 6144 and row["a_components"] == 3 and row["b_components"] == 2
+        assert row["checkpoint_values_changed"] is False
+        assert row["router_arithmetic"] == "Original BF16 input/weight dot; FP32 top-k/softmax; BF16 probabilities"
+        assert row["native_d"] == "actual_fp16_fused_D_decoded_to_fp32"
+        assert row["parameter_dtype"] == ("torch.float32" if row["policy"] == POLICIES[1] else "torch.bfloat16")
+    assert [(row["policy"], row["case"]) for row in meta["rows"]] == [(policy, case) for policy in POLICIES for case in range(3)]
+    rows, expected_keys = [], set()
+    with t.inference_mode():
+        for row in meta["rows"]:
+            policy, case = row["policy"], row["case"]
+            prefix = f"{policy}/{case}/"
+            assert row["input_tokens"] == (73, 70, 256)[case]
+            assert row["mxfp8_layers"] == list(range(24)) and row["gemm_k"] == 6144
+            assert row["model_parameters"] == 1334628352
+            stock = baseline[f"forward_{case}_stock"]
+            control, oracle = values[prefix + "stock_precision_control"], values[prefix + "reference"]
+            expected_keys.update((prefix + "stock_precision_control", prefix + "reference"))
+            assert control.shape == oracle.shape == stock.shape == (1, row["input_tokens"], 49155)
+            control_metric = a.difference(control, stock)
+            control_fp32 = a.difference(control, stock, t.float32)
+            a.compare_metric(control_fp32, row["stock_precision_control_bf16"])
+            r, b = oracle.double(), stock.double()
+            ratio = (t.linalg.vector_norm(r) / t.linalg.vector_norm(b)).item()
+            error = (t.linalg.vector_norm(r - b) / t.linalg.vector_norm(b)).item()
+            bound = max(0.0, error - 0.01 * ratio)
+            for key, value in (("norm_ratio_fp64", ratio), ("oracle_bf16_relative_l2_fp64", error), ("native_bf16_lower_bound", bound)):
+                assert math.isclose(value, row[key], rel_tol=1e-12, abs_tol=1e-15), (key, value, row[key])
+            assert row["both_gates_impossible"] == (bound > 0.05)
+            audited = {
+                "policy": policy,
+                "case": case,
+                "stock_precision_control_original_bf16_fp64": control_metric,
+                "oracle_original_bf16_fp64": a.difference(oracle, stock),
+                "norm_ratio_fp64": ratio,
+                "native_bf16_lower_bound_fp64": bound,
+                "native_status": row["native_status"],
+                "native_calls": row["native_calls"],
+            }
+            if bound > 0.05:
+                assert row["native_calls"] == 0 and row["native_status"] == "NOT_RUN_FIXED_ORACLE_INCOMPATIBLE"
+                assert prefix + "native" not in values
+                audited["both_gates_impossible"] = True
+            else:
+                assert row["native_calls"] == 24 and row["native_status"] == "EXECUTED"
+                native = values[prefix + "native"]
+                expected_keys.add(prefix + "native")
+                assert native.shape == oracle.shape
+                oe, be = a.difference(native, oracle), a.difference(native, stock)
+                a.compare_metric(a.difference(native, oracle, t.float32), row["native_oracle"])
+                a.compare_metric(a.difference(native, stock, t.float32), row["native_bf16"])
+                op, bp = oe["relative_l2"] <= 0.01, be["relative_l2"] <= 0.05
+                assert row["oracle_gate_pass"] == op and row["bf16_gate_pass"] == bp
+                audited.update(native_oracle_fp64=oe, native_original_bf16_fp64=be, oracle_gate_pass=op, bf16_gate_pass=bp)
+            rows.append(audited)
+    assert set(values) == expected_keys and len(tensors) == 12 + expected_calls // 24
+    policy_pass = {
+        policy: all(row.get("oracle_gate_pass", False) and row.get("bf16_gate_pass", False) for row in rows if row["policy"] == policy) for policy in POLICIES
+    }
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "PASS_EVIDENCE_AUDIT_PRECISION_PROBE_NOT_FULL_E2E_SUCCESS",
+        "source_head": a.HEAD,
+        "cuda_initialized": False,
+        "rows": rows,
+        "three_case_policy_pass": policy_pass,
+        "native_calls": expected_calls,
+        "saved_tensor_count": len(tensors),
+        "tensors": tensors,
+        "run": run,
+        "producer_metadata_sha256": a.sha_file(directory / "result.json"),
+        "outputs_sha256": a.sha_file(directory / "outputs.pt"),
+        "baseline_outputs_sha256": a.sha_file(baseline_dir / "outputs.pt"),
+        "harness_sha256": a.sha_file(__file__),
+        "cpu_helper_sha256": a.sha_file(HELPER),
+        "method": "CPU FP32 complete metrics reproduce producer; independent FP64 full-logit norms/gates and necessary triangle bound; source/import/binding hashes and launcher rc checked",
+        "limits": "Packed component weights/inputs not saved for independent GPU pack audit; checkpoint promotion and full native D consumption assertions are producer evidence; generation/KV/boundary/performance NOT_RUN for these recipes",
+        "formal_performance": "NOT_RUN",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(
+        json.dumps({"stage": result["stage"], "saved_tensor_count": len(tensors), "native_calls": expected_calls, "three_case_policy_pass": policy_pass}),
+        flush=True,
+    )
+
+
+if __name__ == "__main__":
+    main()

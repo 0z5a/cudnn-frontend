@@ -1,0 +1,194 @@
+{
+  "stage": "COMPLETED_PRECISION_RECIPES_AUDITED_NOT_FULL_E2E_SUCCESS",
+  "tested_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "files": [
+    {
+      "path": "results/a3-fp32-state-bf16-router-20261001-r1-launch/run.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-bf16-router-20261001-r1-launch/run.json",
+      "size": 772,
+      "sha256": "89330c6d5c5d9a24648934dc22ac571b68bbac1bad51062da3f3f582339582e4"
+    },
+    {
+      "path": "results/a3-fp32-state-bf16-router-20261001-r1-launch/stderr.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-bf16-router-20261001-r1-launch/stderr.log",
+      "size": 425,
+      "sha256": "52b49cdae121893cadda036d456888f7afd64ffde881e73e8df3d25a3228532c"
+    },
+    {
+      "path": "results/a3-fp32-state-bf16-router-20261001-r1-launch/stdout.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-bf16-router-20261001-r1-launch/stdout.log",
+      "size": 4253,
+      "sha256": "d68fef8d04c9933ffeb92a976999069c1b186a160b135f608aa375f5951d2e7d"
+    },
+    {
+      "path": "results/a3-fp32-state-bf16-router-20261001-r1/admission_wait.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-bf16-router-20261001-r1/admission_wait.json",
+      "size": 77,
+      "sha256": "a95d6cd06469d81ce50d1ddd34c8109c4db9854a58239bcf1c63c1a89f1a5343"
+    },
+    {
+      "path": "results/a3-fp32-state-bf16-router-20261001-r1/partial.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-bf16-router-20261001-r1/partial.json",
+      "size": 7320,
+      "sha256": "2877ee258df0fd77ead827e943245d7e12b8caec38ffb2ae26d50ef28b82ac10"
+    },
+    {
+      "path": "results/a3-fp32-state-bf16-router-20261001-r1/result.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-bf16-router-20261001-r1/result.json",
+      "size": 18451,
+      "sha256": "e9f7ea1bb13ccf8d24297507a08c170cb0e823b160eac1b72b45b66bab406d95"
+    },
+    {
+      "path": "results/a3-fp32-state-bf16-router-cpu-audit-20261001-r1-launch/run.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-bf16-router-cpu-audit-20261001-r1-launch/run.json",
+      "size": 726,
+      "sha256": "bdb012058082ee41ebd7489d21628b1df6598d3daeb896d92ebffa091897001d"
+    },
+    {
+      "path": "results/a3-fp32-state-bf16-router-cpu-audit-20261001-r1-launch/stderr.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-bf16-router-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-fp32-state-bf16-router-cpu-audit-20261001-r1-launch/stdout.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-bf16-router-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 239,
+      "sha256": "1ced7255c4c13e40a8a8360ee9ce521b2ac821e68df860dcfe367b3d849951b1"
+    },
+    {
+      "path": "results/a3-fp32-state-bf16-router-cpu-audit-20261001-r1/result.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-bf16-router-cpu-audit-20261001-r1/result.json",
+      "size": 10284,
+      "sha256": "df8c55160f3fdf78efb0ad7b73914d0c30f15226a99a04947e5166fd0e176bd1"
+    },
+    {
+      "path": "results/a3-fp32-state-recipe-20261001-r1-launch/run.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-recipe-20261001-r1-launch/run.json",
+      "size": 763,
+      "sha256": "3c9090e078faef6762586a54a174378001f7561020f301fb4bf75f4a4d4c489a"
+    },
+    {
+      "path": "results/a3-fp32-state-recipe-20261001-r1-launch/stderr.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-recipe-20261001-r1-launch/stderr.log",
+      "size": 572,
+      "sha256": "6f1ee9bbffd5e6342bfaf5208d53637033b7fd0266b2d61a37188615c4ef56fb"
+    },
+    {
+      "path": "results/a3-fp32-state-recipe-20261001-r1-launch/stdout.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-recipe-20261001-r1-launch/stdout.log",
+      "size": 6175,
+      "sha256": "3e7076c37bcb1ef71fbeb322a99b7b8f21173810d0fb8dff9745effd5f78e21d"
+    },
+    {
+      "path": "results/a3-fp32-state-recipe-20261001-r1/admission_wait.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-recipe-20261001-r1/admission_wait.json",
+      "size": 77,
+      "sha256": "7390a1588291e21e99a5fc8a337e760df0362e8847606eb3769f30d7b378e038"
+    },
+    {
+      "path": "results/a3-fp32-state-recipe-20261001-r1/partial.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-recipe-20261001-r1/partial.json",
+      "size": 10431,
+      "sha256": "0a66dea285a8b7f54a786bf46cf13bdcc1af81d5601015d69661b5cdb1ecb8fe"
+    },
+    {
+      "path": "results/a3-fp32-state-recipe-20261001-r1/result.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-recipe-20261001-r1/result.json",
+      "size": 21552,
+      "sha256": "0c13cbefe095c533abcedf0a633cd65e76076ccc997520f59411d8a1d437eed8"
+    },
+    {
+      "path": "results/a3-fp32-state-recipe-cpu-audit-20261001-r1-launch/run.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-recipe-cpu-audit-20261001-r1-launch/run.json",
+      "size": 711,
+      "sha256": "3bc850b0a96acac2dfad0435e8999fca31453875f7016875e3020bb08275e0a6"
+    },
+    {
+      "path": "results/a3-fp32-state-recipe-cpu-audit-20261001-r1-launch/stderr.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-recipe-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-fp32-state-recipe-cpu-audit-20261001-r1-launch/stdout.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-recipe-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 237,
+      "sha256": "6d4c90b9ebc574cbf5295915d322a57981c148b58f93b55ca269329b38562cf3"
+    },
+    {
+      "path": "results/a3-fp32-state-recipe-cpu-audit-20261001-r1/result.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-recipe-cpu-audit-20261001-r1/result.json",
+      "size": 13776,
+      "sha256": "1d6ec7da698766369d148db82a8d54898eb7e50d611d0e0f8d69af8dd7a16771"
+    },
+    {
+      "path": "tools/a3_all24_precision_probe_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_all24_precision_probe_20261001.py",
+      "size": 12896,
+      "sha256": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5"
+    },
+    {
+      "path": "tools/a3_fp32_state_bf16_router_probe_queued_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_fp32_state_bf16_router_probe_queued_20261001.py",
+      "size": 14031,
+      "sha256": "78a4091fbfef71c8294bab61aca20ce0e7788305c550348ad611805d986a2edf"
+    },
+    {
+      "path": "tools/a3_fp32_state_recipe_probe_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_fp32_state_recipe_probe_20261001.py",
+      "size": 13575,
+      "sha256": "265670b01a2260279710b46b5e4319ab6d545754cdd09d1bc59343dc1e310a72"
+    },
+    {
+      "path": "tools/a3_fp32_state_recipe_probe_queued_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_fp32_state_recipe_probe_queued_20261001.py",
+      "size": 13731,
+      "sha256": "7338efa8b1a29a45394e268c42273b29ad3e5c1448df084190ba6a6033305d5c"
+    },
+    {
+      "path": "tools/a3_model_e2e_mergefix_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_model_e2e_mergefix_20261001.py",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "path": "tools/archive_a3_fp32_state_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/archive_a3_fp32_state_20261001.py",
+      "size": 3327,
+      "sha256": "9c1cdb14dac6d928768a3a573fe419be5403970f41974b84496c2a4e66049cac"
+    },
+    {
+      "path": "tools/audit_a3_fp32_state_bf16_router_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_fp32_state_bf16_router_20261001.py",
+      "size": 7345,
+      "sha256": "b560eb6cc501d1c7d03e64b69c241b4e6b9198e9348b904b2aa4fcf6bfb45b5a"
+    },
+    {
+      "path": "tools/audit_a3_fp32_state_recipe_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_fp32_state_recipe_20261001.py",
+      "size": 7208,
+      "sha256": "4a8e90d6948830ec69fb60524271c14500d7d0f4c9d3c1a683cdd4112c24160b"
+    },
+    {
+      "path": "tools/audit_a3_precision_followup_r2_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_precision_followup_r2_20261001.py",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "tools/run_logged.py",
+      "origin": "/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    }
+  ],
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    ".pt outputs",
+    "native binaries"
+  ],
+  "scope": "Five full-model route/residual precision policies and controls; actual supported native FP16 D; original model/baseline/gates unchanged; no full E2E/performance claim"
+}

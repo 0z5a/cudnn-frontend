@@ -1,0 +1,13 @@
+{
+  "verified_utc": "2026-10-01T11:01:59.769025+00:00",
+  "verified": true,
+  "manifest_entries": 30,
+  "transport": {
+    "archive": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-archive-20261001/a3-fp32-state-evidence-20261001.tar.gz",
+    "sha256": "0d5011fbbfc857a127c00b96a78c648a1661683b9b9993d3ecf0ac30aaaec823",
+    "size": 38058,
+    "files": 31
+  },
+  "mac_directory": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-fp32-state-evidence-20261001",
+  "original_baseline_replaced": false
+}

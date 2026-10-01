@@ -1,0 +1,265 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Targeted full-Granite precision recipes for router/residual discontinuities.
+
+Original checkpoint values, all24 layers/E32/top8/H1024 and original BF16
+baseline/1% oracle/5% BF16 gates retained. Native consumes actual fused FP16 D.
+FP32 hidden inputs use three MXFP8 components and original BF16-valued gate/up
+weights use two: six cross terms, explicit expanded K6144. No fallback/timing.
+"""
+
+import argparse
+import fcntl
+import importlib.util
+import json
+from pathlib import Path
+import subprocess
+import time
+import gc
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--expected-source", required=True)
+    parser.add_argument("--expected-head", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        admitted = time.monotonic()
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - admitted > 45:
+                    (out / "admission.json").write_text(json.dumps({"stage": "NOT_RUN_SHARED_LOCK_BUSY", "torch_imported": False}))
+                    return 75
+                time.sleep(1)
+        probe = Path(__file__).with_name("a3_all24_precision_probe_20261001.py")
+        spec = importlib.util.spec_from_file_location("a3_state_precision", probe)
+        p = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(p)
+        m, t = p.m, p.t
+        from transformers.models.granitemoe.modeling_granitemoe import GraniteMoeTopKRouter
+
+        source = Path(args.expected_source).resolve()
+        assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == args.expected_head
+        assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+        for module in (m.cudnn, m.api, m._compiled_module):
+            assert Path(module.__file__).resolve().is_relative_to(source / "python")
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        t.set_num_threads(4)
+        t.backends.cuda.matmul.allow_tf32 = False
+        t.backends.cudnn.allow_tf32 = False
+        t.set_float32_matmul_precision("highest")
+        quantize = m.quantize_mxfp8
+
+        def components(value, count):
+            remainder = value.float()
+            qs, scales, effective = [], [], t.zeros_like(remainder)
+            for _ in range(count):
+                q, _, scale = quantize(remainder)
+                restored = m.dequantize(q, scale)
+                qs.append(q)
+                scales.append(scale)
+                effective += restored
+                remainder = value.float() - effective
+            return qs, scales, effective
+
+        def pack(qs, scales):
+            q = t.cat([x.view(t.uint8) for x in qs], -1).view(t.float8_e4m3fn)
+            scale = t.cat(scales, -1)
+            rows, cols = q.shape[-2:]
+            assert cols == 6144
+            codes = (t.log2(scale).int() + 127).to(t.uint8)
+            packed = codes.reshape(-1, rows // 128, 4, 32, cols // 128, 4).permute(0, 1, 4, 3, 2, 5).contiguous().view(t.float8_e8m0fnu)
+            return q, packed, scale
+
+        def expanded_a(value):
+            q, s, effective = components(value, 3)
+            a, sf, scale = pack([q[i] for i in (0, 0, 1, 1, 2, 2)], [s[i] for i in (0, 0, 1, 1, 2, 2)])
+            return a, sf, scale
+
+        class StateAdapter(p.PrecisionAdapter):
+            def __init__(self, expert, layer):
+                super().__init__(expert, layer, (256, 256))
+                self.policy = "merge_fp32"
+                gate, up = expert.gate_up_proj.detach().chunk(2, 1)
+                weight = t.stack((gate.reshape(32, -1, 32, 1024), up.reshape(32, -1, 32, 1024)), 2).reshape(32, 1024, 1024)
+                q, s, effective = components(weight, 2)
+                self.b, self.sfb, self.bscale = pack([q[i] for i in (0, 1, 0, 1, 0, 1)], [s[i] for i in (0, 1, 0, 1, 0, 1)])
+                self.bref = None
+                self.weight_error = m.difference(effective, weight)
+
+            def forward(self, *values):
+                assert m.quantize_mxfp8 is quantize
+                m.quantize_mxfp8 = expanded_a
+                try:
+                    return super().forward(*values)
+                finally:
+                    m.quantize_mxfp8 = quantize
+
+        def route_fp32(router):
+            weight = router.weight.detach().float()
+
+            def forward(hidden):
+                logits = m.F.linear(hidden.float(), weight)
+                values, indices = logits.topk(router.top_k, -1)
+                return indices, t.softmax(values, -1), logits
+
+            return forward
+
+        def first_layer_float(module, positional, keyword):
+            if positional:
+                return (positional[0].float(), *positional[1:]), keyword
+            keyword = dict(keyword)
+            keyword["hidden_states"] = keyword["hidden_states"].float()
+            return positional, keyword
+
+        def linear_bf16(module, positional):
+            return (positional[0].to(t.bfloat16), *positional[1:])
+
+        def bf16_embedding(module, positional, output):
+            return output.to(t.bfloat16)
+
+        baseline_dir = m.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+        baseline_meta = json.loads((baseline_dir / "result.json").read_text())
+        assert baseline_meta["source_head"] == args.expected_head
+        baseline = t.load(baseline_dir / "outputs.pt", map_location="cpu", weights_only=True)
+        assert m.sha_file(m.MODEL / "model.safetensors") == m.WEIGHT_SHA
+        tokenizer = m.AutoTokenizer.from_pretrained(m.MODEL, local_files_only=True, trust_remote_code=False)
+        _, prompts, workloads = m.load_inputs(tokenizer)
+        cases = (prompts[0], prompts[1], workloads["256"])
+        rows, saved, policies = [], {}, []
+        for policy in ("router_fp32", "fp32_residual_bf16_linears", "fp32_non_quantized_math"):
+            dtype = t.float32 if policy == "fp32_non_quantized_math" else t.bfloat16
+            model, loading = m.AutoModelForCausalLM.from_pretrained(
+                m.MODEL, dtype=dtype, attn_implementation="sdpa", trust_remote_code=False, local_files_only=True, output_loading_info=True
+            )
+            assert not any(loading.values()) and sum(x.numel() for x in model.parameters()) == 1334628352
+            model = model.eval().cuda()
+            routers = [r for r in model.modules() if isinstance(r, GraniteMoeTopKRouter)]
+            experts = [e for e in model.modules() if isinstance(e, m.GraniteMoeExperts)]
+            assert len(routers) == len(experts) == 24
+            if policy != "fp32_non_quantized_math":
+                for router in routers:
+                    router.forward = route_fp32(router)
+            hooks = []
+            if policy != "router_fp32":
+                hooks.append(model.model.layers[0].register_forward_pre_hook(first_layer_float, with_kwargs=True))
+            if policy == "fp32_residual_bf16_linears":
+                for module in model.modules():
+                    if isinstance(module, t.nn.Linear):
+                        assert module.weight.dtype == t.bfloat16
+                        hooks.append(module.register_forward_pre_hook(linear_bf16))
+            elif policy == "fp32_non_quantized_math":
+                hooks.append(model.model.embed_tokens.register_forward_hook(bf16_embedding))
+                assert all(x.dtype == t.float32 for x in model.parameters())
+            with t.inference_mode():
+                for case, ids in enumerate(cases):
+                    before = m.NATIVE_CALLS
+                    control = model(input_ids=ids.cuda(), use_cache=False).logits.cpu()
+                    assert m.NATIVE_CALLS == before
+                    saved[f"{policy}/{case}/stock_precision_control"] = control
+            adapters = [StateAdapter(expert, layer) for layer, expert in enumerate(experts)]
+            policies.append(
+                {
+                    "policy": policy,
+                    "parameter_dtype": str(dtype),
+                    "checkpoint_values_changed": False,
+                    "gemm_k": 6144,
+                    "a_components": 3,
+                    "b_components": 2,
+                    "native_d": "actual_fp16_fused_D_decoded_to_fp32",
+                    "weight_error_max_l2": max(x.weight_error["relative_l2"] for x in adapters),
+                    "weight_error_max_abs": max(x.weight_error["max_abs"] for x in adapters),
+                }
+            )
+            with t.inference_mode():
+                for case, ids in enumerate(cases):
+                    m.attach(adapters, "reference")
+                    before = m.NATIVE_CALLS
+                    oracle = model(input_ids=ids.cuda(), use_cache=False).logits.cpu()
+                    assert m.NATIVE_CALLS == before
+                    stock = baseline[f"forward_{case}_stock"]
+                    saved[f"{policy}/{case}/reference"] = oracle
+                    r, b = oracle.double(), stock.double()
+                    ratio = (t.linalg.vector_norm(r) / t.linalg.vector_norm(b)).item()
+                    error = (t.linalg.vector_norm(r - b) / t.linalg.vector_norm(b)).item()
+                    bound = max(0.0, error - 0.01 * ratio)
+                    row = {
+                        "policy": policy,
+                        "case": case,
+                        "input_tokens": ids.shape[-1],
+                        "model_parameters": 1334628352,
+                        "mxfp8_layers": list(range(24)),
+                        "gemm_k": 6144,
+                        "norm_ratio_fp64": ratio,
+                        "oracle_bf16_relative_l2_fp64": error,
+                        "native_bf16_lower_bound": bound,
+                        "both_gates_impossible": bound > 0.05,
+                        "stock_precision_control_bf16": m.difference(saved[f"{policy}/{case}/stock_precision_control"], stock),
+                        "native_calls": 0,
+                    }
+                    if bound > 0.05:
+                        row["native_status"] = "NOT_RUN_FIXED_ORACLE_INCOMPATIBLE"
+                    else:
+                        m.attach(adapters, "native")
+                        before = m.NATIVE_CALLS
+                        native = model(input_ids=ids.cuda(), use_cache=False).logits.cpu()
+                        assert m.NATIVE_CALLS - before == 24
+                        saved[f"{policy}/{case}/native"] = native
+                        oe, be = m.difference(native, oracle), m.difference(native, stock)
+                        row.update(
+                            native_status="EXECUTED",
+                            native_calls=24,
+                            native_oracle=oe,
+                            native_bf16=be,
+                            oracle_gate_pass=oe["relative_l2"] <= 0.01,
+                            bf16_gate_pass=be["relative_l2"] <= 0.05,
+                        )
+                    rows.append(row)
+                    print(json.dumps(row), flush=True)
+                    (out / "partial.json").write_text(json.dumps({"rows": rows, "policies": policies}, indent=2))
+            m.attach(adapters, "stock")
+            for hook in hooks:
+                hook.remove()
+            del model, routers, experts, adapters
+            gc.collect()
+            t.cuda.empty_cache()
+        assert m.quantize_mxfp8 is quantize
+        t.save(saved, out / "outputs.pt")
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+        result = {
+            "stage": "DIAGNOSTIC_COMPLETE",
+            "scope": __doc__,
+            "source_head": args.expected_head,
+            "source": str(source),
+            "checkpoint": baseline_meta["checkpoint"],
+            "model_parameters": 1334628352,
+            "rows": rows,
+            "policies": policies,
+            "native_calls": m.NATIVE_CALLS,
+            "native_plans": m.NATIVE_PLANS,
+            "imports": {
+                name: {"path": mod.__file__, "sha256": m.sha_file(mod.__file__)}
+                for name, mod in (("cudnn", m.cudnn), ("api", m.api), ("binding", m._compiled_module))
+            },
+            "harness_sha256": m.sha_file(__file__),
+            "precision_probe_sha256": m.sha_file(probe),
+            "base_adapter_sha256": m.sha_file(p.BASE),
+            "baseline_outputs_sha256": m.sha_file(baseline_dir / "outputs.pt"),
+            "formal_performance": "NOT_RUN",
+            "service_final": "inactive",
+            "parameter_value_scope": "Original BF16 checkpoint loaded with no missing/unexpected keys; FP32 load promotes original values exactly; no training/weight edits",
+        }
+        (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps({"stage": result["stage"], "native_calls": m.NATIVE_CALLS}), flush=True)
+        return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

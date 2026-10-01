@@ -1,0 +1,305 @@
+{
+  "stage": "PASS_EVIDENCE_AUDIT_PRECISION_PROBE_NOT_FULL_E2E_SUCCESS",
+  "source_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "cuda_initialized": false,
+  "rows": [
+    {
+      "policy": "fp32_residual_bf16_linears_bf16_router",
+      "case": 0,
+      "stock_precision_control_original_bf16_fp64": {
+        "max_abs": 5.5,
+        "relative_l2": 0.11832950309372343,
+        "argmax_equal_fraction": 0.8767123287671232
+      },
+      "oracle_original_bf16_fp64": {
+        "max_abs": 6.390625,
+        "relative_l2": 0.1264598420993346,
+        "argmax_equal_fraction": 0.8767123287671232
+      },
+      "norm_ratio_fp64": 0.9933475444274682,
+      "native_bf16_lower_bound_fp64": 0.11652636665505993,
+      "native_status": "NOT_RUN_FIXED_ORACLE_INCOMPATIBLE",
+      "native_calls": 0,
+      "both_gates_impossible": true
+    },
+    {
+      "policy": "fp32_residual_bf16_linears_bf16_router",
+      "case": 1,
+      "stock_precision_control_original_bf16_fp64": {
+        "max_abs": 5.5,
+        "relative_l2": 0.12838467796994554,
+        "argmax_equal_fraction": 0.9142857142857143
+      },
+      "oracle_original_bf16_fp64": {
+        "max_abs": 6.1875,
+        "relative_l2": 0.13248345198485603,
+        "argmax_equal_fraction": 0.9
+      },
+      "norm_ratio_fp64": 0.9931719124598941,
+      "native_bf16_lower_bound_fp64": 0.12255173286025708,
+      "native_status": "NOT_RUN_FIXED_ORACLE_INCOMPATIBLE",
+      "native_calls": 0,
+      "both_gates_impossible": true
+    },
+    {
+      "policy": "fp32_residual_bf16_linears_bf16_router",
+      "case": 2,
+      "stock_precision_control_original_bf16_fp64": {
+        "max_abs": 9.28125,
+        "relative_l2": 0.0617404433787024,
+        "argmax_equal_fraction": 0.984375
+      },
+      "oracle_original_bf16_fp64": {
+        "max_abs": 4.9375,
+        "relative_l2": 0.03838208328480198,
+        "argmax_equal_fraction": 0.984375
+      },
+      "norm_ratio_fp64": 1.0030752200046205,
+      "native_bf16_lower_bound_fp64": 0.028351331084755772,
+      "native_status": "EXECUTED",
+      "native_calls": 24,
+      "native_oracle_fp64": {
+        "max_abs": 3.625,
+        "relative_l2": 0.026085134841316943,
+        "argmax_equal_fraction": 0.99609375
+      },
+      "native_original_bf16_fp64": {
+        "max_abs": 4.9375,
+        "relative_l2": 0.039968307535297516,
+        "argmax_equal_fraction": 0.98046875
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": true
+    },
+    {
+      "policy": "fp32_non_quantized_math_bf16_router",
+      "case": 0,
+      "stock_precision_control_original_bf16_fp64": {
+        "max_abs": 5.46256160736084,
+        "relative_l2": 0.14244210786934672,
+        "argmax_equal_fraction": 0.9041095890410958
+      },
+      "oracle_original_bf16_fp64": {
+        "max_abs": 5.48090934753418,
+        "relative_l2": 0.13851168434332034,
+        "argmax_equal_fraction": 0.9178082191780822
+      },
+      "norm_ratio_fp64": 1.0003113367901448,
+      "native_bf16_lower_bound_fp64": 0.1285085709754189,
+      "native_status": "NOT_RUN_FIXED_ORACLE_INCOMPATIBLE",
+      "native_calls": 0,
+      "both_gates_impossible": true
+    },
+    {
+      "policy": "fp32_non_quantized_math_bf16_router",
+      "case": 1,
+      "stock_precision_control_original_bf16_fp64": {
+        "max_abs": 5.462556838989258,
+        "relative_l2": 0.1248959205299957,
+        "argmax_equal_fraction": 0.9142857142857143
+      },
+      "oracle_original_bf16_fp64": {
+        "max_abs": 5.459747314453125,
+        "relative_l2": 0.12072829544405225,
+        "argmax_equal_fraction": 0.9428571428571428
+      },
+      "norm_ratio_fp64": 0.99967654890519,
+      "native_bf16_lower_bound_fp64": 0.11073152995500035,
+      "native_status": "NOT_RUN_FIXED_ORACLE_INCOMPATIBLE",
+      "native_calls": 0,
+      "both_gates_impossible": true
+    },
+    {
+      "policy": "fp32_non_quantized_math_bf16_router",
+      "case": 2,
+      "stock_precision_control_original_bf16_fp64": {
+        "max_abs": 5.942255020141602,
+        "relative_l2": 0.04261573172987986,
+        "argmax_equal_fraction": 0.96484375
+      },
+      "oracle_original_bf16_fp64": {
+        "max_abs": 6.398418426513672,
+        "relative_l2": 0.04659010179424137,
+        "argmax_equal_fraction": 0.97265625
+      },
+      "norm_ratio_fp64": 1.0021172564172192,
+      "native_bf16_lower_bound_fp64": 0.03656892923006918,
+      "native_status": "EXECUTED",
+      "native_calls": 24,
+      "native_oracle_fp64": {
+        "max_abs": 3.514434814453125,
+        "relative_l2": 0.017165736159442533,
+        "argmax_equal_fraction": 0.98828125
+      },
+      "native_original_bf16_fp64": {
+        "max_abs": 5.812782287597656,
+        "relative_l2": 0.04430508570704308,
+        "argmax_equal_fraction": 0.96484375
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": true
+    }
+  ],
+  "three_case_policy_pass": {
+    "fp32_residual_bf16_linears_bf16_router": false,
+    "fp32_non_quantized_math_bf16_router": false
+  },
+  "native_calls": 48,
+  "saved_tensor_count": 14,
+  "tensors": {
+    "fp32_residual_bf16_linears_bf16_router/0/stock_precision_control": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "4afdbdbbfa56321077334faa7ec1915131befe295b5cca92122bc372855ba938"
+    },
+    "fp32_residual_bf16_linears_bf16_router/1/stock_precision_control": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "2e216268dd28b99170a4c7b1ae32d8d6d8beda9f38e36214f7467c0fd948aedb"
+    },
+    "fp32_residual_bf16_linears_bf16_router/2/stock_precision_control": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d3ee58cafe0c096f84537a0a529af147d432a358a35ede4616ffa922bb65ed71"
+    },
+    "fp32_residual_bf16_linears_bf16_router/0/reference": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "0df4243356176a1808f0c0f76abfb2ff28e2558efa9c15057ecf4d381c08ea62"
+    },
+    "fp32_residual_bf16_linears_bf16_router/1/reference": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "9f0de58e36049a1898ea3739b829e7821664b37d5afa009d06e19d2db7c5f4d4"
+    },
+    "fp32_residual_bf16_linears_bf16_router/2/reference": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "4b629c34deb0e0b3b58eceaf27a0fb652b6d877d802909b23a042f28d37c9bf5"
+    },
+    "fp32_residual_bf16_linears_bf16_router/2/native": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "f34b5856046ca41aeaaf71735d16e6ee5f837c5965138e5a4a8f1337d895fce5"
+    },
+    "fp32_non_quantized_math_bf16_router/0/stock_precision_control": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.float32",
+      "sha256": "fee670fa146ad9ab71926003229171952f75d601688279d26eb24f3f51925d67"
+    },
+    "fp32_non_quantized_math_bf16_router/1/stock_precision_control": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.float32",
+      "sha256": "43e5d9c2b97c6aac3ca864e2647383390e368096f63aef1b1d1ca45b769e0418"
+    },
+    "fp32_non_quantized_math_bf16_router/2/stock_precision_control": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.float32",
+      "sha256": "e1574719e83a2666ce71319ac15e3a23597707a276f7a375edb9f4b7e8907304"
+    },
+    "fp32_non_quantized_math_bf16_router/0/reference": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.float32",
+      "sha256": "db709eed9824ec4b174b9698a3c120b30eca31dd96b8b2701475224da6581f05"
+    },
+    "fp32_non_quantized_math_bf16_router/1/reference": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.float32",
+      "sha256": "e468b15da79fd2d6d4ffa4c34e640e99fb3b9c085a6b04f8a534eaec342086ea"
+    },
+    "fp32_non_quantized_math_bf16_router/2/reference": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.float32",
+      "sha256": "6cfdf5a75c7cae0502b1a401985df7b478be9f479b7f21d85b825b2e681f8490"
+    },
+    "fp32_non_quantized_math_bf16_router/2/native": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.float32",
+      "sha256": "0e6f1ba4dc9019e7302951aec2e81c5af647b0fbd915083b2e3afe9704a05450"
+    }
+  },
+  "run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest4/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_fp32_state_bf16_router_probe_queued_20261001.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp32-state-bf16-router-20261001-r1",
+      "--expected-source",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4",
+      "--expected-head",
+      "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-01T10:58:32.035006+00:00",
+    "deadline_seconds": 4200.0,
+    "status": "EXITED",
+    "selected_env": {},
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 38.3862863429822
+  },
+  "producer_metadata_sha256": "e9f7ea1bb13ccf8d24297507a08c170cb0e823b160eac1b72b45b66bab406d95",
+  "outputs_sha256": "020a9342bf0018ab73fd8ecda74e755a4d526c6b8720a8e675b56cf86af7f660",
+  "baseline_outputs_sha256": "a997dac0bbd8b137ecbf7ddbefc5f356c2633d75a9d3cde1d035335cb028440f",
+  "harness_sha256": "b560eb6cc501d1c7d03e64b69c241b4e6b9198e9348b904b2aa4fcf6bfb45b5a",
+  "cpu_helper_sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944",
+  "method": "CPU FP32 complete metrics reproduce producer; independent FP64 full-logit norms/gates and necessary triangle bound; source/import/binding hashes and launcher rc checked",
+  "limits": "Packed component weights/inputs not saved for independent GPU pack audit; checkpoint promotion and full native D consumption assertions are producer evidence; generation/KV/boundary/performance NOT_RUN for these recipes",
+  "formal_performance": "NOT_RUN"
+}

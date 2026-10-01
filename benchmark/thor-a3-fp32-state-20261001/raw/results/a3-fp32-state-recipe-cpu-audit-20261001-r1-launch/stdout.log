@@ -1,0 +1,1 @@
+{"stage": "PASS_EVIDENCE_AUDIT_PRECISION_PROBE_NOT_FULL_E2E_SUCCESS", "saved_tensor_count": 21, "native_calls": 72, "three_case_policy_pass": {"router_fp32": false, "fp32_residual_bf16_linears": false, "fp32_non_quantized_math": false}}

@@ -1,0 +1,4 @@
+Loading weights:   0%|          | 0/218 [00:00<?, ?it/s]Loading weights: 100%|██████████| 218/218 [00:00<00:00, 9060.50it/s]
+GroupedGemmSwigluSm100 is an experimental API
+Loading weights:   0%|          | 0/218 [00:00<?, ?it/s]Loading weights: 100%|██████████| 218/218 [00:00<00:00, 7349.73it/s]
+Loading weights:   0%|          | 0/218 [00:00<?, ?it/s]Loading weights:  79%|███████▉  | 173/218 [00:00<00:00, 1719.29it/s]Loading weights: 100%|██████████| 218/218 [00:00<00:00, 1952.36it/s]

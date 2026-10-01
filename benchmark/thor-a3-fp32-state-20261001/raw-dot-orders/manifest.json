@@ -1,0 +1,37 @@
+{
+  "stage": "MAC_CPU_DOT_ORDER_TRANSPORT_VERIFIED",
+  "files": [
+    {
+      "path": "results/a3-dot-orders-cpu-20261001-r1/result.json",
+      "size": 4998,
+      "sha256": "5094c24b67ed45046c8ad267aed734dbec90bae58fa31d36b967a376d356414d"
+    },
+    {
+      "path": "results/a3-dot-orders-cpu-20261001-r1-launch/run.json",
+      "size": 585,
+      "sha256": "a2d7803494e9ad09a47e0c7bbeba7901c7a0023927d1963925ab91df43144364"
+    },
+    {
+      "path": "results/a3-dot-orders-cpu-20261001-r1-launch/stdout.log",
+      "size": 4366,
+      "sha256": "484678ed83a21dfa5eeba3ab94cc48e521df665f901818dcedfc38d204338d77"
+    },
+    {
+      "path": "results/a3-dot-orders-cpu-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tools/diagnose_a3_dot_orders_cpu_20261001.py",
+      "size": 5619,
+      "sha256": "ce754ab27a7cb45e429c91f2271b638719d94f0bdbaa436facf980ba744d325f"
+    }
+  ],
+  "excluded": [
+    ".pt outputs",
+    "checkpoint",
+    "cache",
+    "engines",
+    "native binaries"
+  ]
+}

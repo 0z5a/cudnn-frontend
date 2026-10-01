@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest4/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_dot_orders_cpu_20261001.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-dot-orders-cpu-20261001-r1"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-01T11:01:23.946325+00:00",
+  "deadline_seconds": 180.0,
+  "status": "EXITED",
+  "selected_env": {},
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 7.224768480984494
+}

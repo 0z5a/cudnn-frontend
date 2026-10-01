@@ -1,0 +1,125 @@
+"""CPU-only rounding-order diagnosis; candidate orders are not GPU ISA proofs."""
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+import torch as t
+from safetensors import safe_open
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+CHECKPOINT = Path("/home/jwipc/models/granite-3.1-1b-a400m-instruct-0da7a48b/model.safetensors")
+
+
+def sha(path):
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(4 * 1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def serial_sum(values):
+    acc = t.zeros(values.shape[0], dtype=t.float32)
+    for k in range(values.shape[1]):
+        acc = acc + values[:, k]
+    return acc
+
+
+def pair_sum(values):
+    while values.shape[1] > 1:
+        assert values.shape[1] % 2 == 0
+        values = values[:, 0::2] + values[:, 1::2]
+    return values[:, 0]
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized()
+    directory = ROOT / "results/a3-residual-staging-20261001-r1"
+    prior = t.load(directory / "outputs.pt", map_location="cpu", weights_only=True)
+    assert sha(CHECKPOINT) == "ac02591061f1344027a7e7b11dbb4143f75f166c47dc09b742f5de3ab1dde1d1"
+    with safe_open(str(CHECKPOINT), framework="pt", device="cpu") as handle:
+        weight = handle.get_tensor("model.layers.0.block_sparse_moe.input_linear.weight")
+    gate, up = weight.chunk(2, 1)
+    weight = t.stack((gate.reshape(32, -1, 32, 1024), up.reshape(32, -1, 32, 1024)), 2).reshape(32, 1024, 1024)
+    hidden = prior["stock_input/0"]["original"]
+    index = prior["stock_route/0"]["index"]
+    order = t.argsort(index.flatten(), stable=True)
+    token_ids = order // 8
+    expert_ids = index.flatten()[order]
+    stock_c = prior["local/0"]["original_bf16_local"]["c"]
+    c32 = prior["local/0"]["original_fp32_dot_fp32_activation"]["c"]
+    mismatch = stock_c != c32.to(t.bfloat16)
+    selected = mismatch.flatten().nonzero().flatten()
+    assert selected.numel() == 270 and stock_c.shape == (584, 1024)
+    controls = t.randperm(stock_c.numel(), generator=t.Generator().manual_seed(20261001))[:512]
+    positions = t.cat((selected, controls))
+    row, column = positions // 1024, positions % 1024
+    x = hidden[token_ids[row]].float()
+    w = weight[expert_ids[row], column].float()
+    products64 = x.double() * w.double()
+    products = x * w
+    assert t.equal(products.double(), products64), "BF16 products must be exactly represented in FP32 for these samples"
+    ideal = products64.sum(-1)
+    saved_c64 = t.load(ROOT / "results/a3-bf16-rounding-cpu-20261001-r2/outputs.pt", map_location="cpu", weights_only=True)["cpu_c64"]
+    assert t.equal(ideal, saved_c64.flatten()[positions]), "Independent elementwise dot must match saved FP64 dot"
+    stock, gpu32 = stock_c.flatten()[positions], c32.flatten()[positions]
+    results = {
+        "gpu_fp32_dot": gpu32,
+        "fp64_dot_rounded_fp32": ideal.float(),
+        "serial_k_ascending": serial_sum(products),
+        "serial_k_descending": serial_sum(products.flip(-1)),
+        "pair_tree_k": pair_sum(products),
+    }
+    for lanes in (4, 8, 16, 32, 64):
+        striped = products.reshape(products.shape[0], -1, lanes)
+        partial = t.zeros((products.shape[0], lanes), dtype=t.float32)
+        for k in range(striped.shape[1]):
+            partial = partial + striped[:, k]
+        results[f"striped_{lanes}_serial_merge"] = serial_sum(partial)
+        results[f"striped_{lanes}_pair_merge"] = pair_sum(partial)
+    rows = []
+    for name, value in results.items():
+        rounded = value.to(t.bfloat16)
+        rows.append(
+            {
+                "order": name,
+                "selected270_stock_bf16_mismatches": (rounded[:270] != stock[:270]).sum().item(),
+                "random512_stock_bf16_mismatches": (rounded[270:] != stock[270:]).sum().item(),
+                "selected270_max_abs_vs_fp64": (value[:270].double() - ideal[:270]).abs().max().item(),
+                "random512_max_abs_vs_fp64": (value[270:].double() - ideal[270:]).abs().max().item(),
+            }
+        )
+    assert not t.cuda.is_initialized()
+    saved = {"positions": positions, "products_fp32": products, "dot_fp64": ideal, "stock_bf16": stock, **results}
+    t.save(saved, out / "outputs.pt")
+    metadata = {
+        "stage": "CPU_DOT_ORDER_DIAGNOSTIC_COMPLETE_NOT_NATIVE_SUCCESS",
+        "cuda_initialized": False,
+        "native_calls": 0,
+        "input_scope": "First layer of original 73-token stock trajectory: all270 GPU FP32/BF16 local-C mismatches plus512 deterministic unconditioned random coordinates",
+        "selected_count": 270,
+        "control_count": 512,
+        "rows": rows,
+        "checkpoint_sha256": sha(CHECKPOINT),
+        "prior_outputs_sha256": sha(directory / "outputs.pt"),
+        "prior_metadata_sha256": sha(directory / "result.json"),
+        "outputs_sha256": sha(out / "outputs.pt"),
+        "harness_sha256": sha(Path(__file__)),
+        "limits": "No GPU kernel or full-model policy executed. These explicit CPU orders are hypotheses, not an identified GPU accumulation order. Selected mismatch coordinates are conditioned; random controls are separate. No rounding/order candidate accepted.",
+    }
+    (out / "result.json").write_text(json.dumps(metadata, indent=2) + "\n")
+    print(json.dumps(metadata), flush=True)
+
+
+if __name__ == "__main__":
+    main()
