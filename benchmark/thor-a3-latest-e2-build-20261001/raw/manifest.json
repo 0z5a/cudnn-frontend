@@ -1,0 +1,70 @@
+{
+  "stage": "LATEST_HEAD_FRESH_NATIVE_BUILD_RC0_GPU_REGRESSION_NOT_RUN",
+  "head": "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1",
+  "base": "e2bf967b17dae17a642102198e6d862d559655c9",
+  "files": [
+    {
+      "path": "results/a3-latest-e2-native-provenance-20261001.json",
+      "size": 18959,
+      "sha256": "30ea6cd6a09d73b01d22215d98c2d7a5964d04d97489f64b876fa979013b3840"
+    },
+    {
+      "path": "results/a3-latest-e2-prebuild-20261001.json",
+      "size": 18078,
+      "sha256": "995ad8fd07466995d4ff34897858bf075e01c86a1406577191c757ddab278dd8"
+    },
+    {
+      "path": "results/a3-latest-e2-prepare-build-20261001-r1-launch/run.json",
+      "size": 405,
+      "sha256": "fa071c6a56b3d18c9a128a57b256caa349588ffaa69825dce5cd60eefa9a6f44"
+    },
+    {
+      "path": "results/a3-latest-e2-prepare-build-20261001-r1-launch/stderr.log",
+      "size": 842,
+      "sha256": "2c8c01f5eebfbd48d49036a03e47980ca934befd4d23de95c69e703c0d890c4c"
+    },
+    {
+      "path": "results/a3-latest-e2-prepare-build-20261001-r1-launch/stdout.log",
+      "size": 1157,
+      "sha256": "e27bcf76820acab1c4e4124baa7d0bdd303ef1e0df9b8a84cb1c3f4a8401bf91"
+    },
+    {
+      "path": "results/build-a3-latest-e2-20261001-r1/run.json",
+      "size": 552,
+      "sha256": "52dced8e66a50b0fac75cddfc027e35860c66e6c521ce6e7b47f65ea7d2cc6e1"
+    },
+    {
+      "path": "results/build-a3-latest-e2-20261001-r1/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/build-a3-latest-e2-20261001-r1/stdout.log",
+      "size": 1436,
+      "sha256": "a0e9003e36ba3e69d350cde7e8387dbaed5861e9d38fceee638c20ff9ff18830"
+    },
+    {
+      "path": "tools/archive_a3_latest_e2_build_20261001.py",
+      "size": 2844,
+      "sha256": "4da0904444aad1d8e827456be7f0d59e2764b3c693fb130ddcb2fa934f0a5769"
+    },
+    {
+      "path": "tools/prepare_build_a3_latest_e2_20261001.py",
+      "size": 5213,
+      "sha256": "4f56988beb7fb6d959cc3097958891559498efcdedf7c14fd02f134e94b40de8"
+    },
+    {
+      "path": "tools/run_logged.py",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    }
+  ],
+  "excluded": [
+    ".pt",
+    "models",
+    "cache",
+    "engines",
+    "native binaries",
+    "pending GPU regression result"
+  ]
+}

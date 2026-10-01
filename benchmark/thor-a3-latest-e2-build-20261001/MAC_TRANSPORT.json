@@ -1,0 +1,9 @@
+{
+  "stage": "VERIFIED_COMPLETE",
+  "archive_sha256": "44575abf6e2d67e350ab8d935743c16867309c9014eeac647ab9a66528c7ed9d",
+  "archive_size": 13423,
+  "files": 12,
+  "entries": 11,
+  "path": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-e2-build-evidence-20261001",
+  "GPU_regression": "NOT_RUN_QUEUED"
+}

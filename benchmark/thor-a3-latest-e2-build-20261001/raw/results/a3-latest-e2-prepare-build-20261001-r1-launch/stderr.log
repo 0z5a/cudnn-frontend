@@ -1,0 +1,17 @@
+Cloning into '/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2'...
+/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3-latest-e2-20261001.bundle is okay
+From /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3-latest-e2-20261001.bundle
+ * branch            codex/a3-sfd-latest-20261001 -> FETCH_HEAD
+Warning: you are leaving 3 commits behind, not connected to
+any of your branches:
+
+  7bfeda6 Order SwiGLU output allocation and AMAX reset on launch stream
+  760488b Write SwiGLU row and column scales for narrow tiles
+  b22c11f Fix grouped SwiGLU SM110 reduction and per-call AMAX correctness
+
+If you want to keep them by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> 7bfeda6
+
+HEAD is now at 741e10f Order SwiGLU output allocation and AMAX reset on launch stream

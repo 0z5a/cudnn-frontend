@@ -1,0 +1,466 @@
+{
+  "head": "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1",
+  "base": "e2bf967b17dae17a642102198e6d862d559655c9",
+  "source": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+  "changed_native_inputs": [
+    "python/pygraph/sdpa_thd_binding.cpp"
+  ],
+  "native_input_digests": [
+    {
+      "path": "CMakeLists.txt",
+      "sha256": "144508ba4fb9eba78ab5553138063cb1483bc2aecfd2833c026686d3aec07a4a"
+    },
+    {
+      "path": "cmake/cuDNN.cmake",
+      "sha256": "4acd9dab1b5f098551fc486a28ed313fc3611437e8ac61e9d5fe659005e52d41"
+    },
+    {
+      "path": "include/cudnn_backend_base.h",
+      "sha256": "51be4a710c5cee766c55905bddeb9d3e0475aaf790f5344180f237fddb3b7320"
+    },
+    {
+      "path": "include/cudnn_frontend.h",
+      "sha256": "aff8afd260af9fd1fb6f691ec9015ab64ff271a45768bf8da08c98f2d991cf99"
+    },
+    {
+      "path": "include/cudnn_frontend/AGENTS.md",
+      "sha256": "13ccb321c65e4fe40677cb58d463c9e576942d37bc96489a2ecc5a020afd3217"
+    },
+    {
+      "path": "include/cudnn_frontend/backend/backend_descriptor.h",
+      "sha256": "1598fc62c6af196eb0ef522b1240e9e5e164cd6440728a0ad42b5252dc57066c"
+    },
+    {
+      "path": "include/cudnn_frontend/backend/device_properties.h",
+      "sha256": "594e2f6e97b2992fd5514a75a8cf648069a272823c3298cdf6a725846587db1f"
+    },
+    {
+      "path": "include/cudnn_frontend/backend/execution_helpers.h",
+      "sha256": "2df7bb026c5e795279bb72d2a6473203bd015f5fbb2e84cbe309bd476ed70e89"
+    },
+    {
+      "path": "include/cudnn_frontend/backend/kernel_cache.h",
+      "sha256": "3ec261ac7b819ee1aac540a4227fa343e9677bdb9524457f0944f61e2dc863be"
+    },
+    {
+      "path": "include/cudnn_frontend/backend/plan_helpers.h",
+      "sha256": "70c42ddf6c51293f8fa9aeb15992575476c3e1a4ea5354a31acc9161e65d9ba3"
+    },
+    {
+      "path": "include/cudnn_frontend/context.h",
+      "sha256": "5784f2bb031e1d6aa4bf45b1c20e9031026b750644e27194a6f9697adf06250f"
+    },
+    {
+      "path": "include/cudnn_frontend/cudnn_interface.h",
+      "sha256": "fa22c197bfca47abfc63c912b2c06cc61167f5da0b87ba7e971f812d738893c5"
+    },
+    {
+      "path": "include/cudnn_frontend/experimental/attention_utils.h",
+      "sha256": "6ffee4706a280dcc70707688d28ad056f099b66cf4e80b2e1ab02fab3fdb93a4"
+    },
+    {
+      "path": "include/cudnn_frontend/experimental/nvrtc_shim.h",
+      "sha256": "73b2829654452a57b2467398412325df2973bf4a59f07d8e4031f27cee0ea73e"
+    },
+    {
+      "path": "include/cudnn_frontend/experimental/oss_engine_interface.h",
+      "sha256": "0036380282f00fd4aeeca7e062a797c2ccd599420d22af01832d256328059760"
+    },
+    {
+      "path": "include/cudnn_frontend/experimental/sm100_rms_norm_silu_engine.h",
+      "sha256": "056ae1e7d0237ca1e439f34f9c3dbc516712d3f950f0797d530c0c3b5f5f8a49"
+    },
+    {
+      "path": "include/cudnn_frontend/experimental/sm100_rms_norm_silu_knobs.h",
+      "sha256": "16d0d3bc717ddb1c1e2f5c6f0f981f671d15e672bea093d37d71a56a04f6f9d4"
+    },
+    {
+      "path": "include/cudnn_frontend/generated/rms_norm_silu/sm100/ln_fwd_silu_kernel.h",
+      "sha256": "29de9274d61cff43b256c0131b4a70e09bfd8e370011376f4c84a072f2666cbc"
+    },
+    {
+      "path": "include/cudnn_frontend/generated/rms_norm_silu/sm100/ln_headers.h",
+      "sha256": "db62c50f21f2e7d67d5c9f3f70beb55107139fd3b43079c4a6e1391202b34046"
+    },
+    {
+      "path": "include/cudnn_frontend/graph_helpers.h",
+      "sha256": "f40aea57f155f8d6d3a22ef587a08a769c67d4f3b388af600e0ac7358ea7377c"
+    },
+    {
+      "path": "include/cudnn_frontend/graph_interface.h",
+      "sha256": "a190896600ebd53c81b1973849725229ff2876105acc888a75935081e05919d1"
+    },
+    {
+      "path": "include/cudnn_frontend/graph_properties.h",
+      "sha256": "76122e55420ad34e3d533c47405c7d418c54d957087869b91b8f1124bcad91ca"
+    },
+    {
+      "path": "include/cudnn_frontend/knobs.h",
+      "sha256": "dd2bcfc6ddfc19ce7343fbe659ac43ed5b32dc737641c29e5a534705644b9333"
+    },
+    {
+      "path": "include/cudnn_frontend/node/adaptive_layernorm.h",
+      "sha256": "3b760b610972f711d8f27ffad130600921c2946982020e0c07e47bbce1c083c7"
+    },
+    {
+      "path": "include/cudnn_frontend/node/batchnorm.h",
+      "sha256": "62309217c5753e9062844d9f3eb46a3805a2434143d0de9c9ffb401aa979189d"
+    },
+    {
+      "path": "include/cudnn_frontend/node/batchnorm_inference.h",
+      "sha256": "8b483c2d9074d9f70d9958dbe54d1e042dc4408f366e23b632557d56d180460e"
+    },
+    {
+      "path": "include/cudnn_frontend/node/block_scale_dequantize.h",
+      "sha256": "a04396d4f642fb765c8a095e2ea9bcf12966d4fe4c32e8cdb0802009cd997819"
+    },
+    {
+      "path": "include/cudnn_frontend/node/block_scale_quantize.h",
+      "sha256": "7f2aebee920024d01ecaee678969f29754d97a42ee35ad143c8a1f573f86d41a"
+    },
+    {
+      "path": "include/cudnn_frontend/node/bn_finalize.h",
+      "sha256": "2a849aee5ee80d4ad64978edb25031c5b6323c2be544e53e5b87687f1b38f6a1"
+    },
+    {
+      "path": "include/cudnn_frontend/node/concatenate.h",
+      "sha256": "4991b13165987132e85d2dc6c2ff4e7dbe301d42e21348464f606c04716290e6"
+    },
+    {
+      "path": "include/cudnn_frontend/node/conv_dgrad.h",
+      "sha256": "4f4c1c44011807bde4872951578906baa1aa3fba2e8bc183858aa3840f4df3e3"
+    },
+    {
+      "path": "include/cudnn_frontend/node/conv_fprop.h",
+      "sha256": "0889c1f646c48cace8bf60dad167992932c1f0947ba13979ab612e7ff5902eb5"
+    },
+    {
+      "path": "include/cudnn_frontend/node/conv_wgrad.h",
+      "sha256": "8dd16189dcccfadd580ba7e29827b895565b04c6b24636242478ec5d8a23e53f"
+    },
+    {
+      "path": "include/cudnn_frontend/node/dbn.h",
+      "sha256": "4997a4cdca40e3aa949757fda91719c6ded47d99d265c0f070abd3729a35d1cc"
+    },
+    {
+      "path": "include/cudnn_frontend/node/dbn_weight.h",
+      "sha256": "0e6f05b48ae2cc91b5b3bb572bab593b4a799173ac68d897f17dd85930fc7f42"
+    },
+    {
+      "path": "include/cudnn_frontend/node/diagonal_band_mask.h",
+      "sha256": "d037b5e16b3529b3f3da6233cea560be20d069e30edda843443732f7f3ee35e0"
+    },
+    {
+      "path": "include/cudnn_frontend/node/dln.h",
+      "sha256": "f1b5f50bac46151aaee7b582c7380e91562255381ed2e9dff0623538090c0a5f"
+    },
+    {
+      "path": "include/cudnn_frontend/node/genstats.h",
+      "sha256": "2b2da0d4599a53d3f7b2b984ddec4908db1d2851494d64c2cab4164da7f6185c"
+    },
+    {
+      "path": "include/cudnn_frontend/node/instancenorm.h",
+      "sha256": "e94009e23da8440cf6399a39e4d1d47c8fc144df388ccc5a894011762d8e24e6"
+    },
+    {
+      "path": "include/cudnn_frontend/node/layernorm.h",
+      "sha256": "c4f01a1965105dabf4293d3707d08f0fc1f39b0d0f0b4b959e77d4cd4c45c1b2"
+    },
+    {
+      "path": "include/cudnn_frontend/node/matmul.h",
+      "sha256": "9c4c99a6de13899ed2b4c056199414ca2fcd60517c8148758af427ba2e4bbe07"
+    },
+    {
+      "path": "include/cudnn_frontend/node/matmul_fp8.h",
+      "sha256": "d8d6a1cc3636e19d611b19e9b4f2aba2c88202496a5ae630f03bc98c8266a564"
+    },
+    {
+      "path": "include/cudnn_frontend/node/moe_grouped_matmul.h",
+      "sha256": "84537ebaae349c807e99143834405d8fe718c90c0378efec26193b862a5b4e3c"
+    },
+    {
+      "path": "include/cudnn_frontend/node/moe_grouped_matmul_bwd.h",
+      "sha256": "cb2fde11f9e58ae24c8f316436305592468e4a64fa4bf044ba7e7238d283407f"
+    },
+    {
+      "path": "include/cudnn_frontend/node/paged_cache_load.h",
+      "sha256": "84ea6f9972812c65a8a8328f3ee7701c29601d2d14c6da5df11d890b8591789d"
+    },
+    {
+      "path": "include/cudnn_frontend/node/pointwise.h",
+      "sha256": "9f9da5e1a7fbdc072915d4c0a9b4cb3ce95c67e083a9d4b6aa04d53b641afbcd"
+    },
+    {
+      "path": "include/cudnn_frontend/node/reduction.h",
+      "sha256": "3364141edccbfba7c1c1e485977817ddbd1ea56450ca1f2145fdeb3267495950"
+    },
+    {
+      "path": "include/cudnn_frontend/node/resample.h",
+      "sha256": "61632926c707917d25613ca55d0ff0307244bc76a2328c8f969e2f6a4bc6a98e"
+    },
+    {
+      "path": "include/cudnn_frontend/node/reshape.h",
+      "sha256": "39b8e7c7031fa7dbf21b0242819ce53a6efdda77dea1b2239aad7dec5a5dcb16"
+    },
+    {
+      "path": "include/cudnn_frontend/node/rmsnorm.h",
+      "sha256": "9cb50a4869e106677a0b64f5d97e500400f106569072f6b2aadd7e789469396d"
+    },
+    {
+      "path": "include/cudnn_frontend/node/rng.h",
+      "sha256": "4554f36dd425cade6d2bf77a75ffda53627e61ac0ad30cb74e781e71a3ba0bba"
+    },
+    {
+      "path": "include/cudnn_frontend/node/rope.h",
+      "sha256": "012eecc5eaae77ba6473a0aa52acdbaf3d56613a3f7c20a3360d56166976c91b"
+    },
+    {
+      "path": "include/cudnn_frontend/node/rope_backward.h",
+      "sha256": "dd9203bfeca2ae24c7a04b29bb5f7d62386dacee949079d2c565ab2e8ca0f85b"
+    },
+    {
+      "path": "include/cudnn_frontend/node/scaled_dot_product_flash_attention.h",
+      "sha256": "306f5fa6ef9a674dc796de6878cffba517b448f8d34aea9661c2d6020d16a0f7"
+    },
+    {
+      "path": "include/cudnn_frontend/node/sdpa_fp8_bwd.h",
+      "sha256": "46106c5bb801c2e3e0034dd3e9ec5eec32ac00b51a52b3795be15ceabfbf36c8"
+    },
+    {
+      "path": "include/cudnn_frontend/node/sdpa_support_surface.h",
+      "sha256": "b872878f1c0eda88ad5af60a2cde6ce5f1fe784db2deeced2bed992c33ad3b6b"
+    },
+    {
+      "path": "include/cudnn_frontend/node/slice.h",
+      "sha256": "3b2448e9bf5d222a65728f73070b6c7612b05313a6f907debb3cc37118a54d57"
+    },
+    {
+      "path": "include/cudnn_frontend/node/softmax.h",
+      "sha256": "8c8f7ff5e135f4001e8c4adcf2de7f0c42d8e5a625b23951455500efa3644bad"
+    },
+    {
+      "path": "include/cudnn_frontend/node/transpose.h",
+      "sha256": "f1f7d8fe51057043608a42048a8696af45f1dca6dccd05b2502ada0d25beca9a"
+    },
+    {
+      "path": "include/cudnn_frontend/node_interface.h",
+      "sha256": "6d311ca4b269d102d6c4e0af7d91dc1ba0c184354da58af27826835045570585"
+    },
+    {
+      "path": "include/cudnn_frontend/plans.h",
+      "sha256": "e3adc2fca5f40c65baadbcc10a2cead0af5800355a69d378cf1c08d2091bdcda"
+    },
+    {
+      "path": "include/cudnn_frontend/thirdparty/nlohmann/LICENSE.MIT",
+      "sha256": "86b998c792894ccb911a1cb7994f7a9652894e7a094c0b5e45be2f553f45cf14"
+    },
+    {
+      "path": "include/cudnn_frontend/thirdparty/nlohmann/json.hpp",
+      "sha256": "21efa2f26ffa8b14b87f67ff8371fde142f237dae48bdb1efb5ffc3b364afc4d"
+    },
+    {
+      "path": "include/cudnn_frontend/utils/attn_score_modifiers.h",
+      "sha256": "69d7163c2d0baae684fc2f7b8dd6a17310a7407fc5fd13cd3d1a176add1ae4b8"
+    },
+    {
+      "path": "include/cudnn_frontend/utils/cuda_graph_retention.h",
+      "sha256": "0f6dbc9a16587d02a5f6db79fdc84d6a9930572d3197914d6c6cc189f553995f"
+    },
+    {
+      "path": "include/cudnn_frontend/utils/serialize.h",
+      "sha256": "49b3e7025a205687fb1bf6cf5fdabfeac7d59d350a4553f324d59717ae102e16"
+    },
+    {
+      "path": "include/cudnn_frontend_ConvDesc.h",
+      "sha256": "81cc4ec7f421954900bb3a1f0415d3590de0980e02d691d4e1847584a211ae9f"
+    },
+    {
+      "path": "include/cudnn_frontend_Engine.h",
+      "sha256": "6807ad8d64a848f43d3a813bcb8637c20ec420215df103ed0e73a4a26d30ab05"
+    },
+    {
+      "path": "include/cudnn_frontend_EngineConfig.h",
+      "sha256": "425848a48381ffd07d2f11593f562b5f788da29731d6f35515d877c28d270f21"
+    },
+    {
+      "path": "include/cudnn_frontend_EngineConfigGenerator.h",
+      "sha256": "fbbcf048c4844d1af80d8e4b09408678b0c572454f555359716da67d067a16cf"
+    },
+    {
+      "path": "include/cudnn_frontend_EngineFallbackList.h",
+      "sha256": "c453ca6395c5928cddf7e4b9830d4f58dab8b82372db01d0eb2c08c1ec6d2975"
+    },
+    {
+      "path": "include/cudnn_frontend_Errata.h",
+      "sha256": "4b6c55a9613d70c8fc2dae133e5d7e454db8e2e29366bf3c03c3dbcf9ee6bb4b"
+    },
+    {
+      "path": "include/cudnn_frontend_ExecutionPlan.h",
+      "sha256": "37090ca6c4674567296ebd5ed7b30b6e2f5c3066513b6fd041b7428ba1427f5d"
+    },
+    {
+      "path": "include/cudnn_frontend_ExecutionPlanCache.h",
+      "sha256": "4ec35b79bf2635caf5e012bd2db6260263eacf0a73e2f00361080077b7bc38c2"
+    },
+    {
+      "path": "include/cudnn_frontend_Filters.h",
+      "sha256": "128b3eb3753825931ef31d913de80660362f4a71667463de969e458b0b5eb765"
+    },
+    {
+      "path": "include/cudnn_frontend_Heuristics.h",
+      "sha256": "5c7dd31045c61c656c549a7c2eb00587e0fecd0a3a2356ed5dec49c68e3f674c"
+    },
+    {
+      "path": "include/cudnn_frontend_Logging.h",
+      "sha256": "d7aef788f67e55dfa9949b0f0a6450b9caa479b1f56d73d69f8c5a43ee5debe4"
+    },
+    {
+      "path": "include/cudnn_frontend_MatMulDesc.h",
+      "sha256": "caf595fab80464a77b7a69f32d21a9673e5a7be50889f5fc13ef32c0297656b1"
+    },
+    {
+      "path": "include/cudnn_frontend_Operation.h",
+      "sha256": "081cfaee17b8724a6c160c3f381b0800b562a7cae011e0b742f0c8a94863f343"
+    },
+    {
+      "path": "include/cudnn_frontend_OperationGraph.h",
+      "sha256": "9e8c02cabed24ef170d1037a108c7b4b219c1dc9dbe754a73861bdc25c14c418"
+    },
+    {
+      "path": "include/cudnn_frontend_PointWiseDesc.h",
+      "sha256": "44fb469c7cd7ff191a5beb384a4b7af51023d1483e620a3f0185243dfa380be1"
+    },
+    {
+      "path": "include/cudnn_frontend_ReductionDesc.h",
+      "sha256": "ca555249f75bce446403eb4a306372ae0f4ddc083e1ec869c2a1fc8fc9d7165d"
+    },
+    {
+      "path": "include/cudnn_frontend_Reorder_Tensor.h",
+      "sha256": "ad4b58b8fd61aa0f352b2082f8fc7e1f4ba6ba5ca99c9e24b0a96171a4d500dd"
+    },
+    {
+      "path": "include/cudnn_frontend_Resample.h",
+      "sha256": "ef837165d4112d452325db457c579ffa66e990bd695998409abb74fdc440bd45"
+    },
+    {
+      "path": "include/cudnn_frontend_Rng.h",
+      "sha256": "a70cc0b7b37f82e1c55a980da3ca5708ecb0ce183b3b94479c47e7f2c347703c"
+    },
+    {
+      "path": "include/cudnn_frontend_Tensor.h",
+      "sha256": "9876db5db0f89d4ed0a99afe8bea7128a3c526d08d6ff59d361e8db3dd8cee1f"
+    },
+    {
+      "path": "include/cudnn_frontend_VariantPack.h",
+      "sha256": "14a1c320a6d1b18594c04e1aa07525f6d1b763f98a5bab98489772ed2de38cdc"
+    },
+    {
+      "path": "include/cudnn_frontend_find_plan.h",
+      "sha256": "73372e7bb2e7b20453c9928cafbdfc11b3fc9763650502b207aec532b83428c3"
+    },
+    {
+      "path": "include/cudnn_frontend_get_plan.h",
+      "sha256": "f6ad2eddc5269f4b901b0f037e566999678f1bcdadbd3ce7092ad26002fa66d0"
+    },
+    {
+      "path": "include/cudnn_frontend_shim.h",
+      "sha256": "3b58b9cb7d7f0b28fd5edd69693ce449e2355e436b5017a900103208aa36c3ab"
+    },
+    {
+      "path": "include/cudnn_frontend_utils.h",
+      "sha256": "1712a476d0d053e358b17d2fe6cc0f26b56ebc3292261d41f2e381047b568aa7"
+    },
+    {
+      "path": "include/cudnn_frontend_version.h",
+      "sha256": "203e9d489744dc76611c25e0ce0131e89f1b88854c4f71bb9f829f76f9261e78"
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "27c7688d5a9b3ae02b6bd5879d1df31feac22acbca9b50d50bc21e100caf03f1"
+    },
+    {
+      "path": "python/cudnn/linear_attention/cake/kernels/cake_flashkda_training_c16_aligned_backward_0f8187e742.cu",
+      "sha256": "a5feca44d6126d8a67b9ec121b1741520693c2618ef776498e8fb71e41f6bbdd"
+    },
+    {
+      "path": "python/cudnn/linear_attention/cake/kernels/cake_flashkda_training_c16_aligned_forward_36075669f2.cu",
+      "sha256": "fe4c998ba4f9245c96a607325485c5a964e9c740236ad5c56849975f209b1523"
+    },
+    {
+      "path": "python/cudnn/linear_attention/cake/kernels/cake_flashkda_training_c16_aligned_param_reduce_be120a1e72.cu",
+      "sha256": "8c1b09cf093fddcda2eb5e16efd3942f16f4a8101f0cde0be8d3b684067a99ab"
+    },
+    {
+      "path": "python/cudnn/linear_attention/cake/kernels/fe_cake_kda_helpers.cu",
+      "sha256": "2299b7f582bfb6f9cd96f201e37008c5364f0b53a70b72df023edae6eead1d5f"
+    },
+    {
+      "path": "python/cudnn/linear_attention/cake/kernels/flashkda_training_aux.cu",
+      "sha256": "a094eed1b0b80f43d27acd834e779cb19682eef0a6a61632b6925b7b22ea301c"
+    },
+    {
+      "path": "python/cudnn/linear_attention/cake/kernels/flashkda_training_c16.cu",
+      "sha256": "4ac0003431df8feba49492f5ede371b8f7e6740e06e13cd41d7594b7b72610bd"
+    },
+    {
+      "path": "python/cudnn/linear_attention/hopper/cuda_kernels/kda_bwd_sm90.cu",
+      "sha256": "47ed19df7f6097838f5fa166bce90ec937a83c29c03828e5f16bb9c8fbb7ca58"
+    },
+    {
+      "path": "python/cudnn/linear_attention/hopper/cuda_kernels/kda_fused_sm90.cu",
+      "sha256": "2cfbb7fe28c949ba3ac9f29ca950a866301bb050d98b81189a66fb4d3234f43c"
+    },
+    {
+      "path": "python/gnn.cpp",
+      "sha256": "e7ee3045b9c4801760d67cb2f667b4d419717f08cd05ecc28db59a98d71d218d"
+    },
+    {
+      "path": "python/properties.cpp",
+      "sha256": "ff889f8d27f41dbd6bd79b02984ef6cdfb62c0e50246f7fb4bd56a5fce82aff4"
+    },
+    {
+      "path": "python/pycudnn.cpp",
+      "sha256": "b75270d5bc5a2b8a33b7e6a69acc5e590607dfb788c7f8f2a0268bb607d388ce"
+    },
+    {
+      "path": "python/pygraph/norm.cpp",
+      "sha256": "ee0b034c68db70674e9bc68e3b2fbda0c594952c7c397260b52d3fed0828a9d3"
+    },
+    {
+      "path": "python/pygraph/pointwise.cpp",
+      "sha256": "1fef68137ddafd3fb56c5a2f81212cceccb36355e31bf232a75899e9e8f632c0"
+    },
+    {
+      "path": "python/pygraph/pygraph.cpp",
+      "sha256": "e756ace49d980205a199136efae1d5bf37766985c97570445009de272046e9ae"
+    },
+    {
+      "path": "python/pygraph/pygraph.h",
+      "sha256": "018f2c820014ee54ad4223de6369f4b316125021d39d5125d5a0df827d006012"
+    },
+    {
+      "path": "python/pygraph/sdpa.cpp",
+      "sha256": "e7a7c7b16beb0e63510356c470d69a49042c1028f51d09ba02b104f6a7229639"
+    },
+    {
+      "path": "python/pygraph/sdpa_thd_binding.cpp",
+      "sha256": "3e8085587237e51b2da4f943129fc55e59d61b363c995835ff1c6dfb20925b23"
+    },
+    {
+      "path": "python/pygraph/variant_pack.cpp",
+      "sha256": "ba45f94c315f70ab4a3dc613ba45539cc1ccd01abdade226a3c8fc5c3f65f6a1"
+    },
+    {
+      "path": "python/pygraph/variant_pack.h",
+      "sha256": "691e688780a46348819a8ac94379dd4a229d0993883267d6100f8ca393f8f42d"
+    },
+    {
+      "path": "setup.py",
+      "sha256": "1751eb8280739e6b7be513a36eaaaec357ce406c2a4d0f76290efafe1e615cdd"
+    }
+  ],
+  "harness_sha256": "4f56988beb7fb6d959cc3097958891559498efcdedf7c14fd02f134e94b40de8",
+  "bundle_sha256": "68a5bae0d89a4346b57beb03eaa17b95f542a54ff950b10681de9a5b82ac6a52",
+  "GPU_tests": "NOT_RUN",
+  "service_enablement_changed": false
+}

@@ -1,0 +1,122 @@
+"""Independent latest-upstream checkout and fresh CPU-only native build."""
+
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1"
+BASE = "e2bf967b17dae17a642102198e6d862d559655c9"
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    old, source = ROOT / "a3sfdlatest4", ROOT / "a3sfdlateste2"
+    bundle = ROOT / "tools/a3-latest-e2-20261001.bundle"
+    assert sha(bundle) == "68a5bae0d89a4346b57beb03eaa17b95f542a54ff950b10681de9a5b82ac6a52"
+    assert not source.exists()
+    subprocess.run(["git", "clone", "--shared", "--no-checkout", str(old), str(source)], check=True)
+    subprocess.run(["git", "-C", str(source), "bundle", "verify", str(bundle)], check=True)
+    subprocess.run(["git", "-C", str(source), "fetch", str(bundle), "codex/a3-sfd-latest-20261001"], check=True)
+    subprocess.run(["git", "-C", str(source), "checkout", "--detach", HEAD], check=True)
+    assert subprocess.check_output(["git", "-C", str(source), "merge-base", "HEAD", BASE], text=True).strip() == BASE
+    files = subprocess.check_output(["git", "-C", str(old), "ls-files"], text=True).splitlines()
+    native = [
+        p
+        for p in files
+        if p.startswith(("include/", "cmake/"))
+        or p in ("CMakeLists.txt", "setup.py", "pyproject.toml")
+        or (p.startswith("python/") and Path(p).suffix in (".h", ".hpp", ".cpp", ".cc", ".cu", ".c"))
+    ]
+    changed = [p for p in native if (old / p).read_bytes() != (source / p).read_bytes()]
+    assert changed == ["python/pygraph/sdpa_thd_binding.cpp"]
+    envdir = ROOT / "venvs/a3sfdlateste2"
+    assert not envdir.exists()
+    subprocess.run(["python3", "-m", "venv", str(envdir)], check=True)
+    oldsite = ROOT / "venvs/a3sfdlatest4/lib/python3.12/site-packages"
+    site = envdir / "lib/python3.12/site-packages"
+    for p in oldsite.iterdir():
+        destination = site / p.name
+        if destination.exists() or p.name == "__pycache__":
+            continue
+        if p.name.startswith("__editable__"):
+            assert p.is_file()
+            destination.write_text(p.read_text().replace(str(old), str(source)))
+        elif p.name.startswith("nvidia_cudnn_frontend"):
+            if p.is_dir():
+                shutil.copytree(p, destination, symlinks=True)
+            else:
+                shutil.copyfile(p, destination)
+        elif p.suffix == ".pth":
+            destination.write_bytes(p.read_bytes())
+        else:
+            destination.symlink_to(p, target_is_directory=p.is_dir())
+    shared = Path("/home/jwipc/projects/host-gateway/.vllm")
+    env = os.environ.copy()
+    env.update(
+        PATH=str(shared / "bin") + ":" + env["PATH"],
+        CUDAToolkit_ROOT="/usr/local/cuda-13.2",
+        CUDA_PATH="/usr/local/cuda-13.2",
+        CUDNN_PATH=str(shared / "lib/python3.12/site-packages/nvidia/cudnn"),
+        FETCHCONTENT_SOURCE_DIR_DLPACK="/home/jwipc/experiments/sm110-execution-20260928/sources/dlpack",
+        CMAKE_BUILD_PARALLEL_LEVEL="2",
+        CMAKE_PREFIX_PATH=str(site / "pybind11/share/cmake/pybind11"),
+    )
+    python = envdir / "bin/python"
+    result = ROOT / "results/build-a3-latest-e2-20261001-r1"
+    record = {
+        "head": HEAD,
+        "base": BASE,
+        "source": str(source),
+        "changed_native_inputs": changed,
+        "native_input_digests": [{"path": p, "sha256": sha(source / p)} for p in native],
+        "harness_sha256": sha(Path(__file__)),
+        "bundle_sha256": sha(bundle),
+        "GPU_tests": "NOT_RUN",
+        "service_enablement_changed": False,
+    }
+    (ROOT / "results/a3-latest-e2-prebuild-20261001.json").write_text(json.dumps(record, indent=2) + "\n")
+    logger = Path("/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py")
+    rc = subprocess.run(
+        [
+            str(python),
+            str(logger),
+            "--out",
+            str(result),
+            "--cwd",
+            str(source),
+            "--timeout",
+            "3600",
+            "--",
+            str(python),
+            "-m",
+            "pip",
+            "install",
+            "--no-deps",
+            "--no-build-isolation",
+            "-e",
+            str(source),
+        ],
+        env=env,
+    ).returncode
+    if rc:
+        return rc
+    run = json.loads((result / "run.json").read_text())
+    assert run["returncode"] == 0 and run["status"] == "EXITED"
+    bindings = list((source / "python").rglob("_compiled_module*.so"))
+    assert len(bindings) == 1
+    record.update(native_build="FRESH_RC0", build_run=run, binding={"path": str(bindings[0]), "sha256": sha(bindings[0])})
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    (ROOT / "results/a3-latest-e2-native-provenance-20261001.json").write_text(json.dumps(record, indent=2) + "\n")
+    print(json.dumps({"head": HEAD, "base": BASE, "fresh_build_rc": 0, "binding": record["binding"], "GPU_tests": "NOT_RUN"}), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

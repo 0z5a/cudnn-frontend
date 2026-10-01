@@ -1,0 +1,9 @@
+# Latest upstream independent fresh native build
+
+Independent source head `741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1` applies the existing three A3 correctness commits to upstream `e2bf967b17dae17a642102198e6d862d559655c9`. It does not modify the frozen running/queued `a3sfdlatest4` source. Full113-native-input comparison finds one changed C++ binding: `python/pygraph/sdpa_thd_binding.cpp`. A3 SwiGLU kernel/API bytes match previous runtime7bfeda6b. The earlier named-path observation excluded this C++ file and cannot be generalized to all native build inputs unchanged.
+
+A fresh private native build returns0 in196.111348s; outer preparation/build logger returns0 in201.915369s. The new binding SHA is `37e7c4e0d16bd0a952ade77ccd577ccadae1888f166a4c897c9e98a104606c2a`. A separate import verifies cudnn and binding resolve to Thor `/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/python/cudnn`, with that same binding SHA. This is a fresh build, not reuse. Local touched-file formatter/license checks pass with a clean worktree.
+
+No GPU was required for building. The separate frozen31-case regression is queued before Torch import under the existing shared lock; no regression/model result is included or claimed here. Four local K-order precision candidates are also queued. Existing PR1280 production head remains7bfeda6b/draft pending latest hardware regression. Full24 model accuracy, generation/KV and paired model performance remain open. No new precision fix or throughput benefit is accepted.
+
+Mac12files/all11 manifest entries verified, archive SHA `44575abf6e2d67e350ab8d935743c16867309c9014eeac647ab9a66528c7ed9d`,13423bytes. Original logger output, complete native-input digests, exact build/archive sources and metadata retained. Native binaries, models/cache/engines/.pt and pending GPU results are excluded. vLLM remains inactive; no other task interrupted, clock/power or service enablement changed.
