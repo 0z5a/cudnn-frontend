@@ -18,8 +18,10 @@ import cutlass
 
 from cudnn.datatypes import _convert_to_cutlass_data_type
 from cudnn.api_base import TupleDict, ceil_div
+from cudnn._torch_stream import stream_context
 from cudnn.tensor_adapter import detect_framework, framework_dtype
 from ..canonical import is_canonical_b, is_flat_sf
+from ..backend_utils import wrapper_operand_meta
 from ..glu._blockscaled_api import GroupedGemmGluBlockScaledAPI
 
 _JAX_SF_LAYOUT_ERROR = (
@@ -192,6 +194,10 @@ import logging
 
 _logger = logging.getLogger(__name__)
 _cache_of_GroupedGemmSwigluSm100Objects = {}
+# Output geometry only: never retain caller tensors, data pointers or streams.
+# M changes output sizes but not the compiled plan; bound these cheap entries.
+_swiglu_wrapper_memo = {}
+_SWIGLU_WRAPPER_MEMO_LIMIT = 256
 
 
 def grouped_gemm_swiglu_wrapper_sm100(
@@ -310,6 +316,114 @@ def grouped_gemm_swiglu_wrapper_sm100(
         )
     if framework != "torch":
         raise ValueError(f"Unsupported tensor framework '{framework}' for grouped_gemm_swiglu_wrapper_sm100; pass torch tensors")
+    # Full metadata controls output geometry; runtime tensor values/pointers and
+    # the per-call launch stream never participate. A hit still goes through the
+    # checked public execute path with the current tensors and fresh outputs.
+    memo_key = (
+        type(a_tensor),
+        wrapper_operand_meta(a_tensor),
+        wrapper_operand_meta(b_tensor),
+        wrapper_operand_meta(sfa_tensor),
+        wrapper_operand_meta(sfb_tensor),
+        wrapper_operand_meta(padded_offsets),
+        wrapper_operand_meta(alpha_tensor),
+        wrapper_operand_meta(norm_const_tensor),
+        wrapper_operand_meta(prob_tensor),
+        acc_dtype,
+        c_dtype,
+        d_dtype,
+        cd_major,
+        tuple(mma_tiler_mn),
+        None if cluster_shape_mn is None else tuple(cluster_shape_mn),
+        sf_vec_size,
+        vector_f32,
+        m_aligned,
+        discrete_col_sfd,
+        os.getenv("CUDNNFE_CLUSTER_OVERLAP_MARGIN", "0"),
+        os.getenv("CUDNN_FE_GROUPED_GEMM_DYNAMIC_MNKL", "1") != "0",
+    )
+    # Allocator stream tagging and the AMAX reduction identity must precede the
+    # launch on the same stream, including an explicit non-current side stream.
+    with stream_context(current_stream, a_tensor.device):
+        memo = _swiglu_wrapper_memo.get(memo_key)
+        if memo is not None:
+            cache_key, output_specs = memo
+            cached = _cache_of_GroupedGemmSwigluSm100Objects.get(cache_key)
+            if cached is not None:
+                import torch
+
+                _logger.debug("grouped_gemm_swiglu_wrapper_sm100: Creating output tensors c_tensor, d_tensor, d_col_tensor")
+                outputs = {}
+                for name, spec in output_specs:
+                    if spec is None:
+                        outputs[name] = None
+                    elif name == "amax_tensor":
+                        outputs[name] = torch.full(spec[0], float("-inf"), dtype=spec[2], device=a_tensor.device)
+                    else:
+                        outputs[name] = torch.empty_strided(spec[0], spec[1], dtype=spec[2], device=a_tensor.device)
+                if outputs["sfd_row_tensor"] is not None:
+                    _logger.debug("grouped_gemm_swiglu_wrapper_sm100: Detected fp8 a_dtype and sfa_dtype, constructing sfd_row_tensor and sfd_col_tensor")
+                _logger.debug("group_gemm_swiglu_wrapper_sm100: Using previously cached GroupedGemmSwigluSm100 object")
+                cached[0].execute(
+                    a_tensor=a_tensor,
+                    b_tensor=b_tensor,
+                    sfa_tensor=sfa_tensor,
+                    sfb_tensor=sfb_tensor,
+                    padded_offsets=padded_offsets,
+                    alpha_tensor=alpha_tensor,
+                    norm_const_tensor=norm_const_tensor,
+                    prob_tensor=prob_tensor,
+                    current_stream=current_stream,
+                    **outputs,
+                )
+                return TupleDict(outputs)
+        return _grouped_gemm_swiglu_torch_call(
+            a_tensor=a_tensor,
+            b_tensor=b_tensor,
+            sfa_tensor=sfa_tensor,
+            sfb_tensor=sfb_tensor,
+            padded_offsets=padded_offsets,
+            alpha_tensor=alpha_tensor,
+            norm_const_tensor=norm_const_tensor,
+            prob_tensor=prob_tensor,
+            acc_dtype=acc_dtype,
+            c_dtype=c_dtype,
+            d_dtype=d_dtype,
+            cd_major=cd_major,
+            mma_tiler_mn=mma_tiler_mn,
+            cluster_shape_mn=cluster_shape_mn,
+            sf_vec_size=sf_vec_size,
+            vector_f32=vector_f32,
+            m_aligned=m_aligned,
+            discrete_col_sfd=discrete_col_sfd,
+            current_stream=current_stream,
+            memo_key=memo_key,
+        )
+
+
+def _grouped_gemm_swiglu_torch_call(
+    a_tensor: torch.Tensor,
+    b_tensor: torch.Tensor,
+    sfa_tensor: torch.Tensor,
+    sfb_tensor: torch.Tensor,
+    padded_offsets: torch.Tensor,
+    alpha_tensor: torch.Tensor,
+    norm_const_tensor: Optional[torch.Tensor] = None,
+    prob_tensor: Optional[torch.Tensor] = None,
+    acc_dtype: Optional[torch.dtype] = None,
+    c_dtype: Optional[torch.dtype] = None,
+    d_dtype: Optional[torch.dtype] = None,
+    cd_major: str = "n",
+    mma_tiler_mn: Tuple[int, int] = (256, 256),
+    cluster_shape_mn: Optional[Tuple[int, int]] = None,
+    sf_vec_size: int = 16,
+    vector_f32: bool = False,
+    m_aligned: int = 256,
+    discrete_col_sfd: bool = False,
+    current_stream: Optional[cuda.CUstream] = None,
+    *,
+    memo_key,
+) -> TupleDict:
     import torch
 
     acc_dtype = _convert_to_cutlass_data_type(acc_dtype) if acc_dtype is not None else cutlass.Float32
@@ -415,6 +529,8 @@ def grouped_gemm_swiglu_wrapper_sm100(
         return tuple(i for i, s in sorted(enumerate(tensor.stride()), key=lambda x: x[1]))
 
     cache_key = (
+        a_tensor.device,
+        os.getenv("CUDNNFE_CLUSTER_OVERLAP_MARGIN", "0"),
         use_full_dynamic,
         a_tensor.shape[1:] if not use_full_dynamic else None,
         b_tensor.shape if not use_full_dynamic else None,
@@ -528,7 +644,7 @@ def grouped_gemm_swiglu_wrapper_sm100(
         )
         _cache_of_GroupedGemmSwigluSm100Objects[cache_key] = (grouped_gemm_swiglu, amax_tensor)
 
-    return TupleDict(
+    outputs = TupleDict(
         c_tensor=c_tensor,
         d_tensor=d_tensor,
         d_col_tensor=d_col_tensor,
@@ -536,3 +652,13 @@ def grouped_gemm_swiglu_wrapper_sm100(
         sfd_row_tensor=sfd_row_tensor,
         sfd_col_tensor=sfd_col_tensor,
     )
+
+    # Successful derivations only. Keep the compiled plan cache independent so
+    # clearing it forces support/compile work again, rather than reviving a plan.
+    if len(_swiglu_wrapper_memo) >= _SWIGLU_WRAPPER_MEMO_LIMIT:
+        del _swiglu_wrapper_memo[next(iter(_swiglu_wrapper_memo))]
+    _swiglu_wrapper_memo[memo_key] = (
+        cache_key,
+        tuple((name, None if tensor is None else (tuple(tensor.shape), tensor.stride(), tensor.dtype)) for name, tensor in outputs.items()),
+    )
+    return outputs
