@@ -1,0 +1,118 @@
+{
+  "stage": "COMPLETED_AND_CPU_AUDITED_NOT_FULL24_SUCCESS",
+  "scope": "Residual-first and reversed four-cross-term K32 native dot order, same frozen BF16-staged prototype/declared logical oracle, all6completecases144nativecalls fail1%gate; production unchanged",
+  "files": [
+    {
+      "path": "results/a3-latest-e2-native-provenance-20261001.json",
+      "size": 18959,
+      "sha256": "30ea6cd6a09d73b01d22215d98c2d7a5964d04d97489f64b876fa979013b3840"
+    },
+    {
+      "path": "results/a3-residual-first-mxfp8-staged-20261001-r1-launch/run.json",
+      "size": 792,
+      "sha256": "0704ba540663cc850859452af28c179376e64daf155048a9a101c13a1d664858"
+    },
+    {
+      "path": "results/a3-residual-first-mxfp8-staged-20261001-r1-launch/stderr.log",
+      "size": 193,
+      "sha256": "166cb07b817034ea6533f3244e084d6cea13fc5a6fa6c4b4cd1593915c9a0ef0"
+    },
+    {
+      "path": "results/a3-residual-first-mxfp8-staged-20261001-r1-launch/stdout.log",
+      "size": 4688,
+      "sha256": "72067b8d394678da4bbe47d05e1fdfb98b9907396b523907b7727a860466fc51"
+    },
+    {
+      "path": "results/a3-residual-first-mxfp8-staged-20261001-r1/admission.json",
+      "size": 106,
+      "sha256": "9a494c4cf2e8457680f096878d5b79a91171c9eae24b05110f28bd02b45c7f65"
+    },
+    {
+      "path": "results/a3-residual-first-mxfp8-staged-20261001-r1/admission_wait.json",
+      "size": 76,
+      "sha256": "f90e9bd513be68b99d60e317fe67e6896740045905ee12f4389a13c6e4316431"
+    },
+    {
+      "path": "results/a3-residual-first-mxfp8-staged-20261001-r1/partial.json",
+      "size": 7799,
+      "sha256": "b75c14dd143920a4a2e214d2d318a3c62beb3f37138811d90baccfa82a25f6c9"
+    },
+    {
+      "path": "results/a3-residual-first-mxfp8-staged-20261001-r1/result.json",
+      "size": 19571,
+      "sha256": "c1c11d5fea0e0ff83310171d84b53c5e15812c31748086f3600d669ce33d5e41"
+    },
+    {
+      "path": "results/a3-residual-first-mxfp8-staged-cpu-audit-20261001-r1-launch/run.json",
+      "size": 620,
+      "sha256": "befd4a74de1cee6f3e0b04e46673d45279f3225fc2ae366e90a0800d8e58001c"
+    },
+    {
+      "path": "results/a3-residual-first-mxfp8-staged-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-residual-first-mxfp8-staged-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 174,
+      "sha256": "2c0c81c829f0d7c89769ba4e2476b23a691c5ab141320fba552b6ff082d86a23"
+    },
+    {
+      "path": "results/a3-residual-first-mxfp8-staged-cpu-audit-20261001-r1/result.json",
+      "size": 8867,
+      "sha256": "1c275544e59cd21d574ce0ed85f1ede241c25db3aae7dea724e4b5f8ff4388b0"
+    },
+    {
+      "path": "tools/a3_all24_precision_probe_20261001.py",
+      "size": 12896,
+      "sha256": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5"
+    },
+    {
+      "path": "tools/a3_model_e2e_mergefix_20261001.py",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "path": "tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+      "size": 131629,
+      "sha256": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3"
+    },
+    {
+      "path": "tools/a3_residual_first_mxfp8_staged_queued_20261001.py",
+      "size": 1635,
+      "sha256": "e207cbfe6b61ef75b2084acb7a94dd2a812fa97ea7f1e2546ccade99d583eb3b"
+    },
+    {
+      "path": "tools/a3_residual_first_mxfp8_staged_worker_20261001.py",
+      "size": 13141,
+      "sha256": "3700c713a3ee35f7762040db00673852e214cd0d35c8eebbb130c5e479ed0c7a"
+    },
+    {
+      "path": "tools/archive_a3_residual_first_mxfp8_staged_20261001.py",
+      "size": 3488,
+      "sha256": "46a10814a3ddd0928c6a503a3b24c015162edef4306eb0f548f84043aac06bb5"
+    },
+    {
+      "path": "tools/audit_a3_precision_followup_r2_20261001.py",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "tools/audit_a3_residual_first_mxfp8_staged_20261001.py",
+      "size": 7667,
+      "sha256": "217c2f8cce53d1a8649dac714deda6ad078c4e0bcc0ecfd0ce98862347faa15d"
+    },
+    {
+      "path": "tools/run_logged.py",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    }
+  ],
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    ".pt outputs",
+    "native binaries"
+  ]
+}

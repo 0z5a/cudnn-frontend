@@ -1,0 +1,1 @@
+{"stage": "CPU_AUDITED_RESIDUAL_FIRST_MXFP8_STAGE_FULL24_REJECTED", "all_cases": {"residual_terms_then_HH_bf16_stage": false, "reversed_four_cross_terms_bf16_stage": false}}
