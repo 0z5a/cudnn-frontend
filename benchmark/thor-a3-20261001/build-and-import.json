@@ -1,0 +1,19 @@
+{
+  "tested_head": "531f7746255a55c97b9b7f3d0e41f8ef621711e4",
+  "develop_base": "b56af9d558e10bb20ecff3cf6e5879ba18134f04",
+  "build_returncode": 0,
+  "build_elapsed_seconds": 225.8173607029894,
+  "private_import_verified": true,
+  "native_binding": "_compiled_module.cpython-312-aarch64-linux-gnu.so",
+  "native_binding_bytes": 6532408,
+  "native_binding_sha256": "74408ba755cc064b52c0d1f7dfd1940985da43e2c82a1178c7dd41916abeb167",
+  "backend": 92000,
+  "source_equivalence": {
+    "latest_develop": "b56af9d558e10bb20ecff3cf6e5879ba18134f04",
+    "rebased_candidate": "531f7746255a55c97b9b7f3d0e41f8ef621711e4",
+    "upstream_cutedsl_equivalence": true,
+    "lean_cutedsl_equivalence": true
+  },
+  "current_pr1233_head": "82c25771e99e4504accefa7efa24241af04b313a",
+  "current_pr1233_cutedsl_matches_pre_fix_control": true
+}

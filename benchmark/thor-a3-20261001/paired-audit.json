@@ -1,0 +1,996 @@
+{
+  "candidate": "narrow",
+  "source_frozen": true,
+  "all_processes_exit_zero": true,
+  "scope": "operator only; four paired process observations, five within-process groups",
+  "cases": {
+    "four32": {
+      "dataset_sha256": "d237109a0373fc344e564426c0f571d0c1038f348a94a2c4ceb0b8ae14deb06c",
+      "outputs_byte_identical": true,
+      "output_hashes": {
+        "default": [
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          }
+        ],
+        "narrow": [
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          }
+        ]
+      },
+      "paired": {
+        "wrapper_e2e": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "default": [
+                48.186561584472656,
+                49.100608825683594,
+                48.57449722290039,
+                49.853153228759766
+              ],
+              "narrow": [
+                48.77641677856445,
+                48.567039489746094,
+                48.475040435791016,
+                48.20220947265625
+              ]
+            },
+            "candidate_over_control": [
+              1.0122410725043696,
+              0.9891331421605836,
+              0.9979524896232486,
+              0.9668838649277033
+            ],
+            "geometric_mean_ratio": 0.991415539860822,
+            "paired_log_t_95pct_df3": [
+              0.9615510702143961,
+              1.0222075593534181
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "default": [
+                48.164179,
+                49.07656,
+                48.547968999999995,
+                49.799034
+              ],
+              "narrow": [
+                48.748629,
+                48.541693,
+                48.450839,
+                48.179181
+              ]
+            },
+            "candidate_over_control": [
+              1.0121345367477355,
+              0.9891013754835303,
+              0.9979992983846555,
+              0.9674722003643685
+            ],
+            "geometric_mean_ratio": 0.9915438957465246,
+            "paired_log_t_95pct_df3": [
+              0.9621272917778468,
+              1.021859898990584
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "default": [
+                48.205549,
+                49.109273,
+                48.583589999999994,
+                49.86321
+              ],
+              "narrow": [
+                48.787017999999996,
+                48.572322,
+                48.483635,
+                48.210431
+              ]
+            },
+            "candidate_over_control": [
+              1.0120622835350346,
+              0.9890661993713489,
+              0.9979426180733043,
+              0.9668537384576724
+            ],
+            "geometric_mean_ratio": 0.9913448114166509,
+            "paired_log_t_95pct_df3": [
+              0.9615566485660532,
+              1.0220557848445941
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        },
+        "compiled_execute_with_reset": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "default": [
+                14.813823699951172,
+                14.690496444702148,
+                14.76636791229248,
+                14.663392066955566
+              ],
+              "narrow": [
+                13.493439674377441,
+                13.568832397460938,
+                13.819904327392578,
+                13.519552230834961
+              ]
+            },
+            "candidate_over_control": [
+              0.9108681153281118,
+              0.9236469610497255,
+              0.9359041038038877,
+              0.9219935038974859
+            ],
+            "geometric_mean_ratio": 0.9230605271062373,
+            "paired_log_t_95pct_df3": [
+              0.906903156613881,
+              0.9395057570236308
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "default": [
+                13.590729999999999,
+                13.415137000000001,
+                13.000461999999999,
+                13.782513999999999
+              ],
+              "narrow": [
+                13.271815,
+                13.498027,
+                13.623331,
+                13.292767
+              ]
+            },
+            "candidate_over_control": [
+              0.9765343730616385,
+              1.006178841110605,
+              1.0479112973062035,
+              0.964466061851996
+            ],
+            "geometric_mean_ratio": 0.9982597183277011,
+            "paired_log_t_95pct_df3": [
+              0.9413063265709927,
+              1.0586590540253253
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "default": [
+                14.819113999999999,
+                14.695957,
+                14.770566,
+                14.668916999999999
+              ],
+              "narrow": [
+                13.497517,
+                13.573582,
+                13.823774,
+                13.524025
+              ]
+            },
+            "candidate_over_control": [
+              0.9108180826465064,
+              0.9236269539983003,
+              0.9359000866994535,
+              0.9219511569940713
+            ],
+            "geometric_mean_ratio": 0.9230312632646732,
+            "paired_log_t_95pct_df3": [
+              0.9068436078081574,
+              0.9395078772438301
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        },
+        "graph_replay_with_reset": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "default": [
+                16.646495819091797,
+                16.583520889282227,
+                16.595264434814453,
+                16.573631286621094
+              ],
+              "narrow": [
+                15.810943603515625,
+                15.648703575134277,
+                15.846336364746094,
+                15.744576454162598
+              ]
+            },
+            "candidate_over_control": [
+              0.9498061198791231,
+              0.9436297442268661,
+              0.9548709770181657,
+              0.9499774781928603
+            ],
+            "geometric_mean_ratio": 0.9495627007432759,
+            "paired_log_t_95pct_df3": [
+              0.9422601541174782,
+              0.9569218423412676
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "default": [
+                4.434056,
+                4.665229999999999,
+                4.3833519999999995,
+                3.070969
+              ],
+              "narrow": [
+                4.633435,
+                4.823147,
+                4.951711,
+                4.775136000000001
+              ]
+            },
+            "candidate_over_control": [
+              1.044965377072369,
+              1.0338497780388105,
+              1.1296630980126627,
+              1.5549281024979416
+            ],
+            "geometric_mean_ratio": 1.1736933629507744,
+            "paired_log_t_95pct_df3": [
+              0.8652187904412008,
+              1.5921477035100466
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "default": [
+                16.650254,
+                16.586835999999998,
+                16.598799,
+                16.574973999999997
+              ],
+              "narrow": [
+                15.814988999999999,
+                15.652285,
+                15.849599,
+                15.747774
+              ]
+            },
+            "candidate_over_control": [
+              0.9498346992184022,
+              0.943657066362747,
+              0.9548642043318917,
+              0.9500934360440024
+            ],
+            "geometric_mean_ratio": 0.949604009190787,
+            "paired_log_t_95pct_df3": [
+              0.9423171751761701,
+              0.9569471914831975
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        }
+      }
+    },
+    "ragged8": {
+      "dataset_sha256": "de8e6daf8cc5f601ccf98d75bf4212e9fcf96a4a066ac75c8be6d4f19bae6ff2",
+      "outputs_byte_identical": true,
+      "output_hashes": {
+        "default": [
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          }
+        ],
+        "narrow": [
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          }
+        ]
+      },
+      "paired": {
+        "wrapper_e2e": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "default": [
+                48.892127990722656,
+                48.234432220458984,
+                47.9796142578125,
+                49.044769287109375
+              ],
+              "narrow": [
+                50.314239501953125,
+                48.193824768066406,
+                47.68729782104492,
+                47.62223815917969
+              ]
+            },
+            "candidate_over_control": [
+              1.0290867174261737,
+              0.999158123138944,
+              0.9939074867255736,
+              0.9709952529371246
+            ],
+            "geometric_mean_ratio": 0.9980730208763142,
+            "paired_log_t_95pct_df3": [
+              0.9608505799642824,
+              1.0367374238752098
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "default": [
+                48.866111,
+                48.210463000000004,
+                47.957509,
+                49.020492
+              ],
+              "narrow": [
+                50.292502,
+                48.204260000000005,
+                47.664148000000004,
+                47.597508000000005
+              ]
+            },
+            "candidate_over_control": [
+              1.029189779395377,
+              0.9998713349838603,
+              0.9938828974624183,
+              0.9709716499785438
+            ],
+            "geometric_mean_ratio": 0.9982638341198266,
+            "paired_log_t_95pct_df3": [
+              0.9609320112379938,
+              1.0370459833342007
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "default": [
+                48.89846300000001,
+                48.239101999999995,
+                47.98849,
+                49.052186
+              ],
+              "narrow": [
+                50.318761,
+                48.236833,
+                47.693528,
+                47.628786
+              ]
+            },
+            "candidate_over_control": [
+              1.0290458618300538,
+              0.9999529634693449,
+              0.9938534844501254,
+              0.9709819252499776
+            ],
+            "geometric_mean_ratio": 0.9982445623275846,
+            "paired_log_t_95pct_df3": [
+              0.961004769469915,
+              1.0369274304083325
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        },
+        "compiled_execute_with_reset": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "default": [
+                21.911840438842773,
+                22.017887115478516,
+                21.91823959350586,
+                21.937824249267578
+              ],
+              "narrow": [
+                16.77734375,
+                16.77187156677246,
+                16.751359939575195,
+                16.7906551361084
+              ]
+            },
+            "candidate_over_control": [
+              0.7656747865076211,
+              0.7617384664935393,
+              0.7642657553820356,
+              0.7653746764184682
+            ],
+            "geometric_mean_ratio": 0.7642618489898632,
+            "paired_log_t_95pct_df3": [
+              0.7614180408662912,
+              0.7671162784071393
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "default": [
+                13.289868,
+                13.214072,
+                13.03483,
+                13.126357
+              ],
+              "narrow": [
+                13.841977,
+                13.058776,
+                13.152654,
+                13.043773999999999
+              ]
+            },
+            "candidate_over_control": [
+              1.0415436029913916,
+              0.9882476802003198,
+              1.0090391666020961,
+              0.9937086123743243
+            ],
+            "geometric_mean_ratio": 1.0079235309014336,
+            "paired_log_t_95pct_df3": [
+              0.9708041001221291,
+              1.0464622512585284
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "default": [
+                21.915811,
+                22.023208,
+                21.922059,
+                21.941743
+              ],
+              "narrow": [
+                16.781259,
+                16.776426,
+                16.757397,
+                16.795981
+              ]
+            },
+            "candidate_over_control": [
+              0.7657147161927979,
+              0.7617612293358896,
+              0.7644079874066574,
+              0.7654807095315993
+            ],
+            "geometric_mean_ratio": 0.7643395485753776,
+            "paired_log_t_95pct_df3": [
+              0.7614598075036152,
+              0.7672301804499881
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        },
+        "graph_replay_with_reset": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "default": [
+                24.637088775634766,
+                24.664831161499023,
+                24.675424575805664,
+                24.683103561401367
+              ],
+              "narrow": [
+                18.634559631347656,
+                18.778783798217773,
+                18.713760375976562,
+                18.688928604125977
+              ]
+            },
+            "candidate_over_control": [
+              0.7563620767473386,
+              0.7613587003802738,
+              0.7583966921617011,
+              0.7571547296568942
+            ],
+            "geometric_mean_ratio": 0.758315673721897,
+            "paired_log_t_95pct_df3": [
+              0.7548367802560209,
+              0.7618106007198736
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "default": [
+                4.088574,
+                4.11976,
+                4.107953,
+                4.083907
+              ],
+              "narrow": [
+                4.5525910000000005,
+                4.571295,
+                4.522286,
+                4.615942
+              ]
+            },
+            "candidate_over_control": [
+              1.1134911585310674,
+              1.1096022583839835,
+              1.1008611831732251,
+              1.1302759832679834
+            ],
+            "geometric_mean_ratio": 1.1135065877871257,
+            "paired_log_t_95pct_df3": [
+              1.0941012222902256,
+              1.1332561336965843
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "default": [
+                24.640179,
+                24.669065999999997,
+                24.678436,
+                24.686462
+              ],
+              "narrow": [
+                18.638232,
+                18.784963,
+                18.716342,
+                18.693129000000003
+              ]
+            },
+            "candidate_over_control": [
+              0.7564162581773451,
+              0.7614784848360292,
+              0.758408758156311,
+              0.7572218732680286
+            ],
+            "geometric_mean_ratio": 0.758378907341179,
+            "paired_log_t_95pct_df3": [
+              0.7548561870915161,
+              0.7619180672228799
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        }
+      }
+    }
+  }
+}
