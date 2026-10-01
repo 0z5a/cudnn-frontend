@@ -1,0 +1,116 @@
+"""CPU audit of saved native C/D experiment; does not import model or kernels."""
+
+import argparse
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+HELPER = Path(__file__).with_name("audit_a3_precision_followup_r2_20261001.py")
+spec = importlib.util.spec_from_file_location("cpu_c_boundary_audit", HELPER)
+a = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(a)
+t = a.torch
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--input", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    directory = Path(args.input)
+    meta = json.loads((directory / "result.json").read_text())
+    run = json.loads(directory.with_name(directory.name + "-launch").joinpath("run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    assert meta["stage"] == "DIAGNOSTIC_COMPLETE" and meta["source_head"] == a.HEAD
+    assert meta["native_calls"] == 2 and meta["gemm_k"] == 4096 and meta["original_h"] == 1024 and meta["layer"] == 0
+    assert not meta["hypothetical_reference_bf16_stage_native_supported"]
+    source = Path(meta["source"])
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == a.HEAD
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    for record in (*meta["imports"].values(), *meta["native_plans"].values()):
+        assert Path(record["path"]).resolve().is_relative_to(source / "python")
+        assert a.sha_file(record["path"]) == record["sha256"]
+    assert a.sha_file(run["argv"][1]) == meta["harness_sha256"]
+    for name, key in (
+        ("a3_double_mxfp8_recipe_probe_20261001.py", "double_helper_sha256"),
+        ("a3_all24_precision_probe_20261001.py", "precision_probe_sha256"),
+        ("a3_model_e2e_mergefix_20261001.py", "base_adapter_sha256"),
+    ):
+        assert a.sha_file(a.ROOT / "tools" / name) == meta[key]
+    prior_path = a.ROOT / "results/a3-residual-staging-20261001-r1/outputs.pt"
+    assert a.sha_file(prior_path) == meta["prior_outputs_sha256"]
+    values = t.load(directory / "outputs.pt", map_location="cpu", weights_only=True)
+    prior = t.load(prior_path, map_location="cpu", weights_only=True)
+    assert t.equal(values["original_stock_c"], prior["local/0"]["original_bf16_local"]["c"])
+    assert t.equal(values["original_stock_d"], prior["local/0"]["original_bf16_local"]["d"])
+    del prior
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized()
+    rows = []
+    with t.inference_mode():
+        for row in meta["rows"]:
+            prefix = row["c_dtype"]
+            c, d = values[prefix + "/native_c"], values[prefix + "/native_d"]
+            assert c.shape == (584, 1024) and d.shape == (584, 512) and row["native_calls"] == 1
+            for key, v, reference in (
+                ("native_c_vs_reference", c, values["reference_c"]),
+                ("native_d_vs_reference_fp16_d", d, values["reference_fp16_d"]),
+                ("native_d_vs_original_stock_d", d, values["original_stock_d"]),
+            ):
+                a.compare_metric(a.difference(v, reference, t.float32), row[key])
+            cm1 = (c.to(t.bfloat16) != values["original_stock_c"]).sum().item()
+            cm2 = (c.to(t.bfloat16) != values["reference_c"].to(t.bfloat16)).sum().item()
+            assert cm1 == row["native_c_original_bf16_rounding_mismatches"]
+            assert cm2 == row["native_c_reference_bf16_rounding_mismatches"]
+            raw, sf = values[prefix + "/raw_d"], values[prefix + "/raw_sfd"]
+            assert raw.dtype == t.float16
+            n, k = raw.shape
+            code = sf.view(t.uint8).reshape(1, n // 128, k // 128, 32, 4, 4).permute(0, 1, 4, 3, 2, 5).contiguous().reshape(n, k // 32)
+            decoded = (raw.float().reshape(n, k // 32, 32) * t.pow(2.0, code.int() - 127).unsqueeze(-1)).reshape(n, k)[values["destinations"]]
+            assert t.equal(decoded.view(t.uint8), d.view(t.uint8))
+            rows.append(
+                {
+                    "c_dtype": prefix,
+                    "native_c_original_bf16_rounding_mismatches": cm1,
+                    "native_c_reference_bf16_rounding_mismatches": cm2,
+                    "native_c_reference_fp64": a.difference(c, values["reference_c"]),
+                    "native_d_reference_fp64": a.difference(d, values["reference_fp16_d"]),
+                    "native_d_original_bf16_fp64": a.difference(d, values["original_stock_d"]),
+                    "raw_d_sf_cpu_decode_byte_equal_saved_native_d": True,
+                }
+            )
+        raw_equal = t.equal(values["torch.bfloat16/raw_d"].view(t.uint8), values["torch.float32/raw_d"].view(t.uint8))
+        sf_equal = t.equal(values["torch.bfloat16/raw_sfd"].view(t.uint8), values["torch.float32/raw_sfd"].view(t.uint8))
+        assert raw_equal == meta["same_input_c_storage_arms_raw_d_byte_equal"]
+        assert sf_equal == meta["same_input_c_storage_arms_raw_sfd_byte_equal"]
+        assert t.equal(values["torch.bfloat16/native_d"].view(t.uint8), values["torch.float32/native_d"].view(t.uint8))
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "PASS_CPU_EVIDENCE_AUDIT_NATIVE_C_BOUNDARY_NOT_MODEL_SUCCESS",
+        "source_head": a.HEAD,
+        "cuda_initialized": False,
+        "native_calls": 2,
+        "run": run,
+        "rows": rows,
+        "C_storage_arms_raw_D_byte_equal": raw_equal,
+        "C_storage_arms_raw_SFD_byte_equal": sf_equal,
+        "tensor_count": len(values),
+        "tensors": a.flatten_tensors(values),
+        "outputs_sha256": a.sha_file(directory / "outputs.pt"),
+        "producer_metadata_sha256": a.sha_file(directory / "result.json"),
+        "harness_sha256": a.sha_file(__file__),
+        "cpu_helper_sha256": a.sha_file(HELPER),
+        "formal_performance": "NOT_RUN",
+        "limits": "Native C/D metrics and rawD/SF decode audited; same-input single-layer scope only. Full input/weight physical-pack reconstruction and GEMM recomputation not audited here. No model quality or throughput success.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "tensor_count": len(values), "raw_d_equal": raw_equal, "raw_sfd_equal": sf_equal}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

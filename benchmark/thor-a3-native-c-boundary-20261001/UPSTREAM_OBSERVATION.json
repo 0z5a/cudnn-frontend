@@ -1,0 +1,24 @@
+{
+  "observed_utc": "2026-10-01T11:37:44.386796+00:00",
+  "tip": "e2bf967b17dae17a642102198e6d862d559655c9",
+  "commit": "FROST: bound cached THD launches and parallelize attention setup (#1314)",
+  "tested_base": "ef85ae94d04b0a366ff6446b327e787d9af5eb85",
+  "runtime_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "new_tip_tested_or_rebased": false,
+  "relevant_compared_paths_unchanged": [
+    "python/cudnn/gemm/cutedsl/grouped/swiglu",
+    "python/cudnn/gemm/cutedsl/grouped/glu",
+    "python/cudnn/common",
+    "python/cudnn/utils.py",
+    "python/cudnn/_torch_utils.py",
+    "python/handle.cpp",
+    "include",
+    "setup.py",
+    "pyproject.toml",
+    "CMakeLists.txt"
+  ],
+  "broad_gemm_changes": [
+    "python/cudnn/gemm/cutedsl/grouped/wgrad/moe_blockscaled_grouped_gemm_wgrad.py"
+  ],
+  "scope": "Read-only latest upstream inspection; no mutation to frozen Thor checkout; new tip not hardware-tested"
+}

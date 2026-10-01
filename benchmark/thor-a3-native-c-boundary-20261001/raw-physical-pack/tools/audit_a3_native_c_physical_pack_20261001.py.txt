@@ -1,0 +1,153 @@
+"""CPU-only independent scale address, component quantization and local GEMM audit."""
+
+import argparse
+import importlib.util
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+HELPER = Path(__file__).with_name("audit_a3_precision_followup_r2_20261001.py")
+spec = importlib.util.spec_from_file_location("cpu_pack_audit", HELPER)
+a = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(a)
+t = a.torch
+from safetensors import safe_open
+
+
+def independent_quantize(value):
+    # frexp exponent plus exact power-of-two threshold; no producer/log2 import.
+    blocks = value.float().reshape(*value.shape[:-1], value.shape[-1] // 32, 32)
+    peak = blocks.abs().amax(-1)
+    _, binary_exp = t.frexp(peak)
+    exponent = binary_exp - 9
+    limit = t.ldexp(t.full_like(peak, 448.0), exponent)
+    exponent += (peak > limit).to(t.int32)
+    exponent = t.where(peak == 0, 0, exponent).clamp(-126, 127)
+    scale = t.ldexp(t.ones_like(peak), exponent)
+    codes = (blocks / scale.unsqueeze(-1)).clamp(-448, 448).to(t.float8_e4m3fn)
+    restored = codes.float() * scale.unsqueeze(-1)
+    return codes.reshape(value.shape), scale, restored.reshape(value.shape)
+
+
+def decode_physical(sf, rows, k, groups):
+    # Direct flattened physical address calculation, not inverse producer permute.
+    r = t.arange(rows)[:, None]
+    c = t.arange(k // 32)[None, :]
+    address = (((r // 128) * (k // 128) + c // 4) * 32 + r % 32) * 16 + ((r % 128) // 32) * 4 + c % 4
+    code = sf.view(t.uint8).reshape(groups, -1)[:, address]
+    return t.ldexp(t.ones_like(code, dtype=t.float32), code.to(t.int32) - 127)
+
+
+def check_operand(q, logical_scale, physical_sf, original, indices, label):
+    high, hs, restored = independent_quantize(original)
+    low, ls, residual = independent_quantize(original.float() - restored)
+    component_codes, component_scales = (high, low), (hs, ls)
+    for chunk, component in enumerate(indices):
+        part = q[..., chunk * 1024 : (chunk + 1) * 1024]
+        scales = logical_scale[..., chunk * 32 : (chunk + 1) * 32]
+        assert t.equal(part.view(t.uint8), component_codes[component].view(t.uint8)), (label, chunk, component)
+        assert t.equal(scales, component_scales[component]), (label, chunk, component)
+    rows, k = q.shape[-2:]
+    groups = q.numel() // (rows * k)
+    decoded_scale = decode_physical(physical_sf, rows, k, groups).reshape(logical_scale.shape)
+    assert t.equal(decoded_scale, logical_scale), label
+    decoded = (q.float().reshape(*logical_scale.shape, 32) * decoded_scale.unsqueeze(-1)).reshape(q.shape)
+    reconstruction = restored + residual
+    return decoded, {
+        "operand": label,
+        "expanded_fp8_elements_byte_checked": q.numel(),
+        "scale_elements_checked_by_direct_address": logical_scale.numel(),
+        "effective_reconstruction_original_fp64": a.difference(reconstruction, original),
+        "components": 2,
+        "expansion_components": list(indices),
+        "quantization": "Independent CPU frexp + exact binary threshold, ties-to-even E4M3 cast",
+        "physical_scale": "Direct integer flattened address formula; no producer inverse permute",
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized()
+    directory = a.ROOT / "results/a3-native-c-boundary-20261001-r2"
+    meta = json.loads((directory / "result.json").read_text())
+    prior_audit_dir = a.ROOT / "results/a3-native-c-boundary-cpu-audit-20261001-r2"
+    prior_audit = json.loads((prior_audit_dir / "result.json").read_text())
+    assert prior_audit["stage"] == "PASS_CPU_EVIDENCE_AUDIT_NATIVE_C_BOUNDARY_NOT_MODEL_SUCCESS"
+    assert prior_audit["outputs_sha256"] == a.sha_file(directory / "outputs.pt")
+    values = t.load(directory / "outputs.pt", map_location="cpu", weights_only=True)
+    prior_path = a.ROOT / "results/a3-residual-staging-20261001-r1/outputs.pt"
+    assert a.sha_file(prior_path) == meta["prior_outputs_sha256"]
+    prior = t.load(prior_path, map_location="cpu", weights_only=True)
+    hidden, index = prior["stock_input/0"]["original"], prior["stock_route/0"]["index"]
+    order = t.argsort(index.flatten(), stable=True)
+    counts = t.bincount(index.flatten(), minlength=32)
+    sizes = counts.tolist()
+    aligned = [((n + 255) // 256) * 256 for n in sizes]
+    ends = t.tensor(aligned).cumsum(0)
+    starts = t.cat((t.zeros(1, dtype=t.int64), ends[:-1]))
+    groups = index.flatten()[order]
+    slot = t.arange(order.numel()) - (counts.cumsum(0) - counts)[groups]
+    destination = starts[groups] + slot
+    assert t.equal(destination, values["destinations"]) and t.equal(ends.to(t.int32), values["padded_offsets"])
+    original_a = t.zeros((sum(aligned), 1024), dtype=t.bfloat16)
+    original_a[destination] = hidden[order // 8]
+    del prior
+    checkpoint = Path("/home/jwipc/models/granite-3.1-1b-a400m-instruct-0da7a48b/model.safetensors")
+    assert a.sha_file(checkpoint) == meta["weight_sha256"]
+    with safe_open(str(checkpoint), framework="pt", device="cpu") as handle:
+        weight = handle.get_tensor("model.layers.0.block_sparse_moe.input_linear.weight")
+    gate, up = weight.chunk(2, 1)
+    # Independent physical output-column assignment: (block, gate/up, lane).
+    original_b = t.empty_like(weight)
+    for block in range(16):
+        original_b[:, block * 64 : block * 64 + 32] = gate[:, block * 32 : (block + 1) * 32]
+        original_b[:, block * 64 + 32 : (block + 1) * 64] = up[:, block * 32 : (block + 1) * 32]
+    with t.inference_mode():
+        adeq, ac = check_operand(values["input_fp8"], values["input_logical_scale"], values["sfa"], original_a, (0, 0, 1, 1), "A")
+        bdeq, bc = check_operand(values["weight_fp8"], values["weight_logical_scale"], values["sfb"], original_b, (0, 1, 0, 1), "B")
+        outputs = []
+        for group, n in enumerate(sizes):
+            if n:
+                begin = starts[group].item()
+                outputs.append(t.nn.functional.linear(adeq[begin : begin + n], bdeq[group]))
+        cpu_c = t.cat(outputs)
+        assert cpu_c.shape == values["reference_c"].shape == (584, 1024)
+        comparisons = {
+            "cpu_fp32_dot_gpu_quantized_oracle_fp64": a.difference(cpu_c, values["reference_c"]),
+            "cpu_fp32_dot_native_fp32_C_fp64": a.difference(values["torch.float32/native_c"], cpu_c),
+            "cpu_fp32_dot_original_stock_C_fp64": a.difference(cpu_c, values["original_stock_c"]),
+        }
+        assert comparisons["cpu_fp32_dot_gpu_quantized_oracle_fp64"]["relative_l2"] < 1e-5
+        t.save({"independent_cpu_C": cpu_c}, out / "outputs.pt")
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "PASS_INDEPENDENT_CPU_NATIVE_INPUT_PACK_LOCAL_DOT_AUDIT_NOT_MODEL_SUCCESS",
+        "cuda_initialized": False,
+        "native_calls": 0,
+        "source_head": meta["source_head"],
+        "operand_checks": [ac, bc],
+        "full_route_assignment_count": destination.numel(),
+        "full_live_C_elements": cpu_c.numel(),
+        "comparisons": comparisons,
+        "independent_routing_and_output_column_pack_byte_checked": True,
+        "harness_sha256": a.sha_file(__file__),
+        "cpu_helper_sha256": a.sha_file(HELPER),
+        "producer_outputs_sha256": a.sha_file(directory / "outputs.pt"),
+        "prior_C_D_cpu_audit_sha256": a.sha_file(prior_audit_dir / "result.json"),
+        "checkpoint_sha256": a.sha_file(checkpoint),
+        "outputs_sha256": a.sha_file(out / "outputs.pt"),
+        "formal_performance": "NOT_RUN",
+        "limits": "First layer/original73-token trajectory with double-componentK4096 only; all packed A/B/SF/routing and all live C recomputed on CPU, GPU/CPU matmul order differs. No full model/generation/KV pass, no correction accepted or new GPU work.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result), flush=True)
+
+
+if __name__ == "__main__":
+    main()

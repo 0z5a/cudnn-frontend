@@ -1,0 +1,74 @@
+{
+  "stage": "PASS_INDEPENDENT_CPU_NATIVE_INPUT_PACK_LOCAL_DOT_AUDIT_NOT_MODEL_SUCCESS",
+  "cuda_initialized": false,
+  "native_calls": 0,
+  "source_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "operand_checks": [
+    {
+      "operand": "A",
+      "expanded_fp8_elements_byte_checked": 33554432,
+      "scale_elements_checked_by_direct_address": 1048576,
+      "effective_reconstruction_original_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "components": 2,
+      "expansion_components": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "quantization": "Independent CPU frexp + exact binary threshold, ties-to-even E4M3 cast",
+      "physical_scale": "Direct integer flattened address formula; no producer inverse permute"
+    },
+    {
+      "operand": "B",
+      "expanded_fp8_elements_byte_checked": 134217728,
+      "scale_elements_checked_by_direct_address": 4194304,
+      "effective_reconstruction_original_fp64": {
+        "max_abs": 2.2351741790771484e-08,
+        "relative_l2": 1.4231448344712796e-09,
+        "argmax_equal_fraction": 1.0
+      },
+      "components": 2,
+      "expansion_components": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "quantization": "Independent CPU frexp + exact binary threshold, ties-to-even E4M3 cast",
+      "physical_scale": "Direct integer flattened address formula; no producer inverse permute"
+    }
+  ],
+  "full_route_assignment_count": 584,
+  "full_live_C_elements": 598016,
+  "comparisons": {
+    "cpu_fp32_dot_gpu_quantized_oracle_fp64": {
+      "max_abs": 0.00016021728515625,
+      "relative_l2": 6.779954516618502e-07,
+      "argmax_equal_fraction": 1.0
+    },
+    "cpu_fp32_dot_native_fp32_C_fp64": {
+      "max_abs": 0.00067138671875,
+      "relative_l2": 2.8846382799360565e-06,
+      "argmax_equal_fraction": 1.0
+    },
+    "cpu_fp32_dot_original_stock_C_fp64": {
+      "max_abs": 0.2477569580078125,
+      "relative_l2": 0.0016417330957417874,
+      "argmax_equal_fraction": 0.9931506849315068
+    }
+  },
+  "independent_routing_and_output_column_pack_byte_checked": true,
+  "harness_sha256": "bf8d0b6e56170fd2e3cc19dca3813faeef7279f11297827d6955151ce21f594b",
+  "cpu_helper_sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944",
+  "producer_outputs_sha256": "87ecd871bfeecec3142f80c3ece78a02c9c941a62da43d27876f6b36a246ed75",
+  "prior_C_D_cpu_audit_sha256": "a102c49ab2f6da99892ef5703f239571fab9b4f52670aea680e1c84484ed0e8a",
+  "checkpoint_sha256": "ac02591061f1344027a7e7b11dbb4143f75f166c47dc09b742f5de3ab1dde1d1",
+  "outputs_sha256": "7f64df401da1bcda27016e96317aef2d4b6c063c5c08aad21bd19b440e7130bf",
+  "formal_performance": "NOT_RUN",
+  "limits": "First layer/original73-token trajectory with double-componentK4096 only; all packed A/B/SF/routing and all live C recomputed on CPU, GPU/CPU matmul order differs. No full model/generation/KV pass, no correction accepted or new GPU work."
+}

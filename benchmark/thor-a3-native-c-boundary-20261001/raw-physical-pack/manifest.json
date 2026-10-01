@@ -1,0 +1,68 @@
+{
+  "stage": "INDEPENDENT_PHYSICAL_INPUT_PACK_AND_CPU_DOT_AUDITED_NOT_MODEL_SUCCESS",
+  "tested_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "files": [
+    {
+      "path": "results/a3-native-c-physical-pack-cpu-audit-20261001-r1-launch/run.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-native-c-physical-pack-cpu-audit-20261001-r1-launch/run.json",
+      "size": 609,
+      "sha256": "7d41e3750c6c78b652cc7584736f0ae3ebeb7750a56ba0930d281990c669ebcd"
+    },
+    {
+      "path": "results/a3-native-c-physical-pack-cpu-audit-20261001-r1-launch/stderr.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-native-c-physical-pack-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-native-c-physical-pack-cpu-audit-20261001-r1-launch/stdout.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-native-c-physical-pack-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 2589,
+      "sha256": "479841d7de287976c6f5fa88f235a0909db277527e9ef521db4bf93882b4e1b8"
+    },
+    {
+      "path": "results/a3-native-c-physical-pack-cpu-audit-20261001-r1/result.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-native-c-physical-pack-cpu-audit-20261001-r1/result.json",
+      "size": 2977,
+      "sha256": "9b1bbf534ed4cfd39640460a2a25dbdc7f848e8c5a5a6d0e63a5046f00c62179"
+    },
+    {
+      "path": "tools/archive_a3_native_c_physical_pack_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/archive_a3_native_c_physical_pack_20261001.py",
+      "size": 2954,
+      "sha256": "e3990ee532831b0c1dbfa9e2745d0bc2333e42645efce8ab6864c8ffa4eecb28"
+    },
+    {
+      "path": "tools/audit_a3_native_c_boundary_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_native_c_boundary_20261001.py",
+      "size": 6549,
+      "sha256": "895f6b4981aab5f75032acd2fa48f19d4126f684988ca80a79b33e70fcf86e73"
+    },
+    {
+      "path": "tools/audit_a3_native_c_physical_pack_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_native_c_physical_pack_20261001.py",
+      "size": 8093,
+      "sha256": "bf8d0b6e56170fd2e3cc19dca3813faeef7279f11297827d6955151ce21f594b"
+    },
+    {
+      "path": "tools/audit_a3_precision_followup_r2_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_precision_followup_r2_20261001.py",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "tools/run_logged.py",
+      "origin": "/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    }
+  ],
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    ".pt outputs",
+    "native binaries"
+  ],
+  "scope": "Independent CPU component quantization via frexp/exact threshold, direct physical scale address, original routing and all live local C; no new native calls or model success"
+}

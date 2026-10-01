@@ -1,0 +1,12 @@
+{
+  "verified": true,
+  "utc": "2026-10-01T11:41:41.282399+00:00",
+  "manifest_entries": 9,
+  "transport": {
+    "archive": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-native-c-physical-pack-archive-20261001/a3-native-c-physical-pack-evidence-20261001.tar.gz",
+    "sha256": "ba9abb3ed1f40ef725f89d283f187a2fffd7632f87f5860c17853f680e9aba97",
+    "size": 11732,
+    "files": 10
+  },
+  "mac_directory": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-native-c-physical-pack-evidence-20261001"
+}

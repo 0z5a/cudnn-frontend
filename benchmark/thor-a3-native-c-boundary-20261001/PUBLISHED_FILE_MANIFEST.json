@@ -11,9 +11,24 @@
       "sha256": "198f742a810aa33da3444d02130aee6a07487fe2d66aea66309031cd59c6b6c4"
     },
     {
+      "path": "PHYSICAL_PACK_AUDIT.md",
+      "size": 2443,
+      "sha256": "27161afb4268dba30f275658913b9d333ec2c77cd263e4db2e7ac4964c041e23"
+    },
+    {
+      "path": "PHYSICAL_PACK_MAC_TRANSPORT.json",
+      "size": 522,
+      "sha256": "3d6c9c9c5215a67c049ecc5d8ed5de0e209654841f23f0dcabacfe41c8aeea9b"
+    },
+    {
       "path": "RESULT.md",
-      "size": 3066,
-      "sha256": "46b50d9b17f0fba9f7296d0cbae05e8df2df2120179e03d2923b20de7894866d"
+      "size": 3429,
+      "sha256": "08f7c15ef8e602695ed96b03a8001e0485929ac6163ab0e899b1173873b2bd62"
+    },
+    {
+      "path": "UPSTREAM_OBSERVATION.json",
+      "size": 921,
+      "sha256": "95eb618e304061fa6b3daa0888bd331f6dedb331f6b657b69fe9d8ae49392885"
     },
     {
       "path": "raw/manifest.json",
@@ -122,6 +137,56 @@
     },
     {
       "path": "raw/tools/run_logged.py.txt",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    },
+    {
+      "path": "raw-physical-pack/manifest.json",
+      "size": 3301,
+      "sha256": "6462e320753840fffda71937eb3259076612818d44d88bbb4b47192487df81d0"
+    },
+    {
+      "path": "raw-physical-pack/results/a3-native-c-physical-pack-cpu-audit-20261001-r1/result.json",
+      "size": 2977,
+      "sha256": "9b1bbf534ed4cfd39640460a2a25dbdc7f848e8c5a5a6d0e63a5046f00c62179"
+    },
+    {
+      "path": "raw-physical-pack/results/a3-native-c-physical-pack-cpu-audit-20261001-r1-launch/run.json",
+      "size": 609,
+      "sha256": "7d41e3750c6c78b652cc7584736f0ae3ebeb7750a56ba0930d281990c669ebcd"
+    },
+    {
+      "path": "raw-physical-pack/results/a3-native-c-physical-pack-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "raw-physical-pack/results/a3-native-c-physical-pack-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 2589,
+      "sha256": "479841d7de287976c6f5fa88f235a0909db277527e9ef521db4bf93882b4e1b8"
+    },
+    {
+      "path": "raw-physical-pack/tools/archive_a3_native_c_physical_pack_20261001.py.txt",
+      "size": 2954,
+      "sha256": "e3990ee532831b0c1dbfa9e2745d0bc2333e42645efce8ab6864c8ffa4eecb28"
+    },
+    {
+      "path": "raw-physical-pack/tools/audit_a3_native_c_boundary_20261001.py.txt",
+      "size": 6549,
+      "sha256": "895f6b4981aab5f75032acd2fa48f19d4126f684988ca80a79b33e70fcf86e73"
+    },
+    {
+      "path": "raw-physical-pack/tools/audit_a3_native_c_physical_pack_20261001.py.txt",
+      "size": 8093,
+      "sha256": "bf8d0b6e56170fd2e3cc19dca3813faeef7279f11297827d6955151ce21f594b"
+    },
+    {
+      "path": "raw-physical-pack/tools/audit_a3_precision_followup_r2_20261001.py.txt",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "raw-physical-pack/tools/run_logged.py.txt",
       "size": 3157,
       "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
     }
