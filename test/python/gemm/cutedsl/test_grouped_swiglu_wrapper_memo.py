@@ -105,7 +105,11 @@ def test_allocations_and_amax_reset_use_launch_stream(api, monkeypatch, warm, ha
 
     def guard(function):
         def allocate(*args, **kwargs):
-            assert torch.cuda.current_stream(inputs["a_tensor"].device) == target, "allocation/reset is unordered with launch"
+            # A pool Stream and an ExternalStream can wrap the same CUDA handle
+            # while comparing unequal as torch objects. CUDA ordering is by the
+            # underlying handle on its device, not torch's internal stream ID.
+            actual = torch.cuda.current_stream(inputs["a_tensor"].device)
+            assert (actual.cuda_stream, actual.device) == (target.cuda_stream, target.device), "allocation/reset is unordered with launch"
             allocations.append(function.__name__)
             return function(*args, **kwargs)
 
