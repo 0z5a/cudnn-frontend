@@ -1,0 +1,118 @@
+{
+  "stage": "COMPLETED_AND_CPU_AUDITED_NOT_FULL24_SUCCESS",
+  "scope": "Common-SF pure-MXFP8/BF16 epilogue stage, two frozen policies, short fixedoracles incompatible, two256cases48nativecalls fail1%gate; production unchanged",
+  "files": [
+    {
+      "path": "results/a3-common-sf-mxfp8-bf16-staged-20261001-r1-launch/run.json",
+      "size": 793,
+      "sha256": "165905a5670f9396c5a2c7f9c19fa8ef69a10c98849d9958f27806b4863574d4"
+    },
+    {
+      "path": "results/a3-common-sf-mxfp8-bf16-staged-20261001-r1-launch/stderr.log",
+      "size": 193,
+      "sha256": "bb6a7dabcafa6ae4276ce0aae049bc6fc6b81fe718d8b13be37b885cbe0f8cda"
+    },
+    {
+      "path": "results/a3-common-sf-mxfp8-bf16-staged-20261001-r1-launch/stdout.log",
+      "size": 3664,
+      "sha256": "483a8c5407d4248690830716731456f160d170d658771f2c1bedba69d1c3261a"
+    },
+    {
+      "path": "results/a3-common-sf-mxfp8-bf16-staged-20261001-r1/admission.json",
+      "size": 105,
+      "sha256": "7be05b9a432a4c8ee819a483b21931d6c56aaa758ca0afb39d437f40f504af0f"
+    },
+    {
+      "path": "results/a3-common-sf-mxfp8-bf16-staged-20261001-r1/admission_wait.json",
+      "size": 75,
+      "sha256": "6dc06fe15f279cc14f1a3a9efd6f24ab76f5b12d5f58b2b3268148dd40ae8d60"
+    },
+    {
+      "path": "results/a3-common-sf-mxfp8-bf16-staged-20261001-r1/partial.json",
+      "size": 5995,
+      "sha256": "2f9f606ac2d046ee501bdcc01fa9b9d6637ea40dabab35f5de98c1b6fd447250"
+    },
+    {
+      "path": "results/a3-common-sf-mxfp8-bf16-staged-20261001-r1/result.json",
+      "size": 17785,
+      "sha256": "062e8c9a0ba2342b027b1cc29957f239783dba00554dc1570ee5d17936488df2"
+    },
+    {
+      "path": "results/a3-common-sf-mxfp8-bf16-staged-cpu-audit-20261001-r1-launch/run.json",
+      "size": 619,
+      "sha256": "5b8b242d3d4d89b0e6153de06d4e945c3edac6c9a3e588757cb5487b839720bb"
+    },
+    {
+      "path": "results/a3-common-sf-mxfp8-bf16-staged-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-common-sf-mxfp8-bf16-staged-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 187,
+      "sha256": "6c59b20396b040b23a2cca364c88ded25e4a08517d80b7f46d82e01066c051a8"
+    },
+    {
+      "path": "results/a3-common-sf-mxfp8-bf16-staged-cpu-audit-20261001-r1/result.json",
+      "size": 6705,
+      "sha256": "bd175f90ef3186481d33975e36d3d924908c0f319cb45b83027c7ee367a3858a"
+    },
+    {
+      "path": "results/a3-latest-e2-native-provenance-20261001.json",
+      "size": 18959,
+      "sha256": "30ea6cd6a09d73b01d22215d98c2d7a5964d04d97489f64b876fa979013b3840"
+    },
+    {
+      "path": "tools/a3_all24_precision_probe_20261001.py",
+      "size": 12896,
+      "sha256": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5"
+    },
+    {
+      "path": "tools/a3_common_sf_mxfp8_bf16_staged_queued_20261001.py",
+      "size": 1635,
+      "sha256": "84a82896284583ba80ac3280a8a55a3609e4730b3acf7584be224ad46fd8a77d"
+    },
+    {
+      "path": "tools/a3_common_sf_mxfp8_bf16_staged_worker_20261001.py",
+      "size": 12966,
+      "sha256": "ba17dfd77b2b0966f19607f5d52ab4df660b9baa01b0455527567cde91910c0b"
+    },
+    {
+      "path": "tools/a3_model_e2e_mergefix_20261001.py",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "path": "tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+      "size": 131629,
+      "sha256": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3"
+    },
+    {
+      "path": "tools/archive_a3_common_sf_mxfp8_bf16_staged_20261001.py",
+      "size": 3452,
+      "sha256": "5e6c3ef042b919c704dd0804ce8c3d91526cee429fd3e01ad743fe689c29a6e3"
+    },
+    {
+      "path": "tools/audit_a3_common_sf_mxfp8_bf16_staged_20261001.py",
+      "size": 7705,
+      "sha256": "356fea54db36268b61ebd8a32f494247004027a43828697a8877ba7e12486fe7"
+    },
+    {
+      "path": "tools/audit_a3_precision_followup_r2_20261001.py",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "tools/run_logged.py",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    }
+  ],
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    ".pt outputs",
+    "native binaries"
+  ]
+}

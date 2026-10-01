@@ -1,0 +1,189 @@
+{
+  "stage": "CPU_AUDITED_FP64_DOT_BF16_STATE_NOT_NATIVE_SUCCESS",
+  "source_head": "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1",
+  "preserved_original_driver_run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_fp64_dot_bf16_state_oracle_queued_20261001.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp64-dot-bf16-state-oracle-20261001-r1",
+      "--expected-source",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+      "--expected-head",
+      "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-01T12:39:16.785123+00:00",
+    "deadline_seconds": 5400.0,
+    "status": "EXITED",
+    "selected_env": {},
+    "returncode": 1,
+    "signal": null,
+    "elapsed_seconds": 41.860836794000534
+  },
+  "original_failure": "Post-reference assertion compared function identity across independent imports; not a GPU accuracy pass/failure",
+  "run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_fp64_dot_bf16_state_oracle_queued_r2_20261001.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fp64-dot-bf16-state-oracle-20261001-r2",
+      "--expected-source",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+      "--expected-head",
+      "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-01T12:41:18.930577+00:00",
+    "deadline_seconds": 5400.0,
+    "status": "EXITED",
+    "selected_env": {},
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 42.67317702000037
+  },
+  "rows": [
+    {
+      "policy": "original_fp64_dot_bf16_stages",
+      "case": 0,
+      "metric_fp64": {
+        "max_abs": 4.28125,
+        "relative_l2": 0.09974720980817618,
+        "argmax_equal_fraction": 0.9452054794520548
+      },
+      "norm_ratio_fp64": 0.9984995547055839,
+      "native_bf16_lower_bound": 0.08976221426112034,
+      "both_gates_impossible": true
+    },
+    {
+      "policy": "original_fp64_dot_bf16_stages",
+      "case": 1,
+      "metric_fp64": {
+        "max_abs": 4.28125,
+        "relative_l2": 0.09396418793381038,
+        "argmax_equal_fraction": 0.9571428571428572
+      },
+      "norm_ratio_fp64": 0.9981224195681088,
+      "native_bf16_lower_bound": 0.08398296373812929,
+      "both_gates_impossible": true
+    },
+    {
+      "policy": "original_fp64_dot_bf16_stages",
+      "case": 2,
+      "metric_fp64": {
+        "max_abs": 4.5625,
+        "relative_l2": 0.04579418789606809,
+        "argmax_equal_fraction": 0.9921875
+      },
+      "norm_ratio_fp64": 1.0005190713249987,
+      "native_bf16_lower_bound": 0.0357889971828181,
+      "both_gates_impossible": false
+    },
+    {
+      "policy": "double_effective_fp64_dot_bf16_stages",
+      "case": 0,
+      "metric_fp64": {
+        "max_abs": 4.171875,
+        "relative_l2": 0.09721817377454457,
+        "argmax_equal_fraction": 0.9452054794520548
+      },
+      "norm_ratio_fp64": 1.0001659716911167,
+      "native_bf16_lower_bound": 0.0872165140576334,
+      "both_gates_impossible": true
+    },
+    {
+      "policy": "double_effective_fp64_dot_bf16_stages",
+      "case": 1,
+      "metric_fp64": {
+        "max_abs": 4.171875,
+        "relative_l2": 0.08495446865673552,
+        "argmax_equal_fraction": 0.9571428571428572
+      },
+      "norm_ratio_fp64": 0.9974230429860006,
+      "native_bf16_lower_bound": 0.07498023822687551,
+      "both_gates_impossible": true
+    },
+    {
+      "policy": "double_effective_fp64_dot_bf16_stages",
+      "case": 2,
+      "metric_fp64": {
+        "max_abs": 4.875,
+        "relative_l2": 0.04769763333133333,
+        "argmax_equal_fraction": 0.9921875
+      },
+      "norm_ratio_fp64": 1.0002547780459803,
+      "native_bf16_lower_bound": 0.03769508555087353,
+      "both_gates_impossible": false
+    }
+  ],
+  "all_three_cases_necessary_bound_compatible": {
+    "original_fp64_dot_bf16_stages": false,
+    "double_effective_fp64_dot_bf16_stages": false
+  },
+  "native_stage_mode_implemented": false,
+  "native_calls": 0,
+  "cuda_initialized": false,
+  "tensor_count": 6,
+  "tensors": {
+    "original_fp64_dot_bf16_stages/0/oracle": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "af84e1de85be846fe7e889b68e612a0e8a586bf3d863f6a85a69ccdac098e3d5"
+    },
+    "original_fp64_dot_bf16_stages/1/oracle": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "efb918b09aa5b886c2f9251abc52858d0eea508e1ec3e932dac702e9e8c28896"
+    },
+    "original_fp64_dot_bf16_stages/2/oracle": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "328c4fa97693e4104f00ba2bfdd4b76dc5095d817f1822f7e3e7f94133e42a2f"
+    },
+    "double_effective_fp64_dot_bf16_stages/0/oracle": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "78149972ccd3b5f0fd94b946ed9ecb1271676d78dc082f59e7f1136a78cac7b9"
+    },
+    "double_effective_fp64_dot_bf16_stages/1/oracle": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "f94287336c8b58da9af73ba14cb627c94c416613d15984885ccc1e993ed44e44"
+    },
+    "double_effective_fp64_dot_bf16_stages/2/oracle": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "90cca813b57ecfd2f814138e3065b51f3b459774e90ffa1c096a4ecc9ad68d17"
+    }
+  },
+  "producer_outputs_sha256": "4c08d0eaac8f238bf579125ae478382991601c68052b42a7bde8b5aa37d265f3",
+  "baseline_outputs_sha256": "a997dac0bbd8b137ecbf7ddbefc5f356c2633d75a9d3cde1d035335cb028440f",
+  "harness_sha256": "84dd84049b1d709806a17a235281c726b7389a278f77e0c8d9c26cf65a783b9d",
+  "cpu_helper_sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944",
+  "formal_performance": "NOT_RUN",
+  "limits": "Six entire full-model reference tensors and necessary bounds only. Any compatible oracle still needs actual native staged D, all24 native/oracle+BF16 gates, generation/KV and paired performance before acceptance."
+}

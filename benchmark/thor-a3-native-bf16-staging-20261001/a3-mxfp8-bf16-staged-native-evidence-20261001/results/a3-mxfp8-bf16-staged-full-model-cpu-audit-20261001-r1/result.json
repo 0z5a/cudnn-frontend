@@ -1,0 +1,284 @@
+{
+  "stage": "CPU_AUDITED_EXPERIMENTAL_MXFP8_BF16_STAGE_FULL24_REJECTED",
+  "head": "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1",
+  "run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_mxfp8_bf16_staged_full_model_queued_20261001.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-mxfp8-bf16-staged-full-model-20261001-r1",
+      "--expected-source",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+      "--expected-head",
+      "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+    "started_utc": "2026-10-01T12:44:54.998668+00:00",
+    "deadline_seconds": 5400.0,
+    "status": "EXITED",
+    "selected_env": {},
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 19.146416332000626
+  },
+  "rows": [
+    {
+      "policy": "component_major_mxfp8_dot_bf16_stage",
+      "case": 0,
+      "oracle_bf16_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_bf16_lower_bound": 0.0,
+      "native_oracle_fp64": {
+        "max_abs": 4.296875,
+        "relative_l2": 0.11478155273228093,
+        "argmax_equal_fraction": 0.9315068493150684
+      },
+      "native_bf16_fp64": {
+        "max_abs": 4.296875,
+        "relative_l2": 0.11478155273228093,
+        "argmax_equal_fraction": 0.9315068493150684
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "component_major_mxfp8_dot_bf16_stage",
+      "case": 1,
+      "oracle_bf16_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_bf16_lower_bound": 0.0,
+      "native_oracle_fp64": {
+        "max_abs": 4.296875,
+        "relative_l2": 0.11199077356661723,
+        "argmax_equal_fraction": 0.9285714285714286
+      },
+      "native_bf16_fp64": {
+        "max_abs": 4.296875,
+        "relative_l2": 0.11199077356661723,
+        "argmax_equal_fraction": 0.9285714285714286
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "component_major_mxfp8_dot_bf16_stage",
+      "case": 2,
+      "oracle_bf16_fp64": {
+        "max_abs": 4.3671875,
+        "relative_l2": 0.0400102271756583,
+        "argmax_equal_fraction": 0.98046875
+      },
+      "native_bf16_lower_bound": 0.02999955247404717,
+      "native_oracle_fp64": {
+        "max_abs": 4.0,
+        "relative_l2": 0.047118751266958504,
+        "argmax_equal_fraction": 0.98046875
+      },
+      "native_bf16_fp64": {
+        "max_abs": 6.125,
+        "relative_l2": 0.04753034549495799,
+        "argmax_equal_fraction": 0.98046875
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": true
+    },
+    {
+      "policy": "k32_mxfp8_dot_bf16_stage",
+      "case": 0,
+      "oracle_bf16_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_bf16_lower_bound": 0.0,
+      "native_oracle_fp64": {
+        "max_abs": 4.78125,
+        "relative_l2": 0.10408586605790084,
+        "argmax_equal_fraction": 0.9178082191780822
+      },
+      "native_bf16_fp64": {
+        "max_abs": 4.78125,
+        "relative_l2": 0.10408586605790084,
+        "argmax_equal_fraction": 0.9178082191780822
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "k32_mxfp8_dot_bf16_stage",
+      "case": 1,
+      "oracle_bf16_fp64": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_bf16_lower_bound": 0.0,
+      "native_oracle_fp64": {
+        "max_abs": 4.78125,
+        "relative_l2": 0.10497938301343157,
+        "argmax_equal_fraction": 0.9285714285714286
+      },
+      "native_bf16_fp64": {
+        "max_abs": 4.78125,
+        "relative_l2": 0.10497938301343157,
+        "argmax_equal_fraction": 0.9285714285714286
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "policy": "k32_mxfp8_dot_bf16_stage",
+      "case": 2,
+      "oracle_bf16_fp64": {
+        "max_abs": 4.3671875,
+        "relative_l2": 0.0400102271756583,
+        "argmax_equal_fraction": 0.98046875
+      },
+      "native_bf16_lower_bound": 0.02999955247404717,
+      "native_oracle_fp64": {
+        "max_abs": 3.8125,
+        "relative_l2": 0.04337400890214134,
+        "argmax_equal_fraction": 0.97265625
+      },
+      "native_bf16_fp64": {
+        "max_abs": 6.25,
+        "relative_l2": 0.04313020439450244,
+        "argmax_equal_fraction": 0.98828125
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": true
+    }
+  ],
+  "all_three_cases_both_gates": {
+    "component_major_mxfp8_dot_bf16_stage": false,
+    "k32_mxfp8_dot_bf16_stage": false
+  },
+  "native_calls_observed": 144,
+  "new_native_calls": 0,
+  "cuda_initialized": false,
+  "tensor_count": 12,
+  "tensors": {
+    "component_major_mxfp8_dot_bf16_stage/0/reference": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d821f2ba2944f24a4bbd62604d4fdc0249efba46529f018f7ceed0b0faf25c03"
+    },
+    "component_major_mxfp8_dot_bf16_stage/0/native": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "87875e615b470ad9ae0a2f4a6e662ae0d5aa8a5cf8fbb38a7f00987115b282ab"
+    },
+    "component_major_mxfp8_dot_bf16_stage/1/reference": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "11ecfe7300f0a2e2c8d26b5983344bec3c14117d141f794d948bf7f8ef5a1129"
+    },
+    "component_major_mxfp8_dot_bf16_stage/1/native": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "ba4226643179418231edc03f4840de08383c946849b8e79267b8d6a075775d90"
+    },
+    "component_major_mxfp8_dot_bf16_stage/2/reference": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "c63e951c109fbc68847fb04f95760a7946eb8c23e96b1a94a8969229fca6c05c"
+    },
+    "component_major_mxfp8_dot_bf16_stage/2/native": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "6e91e58ed13f2d928490bf1345a6eff7d925bf36bf52df04ed5600ca490068ee"
+    },
+    "k32_mxfp8_dot_bf16_stage/0/reference": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d821f2ba2944f24a4bbd62604d4fdc0249efba46529f018f7ceed0b0faf25c03"
+    },
+    "k32_mxfp8_dot_bf16_stage/0/native": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "326e0e3def589ad7fe1d5cb07b6c670d1a78373e878bf8c0df64ce7c5d18b016"
+    },
+    "k32_mxfp8_dot_bf16_stage/1/reference": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "11ecfe7300f0a2e2c8d26b5983344bec3c14117d141f794d948bf7f8ef5a1129"
+    },
+    "k32_mxfp8_dot_bf16_stage/1/native": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "47d54168fb0cf082e6eeacb690f7ee750270fda143836f77fabffdcfecbb2f1a"
+    },
+    "k32_mxfp8_dot_bf16_stage/2/reference": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "c63e951c109fbc68847fb04f95760a7946eb8c23e96b1a94a8969229fca6c05c"
+    },
+    "k32_mxfp8_dot_bf16_stage/2/native": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "fffaf065d472a2a463c1dd02bcdcc579ec7a67e53eb54e59f12134e0b4fab2b6"
+    }
+  },
+  "producer_outputs_sha256": "96dcdce434fd9efce3bc3045097725eb1024cdfeb68a68cadbddc78306b3babe",
+  "baseline_outputs_sha256": "a997dac0bbd8b137ecbf7ddbefc5f356c2633d75a9d3cde1d035335cb028440f",
+  "harness_sha256": "3563496b69a0b86324484fdbe9053069eb98099d65dbc90c0549afe7329196f5",
+  "worker_sha256": "62304d6cc59fc2b604a19efe1c60c075e0737c6898de191404e4bbb6baf057d1",
+  "wrapper_sha256": "398a7f1a4d8f0c69713ccc7370f5ab80ab2655c35874896e678793565f5d80f9",
+  "cpu_helper_sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944",
+  "formal_performance": "NOT_RUN",
+  "limits": "All12 saved full-logit tensors audited. All6 complete cases actually executed24 native calls each. Declared oracle and experimental native source recorded before execution. Both complete policies fail1% oracle gate. No candidate accepted, no generation/KV or performance claim."
+}

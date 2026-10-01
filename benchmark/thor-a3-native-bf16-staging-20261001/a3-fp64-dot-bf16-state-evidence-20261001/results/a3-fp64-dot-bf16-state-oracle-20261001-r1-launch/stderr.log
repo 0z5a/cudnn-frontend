@@ -1,0 +1,9 @@
+Loading weights:   0%|          | 0/218 [00:00<?, ?it/s]Loading weights: 100%|██████████| 218/218 [00:00<00:00, 5600.39it/s]
+Traceback (most recent call last):
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_fp64_dot_bf16_state_oracle_queued_20261001.py", line 192, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_fp64_dot_bf16_state_oracle_queued_20261001.py", line 157, in main
+    assert m.NATIVE_CALLS == 0 and m.quantize_mxfp8 is control.m.quantize_mxfp8
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

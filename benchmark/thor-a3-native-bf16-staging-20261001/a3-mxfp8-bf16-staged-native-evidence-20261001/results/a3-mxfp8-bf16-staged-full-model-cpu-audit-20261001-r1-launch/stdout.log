@@ -1,0 +1,1 @@
+{"stage": "CPU_AUDITED_EXPERIMENTAL_MXFP8_BF16_STAGE_FULL24_REJECTED", "all_cases": {"component_major_mxfp8_dot_bf16_stage": false, "k32_mxfp8_dot_bf16_stage": false}}

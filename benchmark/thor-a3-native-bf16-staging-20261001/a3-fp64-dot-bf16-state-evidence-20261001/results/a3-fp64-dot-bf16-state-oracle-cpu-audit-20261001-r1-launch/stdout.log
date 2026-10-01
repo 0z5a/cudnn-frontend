@@ -1,0 +1,1 @@
+{"stage": "CPU_AUDITED_FP64_DOT_BF16_STATE_NOT_NATIVE_SUCCESS", "all_case_compatibility": {"original_fp64_dot_bf16_stages": false, "double_effective_fp64_dot_bf16_stages": false}}

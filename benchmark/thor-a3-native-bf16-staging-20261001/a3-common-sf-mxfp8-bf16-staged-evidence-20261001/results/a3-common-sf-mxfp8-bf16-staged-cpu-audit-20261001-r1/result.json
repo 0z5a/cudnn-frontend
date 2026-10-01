@@ -1,0 +1,200 @@
+{
+  "stage": "CPU_AUDITED_COMMON_SF_MXFP8_BF16_STAGE_FULL24_REJECTED",
+  "head": "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1",
+  "run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_common_sf_mxfp8_bf16_staged_queued_20261001.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-common-sf-mxfp8-bf16-staged-20261001-r1",
+      "--expected-source",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+      "--expected-head",
+      "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+    "started_utc": "2026-10-01T12:46:55.142855+00:00",
+    "deadline_seconds": 5400.0,
+    "status": "EXITED",
+    "selected_env": {},
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 16.30213047699999
+  },
+  "rows": [
+    {
+      "policy": "common_sf_component_major_mxfp8_bf16_stage",
+      "case": 0,
+      "oracle_bf16_fp64": {
+        "max_abs": 5.3125,
+        "relative_l2": 0.10771147496375265,
+        "argmax_equal_fraction": 0.9041095890410958
+      },
+      "native_bf16_lower_bound": 0.09779797688203914
+    },
+    {
+      "policy": "common_sf_component_major_mxfp8_bf16_stage",
+      "case": 1,
+      "oracle_bf16_fp64": {
+        "max_abs": 5.3125,
+        "relative_l2": 0.10565140560292482,
+        "argmax_equal_fraction": 0.9142857142857143
+      },
+      "native_bf16_lower_bound": 0.09570223794114073
+    },
+    {
+      "policy": "common_sf_component_major_mxfp8_bf16_stage",
+      "case": 2,
+      "oracle_bf16_fp64": {
+        "max_abs": 5.25,
+        "relative_l2": 0.04474529236270515,
+        "argmax_equal_fraction": 0.96484375
+      },
+      "native_bf16_lower_bound": 0.03474803741665436,
+      "native_oracle_fp64": {
+        "max_abs": 3.83984375,
+        "relative_l2": 0.04105208919042619,
+        "argmax_equal_fraction": 0.96875
+      },
+      "native_bf16_fp64": {
+        "max_abs": 5.53125,
+        "relative_l2": 0.046815375277446024,
+        "argmax_equal_fraction": 0.96875
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": true
+    },
+    {
+      "policy": "common_sf_element_major_mxfp8_bf16_stage",
+      "case": 0,
+      "oracle_bf16_fp64": {
+        "max_abs": 5.3125,
+        "relative_l2": 0.10771147496375265,
+        "argmax_equal_fraction": 0.9041095890410958
+      },
+      "native_bf16_lower_bound": 0.09779797688203914
+    },
+    {
+      "policy": "common_sf_element_major_mxfp8_bf16_stage",
+      "case": 1,
+      "oracle_bf16_fp64": {
+        "max_abs": 5.3125,
+        "relative_l2": 0.10565140560292482,
+        "argmax_equal_fraction": 0.9142857142857143
+      },
+      "native_bf16_lower_bound": 0.09570223794114073
+    },
+    {
+      "policy": "common_sf_element_major_mxfp8_bf16_stage",
+      "case": 2,
+      "oracle_bf16_fp64": {
+        "max_abs": 5.25,
+        "relative_l2": 0.04474529236270515,
+        "argmax_equal_fraction": 0.96484375
+      },
+      "native_bf16_lower_bound": 0.03474803741665436,
+      "native_oracle_fp64": {
+        "max_abs": 3.921875,
+        "relative_l2": 0.03899610110983959,
+        "argmax_equal_fraction": 0.98046875
+      },
+      "native_bf16_fp64": {
+        "max_abs": 6.25,
+        "relative_l2": 0.04302574227988692,
+        "argmax_equal_fraction": 0.984375
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": true
+    }
+  ],
+  "all_three_cases_both_gates": {
+    "common_sf_component_major_mxfp8_bf16_stage": false,
+    "common_sf_element_major_mxfp8_bf16_stage": false
+  },
+  "native_calls_observed": 48,
+  "new_native_calls": 0,
+  "cuda_initialized": false,
+  "tensor_count": 8,
+  "tensors": {
+    "common_sf_component_major_mxfp8_bf16_stage/0/reference": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "e49b06eab9a138fe7a9eef3051e49e8b9f30616f0df8faab492d64e9db334a62"
+    },
+    "common_sf_component_major_mxfp8_bf16_stage/1/reference": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "36aa890f745f507eaf89d55020c33955e587f1196d00ec0efefa9dd3dd84301e"
+    },
+    "common_sf_component_major_mxfp8_bf16_stage/2/reference": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "2b6b00fa600c8321bfa4428ad88288459228d424c7d02f007a858615c0efc6d6"
+    },
+    "common_sf_component_major_mxfp8_bf16_stage/2/native": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "b2af5c3dde003440f3a2f53309d65ab710ab050f0dcfaa539635f239e4ee161b"
+    },
+    "common_sf_element_major_mxfp8_bf16_stage/0/reference": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "e49b06eab9a138fe7a9eef3051e49e8b9f30616f0df8faab492d64e9db334a62"
+    },
+    "common_sf_element_major_mxfp8_bf16_stage/1/reference": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "36aa890f745f507eaf89d55020c33955e587f1196d00ec0efefa9dd3dd84301e"
+    },
+    "common_sf_element_major_mxfp8_bf16_stage/2/reference": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "2b6b00fa600c8321bfa4428ad88288459228d424c7d02f007a858615c0efc6d6"
+    },
+    "common_sf_element_major_mxfp8_bf16_stage/2/native": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "5515ffb0670207be8b64a69cf77a4ee375328c21dd653b9b0d50ad082a2f64ff"
+    }
+  },
+  "producer_outputs_sha256": "2070de9cc161d480043d23b3eedabce9af8ad8422ad832adc4576800504f1a13",
+  "baseline_outputs_sha256": "a997dac0bbd8b137ecbf7ddbefc5f356c2633d75a9d3cde1d035335cb028440f",
+  "harness_sha256": "356fea54db36268b61ebd8a32f494247004027a43828697a8877ba7e12486fe7",
+  "worker_sha256": "ba17dfd77b2b0966f19607f5d52ab4df660b9baa01b0455527567cde91910c0b",
+  "wrapper_sha256": "84a82896284583ba80ac3280a8a55a3609e4730b3acf7584be224ad46fd8a77d",
+  "cpu_helper_sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944",
+  "formal_performance": "NOT_RUN",
+  "limits": "All8 saved full-logit tensors audited. Two256-token cases actually executed24 native calls each; all four short fixed oracles incompatible. Declared oracle and experimental native source recorded before execution. Both complete policies fail1% oracle gate. No candidate accepted, no generation/KV or performance claim."
+}
