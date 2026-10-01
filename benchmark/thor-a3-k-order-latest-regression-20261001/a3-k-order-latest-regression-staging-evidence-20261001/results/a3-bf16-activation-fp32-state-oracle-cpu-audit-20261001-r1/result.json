@@ -1,0 +1,296 @@
+{
+  "stage": "CPU_AUDITED_NEW_STAGING_ORACLES_NOT_NATIVE_SUCCESS",
+  "source_head": "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1",
+  "run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_bf16_activation_fp32_state_oracle_queued_20261001.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-activation-fp32-state-oracle-20261001-r1",
+      "--expected-source",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+      "--expected-head",
+      "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-01T12:13:03.472347+00:00",
+    "deadline_seconds": 5400.0,
+    "status": "EXITED",
+    "selected_env": {},
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 659.1186965349993
+  },
+  "rows": [
+    {
+      "policy": "fp32_residual_bf16_linears/bf16_activation/torch.bfloat16",
+      "case": 0,
+      "metric_fp64": {
+        "max_abs": 4.921875,
+        "relative_l2": 0.1186044123680715,
+        "argmax_equal_fraction": 0.8493150684931506
+      },
+      "norm_ratio_fp64": 0.9877598751603925,
+      "native_bf16_lower_bound": 0.10872681361646758,
+      "both_gates_impossible": true
+    },
+    {
+      "policy": "fp32_residual_bf16_linears/bf16_activation/torch.bfloat16",
+      "case": 1,
+      "metric_fp64": {
+        "max_abs": 4.921875,
+        "relative_l2": 0.11495700820980917,
+        "argmax_equal_fraction": 0.8285714285714286
+      },
+      "norm_ratio_fp64": 0.9854900720699155,
+      "native_bf16_lower_bound": 0.10510210748911002,
+      "both_gates_impossible": true
+    },
+    {
+      "policy": "fp32_residual_bf16_linears/bf16_activation/torch.bfloat16",
+      "case": 2,
+      "metric_fp64": {
+        "max_abs": 5.4375,
+        "relative_l2": 0.04041110231680011,
+        "argmax_equal_fraction": 0.984375
+      },
+      "norm_ratio_fp64": 1.0025533583064548,
+      "native_bf16_lower_bound": 0.030385568733735564,
+      "both_gates_impossible": false
+    },
+    {
+      "policy": "fp32_residual_bf16_linears/bf16_activation/torch.float32",
+      "case": 0,
+      "metric_fp64": {
+        "max_abs": 6.1875,
+        "relative_l2": 0.13440216383281972,
+        "argmax_equal_fraction": 0.9041095890410958
+      },
+      "norm_ratio_fp64": 0.9958006041477994,
+      "native_bf16_lower_bound": 0.12444415779134173,
+      "both_gates_impossible": true
+    },
+    {
+      "policy": "fp32_residual_bf16_linears/bf16_activation/torch.float32",
+      "case": 1,
+      "metric_fp64": {
+        "max_abs": 6.125,
+        "relative_l2": 0.12924792963272838,
+        "argmax_equal_fraction": 0.9142857142857143
+      },
+      "norm_ratio_fp64": 0.9973699949736015,
+      "native_bf16_lower_bound": 0.11927422968299237,
+      "both_gates_impossible": true
+    },
+    {
+      "policy": "fp32_residual_bf16_linears/bf16_activation/torch.float32",
+      "case": 2,
+      "metric_fp64": {
+        "max_abs": 9.40625,
+        "relative_l2": 0.054845955614008644,
+        "argmax_equal_fraction": 0.984375
+      },
+      "norm_ratio_fp64": 1.0023369707292078,
+      "native_bf16_lower_bound": 0.04482258590671657,
+      "both_gates_impossible": false
+    },
+    {
+      "policy": "fp32_non_quantized_math/bf16_activation/torch.bfloat16",
+      "case": 0,
+      "metric_fp64": {
+        "max_abs": 6.373205184936523,
+        "relative_l2": 0.1310366481179674,
+        "argmax_equal_fraction": 0.9178082191780822
+      },
+      "norm_ratio_fp64": 0.9962504967669127,
+      "native_bf16_lower_bound": 0.12107414315029827,
+      "both_gates_impossible": true
+    },
+    {
+      "policy": "fp32_non_quantized_math/bf16_activation/torch.bfloat16",
+      "case": 1,
+      "metric_fp64": {
+        "max_abs": 6.373205184936523,
+        "relative_l2": 0.11643301609531075,
+        "argmax_equal_fraction": 0.9285714285714286
+      },
+      "norm_ratio_fp64": 0.9963675875713718,
+      "native_bf16_lower_bound": 0.10646934021959703,
+      "both_gates_impossible": true
+    },
+    {
+      "policy": "fp32_non_quantized_math/bf16_activation/torch.bfloat16",
+      "case": 2,
+      "metric_fp64": {
+        "max_abs": 4.971302032470703,
+        "relative_l2": 0.04412513524735793,
+        "argmax_equal_fraction": 0.96484375
+      },
+      "norm_ratio_fp64": 1.0013501022832727,
+      "native_bf16_lower_bound": 0.0341116342245252,
+      "both_gates_impossible": false
+    },
+    {
+      "policy": "fp32_non_quantized_math/bf16_activation/torch.float32",
+      "case": 0,
+      "metric_fp64": {
+        "max_abs": 6.336935043334961,
+        "relative_l2": 0.1618078435847409,
+        "argmax_equal_fraction": 0.8904109589041096
+      },
+      "norm_ratio_fp64": 1.0006654734762732,
+      "native_bf16_lower_bound": 0.15180118884997817,
+      "both_gates_impossible": true
+    },
+    {
+      "policy": "fp32_non_quantized_math/bf16_activation/torch.float32",
+      "case": 1,
+      "metric_fp64": {
+        "max_abs": 5.551708221435547,
+        "relative_l2": 0.11589949146029765,
+        "argmax_equal_fraction": 0.9285714285714286
+      },
+      "norm_ratio_fp64": 0.9893944582589711,
+      "native_bf16_lower_bound": 0.10600554687770794,
+      "both_gates_impossible": true
+    },
+    {
+      "policy": "fp32_non_quantized_math/bf16_activation/torch.float32",
+      "case": 2,
+      "metric_fp64": {
+        "max_abs": 5.3978271484375,
+        "relative_l2": 0.04530497194660712,
+        "argmax_equal_fraction": 0.97265625
+      },
+      "norm_ratio_fp64": 1.0017483793859172,
+      "native_bf16_lower_bound": 0.035287488152747945,
+      "both_gates_impossible": false
+    }
+  ],
+  "all_three_cases_necessary_bound_compatible": {
+    "fp32_residual_bf16_linears/bf16_activation/torch.bfloat16": false,
+    "fp32_residual_bf16_linears/bf16_activation/torch.float32": false,
+    "fp32_non_quantized_math/bf16_activation/torch.bfloat16": false,
+    "fp32_non_quantized_math/bf16_activation/torch.float32": false
+  },
+  "native_stage_mode_implemented": false,
+  "native_calls": 0,
+  "cuda_initialized": false,
+  "tensor_count": 12,
+  "tensors": {
+    "fp32_residual_bf16_linears/bf16_activation/torch.bfloat16/0/oracle": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d397680a6a89b76c5bfa499b3051086b5f621274fd1a58037a9cfc94a9868a54"
+    },
+    "fp32_residual_bf16_linears/bf16_activation/torch.bfloat16/1/oracle": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "3de16e1bdad83c9c6468c69b66c2327e548f6a1f611c18f8073eed18c0d663b2"
+    },
+    "fp32_residual_bf16_linears/bf16_activation/torch.bfloat16/2/oracle": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "bd83ab8f6f056bf9ee921a2253e340dca3ba9c56a392ae77d7d2ac054688b7ca"
+    },
+    "fp32_residual_bf16_linears/bf16_activation/torch.float32/0/oracle": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "7d5dbd4d9f36da9c3e2be09dafc42f2d42d3870f80ccbf0af76e1bcdbba8ca81"
+    },
+    "fp32_residual_bf16_linears/bf16_activation/torch.float32/1/oracle": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "1bbbf1b4a475ad307153ec5348db9a893c70d6aea33b27664a656dd8bd84252b"
+    },
+    "fp32_residual_bf16_linears/bf16_activation/torch.float32/2/oracle": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "3bd71269902c2c5e76270a1bd0cebfa3489c0bb31b1e148cdb3a136150def483"
+    },
+    "fp32_non_quantized_math/bf16_activation/torch.bfloat16/0/oracle": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.float32",
+      "sha256": "275727f64598d57a91d065bb59d0260007343a28b2bc768d26175831f7435685"
+    },
+    "fp32_non_quantized_math/bf16_activation/torch.bfloat16/1/oracle": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.float32",
+      "sha256": "afacc1768bd1596b0fddcb31a550a64f6cb5b66af6d451fc033426cde5df3fd7"
+    },
+    "fp32_non_quantized_math/bf16_activation/torch.bfloat16/2/oracle": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.float32",
+      "sha256": "0a29a90dc76731a8553f5926672fa13eca0b3edc3baa37acd79725fdb164565e"
+    },
+    "fp32_non_quantized_math/bf16_activation/torch.float32/0/oracle": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.float32",
+      "sha256": "4857a12db3cb1841937300e6b48450aded091b04ab2172f6889b4d07b91e33a6"
+    },
+    "fp32_non_quantized_math/bf16_activation/torch.float32/1/oracle": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.float32",
+      "sha256": "bfe34d88407741416ee9c9bcab48e677c5a8518dab3cb5134d6d0601a8f3816c"
+    },
+    "fp32_non_quantized_math/bf16_activation/torch.float32/2/oracle": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.float32",
+      "sha256": "e1e85c5c4178ec542228319d7597d4a5a034ac3e2dd07acfb496083ab628bb88"
+    }
+  },
+  "producer_outputs_sha256": "55abf3e762d05b50e4d3087d68ae6d7ba0d5ea38f0cbc0a0990059eea8775a51",
+  "baseline_outputs_sha256": "a997dac0bbd8b137ecbf7ddbefc5f356c2633d75a9d3cde1d035335cb028440f",
+  "harness_sha256": "aa73e290cdc1cea1c5bdb2d5a272b415c03f989e6de527a076969763b9454209",
+  "cpu_helper_sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944",
+  "formal_performance": "NOT_RUN",
+  "limits": "Twelve entire full-model reference tensors and necessary bounds only. Any compatible oracle still needs actual native staged D, all24 native/oracle+BF16 gates, generation/KV and paired performance before acceptance."
+}

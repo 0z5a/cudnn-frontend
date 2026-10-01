@@ -1,0 +1,105 @@
+"""CPU audit of local K-order candidates, independently recomputed dot and D."""
+
+import argparse
+import importlib.util
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+HELPER = Path(__file__).with_name("audit_a3_precision_followup_r2_20261001.py")
+spec = importlib.util.spec_from_file_location("k_order_cpu_audit", HELPER)
+a = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(a)
+t = a.torch
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    directory = a.ROOT / "results/a3-k-block-order-20261001-r1"
+    run = json.loads(directory.with_name(directory.name + "-launch").joinpath("run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    m = json.loads((directory / "result.json").read_text())
+    assert m["native_calls"] == 5 and m["source_head"] == a.HEAD and not m["original_baseline_replaced"]
+    assert a.sha_file(directory / "outputs.pt") == m["outputs_sha256"]
+    assert a.sha_file(a.ROOT / "tools/diagnose_a3_k_block_order_queued_20261001.py") == m["harness_sha256"]
+    prior = a.ROOT / "results/a3-native-c-boundary-20261001-r2"
+    assert a.sha_file(prior / "outputs.pt") == m["prior_outputs_sha256"]
+    assert a.sha_file(prior / "result.json") == m["prior_metadata_sha256"]
+    v = t.load(directory / "outputs.pt", map_location="cpu", weights_only=True)
+    p = t.load(prior / "outputs.pt", map_location="cpu", weights_only=True)
+    t.set_num_threads(4)
+    a0 = (p["input_fp8"].float().reshape(*p["input_logical_scale"].shape, 32) * p["input_logical_scale"].unsqueeze(-1)).reshape(p["input_fp8"].shape)
+    b0 = (p["weight_fp8"].float().reshape(*p["weight_logical_scale"].shape, 32) * p["weight_logical_scale"].unsqueeze(-1)).reshape(p["weight_fp8"].shape)
+    ends, destinations = p["padded_offsets"].tolist(), p["destinations"]
+    rows = []
+    for row in m["rows"]:
+        block = row["block"]
+        prefix = f"block{block}"
+        perm = v[prefix + "/permutation"]
+        if block:
+            expected = t.tensor([component * 1024 + k for begin in range(0, 1024, block) for component in range(4) for k in range(begin, begin + block)])
+        else:
+            expected = t.arange(4096)
+        assert t.equal(perm, expected) and t.equal(perm.sort().values, t.arange(4096))
+        ad, bd = a0.index_select(-1, expected), b0.index_select(-1, expected)
+        begin, dots = 0, []
+        for expert, end in enumerate(ends):
+            dots.append(t.nn.functional.linear(ad[begin:end], bd[expert]))
+            begin = end
+        cpu_c = t.cat(dots)[destinations]
+        c, d, ref_c, ref_d = (v[prefix + "/" + name] for name in ("c", "d", "reference_c", "reference_d"))
+        for key, x, ref in (("native_c_reference", c, ref_c), ("native_d_reference", d, ref_d), ("native_d_original", d, p["original_stock_d"])):
+            a.compare_metric(a.difference(x, ref, t.float32), row[key])
+        assert (c.to(t.bfloat16) != p["original_stock_c"]).sum().item() == row["native_c_original_bf16_cast_mismatches"]
+        assert (ref_c.to(t.bfloat16) != p["original_stock_c"]).sum().item() == row["reference_c_original_bf16_cast_mismatches"]
+        raw, sf = v[prefix + "/raw_d"], v[prefix + "/raw_sfd"]
+        n, k = raw.shape
+        r, col = t.arange(n)[:, None], t.arange(k // 32)[None, :]
+        address = (((r // 128) * (k // 128) + col // 4) * 32 + r % 32) * 16 + ((r % 128) // 32) * 4 + col % 4
+        code = sf.view(t.uint8).reshape(-1)[address]
+        scale = t.ldexp(t.ones_like(code, dtype=t.float32), code.int() - 127)
+        decoded = (raw.float().reshape(n, k // 32, 32) * scale.unsqueeze(-1)).reshape(n, k)[destinations]
+        assert t.equal(decoded.view(t.uint8), d.view(t.uint8))
+        comparison = a.difference(cpu_c, ref_c)
+        assert comparison["relative_l2"] < 1e-5
+        if block == 0:
+            assert t.equal(c.view(t.uint8), p["torch.float32/native_c"].view(t.uint8))
+            assert t.equal(d.view(t.uint8), p["torch.float32/native_d"].view(t.uint8))
+        rows.append(
+            {
+                "block": block,
+                "native_c_stock_cast_mismatches": row["native_c_original_bf16_cast_mismatches"],
+                "native_d_original_fp64": a.difference(d, p["original_stock_d"]),
+                "native_d_reference_fp64": a.difference(d, ref_d),
+                "cpu_dot_gpu_oracle_fp64": comparison,
+                "native_D_cpu_decode_byte_equal": True,
+            }
+        )
+    assert len(v) == 35 and not t.cuda.is_initialized()
+    result = {
+        "stage": "CPU_AUDITED_LOCAL_K_ORDER_NOT_MODEL_SUCCESS",
+        "native_calls_observed": 5,
+        "new_native_calls": 0,
+        "cuda_initialized": False,
+        "rows": rows,
+        "run": run,
+        "tensors": a.flatten_tensors(v),
+        "tensor_count": len(v),
+        "harness_sha256": a.sha_file(__file__),
+        "cpu_helper_sha256": a.sha_file(HELPER),
+        "producer_outputs_sha256": m["outputs_sha256"],
+        "source_head": a.HEAD,
+        "formal_performance": "NOT_RUN",
+        "limits": "Saved local outputs and full K permutations independently checked; CPU dot recomputed from prior inputs, not a capture of new candidate physical input buffers. No all24 precision/generation/KV or throughput success.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "rows": rows}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

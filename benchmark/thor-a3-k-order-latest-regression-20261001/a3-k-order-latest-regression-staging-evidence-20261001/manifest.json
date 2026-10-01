@@ -1,0 +1,258 @@
+{
+  "stage": "COMPLETED_AND_CPU_AUDITED_NOT_FULL24_SUCCESS",
+  "scope": "K-order native study at7bfeda6b; latest31 hardware regressions and12 new full-model reference-only staging cases at741e10ff; original driverrc1 retained, testsrc0 independently finalized",
+  "files": [
+    {
+      "path": "results/a3-bf16-activation-fp32-state-oracle-20261001-r1-launch/run.json",
+      "size": 791,
+      "sha256": "635451fd7bcf34b591c4666d7a5fd1f259c74f0fe9adeb74167e46cb8f2b8fc4"
+    },
+    {
+      "path": "results/a3-bf16-activation-fp32-state-oracle-20261001-r1-launch/stderr.log",
+      "size": 677,
+      "sha256": "7c0f769eb859710f9907da4ac27532cc71b58d6704d421448a24fe67a7846f1a"
+    },
+    {
+      "path": "results/a3-bf16-activation-fp32-state-oracle-20261001-r1-launch/stdout.log",
+      "size": 5699,
+      "sha256": "21ad5854acb23131dfb6561c14fb18eb48f21b60b0c87719c1e2a0569178cb7e"
+    },
+    {
+      "path": "results/a3-bf16-activation-fp32-state-oracle-20261001-r1/admission_wait.json",
+      "size": 75,
+      "sha256": "2946228b1f55cb1a9a72f3bdb57e3c3b835c8f4f57daa903d088ccd45edbe9c6"
+    },
+    {
+      "path": "results/a3-bf16-activation-fp32-state-oracle-20261001-r1/partial.json",
+      "size": 11054,
+      "sha256": "07990ceb77284e6b0476835f5c2b54fd98fb864e1b4696a50f9eb6cfeb0ded2b"
+    },
+    {
+      "path": "results/a3-bf16-activation-fp32-state-oracle-20261001-r1/result.json",
+      "size": 13622,
+      "sha256": "dc1a438fcde204daabcbe7d6f6050b5e6cdd153b499edbc21371abb96aa0e64d"
+    },
+    {
+      "path": "results/a3-bf16-activation-fp32-state-oracle-cpu-audit-20261001-r1-launch/run.json",
+      "size": 631,
+      "sha256": "439fe59d3b6c8a9f457cc1a493b2d7efa3bfb662974a32a248f8748021472087"
+    },
+    {
+      "path": "results/a3-bf16-activation-fp32-state-oracle-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-bf16-activation-fp32-state-oracle-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 356,
+      "sha256": "9f91e1529a70f2eea42ebda6c04eef19c7319f6e6827608f3d636b1e4c70dd82"
+    },
+    {
+      "path": "results/a3-bf16-activation-fp32-state-oracle-cpu-audit-20261001-r1/result.json",
+      "size": 9983,
+      "sha256": "fa1cdf1d8abb7a0946279f3cd4cde762196c1ba8451a58764365d0e11303f9d5"
+    },
+    {
+      "path": "results/a3-k-block-order-20261001-r1-launch/run.json",
+      "size": 759,
+      "sha256": "7d38c75e2f6e819e367dd2ede92645d006bcf52c41e97d65dcfa788133e51229"
+    },
+    {
+      "path": "results/a3-k-block-order-20261001-r1-launch/stderr.log",
+      "size": 46,
+      "sha256": "c0362da2d738fd8f26bcb4467800ed22c57dd7a61da33405a76421244f48fecb"
+    },
+    {
+      "path": "results/a3-k-block-order-20261001-r1-launch/stdout.log",
+      "size": 2446,
+      "sha256": "ef479b2202504686fdde75a7e07780b5b54ebf2c280e12aabd3ca7b6b407a2cb"
+    },
+    {
+      "path": "results/a3-k-block-order-20261001-r1/admission_wait.json",
+      "size": 75,
+      "sha256": "bee72a9801848e325fd0ae5ba18d0f3b200b4f1424165ee39b8d6f53ea398be3"
+    },
+    {
+      "path": "results/a3-k-block-order-20261001-r1/result.json",
+      "size": 5318,
+      "sha256": "c0aca56a890d78ca233264eec55e77cd471290fa5b8c72b18085177ce77f3f44"
+    },
+    {
+      "path": "results/a3-k-block-order-cpu-audit-20261001-r1-launch/run.json",
+      "size": 590,
+      "sha256": "7328989280996b399d4235e0ab4438915dc89ef6d4a20b0decf4055090c47451"
+    },
+    {
+      "path": "results/a3-k-block-order-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-k-block-order-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 2407,
+      "sha256": "8f61405f18f395a7ed555d9af9ec441bb5cae6ee81b21b5ceb6f9f22e050cbea"
+    },
+    {
+      "path": "results/a3-k-block-order-cpu-audit-20261001-r1/result.json",
+      "size": 11779,
+      "sha256": "68baed7c3c4256f828ff019020df2950acdfcf86c0546ddcd4d0e22d0beff6aa"
+    },
+    {
+      "path": "results/a3-latest-e2-native-provenance-20261001.json",
+      "size": 18959,
+      "sha256": "30ea6cd6a09d73b01d22215d98c2d7a5964d04d97489f64b876fa979013b3840"
+    },
+    {
+      "path": "results/a3-latest-e2-regression-20261001-r1-launch/run.json",
+      "size": 409,
+      "sha256": "4f553c37726683a5500ccb75529edbc330e8e799100e88c8ccf938d246fc61b0"
+    },
+    {
+      "path": "results/a3-latest-e2-regression-20261001-r1-launch/stderr.log",
+      "size": 644,
+      "sha256": "56f54041c2ef408fb34939be9491af616c0645587e5e16e93df7e9b2bfce37f4"
+    },
+    {
+      "path": "results/a3-latest-e2-regression-20261001-r1-launch/stdout.log",
+      "size": 1274,
+      "sha256": "f6512feac5418ef5104bdb8047405d7a63892f712e72700f3c84db86678f8f9a"
+    },
+    {
+      "path": "results/a3-latest-e2-regression-20261001-r1/admission_wait.json",
+      "size": 75,
+      "sha256": "080629c47bd7eab80477273ef5086cc1d833f73e0414eb334ae1fbd25a087e67"
+    },
+    {
+      "path": "results/a3-latest-e2-regression-20261001-r1/imports/76928.json",
+      "size": 815,
+      "sha256": "fd75e7e786bbb5faa71e41ee4e2aa6ceb4193e88d5dc2bbf32f0c0be3774ef07"
+    },
+    {
+      "path": "results/a3-latest-e2-regression-20261001-r1/imports/76952.json",
+      "size": 1159,
+      "sha256": "fc4374916c105de07c2215c79feb2bbca59aa8d9ccbd70b80ec29e5690cf4c9b"
+    },
+    {
+      "path": "results/a3-latest-e2-regression-20261001-r1/imports/matrix-selection-76952.json",
+      "size": 10462,
+      "sha256": "984ab995e403dd86e650bb5bc055224d846f48f57d8071ce71a5c68a75408ae6"
+    },
+    {
+      "path": "results/a3-latest-e2-regression-20261001-r1/pytest/junit.xml",
+      "size": 5632,
+      "sha256": "1006039dba1c353efd374ca3938efbf3fc674d50d118536c49e0d1f9a885a8e9"
+    },
+    {
+      "path": "results/a3-latest-e2-regression-20261001-r1/pytest/run.json",
+      "size": 1274,
+      "sha256": "f6512feac5418ef5104bdb8047405d7a63892f712e72700f3c84db86678f8f9a"
+    },
+    {
+      "path": "results/a3-latest-e2-regression-20261001-r1/pytest/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-latest-e2-regression-20261001-r1/pytest/stdout.log",
+      "size": 753,
+      "sha256": "363b15d7695db0c7986473c5947145d4a59adf6cb3d58176c90d7bc5f58f22ec"
+    },
+    {
+      "path": "results/a3-latest-e2-regression-cpu-finalize-20261001-r1-launch/run.json",
+      "size": 541,
+      "sha256": "9f1198fbacc5c1f3590a3f9e5bf809917d996ffdc0fbef1bf16f42d1dd3c151e"
+    },
+    {
+      "path": "results/a3-latest-e2-regression-cpu-finalize-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-latest-e2-regression-cpu-finalize-20261001-r1-launch/stdout.log",
+      "size": 142,
+      "sha256": "92d1286faccf58c2eb409d6bde4807087506946cf1d28b0dd9b11045552def0a"
+    },
+    {
+      "path": "results/a3-latest-e2-regression-cpu-finalize-20261001-r1/result.json",
+      "size": 5952,
+      "sha256": "074b8f080de65213fbce65894cde96d3f1954309cc3fbf9f5d8dd0255c0842b4"
+    },
+    {
+      "path": "tools/a3_all24_precision_probe_20261001.py",
+      "size": 12896,
+      "sha256": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5"
+    },
+    {
+      "path": "tools/a3_bf16_activation_fp32_state_oracle_queued_20261001.py",
+      "size": 14141,
+      "sha256": "c6345c711904f8b6664b8e9480903e2c31652c9c813fbf4635f7f837c109ef56"
+    },
+    {
+      "path": "tools/a3_double_mxfp8_recipe_probe_20261001.py",
+      "size": 11740,
+      "sha256": "fa63500b8a10122fc7bf16e52aaf10a0ceb64cc23816aeec28ccc55bd257fe7e"
+    },
+    {
+      "path": "tools/a3_model_e2e_mergefix_20261001.py",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "path": "tools/a3_repair_import_probe_20261001.py",
+      "size": 2077,
+      "sha256": "304665d9d55ddeccc9f8e975b2a30c958917878da3873e869b00e939ae54e9d3"
+    },
+    {
+      "path": "tools/a3_repair_matrix_select_20261001.py",
+      "size": 1628,
+      "sha256": "0dc9823c8ce28b42491600dfb8327dd1e6495e08fb7cb9df9cab5b0e8314fa45"
+    },
+    {
+      "path": "tools/archive_a3_k_order_latest_regression_staging_20261001.py",
+      "size": 4301,
+      "sha256": "e48e348350ddf608306839147dac824c2a38d9045457e5693669e2d51a195077"
+    },
+    {
+      "path": "tools/audit_a3_bf16_activation_fp32_state_oracle_20261001.py",
+      "size": 5968,
+      "sha256": "aa73e290cdc1cea1c5bdb2d5a272b415c03f989e6de527a076969763b9454209"
+    },
+    {
+      "path": "tools/audit_a3_k_block_order_20261001.py",
+      "size": 5637,
+      "sha256": "7e158d07c9d95b11f20293580a76773ec51ee197b9b64eb9d79fd834dd98df8e"
+    },
+    {
+      "path": "tools/audit_a3_precision_followup_r2_20261001.py",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "tools/diagnose_a3_k_block_order_queued_20261001.py",
+      "size": 8126,
+      "sha256": "6b5b3112b97df36da4129a1cc8002180ccf2b48df086d53ac7c3f52653b3a694"
+    },
+    {
+      "path": "tools/finalize_a3_latest_e2_regression_cpu_20261001.py",
+      "size": 5913,
+      "sha256": "558c99391ef0d2863871e216e4f28ee1830f5b2f75b18b8cf5beb946f447dfa7"
+    },
+    {
+      "path": "tools/run_a3_latest_e2_regression_queued_20261001.py",
+      "size": 5341,
+      "sha256": "91abbc3e383cfa15b2ee11fe81b266163d5212fe116a5f377d1154780f4a01e2"
+    },
+    {
+      "path": "tools/run_logged.py",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    }
+  ],
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    ".pt outputs",
+    "native binaries"
+  ]
+}

@@ -1,0 +1,108 @@
+"""CPU-only complete-logit/provenance audit of new BF16-staged MXFP8 oracles."""
+
+import argparse
+import importlib.util
+import json
+import math
+import os
+from pathlib import Path
+import subprocess
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+HELPER = Path(__file__).with_name("audit_a3_precision_followup_r2_20261001.py")
+spec = importlib.util.spec_from_file_location("activation_oracle_cpu", HELPER)
+a = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(a)
+t = a.torch
+HEAD = "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1"
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    directory = a.ROOT / "results/a3-bf16-activation-fp32-state-oracle-20261001-r1"
+    run = json.loads(directory.with_name(directory.name + "-launch").joinpath("run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    m = json.loads((directory / "result.json").read_text())
+    assert m["source_head"] == HEAD and m["native_calls"] == 0 and not m["native_stage_mode_implemented"] and not m["original_baseline_replaced"]
+    assert m["model_parameters"] == 1334628352 and len(m["rows"]) == 12 and len(m["policies"]) == 4
+    source = Path(m["source"])
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == HEAD
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    for record in m["imports"].values():
+        assert Path(record["path"]).resolve().is_relative_to(source / "python") and a.sha_file(record["path"]) == record["sha256"]
+    native = json.loads((a.ROOT / "results/a3-latest-e2-native-provenance-20261001.json").read_text())
+    assert native["head"] == HEAD and native["native_build"] == "FRESH_RC0"
+    assert native["binding"]["sha256"] == m["imports"]["binding"]["sha256"]
+    assert a.sha_file(a.ROOT / "tools/a3_bf16_activation_fp32_state_oracle_queued_20261001.py") == m["harness_sha256"]
+    assert a.sha_file(a.ROOT / "tools/a3_all24_precision_probe_20261001.py") == m["helper_sha256"]
+    assert a.sha_file(a.ROOT / "tools/a3_model_e2e_mergefix_20261001.py") == m["base_adapter_sha256"]
+    baseline = a.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001/outputs.pt"
+    assert a.sha_file(baseline) == m["baseline_outputs_sha256"]
+    assert m["original_baseline_head"] == "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+    assert a.sha_file(directory / "outputs.pt") == m["outputs_sha256"]
+    values = t.load(directory / "outputs.pt", map_location="cpu", weights_only=True)
+    b = t.load(baseline, map_location="cpu", weights_only=True)
+    assert len(values) == 12
+    t.set_num_threads(4)
+    rows, eligibility = [], {}
+    with t.inference_mode():
+        for policy in m["policies"]:
+            name = policy["policy"]
+            assert policy["capacity"] == {"layers": 24, "experts": 32, "top_k": 8, "H": 1024, "I": 512, "expanded_K": 6144}
+            assert not policy["native_stage_mode_implemented"]
+            cases = [row for row in m["rows"] if row["policy"] == name]
+            assert [row["case"] for row in cases] == [0, 1, 2]
+            eligible = True
+            for row in cases:
+                case = row["case"]
+                r, stock = values[f"{name}/{case}/oracle"], b[f"forward_{case}_stock"]
+                assert r.shape == stock.shape and list(r.shape) == row["shape"] == [1, (73, 70, 256)[case], 49155]
+                assert row["native_calls"] == 0 and row["all24_oracle_calls_per_case"] == [1] * 24
+                assert row["native_status"] == "NOT_RUN_STAGE_MODE_UNIMPLEMENTED"
+                metric = a.difference(r, stock)
+                ratio = (t.linalg.vector_norm(r.double()) / t.linalg.vector_norm(stock.double())).item()
+                lower = max(0.0, metric["relative_l2"] - 0.01 * ratio)
+                for actual, key in ((metric["relative_l2"], "oracle_bf16_relative_l2_fp64"), (ratio, "norm_ratio_fp64"), (lower, "native_bf16_lower_bound")):
+                    assert math.isclose(actual, row[key], rel_tol=1e-12, abs_tol=1e-14), (actual, row)
+                assert (lower > 0.05) == row["both_gates_impossible"]
+                eligible &= lower <= 0.05
+                rows.append(
+                    {
+                        "policy": name,
+                        "case": case,
+                        "metric_fp64": metric,
+                        "norm_ratio_fp64": ratio,
+                        "native_bf16_lower_bound": lower,
+                        "both_gates_impossible": lower > 0.05,
+                    }
+                )
+            eligibility[name] = bool(eligible)
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "CPU_AUDITED_NEW_STAGING_ORACLES_NOT_NATIVE_SUCCESS",
+        "source_head": HEAD,
+        "run": run,
+        "rows": rows,
+        "all_three_cases_necessary_bound_compatible": eligibility,
+        "native_stage_mode_implemented": False,
+        "native_calls": 0,
+        "cuda_initialized": False,
+        "tensor_count": len(values),
+        "tensors": a.flatten_tensors(values),
+        "producer_outputs_sha256": m["outputs_sha256"],
+        "baseline_outputs_sha256": m["baseline_outputs_sha256"],
+        "harness_sha256": a.sha_file(__file__),
+        "cpu_helper_sha256": a.sha_file(HELPER),
+        "formal_performance": "NOT_RUN",
+        "limits": "Twelve entire full-model reference tensors and necessary bounds only. Any compatible oracle still needs actual native staged D, all24 native/oracle+BF16 gates, generation/KV and paired performance before acceptance.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "all_case_compatibility": eligibility}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

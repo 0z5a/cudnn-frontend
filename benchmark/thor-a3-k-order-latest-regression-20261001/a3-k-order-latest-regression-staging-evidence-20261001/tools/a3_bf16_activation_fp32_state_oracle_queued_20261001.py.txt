@@ -1,0 +1,258 @@
+"""Novel MXFP8/FP32-state BF16 activation-stage oracles, not native success.
+
+Expanded A3 MXFP8 K6144 dot stays FP32-input FP32-output, with three A and
+two B components. C, SiLU output and activation product are explicitly
+rounded to BF16 before normalized FP16 D staging. Original weights/capacity,
+all24 layers and immutable original BF16/1%-oracle/5%-BF16 gates retained.
+This stage mode is not implemented in the current native kernel; native
+execution is NEVER substituted by this Torch oracle or claimed successful.
+"""
+
+import argparse
+import fcntl
+import gc
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import time
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--expected-source", required=True)
+    parser.add_argument("--expected-head", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        start = time.monotonic()
+        (out / "admission_wait.json").write_text(json.dumps({"stage": "WAITING_FOR_SHARED_LOCK", "pid": os.getpid(), "torch_imported": False}))
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - start > 3600:
+                    (out / "admission.json").write_text(json.dumps({"stage": "NOT_RUN_SHARED_LOCK_BUSY", "torch_imported": False}))
+                    return 75
+                time.sleep(1)
+        probe = Path(__file__).with_name("a3_all24_precision_probe_20261001.py")
+        spec = importlib.util.spec_from_file_location("a3_stage_oracle", probe)
+        p = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(p)
+        m, t = p.m, p.t
+        from transformers.models.granitemoe.modeling_granitemoe import GraniteMoeTopKRouter
+
+        source = Path(args.expected_source).resolve()
+        assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == args.expected_head
+        assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+        for mod in (m.cudnn, m.api, m._compiled_module):
+            assert Path(mod.__file__).resolve().is_relative_to(source / "python")
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        t.set_num_threads(4)
+        t.backends.cuda.matmul.allow_tf32 = False
+        t.backends.cudnn.allow_tf32 = False
+        t.set_float32_matmul_precision("highest")
+        assert m.sha_file(m.MODEL / "model.safetensors") == m.WEIGHT_SHA
+        quantize = m.quantize_mxfp8
+
+        def components(value, count):
+            effective = t.zeros_like(value, dtype=t.float32)
+            qs, scales = [], []
+            for _ in range(count):
+                q, _, sf = quantize(value.float() - effective)
+                qs.append(q)
+                scales.append(sf)
+                effective += m.dequantize(q, sf)
+            return qs, scales, effective
+
+        def expand(value, is_a):
+            q, s, effective = components(value, 3 if is_a else 2)
+            indices = (0, 0, 1, 1, 2, 2) if is_a else (0, 1, 0, 1, 0, 1)
+            codes = t.cat([q[i].view(t.uint8) for i in indices], -1).view(t.float8_e4m3fn)
+            scale = t.cat([s[i] for i in indices], -1)
+            assert codes.shape[-1] == 6144
+            return codes, scale, effective
+
+        class StageOracle(m.A3ExpertAdapter):
+            def __init__(self, expert, layer, down_dtype):
+                super().__init__(expert, layer, (256, 256))
+                self.down_dtype = down_dtype
+                self.down = expert.down_proj.detach().to(down_dtype)
+                gate, up = expert.gate_up_proj.detach().chunk(2, 1)
+                original = t.stack((gate.reshape(32, -1, 32, 1024), up.reshape(32, -1, 32, 1024)), 2).reshape(32, 1024, 1024)
+                self.bcodes, self.logical_scale, effective = expand(original, False)
+                self.bref = m.dequantize(self.bcodes, self.logical_scale)
+                self.weight_error = m.difference(effective, original)
+                self.oracle_calls = 0
+
+            def forward(self, hidden, index, probability):
+                assert self.mode == "reference", "No native kernel exists for this stage mode yet"
+                self.oracle_calls += 1
+                x, ends, destinations, order, token_ids, sizes, aligned = self.routing(hidden, index)
+                codes, scale, _ = expand(x, True)
+                adeq = m.dequantize(codes, scale)
+                d = t.zeros((x.shape[0], 512), dtype=t.float32, device=x.device)
+                begin = 0
+                for expert, n in enumerate(aligned):
+                    if n:
+                        c = m.F.linear(adeq[begin : begin + n], self.bref[expert]).to(t.bfloat16).reshape(n, -1, 2, 32)
+                        # Tensor BF16 SiLU and BF16 product are distinct rounding points.
+                        activated = (m.F.silu(c[:, :, 0]) * c[:, :, 1]).reshape(n, 512)
+                        assert activated.dtype == t.bfloat16
+                        d[begin : begin + n] = p.reference_fp16_round(activated.float())
+                    begin += n
+                live = d[destinations].to(self.down_dtype)
+                routes = t.empty((order.numel(), 1024), dtype=t.float32, device=x.device)
+                weights = probability.flatten()[order]
+                begin = 0
+                for expert, n in enumerate(sizes):
+                    if n:
+                        y = m.F.linear(live[begin : begin + n], self.down[expert])
+                        if self.down_dtype == t.bfloat16:
+                            routes[begin : begin + n] = (y * weights[begin : begin + n, None].to(t.bfloat16)).float()
+                        else:
+                            routes[begin : begin + n] = y * weights[begin : begin + n, None].float()
+                    begin += n
+                unsorted = t.empty_like(routes)
+                unsorted[order] = routes
+                return unsorted.reshape(hidden.shape[0], index.shape[-1], 1024).sum(1).to(hidden.dtype)
+
+        def first_float(module, positional, keyword):
+            if positional:
+                return (positional[0].float(), *positional[1:]), keyword
+            keyword = dict(keyword)
+            keyword["hidden_states"] = keyword["hidden_states"].float()
+            return positional, keyword
+
+        def linear_bf16(module, positional):
+            return (positional[0].to(t.bfloat16), *positional[1:])
+
+        def embed_bf16(module, positional, value):
+            return value.to(t.bfloat16)
+
+        def original_router(router):
+            weight = router.weight.detach().to(t.bfloat16)
+
+            def forward(hidden):
+                logits = m.F.linear(hidden.to(t.bfloat16), weight).float()
+                values, indices = logits.topk(router.top_k, -1)
+                return indices, t.softmax(values, -1).to(t.bfloat16), logits
+
+            return forward
+
+        baseline_dir = m.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+        baseline_meta = json.loads((baseline_dir / "result.json").read_text())
+        assert baseline_meta["source_head"] == "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+        baseline = t.load(baseline_dir / "outputs.pt", map_location="cpu", weights_only=True)
+        tokenizer = m.AutoTokenizer.from_pretrained(m.MODEL, local_files_only=True, trust_remote_code=False)
+        _, prompts, workloads = m.load_inputs(tokenizer)
+        inputs = (prompts[0], prompts[1], workloads["256"])
+        rows, policies, saved = [], [], {}
+        for math_mode in ("fp32_residual_bf16_linears", "fp32_non_quantized_math"):
+            for down_type in (t.bfloat16, t.float32):
+                name = math_mode + "/bf16_activation/" + str(down_type)
+                dtype = t.float32 if math_mode == "fp32_non_quantized_math" else t.bfloat16
+                model, loading = m.AutoModelForCausalLM.from_pretrained(
+                    m.MODEL, dtype=dtype, attn_implementation="sdpa", trust_remote_code=False, local_files_only=True, output_loading_info=True
+                )
+                assert not any(loading.values()) and sum(x.numel() for x in model.parameters()) == 1334628352
+                model = model.eval().cuda()
+                routers = [v for v in model.modules() if isinstance(v, GraniteMoeTopKRouter)]
+                experts = [v for v in model.modules() if isinstance(v, m.GraniteMoeExperts)]
+                assert len(routers) == len(experts) == 24
+                for router in routers:
+                    router.forward = original_router(router)
+                hooks = [model.model.layers[0].register_forward_pre_hook(first_float, with_kwargs=True)]
+                if math_mode == "fp32_residual_bf16_linears":
+                    for module in model.modules():
+                        if isinstance(module, t.nn.Linear):
+                            hooks.append(module.register_forward_pre_hook(linear_bf16))
+                else:
+                    hooks.append(model.model.embed_tokens.register_forward_hook(embed_bf16))
+                    assert all(v.dtype == t.float32 for v in model.parameters())
+                adapters = [StageOracle(expert, layer, down_type) for layer, expert in enumerate(experts)]
+                m.attach(adapters, "reference")
+                policies.append(
+                    {
+                        "policy": name,
+                        "weight_error_max_l2": max(v.weight_error["relative_l2"] for v in adapters),
+                        "capacity": {"layers": 24, "experts": 32, "top_k": 8, "H": 1024, "I": 512, "expanded_K": 6144},
+                        "native_stage_mode_implemented": False,
+                        "router": "original_bf16_dot_softmax_prob_staging",
+                    }
+                )
+                with t.inference_mode():
+                    for case, ids in enumerate(inputs):
+                        before = m.NATIVE_CALLS
+                        calls = [v.oracle_calls for v in adapters]
+                        oracle = model(input_ids=ids.cuda(), use_cache=False).logits.cpu()
+                        assert m.NATIVE_CALLS == before == 0
+                        assert all(v.oracle_calls - count == 1 for v, count in zip(adapters, calls))
+                        stock = baseline[f"forward_{case}_stock"]
+                        assert oracle.shape == stock.shape and oracle.shape[-1] == 49155
+                        r, b = oracle.double(), stock.double()
+                        error = (t.linalg.vector_norm(r - b) / t.linalg.vector_norm(b)).item()
+                        ratio = (t.linalg.vector_norm(r) / t.linalg.vector_norm(b)).item()
+                        lower = max(0.0, error - 0.01 * ratio)
+                        row = {
+                            "policy": name,
+                            "case": case,
+                            "input_tokens": ids.shape[-1],
+                            "shape": list(oracle.shape),
+                            "oracle_bf16_relative_l2_fp64": error,
+                            "norm_ratio_fp64": ratio,
+                            "native_bf16_lower_bound": lower,
+                            "both_gates_impossible": lower > 0.05,
+                            "native_calls": 0,
+                            "native_status": "NOT_RUN_STAGE_MODE_UNIMPLEMENTED",
+                            "all24_oracle_calls_per_case": [1] * 24,
+                        }
+                        rows.append(row)
+                        saved[f"{name}/{case}/oracle"] = oracle
+                        print(json.dumps(row), flush=True)
+                        (out / "partial.json").write_text(json.dumps({"rows": rows, "policies": policies}, indent=2) + "\n")
+                m.attach(adapters, "stock")
+                for hook in hooks:
+                    hook.remove()
+                del model, experts, routers, adapters
+                gc.collect()
+                t.cuda.empty_cache()
+        assert m.NATIVE_CALLS == 0 and m.quantize_mxfp8 is quantize
+        t.save(saved, out / "outputs.pt")
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        metadata = {
+            "stage": "REFERENCE_ONLY_BF16_ACTIVATION_FP32_STATE_COMPLETE_NOT_NATIVE_SUCCESS",
+            "scope": __doc__,
+            "source": str(source),
+            "source_head": args.expected_head,
+            "original_baseline_head": baseline_meta["source_head"],
+            "checkpoint_sha256": m.WEIGHT_SHA,
+            "baseline_outputs_sha256": m.sha_file(baseline_dir / "outputs.pt"),
+            "rows": rows,
+            "policies": policies,
+            "native_calls": 0,
+            "model_parameters": 1334628352,
+            "original_baseline_replaced": False,
+            "harness_sha256": m.sha_file(__file__),
+            "helper_sha256": m.sha_file(probe),
+            "base_adapter_sha256": m.sha_file(p.BASE),
+            "outputs_sha256": m.sha_file(out / "outputs.pt"),
+            "imports": {
+                name: {"path": mod.__file__, "sha256": m.sha_file(mod.__file__)}
+                for name, mod in (("cudnn", m.cudnn), ("api", m.api), ("binding", m._compiled_module))
+            },
+            "formal_performance": "NOT_RUN",
+            "service_final": "inactive",
+            "native_stage_mode_implemented": False,
+            "limits": "Twelve complete full-model reference cases only; no native/model quality pass or production change. Necessary compatibility bounds do not prove a future native implementation can pass. Explicit BF16 activation stage is hypothetical, never a fallback.",
+        }
+        (out / "result.json").write_text(json.dumps(metadata, indent=2) + "\n")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,1 @@
+{"stage": "CPU_AUDITED_K32_FULL24_RECIPE_REJECTED", "all_cases": {"k32_double_mxfp8_bf16_d_down": false, "k32_double_mxfp8_fp16_d_fp32_down_merge": false}}

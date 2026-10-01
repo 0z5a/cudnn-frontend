@@ -1,0 +1,1 @@
+{"stage": "CPU_AUDITED_NEW_STAGING_ORACLES_NOT_NATIVE_SUCCESS", "all_case_compatibility": {"fp32_residual_bf16_linears/bf16_activation/torch.bfloat16": false, "fp32_residual_bf16_linears/bf16_activation/torch.float32": false, "fp32_non_quantized_math/bf16_activation/torch.bfloat16": false, "fp32_non_quantized_math/bf16_activation/torch.float32": false}}

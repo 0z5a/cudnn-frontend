@@ -1,0 +1,113 @@
+{
+  "stage": "COMPLETED_AND_CPU_AUDITED_NOT_FULL24_SUCCESS",
+  "scope": "K32 double-MXFP8 full24 policies at741e10ff: four short fixed-oracle cases incompatible; two256-token cases executed48 native calls but neither completepolicy accepted",
+  "files": [
+    {
+      "path": "results/a3-k32-double-full-model-20261001-r1-launch/run.json",
+      "size": 788,
+      "sha256": "256af3bf8575e57d37e0a96e937f06cb9a874f481558a151b629d74f55a78d09"
+    },
+    {
+      "path": "results/a3-k32-double-full-model-20261001-r1-launch/stderr.log",
+      "size": 193,
+      "sha256": "164177b58972ed145352903c280e2cda22575042ddcc8e760a55eede51abc550"
+    },
+    {
+      "path": "results/a3-k32-double-full-model-20261001-r1-launch/stdout.log",
+      "size": 3608,
+      "sha256": "6b19caed251bdee49026527c9552e8d72d525d08c718b819e86c3e5603ab43cd"
+    },
+    {
+      "path": "results/a3-k32-double-full-model-20261001-r1/admission.json",
+      "size": 105,
+      "sha256": "dfbeb554c084bfc6a968a6fee73aa6fab3d22496a8263ee373200b76ab790526"
+    },
+    {
+      "path": "results/a3-k32-double-full-model-20261001-r1/admission_wait.json",
+      "size": 75,
+      "sha256": "17a2cddc2824cc94a12946d0a65ce64dd1dd94a51cc197d0d25ca6742e6af545"
+    },
+    {
+      "path": "results/a3-k32-double-full-model-20261001-r1/partial.json",
+      "size": 5932,
+      "sha256": "ac7d4d007a62ef0214c3f8b6af62dfc54ae370b5815c8e6db900974082b19b56"
+    },
+    {
+      "path": "results/a3-k32-double-full-model-20261001-r1/result.json",
+      "size": 17121,
+      "sha256": "afee364a6732b57abc15c3c5b8495ee88cac667b6487539e900d5bf488344601"
+    },
+    {
+      "path": "results/a3-k32-full-model-cpu-audit-20261001-r1-launch/run.json",
+      "size": 593,
+      "sha256": "6255bc46b3d650d7fd896b6e56ef4772000f1dc5c0bfcda49309e59403dbcd22"
+    },
+    {
+      "path": "results/a3-k32-full-model-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-k32-full-model-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 156,
+      "sha256": "f8c39d5c5a68e139cce6dd826cbb9ca4ecaef67993350119667f3e8c8353d800"
+    },
+    {
+      "path": "results/a3-k32-full-model-cpu-audit-20261001-r1/result.json",
+      "size": 6446,
+      "sha256": "bdc4c88655f0b11a9b34765c773494c4967ef27783e6d31b5ba250936f68ba3a"
+    },
+    {
+      "path": "results/a3-latest-e2-native-provenance-20261001.json",
+      "size": 18959,
+      "sha256": "30ea6cd6a09d73b01d22215d98c2d7a5964d04d97489f64b876fa979013b3840"
+    },
+    {
+      "path": "tools/a3_all24_precision_probe_20261001.py",
+      "size": 12896,
+      "sha256": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5"
+    },
+    {
+      "path": "tools/a3_k32_double_mxfp8_full_model_queued_20261001.py",
+      "size": 1606,
+      "sha256": "0c6202edb9086964005840e7984b8e1c5de5d19b6cf84c96de2469bf74c36f63"
+    },
+    {
+      "path": "tools/a3_k32_double_mxfp8_full_model_worker_20261001.py",
+      "size": 11821,
+      "sha256": "b3a96e4646b829f9e1a37248c11d943f6ce5fb18bdc1ba9204c029834f569133"
+    },
+    {
+      "path": "tools/a3_model_e2e_mergefix_20261001.py",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "path": "tools/archive_a3_k32_full_model_20261001.py",
+      "size": 3308,
+      "sha256": "7b69754b3e923757008e13b8ef5021d75d312447c722dda95a412e7376bedd86"
+    },
+    {
+      "path": "tools/audit_a3_k32_full_model_20261001.py",
+      "size": 7147,
+      "sha256": "1e2fb873d880d72a52ed6f79d4ae78fb7cd3c4a00380675b94d7968f217d5f83"
+    },
+    {
+      "path": "tools/audit_a3_precision_followup_r2_20261001.py",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "tools/run_logged.py",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    }
+  ],
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    ".pt outputs",
+    "native binaries"
+  ]
+}

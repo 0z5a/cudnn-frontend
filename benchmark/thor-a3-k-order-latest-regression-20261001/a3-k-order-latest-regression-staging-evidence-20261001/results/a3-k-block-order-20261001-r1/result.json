@@ -1,0 +1,142 @@
+{
+  "stage": "LOCAL_K_ORDER_DIAGNOSTIC_NOT_MODEL_SUCCESS",
+  "rows": [
+    {
+      "block": 0,
+      "native_calls": 1,
+      "native_c_original_bf16_cast_mismatches": 285,
+      "reference_c_original_bf16_cast_mismatches": 263,
+      "native_c_reference": {
+        "max_abs": 0.000518798828125,
+        "relative_l2": 2.8039037260896293e-06,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_reference": {
+        "max_abs": 0.03125,
+        "relative_l2": 4.8729401896707714e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_original": {
+        "max_abs": 0.4375,
+        "relative_l2": 0.003189191920682788,
+        "argmax_equal_fraction": 0.9982876777648926
+      }
+    },
+    {
+      "block": 32,
+      "native_calls": 1,
+      "native_c_original_bf16_cast_mismatches": 82,
+      "reference_c_original_bf16_cast_mismatches": 279,
+      "native_c_reference": {
+        "max_abs": 0.0002899169921875,
+        "relative_l2": 1.5008633909019409e-06,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_reference": {
+        "max_abs": 0.015625,
+        "relative_l2": 3.5950295568909496e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_original": {
+        "max_abs": 0.4375,
+        "relative_l2": 0.0031893113628029823,
+        "argmax_equal_fraction": 0.9982876777648926
+      }
+    },
+    {
+      "block": 64,
+      "native_calls": 1,
+      "native_c_original_bf16_cast_mismatches": 91,
+      "reference_c_original_bf16_cast_mismatches": 272,
+      "native_c_reference": {
+        "max_abs": 0.0003204345703125,
+        "relative_l2": 1.543281882732117e-06,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_reference": {
+        "max_abs": 0.015625,
+        "relative_l2": 3.731278047780506e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_original": {
+        "max_abs": 0.4375,
+        "relative_l2": 0.003189310198649764,
+        "argmax_equal_fraction": 0.9982876777648926
+      }
+    },
+    {
+      "block": 128,
+      "native_calls": 1,
+      "native_c_original_bf16_cast_mismatches": 93,
+      "reference_c_original_bf16_cast_mismatches": 276,
+      "native_c_reference": {
+        "max_abs": 0.00030517578125,
+        "relative_l2": 1.649633418310259e-06,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_reference": {
+        "max_abs": 0.03125,
+        "relative_l2": 4.291226287023164e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_original": {
+        "max_abs": 0.4375,
+        "relative_l2": 0.0031893053092062473,
+        "argmax_equal_fraction": 0.9982876777648926
+      }
+    },
+    {
+      "block": 256,
+      "native_calls": 1,
+      "native_c_original_bf16_cast_mismatches": 114,
+      "reference_c_original_bf16_cast_mismatches": 274,
+      "native_c_reference": {
+        "max_abs": 0.0003662109375,
+        "relative_l2": 1.8200032627646578e-06,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_reference": {
+        "max_abs": 0.03125,
+        "relative_l2": 4.504198659560643e-05,
+        "argmax_equal_fraction": 1.0
+      },
+      "native_d_original": {
+        "max_abs": 0.4375,
+        "relative_l2": 0.003189139300957322,
+        "argmax_equal_fraction": 0.9982876777648926
+      }
+    }
+  ],
+  "native_calls": 5,
+  "source": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4",
+  "source_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "prior_metadata_sha256": "4c0aba88779c34477528194cf185ecde9d30cece6c331023b1a8235822c0fb6f",
+  "prior_outputs_sha256": "87ecd871bfeecec3142f80c3ece78a02c9c941a62da43d27876f6b36a246ed75",
+  "outputs_sha256": "719a67714dc87cf71c011b70150198b637bb169b03e3d0aa4b4c7974cd2973ce",
+  "harness_sha256": "6b5b3112b97df36da4129a1cc8002180ccf2b48df086d53ac7c3f52653b3a694",
+  "helper_sha256": "fa63500b8a10122fc7bf16e52aaf10a0ceb64cc23816aeec28ccc55bd257fe7e",
+  "native_plans": {
+    "cudnn.gemm.cutedsl.grouped.swiglu.grouped_gemm_swiglu_quant.BlockScaledContiguousGroupedGemmKernel": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+      "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+    }
+  },
+  "imports": {
+    "cudnn": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4/python/cudnn/__init__.py",
+      "sha256": "ee53bcbde07f59b89ca9378184a7a54beb5d36d216df1f15d7e6d810d9b7f1f9"
+    },
+    "api": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+      "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+    },
+    "binding": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+      "sha256": "2edf36cdbdebe785ab48e30086d595c5799d5131ad3036d385771ca5f39763cc"
+    }
+  },
+  "original_baseline_replaced": false,
+  "formal_performance": "NOT_RUN",
+  "service_final": "inactive",
+  "limits": "First-layer original73-token trajectory only; four K permutations plus byte-exact identity control. Same supported MXFP8 capacity K4096 and actual native D consumed. No kernel/source change, complete-model quality or speedup claim."
+}

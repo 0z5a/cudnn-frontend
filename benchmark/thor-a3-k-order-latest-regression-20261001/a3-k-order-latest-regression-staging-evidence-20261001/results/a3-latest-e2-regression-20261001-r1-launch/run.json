@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "python3",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/run_a3_latest_e2_regression_queued_20261001.py"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-01T12:04:23.222208+00:00",
+  "deadline_seconds": 5400.0,
+  "status": "EXITED",
+  "selected_env": {},
+  "returncode": 1,
+  "signal": null,
+  "elapsed_seconds": 1136.934288172
+}
