@@ -1,0 +1,11 @@
+{
+  "archive": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-flag-admission-final-archive-20261001/a3-bf16-flag-admission-final-evidence-20261001.tar.gz",
+  "size": 5880,
+  "sha256": "afbb4cfc06f4ed8dd6b21a3f930b83f91ef40ecb4f0ff6439f755513a3327628",
+  "files": 13,
+  "payload_bytes": 28576,
+  "local_archive": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-residual-staging-20261001/a3-bf16-flag-admission-final-evidence-20261001.tar.gz",
+  "local_evidence": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-bf16-flag-admission-final-evidence-20261001",
+  "all_manifest_entries_verified": true,
+  "gpu_control_status": "NOT_RUN_SHARED_LOCK_BUSY_AFTER_INITIAL_TIMEOUT"
+}

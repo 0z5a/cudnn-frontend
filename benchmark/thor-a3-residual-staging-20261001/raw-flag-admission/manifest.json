@@ -1,0 +1,144 @@
+{
+  "stage": "GPU_FLAG_ADMISSION_BUSY_FINAL_EVIDENCE",
+  "runtime_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "runs": {
+    "r3": {
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest4/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_bf16_reduction_flag_gpu_20261001.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-reduction-flag-gpu-20261001-r3",
+          "--expected-source",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4",
+          "--expected-head",
+          "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+        "started_utc": "2026-10-01T09:51:14.237643+00:00",
+        "deadline_seconds": 300.0,
+        "status": "EXITED",
+        "selected_env": {},
+        "returncode": 75,
+        "signal": null,
+        "elapsed_seconds": 5.930364628962707
+      },
+      "admission": {
+        "stage": "NOT_RUN_SHARED_LOCK_BUSY",
+        "cuda_initialized": false,
+        "native_calls": 0
+      }
+    },
+    "r4": {
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest4/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_bf16_reduction_flag_early_admission_20261001.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-reduction-flag-gpu-20261001-r4",
+          "--expected-source",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4",
+          "--expected-head",
+          "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+        "started_utc": "2026-10-01T10:00:43.148323+00:00",
+        "deadline_seconds": 120.0,
+        "status": "EXITED",
+        "selected_env": {},
+        "returncode": 75,
+        "signal": null,
+        "elapsed_seconds": 45.082089438976254
+      },
+      "admission": {
+        "stage": "NOT_RUN_SHARED_LOCK_BUSY",
+        "torch_imported": false,
+        "cuda_initialized": false,
+        "native_calls": 0,
+        "wait_seconds": 45.006263296992984
+      }
+    }
+  },
+  "files": [
+    {
+      "path": "results/a3-bf16-reduction-flag-gpu-20261001-r3-launch/run.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-reduction-flag-gpu-20261001-r3-launch/run.json",
+      "size": 771,
+      "sha256": "a655e7ac5776ffe189e2d79f8ac616585d8b2d06386ebc3740fe795d5e7ee01a"
+    },
+    {
+      "path": "results/a3-bf16-reduction-flag-gpu-20261001-r3-launch/stderr.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-reduction-flag-gpu-20261001-r3-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-bf16-reduction-flag-gpu-20261001-r3-launch/stdout.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-reduction-flag-gpu-20261001-r3-launch/stdout.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-bf16-reduction-flag-gpu-20261001-r3/admission.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-reduction-flag-gpu-20261001-r3/admission.json",
+      "size": 91,
+      "sha256": "37d70c38bfe1dea503becb43dfae962ebf4a11117b5f7e4c3940e6ffa0c3a416"
+    },
+    {
+      "path": "results/a3-bf16-reduction-flag-gpu-20261001-r4-launch/run.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-reduction-flag-gpu-20261001-r4-launch/run.json",
+      "size": 784,
+      "sha256": "9ea33314fd656621fd385f17e89f548e8e6070854b4bf4a56bedb6e8584301fd"
+    },
+    {
+      "path": "results/a3-bf16-reduction-flag-gpu-20261001-r4-launch/stderr.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-reduction-flag-gpu-20261001-r4-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-bf16-reduction-flag-gpu-20261001-r4-launch/stdout.log",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-reduction-flag-gpu-20261001-r4-launch/stdout.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-bf16-reduction-flag-gpu-20261001-r4/admission.json",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-reduction-flag-gpu-20261001-r4/admission.json",
+      "size": 156,
+      "sha256": "0f05cd62202ba6ca362877353b372f277bc7ce43e62410aa794cee12dc85b4db"
+    },
+    {
+      "path": "tools/audit_a3_bf16_reduction_flag_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_bf16_reduction_flag_20261001.py",
+      "size": 3475,
+      "sha256": "72b2bcf544327eab12ae9b5c556b05edfba02c193a1d2e8e7b857da5ccb8066c"
+    },
+    {
+      "path": "tools/audit_a3_bf16_reduction_flag_early_admission_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_bf16_reduction_flag_early_admission_20261001.py",
+      "size": 3484,
+      "sha256": "d4e4bf362725015d18e1856c01f0339e9bedd155707594ce1ebafee082ec4bc0"
+    },
+    {
+      "path": "tools/diagnose_a3_bf16_reduction_flag_early_admission_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_bf16_reduction_flag_early_admission_20261001.py",
+      "size": 7111,
+      "sha256": "31e1b8011c0d53507b5238eead060c6495964659ca8d1a376825e90986a2309c"
+    },
+    {
+      "path": "tools/diagnose_a3_bf16_reduction_flag_gpu_20261001.py",
+      "origin": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_bf16_reduction_flag_gpu_20261001.py",
+      "size": 6308,
+      "sha256": "3dfdaa60a335ef218895adb328d822372b28319eeda545ee3c5d3cbef192ef13"
+    }
+  ],
+  "auditor_status": "BOTH_NOT_RUN_GPU_RESULT_ABSENT",
+  "excluded": [
+    ".pt",
+    "models",
+    "cache",
+    "engines",
+    "native binaries"
+  ]
+}

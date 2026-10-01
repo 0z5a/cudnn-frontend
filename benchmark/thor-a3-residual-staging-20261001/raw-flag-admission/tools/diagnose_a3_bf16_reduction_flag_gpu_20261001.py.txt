@@ -1,0 +1,122 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""GPU-only BF16 reduction-flag control after CPU boundary evidence is audited.
+
+Original saved BF16 baseline unchanged. No native A3 calls or accuracy success.
+Fail-fast admission avoids repeating a deadline spent waiting on another task.
+"""
+
+import argparse
+import fcntl
+import importlib.util
+import json
+from pathlib import Path
+import subprocess
+
+BASE = Path(__file__).with_name("a3_model_e2e_mergefix_20261001.py")
+spec = importlib.util.spec_from_file_location("a3_flag_base", BASE)
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+t = m.torch
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--expected-source", required=True)
+    parser.add_argument("--expected-head", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized()
+    source = Path(args.expected_source).resolve()
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == args.expected_head
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    for mod in (m.cudnn, m.api, m._compiled_module):
+        assert Path(mod.__file__).resolve().is_relative_to(source / "python")
+    cpu_dir = m.ROOT / "results/a3-bf16-rounding-cpu-audit-20261001-r2"
+    audit = json.loads((cpu_dir / "result.json").read_text())
+    assert audit["stage"] == "PASS_EVIDENCE_AUDIT_BF16_ROUNDING_DIAGNOSTIC_NOT_NATIVE_SUCCESS" and not audit["cuda_initialized"]
+    baseline_dir = m.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    meta = json.loads((baseline_dir / "result.json").read_text())
+    assert meta["source_head"] == args.expected_head
+    baseline = t.load(baseline_dir / "outputs.pt", weights_only=True, map_location="cpu")
+    rows, saved = [], {}
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            (out / "admission.json").write_text(
+                json.dumps({"stage": "NOT_RUN_SHARED_LOCK_BUSY", "cuda_initialized": t.cuda.is_initialized(), "native_calls": 0}, indent=2)
+            )
+            return 75
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        original_flag = t.backends.cuda.matmul.allow_bf16_reduced_precision_reduction
+        assert original_flag is True
+        t.backends.cuda.matmul.allow_tf32 = False
+        t.backends.cudnn.allow_tf32 = False
+        t.set_float32_matmul_precision("highest")
+        try:
+            t.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = False
+            model, loading = m.AutoModelForCausalLM.from_pretrained(
+                m.MODEL, dtype=t.bfloat16, attn_implementation="sdpa", local_files_only=True, trust_remote_code=False, output_loading_info=True
+            )
+            assert not any(loading.values()) and sum(v.numel() for v in model.parameters()) == 1334628352
+            model = model.eval().cuda()
+            tokenizer = m.AutoTokenizer.from_pretrained(m.MODEL, local_files_only=True, trust_remote_code=False)
+            _, prompts, workloads = m.load_inputs(tokenizer)
+            with t.inference_mode():
+                for case, ids in enumerate((prompts[0], prompts[1], workloads["256"])):
+                    logits = model(input_ids=ids.cuda(), use_cache=False).logits.cpu()
+                    stock = baseline[f"forward_{case}_stock"]
+                    saved[f"strict_bf16/{case}"] = logits
+                    row = {
+                        "case": case,
+                        "input_tokens": ids.shape[-1],
+                        "vs_original_stored_bf16": m.difference(logits, stock),
+                        "byte_exact_original_bf16": t.equal(logits.view(t.uint8), stock.view(t.uint8)),
+                        "native_calls": 0,
+                        "original_baseline_replaced": False,
+                        "allow_bf16_reduced_precision_reduction": False,
+                    }
+                    rows.append(row)
+                    print(json.dumps(row), flush=True)
+        finally:
+            t.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = original_flag
+        assert m.NATIVE_CALLS == 0 and not m.NATIVE_PLANS
+        t.save(saved, out / "outputs.pt")
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+        result = {
+            "stage": "DIAGNOSTIC_COMPLETE",
+            "scope": __doc__,
+            "source_head": args.expected_head,
+            "source": str(source),
+            "model_parameters": 1334628352,
+            "checkpoint": meta["checkpoint"],
+            "native_calls": 0,
+            "native_plans": {},
+            "rows": rows,
+            "allow_bf16_reduced_precision_reduction_original": original_flag,
+            "flag_restored": True,
+            "lock_admission": "SUCCESS_NONBLOCKING",
+            "stock_experts_implementation": model.config._experts_implementation,
+            "baseline_outputs_sha256": m.sha_file(baseline_dir / "outputs.pt"),
+            "cpu_audit_sha256": m.sha_file(cpu_dir / "result.json"),
+            "imports": {
+                name: {"path": mod.__file__, "sha256": m.sha_file(mod.__file__)}
+                for name, mod in (("cudnn", m.cudnn), ("api", m.api), ("binding", m._compiled_module))
+            },
+            "harness_sha256": m.sha_file(__file__),
+            "base_adapter_sha256": m.sha_file(BASE),
+            "formal_performance": "NOT_RUN",
+            "service_final": "inactive",
+            "all24_native_success": False,
+        }
+        (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+        return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,11 @@
+# BF16 flag admission follow-up
+
+The BF16 reduction-flag GPU control remains **NOT_RUN_SHARED_LOCK_BUSY_AFTER_INITIAL_TIMEOUT**. Original numeric gates, stored BF16 baselines and frozen runtime7bfeda6b remain unchanged; no new native A3 call or model precision success occurred.
+
+The earlier combined attempt hit its600s lock-wait deadline. Later a read-only final-state probe briefly found the lock free. A separate GPU-only harness was then uploaded and attempted with nonblocking admission. Another task had taken the lock before admission: r3 returned75 in5.930s, Torch CUDA uninitialized, native calls0, and no model/GPU phase started. The prepared CPU auditor had no GPU tensors to inspect and was not run.
+
+A new independent harness version moves admission ahead of heavy Torch/model imports and waits at most45s. R4 returned75 in45.082s after45.006s waiting, with Torch not imported, CUDA uninitialized and native calls0. Its GPU/model phase and prepared CPU auditor were not run. This avoids the previous import/admission race and leaves a frozen GPU-only test ready for a later available slot. No other task was interrupted, no shared lock was removed/bypassed, and no service/timer was started.
+
+Both launchers exited normally with the explicit busy code, rather than reporting native build, inference or accuracy failure. Raw admission JSON, real run status, stdout/stderr and exact source bytes are preserved. The initial600s timeout remains in the preceding immutable evidence. The all24 numerical task stays open, and the earlier516+2 tensor audits are the completed new accuracy evidence; no extra3 GPU-flag tensors exist.
+
+Mac final admission archive contains13 files; all12 manifest entries match sizes and SHA256. Archive SHA256: afbb4cfc06f4ed8dd6b21a3f930b83f91ef40ecb4f0ff6439f755513a3327628. Tensor/model/cache/engine/native-binary payloads are excluded. Future continuation should use the early-admission harness with a new output directory only when the shared lock can be acquired, then independently audit the3 complete flag-control outputs against the original baseline. The original flagTrue state is restored by the frozen GPU harness if its GPU phase runs; this restoration path has not yet been exercised by these admission-only attempts.
