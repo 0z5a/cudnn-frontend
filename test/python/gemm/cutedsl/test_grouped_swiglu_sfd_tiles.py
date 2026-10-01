@@ -166,7 +166,8 @@ def test_narrow_sfd_plan_reuse_preserves_previous_outputs(api, monkeypatch, side
     assert len(api._cache_of_GroupedGemmSwigluSm100Objects) == plans
     _, _, row, col = _dequantized(second, rows, 1024, True)
     assert torch.count_nonzero(row) == torch.count_nonzero(col) == 0
-    assert torch.count_nonzero(second["amax_tensor"]) == 0
+    expected_amax = torch.tensor([0.0 if n else -float("inf") for n in counts], device="cuda").reshape(-1, 1)
+    torch.testing.assert_close(second["amax_tensor"], expected_amax, rtol=0, atol=0)
     for current, saved in zip(_dequantized(first, rows, 1024, True), snapshot):
         torch.testing.assert_close(current, saved, rtol=0, atol=0)
     _assert_guards(guards)
