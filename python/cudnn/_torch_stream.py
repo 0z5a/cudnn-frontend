@@ -84,8 +84,14 @@ def stream_context(stream, device=None, *, verify_current: bool = False) -> Iter
         return
     import torch
 
-    handle = stream.cuda_stream if isinstance(stream, torch.cuda.Stream) else int(stream)
-    if not verify_current and handle not in DEFAULT_STREAM_HANDLES:
+    # Validate a torch Stream's device even when its raw handle is already
+    # current. Default-stream handles can be equal across different devices.
+    if isinstance(stream, torch.cuda.Stream):
+        stream = as_torch_stream(stream, device)
+        handle = stream.cuda_stream
+    else:
+        handle = int(stream)
+    if not verify_current:
         raw = _raw_current_stream(torch, device)
         if raw is not None and handle == raw:
             yield

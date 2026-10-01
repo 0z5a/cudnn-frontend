@@ -60,6 +60,34 @@ def test_current_stream_handle_needs_no_wrapper(no_external_stream):
             assert torch.cuda.current_stream() == side
 
 
+@pytest.mark.parametrize("use_default", [False, True])
+def test_current_raw_handle_needs_no_stream_context(monkeypatch, use_default):
+    if not hasattr(torch._C, "_cuda_getCurrentRawStream"):
+        pytest.skip("torch raw stream getter is unavailable")
+    current = torch.cuda.default_stream() if use_default else torch.cuda.Stream()
+    with torch.cuda.stream(current):
+
+        def no_context(*args, **kwargs):
+            raise AssertionError("the current raw stream should not rebuild a torch stream context")
+
+        monkeypatch.setattr(torch.cuda, "stream", no_context)
+        with stream_context(current.cuda_stream, current.device):
+            assert torch.cuda.current_stream() == current
+
+
+def test_matching_default_handle_does_not_hide_wrong_stream_device(monkeypatch):
+    # The device check is a host contract: a synthetic stream lets a single-GPU
+    # worker exercise equal default handles on different devices without launch.
+    class OtherDeviceStream:
+        cuda_stream = 0
+        device = torch.device("cuda", 1)
+
+    monkeypatch.setattr(torch.cuda, "Stream", OtherDeviceStream)
+    with pytest.raises(ValueError, match="stream must be on cuda:0, got cuda:1"):
+        with stream_context(OtherDeviceStream(), torch.device("cuda", 0)):
+            pytest.fail("wrong-device stream was admitted")
+
+
 def test_none_is_a_no_op():
     side = torch.cuda.Stream()
     with torch.cuda.stream(side), stream_context(None):
