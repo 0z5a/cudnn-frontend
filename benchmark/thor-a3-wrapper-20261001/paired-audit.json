@@ -1,0 +1,3193 @@
+{
+  "source_frozen": true,
+  "all_processes_exit_zero": true,
+  "scope": "operator only; four paired process observations; five within-process groups",
+  "cases": {
+    "four32-default": {
+      "dataset_sha256": "d237109a0373fc344e564426c0f571d0c1038f348a94a2c4ceb0b8ae14deb06c",
+      "stream_mode": "current",
+      "outputs_byte_identical": true,
+      "output_hashes": {
+        "control": [
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          }
+        ],
+        "candidate": [
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          }
+        ]
+      },
+      "paired": {
+        "wrapper_e2e": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                48.95228958129883,
+                48.839359283447266,
+                49.33599853515625,
+                48.69161605834961
+              ],
+              "candidate": [
+                45.90031814575195,
+                46.258113861083984,
+                45.40537643432617,
+                46.03513717651367
+              ]
+            },
+            "median_us": {
+              "control": 48.89582443237305,
+              "candidate": 45.96772766113281
+            },
+            "candidate_over_control": [
+              0.9376541636427805,
+              0.9471482537806731,
+              0.920329531832032,
+              0.9454427867283652
+            ],
+            "geometric_mean_ratio": 0.9375831960128421,
+            "paired_log_t_95pct_df3": [
+              0.9181882557105964,
+              0.9573878166905316
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                48.880771,
+                48.814149,
+                49.310665,
+                48.668242
+              ],
+              "candidate": [
+                45.867889000000005,
+                46.259629000000004,
+                45.383133,
+                46.013417999999994
+              ]
+            },
+            "median_us": {
+              "control": 48.84746,
+              "candidate": 45.940653499999996
+            },
+            "candidate_over_control": [
+              0.9383626334371854,
+              0.9476684516204513,
+              0.9203512668101312,
+              0.9454505876748126
+            ],
+            "geometric_mean_ratio": 0.937896455842837,
+            "paired_log_t_95pct_df3": [
+              0.9182931234630377,
+              0.9579182718533791
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                48.962788,
+                48.843351999999996,
+                49.343572,
+                48.698131000000004
+              ],
+              "candidate": [
+                45.908685,
+                46.288813999999995,
+                45.41205,
+                46.043353
+              ]
+            },
+            "median_us": {
+              "control": 48.90307,
+              "candidate": 45.976019
+            },
+            "candidate_over_control": [
+              0.9376239972282623,
+              0.9476993716565563,
+              0.9203235225856774,
+              0.9454850125562314
+            ],
+            "geometric_mean_ratio": 0.9377209513601628,
+            "paired_log_t_95pct_df3": [
+              0.918082811065776,
+              0.9577791589399552
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        },
+        "compiled_execute_with_reset": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                14.661343574523926,
+                14.691519737243652,
+                14.751775741577148,
+                14.692255973815918
+              ],
+              "candidate": [
+                14.68496036529541,
+                14.71571159362793,
+                14.732288360595703,
+                14.701375961303711
+              ]
+            },
+            "median_us": {
+              "control": 14.691887855529785,
+              "candidate": 14.70854377746582
+            },
+            "candidate_over_control": [
+              1.0016108203625023,
+              1.0016466544521565,
+              0.9986789806649161,
+              1.000620734317728
+            ],
+            "geometric_mean_ratio": 1.0006385722198923,
+            "paired_log_t_95pct_df3": [
+              0.9984271013304982,
+              1.0028549414173233
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                13.185811,
+                13.505006,
+                13.119954,
+                13.306186
+              ],
+              "candidate": [
+                13.111323,
+                13.178619000000001,
+                13.329972,
+                13.640239
+              ]
+            },
+            "median_us": {
+              "control": 13.245998499999999,
+              "candidate": 13.254295500000001
+            },
+            "candidate_over_control": [
+              0.9943508973395722,
+              0.9758321469831263,
+              1.0160075256361416,
+              1.0251050902189403
+            ],
+            "geometric_mean_ratio": 1.0026399995603603,
+            "paired_log_t_95pct_df3": [
+              0.9679407630340602,
+              1.0385831521004192
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                14.665457,
+                14.698071,
+                14.756089,
+                14.696213
+              ],
+              "candidate": [
+                14.688876,
+                14.720672,
+                14.737054,
+                14.704887000000001
+              ]
+            },
+            "median_us": {
+              "control": 14.697142,
+              "candidate": 14.7127795
+            },
+            "candidate_over_control": [
+              1.001596881706448,
+              1.0015376847750974,
+              0.9987100240449892,
+              1.0005902200791457
+            ],
+            "geometric_mean_ratio": 1.0006080220386513,
+            "paired_log_t_95pct_df3": [
+              0.9984656265108947,
+              1.0027550144783852
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        },
+        "graph_replay_with_reset": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                16.62713623046875,
+                16.551584243774414,
+                16.596832275390625,
+                16.631711959838867
+              ],
+              "candidate": [
+                16.605823516845703,
+                16.660255432128906,
+                16.701568603515625,
+                16.629568099975586
+              ]
+            },
+            "median_us": {
+              "control": 16.611984252929688,
+              "candidate": 16.644911766052246
+            },
+            "candidate_over_control": [
+              0.9987181969686402,
+              1.0065656064551867,
+              1.0063106215925492,
+              0.9998710980644411
+            ],
+            "geometric_mean_ratio": 1.0028599328898729,
+            "paired_log_t_95pct_df3": [
+              0.996273907775077,
+              1.0094894959579106
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                2.4309250000000002,
+                4.762408000000001,
+                4.709779,
+                4.767704
+              ],
+              "candidate": [
+                4.41392,
+                4.784731,
+                4.680103,
+                4.744946
+              ]
+            },
+            "median_us": {
+              "control": 4.736093500000001,
+              "candidate": 4.7125245
+            },
+            "candidate_over_control": [
+              1.815736808005183,
+              1.0046873346424747,
+              0.9936990674084707,
+              0.9952266331970272
+            ],
+            "geometric_mean_ratio": 1.1589512659667414,
+            "paired_log_t_95pct_df3": [
+              0.719766936448445,
+              1.8661152226768336
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                16.628766,
+                16.554084,
+                16.600103999999998,
+                16.634874
+              ],
+              "candidate": [
+                16.609906,
+                16.663610000000002,
+                16.704639999999998,
+                16.632993
+              ]
+            },
+            "median_us": {
+              "control": 16.614435,
+              "candidate": 16.648301500000002
+            },
+            "candidate_over_control": [
+              0.998865820831203,
+              1.0066162525211302,
+              1.0062973099445642,
+              0.9998869243013202
+            ],
+            "geometric_mean_ratio": 1.0029102568486303,
+            "paired_log_t_95pct_df3": [
+              0.9963894997941078,
+              1.0094736882514603
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        }
+      }
+    },
+    "four32-narrow": {
+      "dataset_sha256": "d237109a0373fc344e564426c0f571d0c1038f348a94a2c4ceb0b8ae14deb06c",
+      "stream_mode": "current",
+      "outputs_byte_identical": true,
+      "output_hashes": {
+        "control": [
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          }
+        ],
+        "candidate": [
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          }
+        ]
+      },
+      "paired": {
+        "wrapper_e2e": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                48.430110931396484,
+                48.95452880859375,
+                48.77123260498047,
+                48.61065673828125
+              ],
+              "candidate": [
+                46.75929641723633,
+                46.46428680419922,
+                45.34617614746094,
+                46.08371353149414
+              ]
+            },
+            "median_us": {
+              "control": 48.69094467163086,
+              "candidate": 46.27400016784668
+            },
+            "candidate_over_control": [
+              0.9655005020218321,
+              0.9491315295029991,
+              0.9297730183434042,
+              0.9480166824243474
+            ],
+            "geometric_mean_ratio": 0.9480209959371442,
+            "paired_log_t_95pct_df3": [
+              0.9250491857010109,
+              0.9715632667214104
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                48.401905,
+                48.928731,
+                48.742309,
+                48.579344
+              ],
+              "candidate": [
+                46.734892,
+                46.436414,
+                45.322512,
+                46.058786
+              ]
+            },
+            "median_us": {
+              "control": 48.6608265,
+              "candidate": 46.2476
+            },
+            "candidate_over_control": [
+              0.9655589382277413,
+              0.9490623004303954,
+              0.9298392491008172,
+              0.9481146143101479
+            ],
+            "geometric_mean_ratio": 0.9480594170734483,
+            "paired_log_t_95pct_df3": [
+              0.9250979939946352,
+              0.9715907548566785
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                48.436729,
+                48.960472,
+                48.780939,
+                48.618917
+              ],
+              "candidate": [
+                46.763186999999995,
+                46.470386,
+                45.353799,
+                46.088322999999995
+              ]
+            },
+            "median_us": {
+              "control": 48.699928,
+              "candidate": 46.2793545
+            },
+            "candidate_over_control": [
+              0.9654489055196108,
+              0.9491408906352046,
+              0.9297442798302838,
+              0.9479504243173494
+            ],
+            "geometric_mean_ratio": 0.9479867772209333,
+            "paired_log_t_95pct_df3": [
+              0.9250273191459778,
+              0.9715160959953353
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        },
+        "compiled_execute_with_reset": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                13.489439964294434,
+                13.49407958984375,
+                13.5448637008667,
+                13.495072364807129
+              ],
+              "candidate": [
+                13.46121597290039,
+                13.487327575683594,
+                13.491999626159668,
+                13.431039810180664
+              ]
+            },
+            "median_us": {
+              "control": 13.49457597732544,
+              "candidate": 13.474271774291992
+            },
+            "candidate_over_control": [
+              0.9979076973196256,
+              0.9994996313668375,
+              0.9960971128337269,
+              0.9952551158752249
+            ],
+            "geometric_mean_ratio": 0.997188537436156,
+            "paired_log_t_95pct_df3": [
+              0.9941762679548789,
+              1.0002099338375983
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                13.250456,
+                13.381984000000001,
+                13.438679,
+                13.327478999999999
+              ],
+              "candidate": [
+                13.249012,
+                13.294262,
+                13.435587,
+                13.335912
+              ]
+            },
+            "median_us": {
+              "control": 13.3547315,
+              "candidate": 13.315087
+            },
+            "candidate_over_control": [
+              0.9998910226183915,
+              0.9934447687278657,
+              0.9997699178617183,
+              1.000632752825947
+            ],
+            "geometric_mean_ratio": 0.998430395527406,
+            "paired_log_t_95pct_df3": [
+              0.9931080533008911,
+              1.0037812616659785
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                13.493815,
+                13.498549,
+                13.550244000000001,
+                13.499958000000001
+              ],
+              "candidate": [
+                13.465279,
+                13.493002,
+                13.497485000000001,
+                13.437254999999999
+              ]
+            },
+            "median_us": {
+              "control": 13.499253500000002,
+              "candidate": 13.4791405
+            },
+            "candidate_over_control": [
+              0.997885253354963,
+              0.9995890669434174,
+              0.996106416976698,
+              0.9953553188832142
+            ],
+            "geometric_mean_ratio": 0.997232664325355,
+            "paired_log_t_95pct_df3": [
+              0.9942228276218092,
+              1.0002516127860746
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        },
+        "graph_replay_with_reset": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                15.831616401672363,
+                15.58739185333252,
+                15.718624114990234,
+                15.76473617553711
+              ],
+              "candidate": [
+                16.062623977661133,
+                15.74294376373291,
+                15.632320404052734,
+                15.607295989990234
+              ]
+            },
+            "median_us": {
+              "control": 15.741680145263672,
+              "candidate": 15.687632083892822
+            },
+            "candidate_over_control": [
+              1.0145915344414465,
+              1.0099793417567247,
+              0.99450946149573,
+              0.9900131417491665
+            ],
+            "geometric_mean_ratio": 1.002220775014654,
+            "paired_log_t_95pct_df3": [
+              0.9835318279730638,
+              1.0212648470573773
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                4.771343,
+                4.771937,
+                3.520344,
+                4.480309
+              ],
+              "candidate": [
+                4.677761,
+                4.664224,
+                4.787374,
+                4.424625
+              ]
+            },
+            "median_us": {
+              "control": 4.625826,
+              "candidate": 4.6709925000000005
+            },
+            "candidate_over_control": [
+              0.9803866542396974,
+              0.9774278243824257,
+              1.3599165308844816,
+              0.9875713929552626
+            ],
+            "geometric_mean_ratio": 1.0651007995456425,
+            "paired_log_t_95pct_df3": [
+              0.8218177331066654,
+              1.380403059574191
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                15.834788,
+                15.590913,
+                15.722005,
+                15.768229999999999
+              ],
+              "candidate": [
+                16.065981,
+                15.747356,
+                15.635341,
+                15.610498
+              ]
+            },
+            "median_us": {
+              "control": 15.7451175,
+              "candidate": 15.6913485
+            },
+            "candidate_over_control": [
+              1.014600321772543,
+              1.010034242382085,
+              0.9944877259611609,
+              0.9899968480926522
+            ],
+            "geometric_mean_ratio": 1.0022269646686812,
+            "paired_log_t_95pct_df3": [
+              0.9834983551769214,
+              1.0213122202205474
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        }
+      }
+    },
+    "ragged8-default": {
+      "dataset_sha256": "de8e6daf8cc5f601ccf98d75bf4212e9fcf96a4a066ac75c8be6d4f19bae6ff2",
+      "stream_mode": "current",
+      "outputs_byte_identical": true,
+      "output_hashes": {
+        "control": [
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          }
+        ],
+        "candidate": [
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          }
+        ]
+      },
+      "paired": {
+        "wrapper_e2e": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                48.05811309814453,
+                48.347679138183594,
+                48.80393600463867,
+                48.28745651245117
+              ],
+              "candidate": [
+                45.896095275878906,
+                46.12470245361328,
+                47.086463928222656,
+                47.87936019897461
+              ]
+            },
+            "median_us": {
+              "control": 48.31756782531738,
+              "candidate": 46.60558319091797
+            },
+            "candidate_over_control": [
+              0.9550124280191704,
+              0.9540210259479721,
+              0.9648087384539482,
+              0.9915486061401612
+            ],
+            "geometric_mean_ratio": 0.9662300756955163,
+            "paired_log_t_95pct_df3": [
+              0.9389854310922005,
+              0.9942652231490176
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                48.034653,
+                48.324231,
+                48.782061999999996,
+                48.263228000000005
+              ],
+              "candidate": [
+                45.873715,
+                46.104447,
+                47.06339,
+                47.848701
+              ]
+            },
+            "median_us": {
+              "control": 48.2937295,
+              "candidate": 46.583918499999996
+            },
+            "candidate_over_control": [
+              0.9550129361817186,
+              0.954064783772762,
+              0.9647683609602234,
+              0.9914111215271385
+            ],
+            "geometric_mean_ratio": 0.966197678683984,
+            "paired_log_t_95pct_df3": [
+              0.9390679413329751,
+              0.9941111960112211
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                48.063412,
+                48.352545,
+                48.812394999999995,
+                48.296515
+              ],
+              "candidate": [
+                45.903262000000005,
+                46.128975,
+                47.091787,
+                47.887173000000004
+              ]
+            },
+            "median_us": {
+              "control": 48.324529999999996,
+              "candidate": 46.610381
+            },
+            "candidate_over_control": [
+              0.9550562494398027,
+              0.9540133823359246,
+              0.96475059254929,
+              0.991524398810142
+            ],
+            "geometric_mean_ratio": 0.9662187684747813,
+            "paired_log_t_95pct_df3": [
+              0.9390014378650738,
+              0.9942250042508135
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        },
+        "compiled_execute_with_reset": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                21.9052791595459,
+                21.91814422607422,
+                21.8907527923584,
+                21.919967651367188
+              ],
+              "candidate": [
+                21.95680046081543,
+                21.902463912963867,
+                21.944608688354492,
+                21.985952377319336
+              ]
+            },
+            "median_us": {
+              "control": 21.91171169281006,
+              "candidate": 21.95070457458496
+            },
+            "candidate_over_control": [
+              1.0023520038660214,
+              0.9992845966816982,
+              1.0024602121501685,
+              1.0030102565387697
+            ],
+            "geometric_mean_ratio": 1.001775701810703,
+            "paired_log_t_95pct_df3": [
+              0.9990940268437983,
+              1.0044645746793412
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                13.261835,
+                13.146948,
+                12.968218,
+                13.209247
+              ],
+              "candidate": [
+                13.220317,
+                12.999300999999999,
+                13.907315,
+                13.462363999999999
+              ]
+            },
+            "median_us": {
+              "control": 13.1780975,
+              "candidate": 13.3413405
+            },
+            "candidate_over_control": [
+              0.996869362346915,
+              0.988769484750377,
+              1.0724152693916775,
+              1.0191621066666403
+            ],
+            "geometric_mean_ratio": 1.0187905081312267,
+            "paired_log_t_95pct_df3": [
+              0.9612872770813224,
+              1.0797335242069126
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                21.908767,
+                21.921991000000002,
+                21.895667,
+                21.925234
+              ],
+              "candidate": [
+                21.961562999999998,
+                21.907121,
+                21.948604,
+                21.990539000000002
+              ]
+            },
+            "median_us": {
+              "control": 21.915379,
+              "candidate": 21.9550835
+            },
+            "candidate_over_control": [
+              1.002409811560824,
+              0.9993216856990772,
+              1.0024176929618083,
+              1.0029785314948065
+            ],
+            "geometric_mean_ratio": 1.0017808958306957,
+            "paired_log_t_95pct_df3": [
+              0.9991383354919285,
+              1.0044304453169073
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        },
+        "graph_replay_with_reset": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                24.668031692504883,
+                24.674528121948242,
+                24.68022346496582,
+                24.690176010131836
+              ],
+              "candidate": [
+                24.693632125854492,
+                24.662752151489258,
+                24.666400909423828,
+                24.652063369750977
+              ]
+            },
+            "median_us": {
+              "control": 24.67737579345703,
+              "candidate": 24.664576530456543
+            },
+            "candidate_over_control": [
+              1.001037797975482,
+              0.9995227478960982,
+              0.9994399339389445,
+              0.9984563641682741
+            ],
+            "geometric_mean_ratio": 0.999613785197365,
+            "paired_log_t_95pct_df3": [
+              0.9979200843421786,
+              1.001310360654067
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                4.106407,
+                4.153259,
+                4.107843,
+                4.0696390000000005
+              ],
+              "candidate": [
+                4.053389,
+                3.9684459999999997,
+                4.157861,
+                3.44168
+              ]
+            },
+            "median_us": {
+              "control": 4.107125,
+              "candidate": 4.0109175
+            },
+            "candidate_over_control": [
+              0.987088956355276,
+              0.9555016915631795,
+              1.0121762199772484,
+              0.8456966330428816
+            ],
+            "geometric_mean_ratio": 0.9479045788876133,
+            "paired_log_t_95pct_df3": [
+              0.8350865335563121,
+              1.0759640523116083
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                24.671414000000002,
+                24.677453,
+                24.683353,
+                24.696346000000002
+              ],
+              "candidate": [
+                24.696573,
+                24.666324,
+                24.670317,
+                24.655578000000002
+              ]
+            },
+            "median_us": {
+              "control": 24.680403,
+              "candidate": 24.6683205
+            },
+            "candidate_over_control": [
+              1.0010197631963857,
+              0.9995490215298961,
+              0.999471870778658,
+              0.9983492294771057
+            ],
+            "geometric_mean_ratio": 0.99959702124852,
+            "paired_log_t_95pct_df3": [
+              0.9978558737140254,
+              1.0013412068918406
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        }
+      }
+    },
+    "ragged8-narrow": {
+      "dataset_sha256": "de8e6daf8cc5f601ccf98d75bf4212e9fcf96a4a066ac75c8be6d4f19bae6ff2",
+      "stream_mode": "current",
+      "outputs_byte_identical": true,
+      "output_hashes": {
+        "control": [
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          }
+        ],
+        "candidate": [
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          }
+        ]
+      },
+      "paired": {
+        "wrapper_e2e": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                48.961055755615234,
+                50.19510269165039,
+                48.69193649291992,
+                49.43414306640625
+              ],
+              "candidate": [
+                45.626529693603516,
+                46.013153076171875,
+                45.79391860961914,
+                45.8900146484375
+              ]
+            },
+            "median_us": {
+              "control": 49.19759941101074,
+              "candidate": 45.84196662902832
+            },
+            "candidate_over_control": [
+              0.9318943186467279,
+              0.9166861030015553,
+              0.940482591327577,
+              0.9283060613955051
+            ],
+            "geometric_mean_ratio": 0.9293029476365712,
+            "paired_log_t_95pct_df3": [
+              0.9137213246614465,
+              0.9451502828895929
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                48.928364,
+                50.172167,
+                48.660882,
+                49.399558
+              ],
+              "candidate": [
+                45.605702,
+                46.047377,
+                45.773031,
+                45.864336
+              ]
+            },
+            "median_us": {
+              "control": 49.163961,
+              "candidate": 45.818683500000006
+            },
+            "candidate_over_control": [
+              0.9320912916687751,
+              0.9177872863255039,
+              0.940653541791536,
+              0.9284361613114028
+            ],
+            "geometric_mean_ratio": 0.9297058368368953,
+            "paired_log_t_95pct_df3": [
+              0.9147419489517367,
+              0.9449145128187365
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                48.970698,
+                50.200092,
+                48.702834,
+                49.443705
+              ],
+              "candidate": [
+                45.630212,
+                46.090579,
+                45.800975,
+                45.900124000000005
+              ]
+            },
+            "median_us": {
+              "control": 49.2072015,
+              "candidate": 45.8505495
+            },
+            "candidate_over_control": [
+              0.9317860243691034,
+              0.9181373412622431,
+              0.9404170402075575,
+              0.9283309978489679
+            ],
+            "geometric_mean_ratio": 0.9296335660396038,
+            "paired_log_t_95pct_df3": [
+              0.9150759156735121,
+              0.9444228094140477
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        },
+        "compiled_execute_with_reset": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                16.837312698364258,
+                16.769311904907227,
+                16.824928283691406,
+                16.83238410949707
+              ],
+              "candidate": [
+                16.78892707824707,
+                16.774560928344727,
+                16.8239688873291,
+                16.785024642944336
+              ]
+            },
+            "median_us": {
+              "control": 16.82865619659424,
+              "candidate": 16.786975860595703
+            },
+            "candidate_over_control": [
+              0.997126286065716,
+              1.0003130136446423,
+              0.9999429776848895,
+              0.9971864076862401
+            ],
+            "geometric_mean_ratio": 0.9986410571608442,
+            "paired_log_t_95pct_df3": [
+              0.9959039877065772,
+              1.0013856489759914
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                13.827771,
+                13.254877,
+                13.327628,
+                13.229426
+              ],
+              "candidate": [
+                13.274784,
+                13.243182000000001,
+                13.134749,
+                13.219258
+              ]
+            },
+            "median_us": {
+              "control": 13.2912525,
+              "candidate": 13.23122
+            },
+            "candidate_over_control": [
+              0.9600089558902878,
+              0.9991176832497202,
+              0.9855278823808706,
+              0.9992314103423686
+            ],
+            "geometric_mean_ratio": 0.9858406704545127,
+            "paired_log_t_95pct_df3": [
+              0.9567080023804889,
+              1.0158604559635318
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                16.842029,
+                16.774141,
+                16.829039,
+                16.836458
+              ],
+              "candidate": [
+                16.793215,
+                16.778947,
+                16.828114000000003,
+                16.789143
+              ]
+            },
+            "median_us": {
+              "control": 16.8327485,
+              "candidate": 16.791179
+            },
+            "candidate_over_control": [
+              0.9971016556259343,
+              1.0002865124360167,
+              0.9999450354830125,
+              0.9971897295737618
+            ],
+            "geometric_mean_ratio": 0.998629621331077,
+            "paired_log_t_95pct_df3": [
+              0.9958952168401379,
+              1.0013715336077686
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        },
+        "graph_replay_with_reset": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                18.690847396850586,
+                18.602783203125,
+                18.701663970947266,
+                18.668256759643555
+              ],
+              "candidate": [
+                18.760543823242188,
+                18.63795280456543,
+                18.75974464416504,
+                18.675071716308594
+              ]
+            },
+            "median_us": {
+              "control": 18.67955207824707,
+              "candidate": 18.717408180236816
+            },
+            "candidate_over_control": [
+              1.0037289067163078,
+              1.001890555894589,
+              1.0031056420064013,
+              1.0003650558674428
+            ],
+            "geometric_mean_ratio": 1.0022717167808632,
+            "paired_log_t_95pct_df3": [
+              0.9999138296084767,
+              1.0046351640642843
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                4.588554,
+                4.521508,
+                4.629905,
+                4.537916
+              ],
+              "candidate": [
+                4.508238,
+                4.5490900000000005,
+                4.522508,
+                4.395519
+              ]
+            },
+            "median_us": {
+              "control": 4.563235000000001,
+              "candidate": 4.515373
+            },
+            "candidate_over_control": [
+              0.982496446592979,
+              1.006100177197519,
+              0.9768036277202232,
+              0.9686206179224119
+            ],
+            "geometric_mean_ratio": 0.9834070031296758,
+            "paired_log_t_95pct_df3": [
+              0.9582412074684029,
+              1.0092337151305184
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                18.695803,
+                18.605722,
+                18.70463,
+                18.668919000000002
+              ],
+              "candidate": [
+                18.766108,
+                18.641064,
+                18.763351999999998,
+                18.68276
+              ]
+            },
+            "median_us": {
+              "control": 18.682361,
+              "candidate": 18.723056
+            },
+            "candidate_over_control": [
+              1.0037604696626294,
+              1.0018995231681953,
+              1.0031394365993873,
+              1.000741392685886
+            ],
+            "geometric_mean_ratio": 1.0023845322296332,
+            "paired_log_t_95pct_df3": [
+              1.0002520038676717,
+              1.0045216071230658
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        }
+      }
+    },
+    "four32-narrow-none": {
+      "dataset_sha256": "d237109a0373fc344e564426c0f571d0c1038f348a94a2c4ceb0b8ae14deb06c",
+      "stream_mode": "none",
+      "outputs_byte_identical": true,
+      "output_hashes": {
+        "control": [
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          }
+        ],
+        "candidate": [
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                512,
+                1
+              ],
+              "sha256": "e54c654348e5cb8345f58ce20e2407b508603a877d3288652f3b917e0dd02830"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1024,
+                256,
+                1
+              ],
+              "sha256": "2db79c9b9e2b42b4dca2fefa6da8b99207b30e2eb579f0d93675157d19feedef"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                4,
+                1
+              ],
+              "sha256": "ab74f5666dac73f03b3d2ce671bfad0b639c703b9434fefb2d65a36d0abb8669"
+            }
+          }
+        ]
+      },
+      "paired": {
+        "wrapper_e2e": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                49.35744094848633,
+                49.67046356201172,
+                49.365150451660156,
+                49.95270538330078
+              ],
+              "candidate": [
+                45.9672966003418,
+                45.42483139038086,
+                46.926815032958984,
+                48.568511962890625
+              ]
+            },
+            "median_us": {
+              "control": 49.51780700683594,
+              "candidate": 46.44705581665039
+            },
+            "candidate_over_control": [
+              0.9313144222431876,
+              0.9145240074852463,
+              0.9506061382090011,
+              0.9722899208403457
+            ],
+            "geometric_mean_ratio": 0.9419372226368229,
+            "paired_log_t_95pct_df3": [
+              0.9031889294370072,
+              0.9823478814580096
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                49.333256999999996,
+                49.648548999999996,
+                49.344125999999996,
+                49.929906
+              ],
+              "candidate": [
+                45.943006999999994,
+                45.405975,
+                46.901794,
+                48.546848
+              ]
+            },
+            "median_us": {
+              "control": 49.496337499999996,
+              "candidate": 46.422400499999995
+            },
+            "candidate_over_control": [
+              0.931278609883795,
+              0.9145478753064868,
+              0.9505040985020183,
+              0.9723000079351239
+            ],
+            "geometric_mean_ratio": 0.9419114777280372,
+            "paired_log_t_95pct_df3": [
+              0.903182097933391,
+              0.9823016132691824
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                49.365424,
+                49.677150000000005,
+                49.374617,
+                49.95924900000001
+              ],
+              "candidate": [
+                45.973636,
+                45.431808,
+                46.936237999999996,
+                48.574163
+              ]
+            },
+            "median_us": {
+              "control": 49.525883500000006,
+              "candidate": 46.454937
+            },
+            "candidate_over_control": [
+              0.9312922340138312,
+              0.9145413535196764,
+              0.9506147257810627,
+              0.9722756841280779
+            ],
+            "geometric_mean_ratio": 0.9419347579108986,
+            "paired_log_t_95pct_df3": [
+              0.9031987448356673,
+              0.9823320650452104
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        },
+        "compiled_execute_with_reset": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                13.922240257263184,
+                13.921024322509766,
+                13.907008171081543,
+                14.535296440124512
+              ],
+              "candidate": [
+                14.270879745483398,
+                13.836511611938477,
+                14.30179214477539,
+                15.375391960144043
+              ]
+            },
+            "median_us": {
+              "control": 13.921632289886475,
+              "candidate": 14.286335945129395
+            },
+            "candidate_over_control": [
+              1.02504191005024,
+              0.9939291313186893,
+              1.0283874122196008,
+              1.057796930628842
+            ],
+            "geometric_mean_ratio": 1.0260393672085701,
+            "paired_log_t_95pct_df3": [
+              0.9852856418548216,
+              1.0684787622398773
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                13.897853999999999,
+                13.897929,
+                13.887745,
+                14.51279
+              ],
+              "candidate": [
+                14.240639999999999,
+                13.813143,
+                14.280928,
+                15.351589
+              ]
+            },
+            "median_us": {
+              "control": 13.8978915,
+              "candidate": 14.260784
+            },
+            "candidate_over_control": [
+              1.0246646712506837,
+              0.9938993788211179,
+              1.028311507735777,
+              1.0577972257574182
+            ],
+            "geometric_mean_ratio": 1.025918415027465,
+            "paired_log_t_95pct_df3": [
+              0.9851450330105319,
+              1.0683793340317371
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                13.927076,
+                13.930958,
+                13.910689,
+                14.539632
+              ],
+              "candidate": [
+                14.277168,
+                13.840939,
+                14.309808,
+                15.380171
+              ]
+            },
+            "median_us": {
+              "control": 13.929017,
+              "candidate": 14.293488
+            },
+            "candidate_over_control": [
+              1.0251375091225179,
+              0.9935382046231135,
+              1.0286915335394242,
+              1.0578101976721284
+            ],
+            "geometric_mean_ratio": 1.0260414429298594,
+            "paired_log_t_95pct_df3": [
+              0.9850095792081122,
+              1.0687825426590711
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        },
+        "graph_replay_with_reset": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                15.577055931091309,
+                15.636896133422852,
+                15.869919776916504,
+                15.716511726379395
+              ],
+              "candidate": [
+                15.59552001953125,
+                15.978816032409668,
+                15.871456146240234,
+                15.882271766662598
+              ]
+            },
+            "median_us": {
+              "control": 15.676703929901123,
+              "candidate": 15.876863956451416
+            },
+            "candidate_over_control": [
+              1.001185338777855,
+              1.021866225628754,
+              1.0000968101506074,
+              1.010546872179339
+            ],
+            "geometric_mean_ratio": 1.00838588436533,
+            "paired_log_t_95pct_df3": [
+              0.9924561952467978,
+              1.024571257308124
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                4.431959,
+                4.650772,
+                4.762763,
+                4.7186069999999996
+              ],
+              "candidate": [
+                4.68466,
+                4.749031,
+                4.803624,
+                4.803643
+              ]
+            },
+            "median_us": {
+              "control": 4.684689499999999,
+              "candidate": 4.7763275
+            },
+            "candidate_over_control": [
+              1.057017901113255,
+              1.0211274601292,
+              1.0085792637592927,
+              1.0180214203047637
+            ],
+            "geometric_mean_ratio": 1.0260235100125414,
+            "paired_log_t_95pct_df3": [
+              0.9930534069963196,
+              1.0600882446822493
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                15.580638,
+                15.640168,
+                15.872907999999999,
+                15.720531000000001
+              ],
+              "candidate": [
+                15.598565,
+                15.982313,
+                15.874556,
+                15.885325
+              ]
+            },
+            "median_us": {
+              "control": 15.6803495,
+              "candidate": 15.8799405
+            },
+            "candidate_over_control": [
+              1.0011505947317434,
+              1.021876043786742,
+              1.0001038247055927,
+              1.0104827247883674
+            ],
+            "geometric_mean_ratio": 1.0083653231947631,
+            "paired_log_t_95pct_df3": [
+              0.9924262642113628,
+              1.0245603745983947
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        }
+      }
+    },
+    "ragged8-narrow-none": {
+      "dataset_sha256": "de8e6daf8cc5f601ccf98d75bf4212e9fcf96a4a066ac75c8be6d4f19bae6ff2",
+      "stream_mode": "none",
+      "outputs_byte_identical": true,
+      "output_hashes": {
+        "control": [
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          }
+        ],
+        "candidate": [
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          },
+          {
+            "c_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                512,
+                1
+              ],
+              "sha256": "b3cf6d1d0cfd64035269887a2db729b2021dec9cfb128870514fc6c1905eb846"
+            },
+            "d_tensor": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                1536,
+                256,
+                1
+              ],
+              "sha256": "6eecf928fe2d8fca857eb5a60815cce692a5f6b73bb6d9bf87363998fd903e8c"
+            },
+            "amax_tensor": {
+              "dtype": "torch.float32",
+              "shape": [
+                8,
+                1
+              ],
+              "sha256": "b7ea5d5c0ce82111fc0ad3c744a2caf4f5f8c11ca05849e141806d9f820af561"
+            }
+          }
+        ]
+      },
+      "paired": {
+        "wrapper_e2e": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                50.72518539428711,
+                50.58700942993164,
+                49.532352447509766,
+                50.60889434814453
+              ],
+              "candidate": [
+                46.398624420166016,
+                46.040992736816406,
+                47.14486312866211,
+                46.07980728149414
+              ]
+            },
+            "median_us": {
+              "control": 50.597951889038086,
+              "candidate": 46.23921585083008
+            },
+            "candidate_over_control": [
+              0.9147058617826487,
+              0.9101347016883465,
+              0.9517993957307456,
+              0.910508081138974
+            ],
+            "geometric_mean_ratio": 0.9216246697482351,
+            "paired_log_t_95pct_df3": [
+              0.8904901318648972,
+              0.9538477760665526
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                50.69818,
+                50.635879,
+                49.507887000000004,
+                50.586885
+              ],
+              "candidate": [
+                46.375449999999994,
+                46.010148,
+                47.123754999999996,
+                46.056439
+              ]
+            },
+            "median_us": {
+              "control": 50.611382000000006,
+              "candidate": 46.21594449999999
+            },
+            "candidate_over_control": [
+              0.914735992495194,
+              0.9086471669623825,
+              0.9518433901248905,
+              0.9104422816309009
+            ],
+            "geometric_mean_ratio": 0.9212494474348076,
+            "paired_log_t_95pct_df3": [
+              0.8896150357744356,
+              0.9540087681410646
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                50.732735999999996,
+                50.680555,
+                49.537878,
+                50.613441
+              ],
+              "candidate": [
+                46.406496,
+                46.051796,
+                47.149968,
+                46.086040999999994
+              ]
+            },
+            "median_us": {
+              "control": 50.646997999999996,
+              "candidate": 46.2462685
+            },
+            "candidate_over_control": [
+              0.9147248829631424,
+              0.9086679496702434,
+              0.9517962800102177,
+              0.9105494526641646
+            ],
+            "geometric_mean_ratio": 0.9212676280538056,
+            "paired_log_t_95pct_df3": [
+              0.8897020175894724,
+              0.9539531502911676
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        },
+        "compiled_execute_with_reset": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                16.78201675415039,
+                16.770751953125,
+                16.787391662597656,
+                16.87753677368164
+              ],
+              "candidate": [
+                16.809024810791016,
+                16.75187110900879,
+                16.837663650512695,
+                16.809343338012695
+              ]
+            },
+            "median_us": {
+              "control": 16.784704208374023,
+              "candidate": 16.809184074401855
+            },
+            "candidate_over_control": [
+              1.0016093451124666,
+              0.9988741802294265,
+              1.0029946276899613,
+              0.9959595149112468
+            ],
+            "geometric_mean_ratio": 0.999855780486542,
+            "paired_log_t_95pct_df3": [
+              0.994912556072205,
+              1.0048235653182356
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                14.554214,
+                14.37504,
+                14.148931000000001,
+                13.854174
+              ],
+              "candidate": [
+                14.557316,
+                14.00471,
+                14.576002,
+                14.199589
+              ]
+            },
+            "median_us": {
+              "control": 14.261985500000002,
+              "candidate": 14.3784525
+            },
+            "candidate_over_control": [
+              1.0002131341479519,
+              0.974237984729086,
+              1.0301839764431673,
+              1.0249321973291226
+            ],
+            "geometric_mean_ratio": 1.007144730010882,
+            "paired_log_t_95pct_df3": [
+              0.9669107665802448,
+              1.0490528622162276
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                16.787431,
+                16.774719,
+                16.792535,
+                16.881785
+              ],
+              "candidate": [
+                16.816747,
+                16.756739000000003,
+                16.842202,
+                16.813481
+              ]
+            },
+            "median_us": {
+              "control": 16.789983,
+              "candidate": 16.815114
+            },
+            "candidate_over_control": [
+              1.0017463065075292,
+              0.9989281489603493,
+              1.0029576832801004,
+              0.9959539823543541
+            ],
+            "geometric_mean_ratio": 0.9998928683950845,
+            "paired_log_t_95pct_df3": [
+              0.9949322917740034,
+              1.004878177674475
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        },
+        "graph_replay_with_reset": {
+          "gpu_interval_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                18.650367736816406,
+                18.64793586730957,
+                18.830528259277344,
+                18.6845760345459
+              ],
+              "candidate": [
+                18.72425651550293,
+                18.614240646362305,
+                18.66422462463379,
+                18.686656951904297
+              ]
+            },
+            "median_us": {
+              "control": 18.667471885681152,
+              "candidate": 18.675440788269043
+            },
+            "candidate_over_control": [
+              1.0039617866912438,
+              0.9981930857556018,
+              0.991168403118929,
+              1.0001113708630343
+            ],
+            "geometric_mean_ratio": 0.9983478535195505,
+            "paired_log_t_95pct_df3": [
+              0.9898455552001567,
+              1.0069231825014877
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "host_enqueue_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                4.490574,
+                4.234621,
+                4.453787999999999,
+                4.608778
+              ],
+              "candidate": [
+                4.681118000000001,
+                4.5685270000000004,
+                4.322353,
+                4.516176000000001
+              ]
+            },
+            "median_us": {
+              "control": 4.472180999999999,
+              "candidate": 4.5423515000000005
+            },
+            "candidate_over_control": [
+              1.0424319919903338,
+              1.0788514485711946,
+              0.9704891656271022,
+              0.9799074722193173
+            ],
+            "geometric_mean_ratio": 1.0169422366717262,
+            "paired_log_t_95pct_df3": [
+              0.938338312241999,
+              1.1021307552240058
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          },
+          "wall_e2e_us_per_call": {
+            "process_medians_us": {
+              "control": [
+                18.654391,
+                18.651282,
+                18.833263,
+                18.687488000000002
+              ],
+              "candidate": [
+                18.727651,
+                18.618004,
+                18.667755,
+                18.688496999999998
+              ]
+            },
+            "median_us": {
+              "control": 18.670939500000003,
+              "candidate": 18.678126
+            },
+            "candidate_over_control": [
+              1.0039272254988116,
+              0.9982157794836838,
+              0.9912119317826126,
+              1.000053993345708
+            ],
+            "geometric_mean_ratio": 0.9983415769081013,
+            "paired_log_t_95pct_df3": [
+              0.9898992651705992,
+              1.0068558885247638
+            ],
+            "limitation": "small-sample descriptive uncertainty; repeats share one device/session"
+          }
+        }
+      }
+    }
+  }
+}

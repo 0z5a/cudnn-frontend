@@ -1,0 +1,279 @@
+{
+  "source_heads": {
+    "upstream": "a4dcf87ca1b77fbc0ab62642e8cb7136a63baf73",
+    "control": "83374af96ec3f8e22dd159d278bdf25acab17a4e",
+    "candidate": "209d9e61c6ca873ccf5b869e83db00eed9f8f966"
+  },
+  "candidate_passed": 67,
+  "candidate_skips": 0,
+  "negative_control_expected_failures": 13,
+  "timing_processes_exit_zero": 48,
+  "transport": {
+    "archive_sha256": "9ce06e972a03ebf01772fda2b6f44a53617148aa5600d6a0b0237ae55ae65d46",
+    "archive_bytes": 854146,
+    "files_verified": 454,
+    "source_frozen": true,
+    "processes_exit_zero": 48,
+    "cross_source_tile_stream_output_hashes_agree": true
+  },
+  "builds": {
+    "a3wrappercontrol": {
+      "argv": [
+        "THOR_EXPERIMENT/venvs/a3wrappercontrol/bin/python",
+        "-m",
+        "pip",
+        "install",
+        "--no-deps",
+        "--no-build-isolation",
+        "-e",
+        "THOR_EXPERIMENT/a3wrappercontrol"
+      ],
+      "cwd": "THOR_EXPERIMENT/a3wrappercontrol",
+      "started_utc": "2026-10-01T02:06:52.481380+00:00",
+      "deadline_seconds": 3600.0,
+      "status": "EXITED",
+      "selected_env": {},
+      "returncode": 0,
+      "signal": null,
+      "elapsed_seconds": 217.91081734799081
+    },
+    "a3wrappermemo": {
+      "argv": [
+        "THOR_EXPERIMENT/venvs/a3wrappermemo/bin/python",
+        "-m",
+        "pip",
+        "install",
+        "--no-deps",
+        "--no-build-isolation",
+        "-e",
+        "THOR_EXPERIMENT/a3wrappermemo"
+      ],
+      "cwd": "THOR_EXPERIMENT/a3wrappermemo",
+      "started_utc": "2026-10-01T02:10:36.397610+00:00",
+      "deadline_seconds": 3600.0,
+      "status": "EXITED",
+      "selected_env": {},
+      "returncode": 0,
+      "signal": null,
+      "elapsed_seconds": 222.975375643
+    },
+    "a3wrappermemo2": {
+      "argv": [
+        "THOR_EXPERIMENT/venvs/a3wrappermemo2/bin/python",
+        "-m",
+        "pip",
+        "install",
+        "--no-deps",
+        "--no-build-isolation",
+        "-e",
+        "THOR_EXPERIMENT/a3wrappermemo2"
+      ],
+      "cwd": "THOR_EXPERIMENT/a3wrappermemo2",
+      "started_utc": "2026-10-01T02:17:00.541207+00:00",
+      "deadline_seconds": 3600.0,
+      "status": "EXITED",
+      "selected_env": {},
+      "returncode": 0,
+      "signal": null,
+      "elapsed_seconds": 179.59935648099054
+    }
+  },
+  "checks": {
+    "control-current-stream-red-run": {
+      "command": [
+        "THOR_EXPERIMENT/venvs/a3wrappercontrol/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "a3_wrapper_import_probe",
+        "-o",
+        "addopts=",
+        "-q",
+        "core/torch/test_torch_stream.py",
+        "--junitxml=THOR_EXPERIMENT/results/a3-wrapper-checks-r2-20261001/control-current-stream-red.xml",
+        "-k",
+        "test_current_raw_handle_needs_no_stream_context"
+      ],
+      "returncode": 1,
+      "elapsed_seconds": 5.995655409991741,
+      "tests": 2,
+      "failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "expected_red": true
+    },
+    "candidate-wrapper-green-run": {
+      "command": [
+        "THOR_EXPERIMENT/venvs/a3wrappermemo2/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "a3_wrapper_import_probe",
+        "-o",
+        "addopts=",
+        "-q",
+        "gemm/cutedsl/test_grouped_swiglu_wrapper_memo.py",
+        "gemm/cutedsl/test_grouped_gemm_wrapper_memo.py::test_memo_key_covers_every_wrapper_parameter",
+        "--junitxml=THOR_EXPERIMENT/results/a3-wrapper-checks-r2-20261001/candidate-wrapper-green.xml"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 40.01899691700237,
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "expected_red": false
+    },
+    "control-wrapper-red-run": {
+      "command": [
+        "THOR_EXPERIMENT/venvs/a3wrappercontrol/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "a3_wrapper_import_probe",
+        "-o",
+        "addopts=",
+        "-q",
+        "gemm/cutedsl/test_grouped_swiglu_wrapper_memo.py",
+        "--junitxml=THOR_EXPERIMENT/results/a3-wrapper-checks-r2-20261001/control-wrapper-red.xml",
+        "-k",
+        "hit_binds_fresh or allocations_and_amax_reset"
+      ],
+      "returncode": 1,
+      "elapsed_seconds": 21.2640446019941,
+      "tests": 14,
+      "failures": 12,
+      "errors": 0,
+      "skips": 0,
+      "expected_red": true
+    },
+    "candidate-current-stream-green-run": {
+      "command": [
+        "THOR_EXPERIMENT/venvs/a3wrappermemo2/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "a3_wrapper_import_probe",
+        "-o",
+        "addopts=",
+        "-q",
+        "core/torch/test_torch_stream.py",
+        "--junitxml=THOR_EXPERIMENT/results/a3-wrapper-checks-r2-20261001/candidate-current-stream-green.xml",
+        "-k",
+        "not test_torch_stream_on_another_device_is_rejected"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 6.346951188985258,
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "expected_red": false
+    },
+    "candidate-reference-green-run": {
+      "command": [
+        "THOR_EXPERIMENT/venvs/a3wrappermemo2/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "a3_wrapper_import_probe",
+        "-o",
+        "addopts=",
+        "-q",
+        "gemm/cutedsl/test_a3_current.py",
+        "gemm/cutedsl/test_swiglu_amax_per_call.py",
+        "gemm/cutedsl/test_a3_wrapper_narrow_bf16.py",
+        "gemm/cutedsl/test_a3_narrow_declines.py",
+        "gemm/cutedsl/test_grouped_gemm_canonical_layouts.py::test_grouped_gemm_swiglu_canonical_matches_legacy",
+        "gemm/cutedsl/test_grouped_gemm_canonical_layouts.py::test_grouped_gemm_swiglu_canonical_bf16_prob",
+        "gemm/cutedsl/test_grouped_gemm_swiglu.py::test_grouped_gemm_swiglu_wrapper_cache_partial_dynamic_smoke",
+        "gemm/cutedsl/test_grouped_gemm_swiglu.py::test_grouped_gemm_swiglu_wrapper_cache_full_dynamic_smoke",
+        "gemm/cutedsl/test_grouped_gemm_swiglu.py::test_grouped_gemm_swiglu_wrapper_cache_prob_signature_smoke",
+        "gemm/cutedsl/test_grouped_gemm_swiglu.py::test_grouped_gemm_swiglu_wrapper_cache_keys_on_expert_count",
+        "--junitxml=THOR_EXPERIMENT/results/a3-wrapper-checks-r2-20261001/candidate-reference-green.xml"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 49.41551303502638,
+      "tests": 31,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "expected_red": false
+    }
+  },
+  "imports": {
+    "a3wrappercontrol": {
+      "head": "83374af96ec3f8e22dd159d278bdf25acab17a4e",
+      "tracked_production_diff": "",
+      "native_bindings": [
+        {
+          "path": "THOR_EXPERIMENT/a3wrappercontrol/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+          "size": 6532704,
+          "sha256": "25dd95a5a2a2a925f6ae5127695322bc9f6316aa20966464ed4c9208d8020f70"
+        }
+      ]
+    },
+    "a3wrappermemo2": {
+      "head": "209d9e61c6ca873ccf5b869e83db00eed9f8f966",
+      "tracked_production_diff": "",
+      "native_bindings": [
+        {
+          "path": "THOR_EXPERIMENT/a3wrappermemo2/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+          "size": 6533488,
+          "sha256": "5bcdcbdd782e12d900a6eb55f0540081be8b8cac7271ef88557999115610c3ea"
+        }
+      ]
+    }
+  },
+  "notes": [
+    "A real two-device stream check was deselected on the single-GPU host; host wrong-device/equal-handle contract was checked.",
+    "Initial r1 has two harness assertion failures (equal CUDA handles but unequal torch Stream objects), preserved in raw evidence.",
+    "No full-model throughput or cross-architecture claim."
+  ],
+  "graph_checks": [
+    {
+      "name": "a3wrappercontrol",
+      "command": [
+        "THOR_EXPERIMENT/venvs/a3wrappercontrol/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "a3_wrapper_import_probe",
+        "-o",
+        "addopts=",
+        "-q",
+        "gemm/cutedsl/test_a3_wrapper_graph_20261001.py",
+        "--junitxml=THOR_EXPERIMENT/results/a3-wrapper-graph-r1-20261001/a3wrappercontrol.xml"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 12.459149230038747,
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "test_sha256": "c20633793df6571448ccf2f87a12333bb265d74ae80f69aec94f4ce452a04906"
+    },
+    {
+      "name": "a3wrappermemo2",
+      "command": [
+        "THOR_EXPERIMENT/venvs/a3wrappermemo2/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "a3_wrapper_import_probe",
+        "-o",
+        "addopts=",
+        "-q",
+        "gemm/cutedsl/test_a3_wrapper_graph_20261001.py",
+        "--junitxml=THOR_EXPERIMENT/results/a3-wrapper-graph-r1-20261001/a3wrappermemo2.xml"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 12.160640518995933,
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "test_sha256": "c20633793df6571448ccf2f87a12333bb265d74ae80f69aec94f4ce452a04906"
+    }
+  ]
+}
