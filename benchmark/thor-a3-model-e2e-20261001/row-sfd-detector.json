@@ -1,0 +1,30 @@
+{
+  "stage": "DETECTOR_CONFIRMED",
+  "scope": "Deterministic poisoned-output detector for the model adapter's row-SFD need.",
+  "records": [
+    {
+      "tile": [
+        256,
+        256
+      ],
+      "live_scale_elements": 1664,
+      "unwritten_poison_elements": 0,
+      "d_finite": true,
+      "production_support_accepted": true,
+      "model_row_sfd": "VALID"
+    },
+    {
+      "tile": [
+        256,
+        128
+      ],
+      "live_scale_elements": 1664,
+      "unwritten_poison_elements": 1664,
+      "d_finite": true,
+      "production_support_accepted": true,
+      "model_row_sfd": "UNWRITTEN_DECLINE_MODEL_INTEGRATION"
+    }
+  ],
+  "source": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3wrappermemo2/python/cudnn/__init__.py",
+  "harness_sha256": "76d291ecbcfc68726585de678091e188de1896d921eefb1498440f1810da5b2d"
+}
