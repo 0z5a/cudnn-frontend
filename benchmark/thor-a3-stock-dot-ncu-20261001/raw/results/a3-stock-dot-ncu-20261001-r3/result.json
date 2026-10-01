@@ -1,0 +1,33 @@
+{
+  "stage": "NCU_EXITED",
+  "ncu_returncode": 0,
+  "argv": [
+    "/opt/nvidia/nsight-compute/2026.1.1/ncu",
+    "--nvtx",
+    "--nvtx-include",
+    "stock_bf16_dot/",
+    "--launch-count",
+    "1",
+    "--section",
+    "LaunchStats",
+    "--cache-control",
+    "none",
+    "--clock-control",
+    "none",
+    "--export",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-stock-dot-ncu-20261001-r3/stock-dot",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest4/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_stock_dot_ncu_probe_20261001.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-stock-dot-ncu-20261001-r3/target"
+  ],
+  "admission_and_profile_elapsed_seconds": 580.4040218550001,
+  "clock_control": "none",
+  "effective_uid": 0,
+  "probe_sha256": "d08a3642b0f0145d89d6f6d53b1a280cf8227f53260259cf16a519f33faea1c0",
+  "harness_sha256": "e27804edf548fbdb002fd29cdf2a8b7e5f6c4355d2bf5a35a1540b233d37ee23",
+  "boot_id": "45fb4742-5aac-48ce-bcd7-0db6a26ee428",
+  "service_final": "inactive",
+  "formal_performance": "NOT_RUN",
+  "native_A3_calls": 0
+}

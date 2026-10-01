@@ -1,0 +1,1 @@
+See [RESULT.md](RESULT.md). Exact source payloads are stored as .py.txt without changing their bytes. The raw manifest lists their original .py names. This is audited stock-dot diagnosis, not native A3 or whole-model success.

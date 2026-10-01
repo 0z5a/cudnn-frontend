@@ -1,0 +1,209 @@
+{
+  "stage": "PASS_CPU_STOCK_NCU_AND_OUTPUT_DTYPE_AUDIT_NOT_MODEL_SUCCESS",
+  "files": [
+    {
+      "path": "results/a3-bf16-dot-fp32-output-20261001-r1-launch/run.json",
+      "size": 605,
+      "sha256": "f1b1d03fbf8a817b5e724e4c15cb43af1665f0ffb4b2769537cd4a4f14d5f74e"
+    },
+    {
+      "path": "results/a3-bf16-dot-fp32-output-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-bf16-dot-fp32-output-20261001-r1-launch/stdout.log",
+      "size": 1459,
+      "sha256": "787e760df7c6f173432711f2ed439424b4a7a2e5c301a6c09bbc1dea8d133daf"
+    },
+    {
+      "path": "results/a3-bf16-dot-fp32-output-20261001-r1/admission_wait.json",
+      "size": 75,
+      "sha256": "c2f1cac0086ec77b0bc809084387a66e84d426910c547557da68dc0925666d85"
+    },
+    {
+      "path": "results/a3-bf16-dot-fp32-output-20261001-r1/result.json",
+      "size": 1583,
+      "sha256": "a400343620513d8dfecbc4f471bdb4f3c04471b306d0e160c93ace59c28c498c"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-20261001-r1-launch/run.json",
+      "size": 587,
+      "sha256": "248c815e3682f8d68f9631f947e0b5bc9e94309820641672bdd29fcf9f736b2e"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-20261001-r1-launch/stdout.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-20261001-r1/admission_wait.json",
+      "size": 75,
+      "sha256": "a0a00f138ad6f2647b9b7c2ed440511a281829f8c662c99d643cca85cd4858b3"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-20261001-r2-launch/run.json",
+      "size": 598,
+      "sha256": "c8dd2fc6cd2e5eaf41e5d9c6dd043a4ca1d99fec2c07c413b78fd78b067e9bda"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-20261001-r2-launch/stderr.log",
+      "size": 544,
+      "sha256": "bd793aa36373b96c09b36aa842b171af13ab166f6788d4dbe132c28cce823a9b"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-20261001-r2-launch/stdout.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-20261001-r3-launch/run.json",
+      "size": 601,
+      "sha256": "5eb2dbf371e2e295c736d1fabbb928ded34a6d3338ec45da030323ee2360ca65"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-20261001-r3-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-20261001-r3-launch/stdout.log",
+      "size": 1059,
+      "sha256": "91e2dfb617fc2d65713d0f54787d6cf419d157cfde84e6abccd4f505a8c1bb56"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-20261001-r3/admission_wait.json",
+      "size": 75,
+      "sha256": "567ef075018603f25593324fd83c771bfb6ab07db3483769395bf515360a1f67"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-20261001-r3/ncu-stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-20261001-r3/ncu-stdout.log",
+      "size": 1451,
+      "sha256": "a1bf8668520d1ddd1e1c385de177fd18363a0ead520255c5719463995ec05df8"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-20261001-r3/ncu-version.txt",
+      "size": 144,
+      "sha256": "7cf3df32e33121a9f4e53c7dbb843fb5efcc581ac4b3e85bad70571c0634c593"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-20261001-r3/result.json",
+      "size": 1161,
+      "sha256": "50833796e718a30b700320158e2666934b026becb85bbdfe2fc1ef5010a0085d"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-20261001-r3/target/result.json",
+      "size": 956,
+      "sha256": "e7b8d0d11c1ffd99fece0dad782e0dd3a5e11a88c54b690f7ae45d92a19c3a59"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-analysis-20261001-r3/details.txt",
+      "size": 3463,
+      "sha256": "635aa563a452167c967807467342de29dec4d6e0b394a569be20e2a6f02c353a"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-analysis-20261001-r3/raw.csv",
+      "size": 14387,
+      "sha256": "14e836a68cfa3980037197fdd21419022192d933948199d0e85292b3bf64c0d3"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-analysis-20261001-r3/result.json",
+      "size": 21855,
+      "sha256": "27fb2c616aa249cc8fcaceea0f68abff1cb9d57776e38354fb828401a717f303"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-analysis-20261001-r3/sass.txt",
+      "size": 102212,
+      "sha256": "d36f67b0e817bee6db84074bc7bd018e039459c1d86f452712ff47ca594f69f2"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-analysis-20261001-r3/session.txt",
+      "size": 4289,
+      "sha256": "ef7a456a7ecd4f4f034bb425de3f9751dee72b31d22858323fa7febaf964f3b0"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-cpu-audit-20261001-r1-launch/run.json",
+      "size": 590,
+      "sha256": "3113a101becd5f3ae3b19c6321fadb23a7b47bf86312b80d658ed835c6796667"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 537,
+      "sha256": "e4b61cb673cd307315a735a75a6b81cb118fd94d227ba42de0c8c79f31a39049"
+    },
+    {
+      "path": "results/a3-stock-dot-ncu-cpu-audit-20261001-r1/result.json",
+      "size": 5037,
+      "sha256": "7a4505920a43bf6d3e9d6dfb56a22354641eb252f3252df076424ea4600bbd27"
+    },
+    {
+      "path": "tools/a3_stock_dot_ncu_probe_20261001.py",
+      "size": 4102,
+      "sha256": "d08a3642b0f0145d89d6f6d53b1a280cf8227f53260259cf16a519f33faea1c0"
+    },
+    {
+      "path": "tools/archive_a3_stock_dot_ncu_20261001.py",
+      "size": 3210,
+      "sha256": "e297776970ee47b118db5d246a6adc50552e2bd5cb0ff51f1259d2c51727ec0e"
+    },
+    {
+      "path": "tools/audit_a3_precision_followup_r2_20261001.py",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "tools/audit_a3_stock_dot_ncu_20261001.py",
+      "size": 6686,
+      "sha256": "547566b2893614b6f8739f10e30b2e245cf53861cd862562f0d9508419af39c6"
+    },
+    {
+      "path": "tools/diagnose_a3_bf16_dot_fp32_output_queued_20261001.py",
+      "size": 4656,
+      "sha256": "040438a8bffa5f42d32ff0b7b860afabc2abd5350567ae670b588d14b7135d7b"
+    },
+    {
+      "path": "tools/run_a3_stock_dot_ncu_clocknone_queued_20261001.py",
+      "size": 3503,
+      "sha256": "1b9ad9d96112db2304c41620eebd1c71ceee5252da2203bfd03ce275e794175c"
+    },
+    {
+      "path": "tools/run_a3_stock_dot_ncu_clocknone_readlock_queued_20261001.py",
+      "size": 3692,
+      "sha256": "e27804edf548fbdb002fd29cdf2a8b7e5f6c4355d2bf5a35a1540b233d37ee23"
+    },
+    {
+      "path": "tools/run_a3_stock_dot_ncu_queued_20261001.py",
+      "size": 3330,
+      "sha256": "1f5011ec61d42225056e9702d7aa44533e92b1340536aea251e472465e3a8255"
+    },
+    {
+      "path": "tools/run_logged.py",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    }
+  ],
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    ".pt outputs",
+    "native binaries",
+    "binary ncu-rep kept on Thor with recorded SHA"
+  ],
+  "scope": "Original first-expert stock BF16 dot NCU plus BF16-input/FP32-output control, independently CPU audited; no native/model/performance pass"
+}

@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest4/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_stock_dot_ncu_20261001.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-stock-dot-ncu-cpu-audit-20261001-r1"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-01T11:51:59.712405+00:00",
+  "deadline_seconds": 600.0,
+  "status": "EXITED",
+  "selected_env": {},
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 5.183678683999915
+}

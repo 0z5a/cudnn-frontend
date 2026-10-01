@@ -1,0 +1,121 @@
+"""CPU-only original checkpoint, saved NCU tensors and output-dtype audit."""
+
+import argparse
+import importlib.util
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+HELPER = Path(__file__).with_name("audit_a3_precision_followup_r2_20261001.py")
+spec = importlib.util.spec_from_file_location("stock_dot_cpu_audit", HELPER)
+a = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(a)
+t = a.torch
+from safetensors import safe_open
+
+
+def load_run(name):
+    directory = a.ROOT / "results" / name
+    run = json.loads(directory.with_name(name + "-launch").joinpath("run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    return directory, run
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    ncu, run = load_run("a3-stock-dot-ncu-20261001-r3")
+    meta = json.loads((ncu / "result.json").read_text())
+    assert meta["ncu_returncode"] == 0 and meta["clock_control"] == "none" and meta["native_A3_calls"] == 0
+    argv = meta["argv"]
+    assert argv[argv.index("--clock-control") + 1] == "none" and argv[argv.index("--cache-control") + 1] == "none"
+    assert a.sha_file(a.ROOT / "tools/run_a3_stock_dot_ncu_clocknone_readlock_queued_20261001.py") == meta["harness_sha256"]
+    assert a.sha_file(a.ROOT / "tools/a3_stock_dot_ncu_probe_20261001.py") == meta["probe_sha256"]
+    target = ncu / "target"
+    tm = json.loads((target / "result.json").read_text())
+    assert a.sha_file(target / "outputs.pt") == tm["outputs_sha256"]
+    assert tm["actual_rows"] == 36 and tm["aligned_rows"] == 256 and tm["expert"] == 0 and tm["native_A3_calls"] == 0
+    v = t.load(target / "outputs.pt", map_location="cpu", weights_only=True)
+    assert len(v) == 5 and t.equal(v["stock_c_before"].view(t.uint8), v["stock_c_profiled"].view(t.uint8))
+    prior_path = a.ROOT / "results/a3-residual-staging-20261001-r1/outputs.pt"
+    assert a.sha_file(prior_path) == tm["prior_outputs_sha256"]
+    prior = t.load(prior_path, map_location="cpu", weights_only=True)
+    hidden, index = prior["stock_input/0"]["original"], prior["stock_route/0"]["index"]
+    order = t.argsort(index.flatten(), stable=True)
+    x = t.zeros((256, 1024), dtype=t.bfloat16)
+    x[:36] = hidden[order[:36] // 8]
+    assert t.equal(x.view(t.uint8), v["input_bf16"].view(t.uint8))
+    assert t.equal(v["stock_c_before"][:36].view(t.uint8), prior["local/0"]["original_bf16_local"]["c"][:36].view(t.uint8))
+    checkpoint = Path("/home/jwipc/models/granite-3.1-1b-a400m-instruct-0da7a48b/model.safetensors")
+    assert a.sha_file(checkpoint) == tm["checkpoint_sha256"] == "ac02591061f1344027a7e7b11dbb4143f75f166c47dc09b742f5de3ab1dde1d1"
+    with safe_open(str(checkpoint), framework="pt", device="cpu") as handle:
+        weight = handle.get_tensor("model.layers.0.block_sparse_moe.input_linear.weight")[0]
+    gate, up = weight.chunk(2, 0)
+    packed = t.empty_like(weight)
+    for block in range(16):
+        packed[block * 64 : block * 64 + 32] = gate[block * 32 : (block + 1) * 32]
+        packed[block * 64 + 32 : (block + 1) * 64] = up[block * 32 : (block + 1) * 32]
+    assert t.equal(packed.view(t.uint8), v["weight_bf16"].view(t.uint8))
+    analysis = a.ROOT / "results/a3-stock-dot-ncu-analysis-20261001-r3"
+    am = json.loads((analysis / "result.json").read_text())
+    assert all(row["returncode"] == 0 for row in am["runs"])
+    report_sha = a.sha_file(ncu / "stock-dot.ncu-rep")
+    assert report_sha == am["ncu_report_sha256"]
+    sass = (analysis / "sass.txt").read_text()
+    assert "nvjet_sm110_tst_112x128_64x7_2x1_v_bz_TNN" in sass
+    assert sass.count("UTCHMMA") == 8 and "F2FP.BF16.F32.PACK_AB" in sass
+    control, control_run = load_run("a3-bf16-dot-fp32-output-20261001-r1")
+    cm = json.loads((control / "result.json").read_text())
+    assert a.sha_file(control / "outputs.pt") == cm["outputs_sha256"]
+    assert a.sha_file(target / "outputs.pt") == cm["prior_target_outputs_sha256"]
+    assert a.sha_file(target / "result.json") == cm["prior_target_metadata_sha256"]
+    assert a.sha_file(a.ROOT / "tools/diagnose_a3_bf16_dot_fp32_output_queued_20261001.py") == cm["harness_sha256"]
+    c = t.load(control / "outputs.pt", map_location="cpu", weights_only=True)
+    assert len(c) == 6 and cm["native_A3_calls"] == 0 and not cm["original_baseline_replaced"]
+    rows = []
+    for row in cm["rows"]:
+        n = row["rows"]
+        target_c = v["stock_c_before"][:n]
+        assert t.equal(c[f"{n}/bf16_input_bf16_output"].view(t.uint8), target_c.view(t.uint8))
+        bf32, fp32 = c[f"{n}/bf16_input_fp32_output"], c[f"{n}/fp32_input_fp32_output"]
+        bm = (bf32.to(t.bfloat16) != target_c).sum().item()
+        fm = (fp32.to(t.bfloat16) != target_c).sum().item()
+        assert bm == row["bf16_input_fp32_output_rounded_stock_mismatches"] == 0
+        assert fm == row["fp32_input_output_rounded_stock_mismatches"]
+        measured = a.difference(bf32, fp32, t.float32)
+        assert measured["relative_l2"] == row["bf16_input_fp32_output_vs_fp32_input_l2"]
+        assert measured["max_abs"] == row["bf16_input_fp32_output_vs_fp32_input_maxabs"]
+        rows.append(
+            {"rows": n, "bf16_input_fp32_output_stock_cast_mismatches": bm, "fp32_input_stock_cast_mismatches": fm, "comparison_fp64": a.difference(bf32, fp32)}
+        )
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "PASS_CPU_STOCK_NCU_AND_OUTPUT_DTYPE_AUDIT_NOT_MODEL_SUCCESS",
+        "cuda_initialized": False,
+        "native_calls": 0,
+        "ncu_run": run,
+        "control_run": control_run,
+        "rows": rows,
+        "ncu_report_sha256": report_sha,
+        "original_input_weight_C_and_profile_C_byte_verified": True,
+        "tensor_count": 11,
+        "ncu_tensors": a.flatten_tensors(v),
+        "control_tensors": a.flatten_tensors(c),
+        "static_UTCHMMA_instructions": 8,
+        "kernel": "nvjet_sm110_tst_112x128_64x7_2x1_v_bz_TNN",
+        "harness_sha256": a.sha_file(__file__),
+        "cpu_helper_sha256": a.sha_file(HELPER),
+        "formal_performance": "NOT_RUN",
+        "limits": "First layer expert0 only, actual36/padded256 rows. Static SASS is not dynamic instruction count or proof of hardware internal accumulation order. Output dtype may select another kernel. No native/full model success.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "rows": rows}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

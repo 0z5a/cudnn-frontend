@@ -1,0 +1,7 @@
+==WARNING== Note: Running with uncontrolled GPU caches. Profiling results may be inconsistent.
+==WARNING== Note: Running with unmodified GPU clocks. If not controlled otherwise, profiling results may be inconsistent.
+==PROF== Connected to process 45735 (/usr/bin/python3.12)
+==PROF== Profiling "nvjet_sm110_tst_112x128_64x7_..." - 0 (1/1): 0%....50%....100% - 3 passes
+{"stage": "STOCK_DOT_PROFILE_TARGET_COMPLETE_NOT_NATIVE_SUCCESS", "layer": 0, "expert": 0, "actual_rows": 36, "aligned_rows": 256, "N": 1024, "K": 1024, "stock_C_saved_original_byte_equal": true, "stock_C_before_after_profile_byte_equal": true, "native_A3_calls": 0, "checkpoint_sha256": "ac02591061f1344027a7e7b11dbb4143f75f166c47dc09b742f5de3ab1dde1d1", "prior_outputs_sha256": "34be866726f1e7c30c66af3d1009e07070b88ea045e8966d037772dd9d240ed1", "outputs_sha256": "0aafa01f30a4d4bcc4941ac0d507da94b28d7fa76417e034067dd58ee1d13ab6", "harness_sha256": "d08a3642b0f0145d89d6f6d53b1a280cf8227f53260259cf16a519f33faea1c0", "torch": "2.13.0+cu130", "device": "NVIDIA Thor", "allow_bf16_reduced_precision_reduction": true, "limits": "Single original expert dot launch, no complete model/recipe/generation/KV or performance success. Profiler symbol/SASS can identify executed implementation; not proof of a numerical fix."}
+==PROF== Disconnected from process 45735
+==PROF== Report: /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-stock-dot-ncu-20261001-r3/stock-dot.ncu-rep

@@ -1,0 +1,845 @@
+{
+  "stage": "OFFLINE_NCU_EXPORT_COMPLETE",
+  "runs": [
+    {
+      "argv": [
+        "/opt/nvidia/nsight-compute/2026.1.1/ncu",
+        "--import",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-stock-dot-ncu-20261001-r3/stock-dot.ncu-rep",
+        "--page",
+        "source",
+        "--print-source",
+        "sass"
+      ],
+      "returncode": 0,
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-stock-dot-ncu-analysis-20261001-r3/sass.txt"
+    },
+    {
+      "argv": [
+        "/opt/nvidia/nsight-compute/2026.1.1/ncu",
+        "--import",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-stock-dot-ncu-20261001-r3/stock-dot.ncu-rep",
+        "--page",
+        "raw",
+        "--csv"
+      ],
+      "returncode": 0,
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-stock-dot-ncu-analysis-20261001-r3/raw.csv"
+    },
+    {
+      "argv": [
+        "/opt/nvidia/nsight-compute/2026.1.1/ncu",
+        "--import",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-stock-dot-ncu-20261001-r3/stock-dot.ncu-rep",
+        "--page",
+        "session"
+      ],
+      "returncode": 0,
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-stock-dot-ncu-analysis-20261001-r3/session.txt"
+    },
+    {
+      "argv": [
+        "/opt/nvidia/nsight-compute/2026.1.1/ncu",
+        "--import",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-stock-dot-ncu-20261001-r3/stock-dot.ncu-rep",
+        "--page",
+        "details",
+        "--print-details",
+        "all"
+      ],
+      "returncode": 0,
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-stock-dot-ncu-analysis-20261001-r3/details.txt"
+    }
+  ],
+  "sass_lines": 1012,
+  "interesting_instructions": [
+    {
+      "line": 186,
+      "text": "0x3259c1c50              FFMA R16, R5, R16, RZ"
+    },
+    {
+      "line": 187,
+      "text": "0x3259c1c60              FFMA R17, R5, R17, RZ"
+    },
+    {
+      "line": 188,
+      "text": "0x3259c1c70              FFMA R18, R5, R18, RZ"
+    },
+    {
+      "line": 189,
+      "text": "0x3259c1c80              FFMA R19, R5, R19, RZ"
+    },
+    {
+      "line": 190,
+      "text": "0x3259c1c90              FFMA R20, R5, R20, RZ"
+    },
+    {
+      "line": 191,
+      "text": "0x3259c1ca0              FFMA R21, R5, R21, RZ"
+    },
+    {
+      "line": 192,
+      "text": "0x3259c1cb0              F2FP.BF16.F32.PACK_AB R16, R17, R16"
+    },
+    {
+      "line": 193,
+      "text": "0x3259c1cc0              FFMA R22, R5, R22, RZ"
+    },
+    {
+      "line": 194,
+      "text": "0x3259c1cd0              F2FP.BF16.F32.PACK_AB R17, R19, R18"
+    },
+    {
+      "line": 195,
+      "text": "0x3259c1ce0              FFMA R23, R5, R23, RZ"
+    },
+    {
+      "line": 196,
+      "text": "0x3259c1cf0              F2FP.BF16.F32.PACK_AB R18, R21, R20"
+    },
+    {
+      "line": 197,
+      "text": "0x3259c1d00              FFMA R24, R5, R24, RZ"
+    },
+    {
+      "line": 198,
+      "text": "0x3259c1d10              FFMA R25, R5, R25, RZ"
+    },
+    {
+      "line": 199,
+      "text": "0x3259c1d20              FFMA R26, R5, R26, RZ"
+    },
+    {
+      "line": 200,
+      "text": "0x3259c1d30              F2FP.BF16.F32.PACK_AB R19, R23, R22"
+    },
+    {
+      "line": 201,
+      "text": "0x3259c1d40              FFMA R27, R5, R27, RZ"
+    },
+    {
+      "line": 202,
+      "text": "0x3259c1d50              FFMA R28, R5, R28, RZ"
+    },
+    {
+      "line": 203,
+      "text": "0x3259c1d60              F2FP.BF16.F32.PACK_AB R24, R25, R24"
+    },
+    {
+      "line": 204,
+      "text": "0x3259c1d70              FFMA R29, R5, R29, RZ"
+    },
+    {
+      "line": 206,
+      "text": "0x3259c1d90              F2FP.BF16.F32.PACK_AB R25, R27, R26"
+    },
+    {
+      "line": 207,
+      "text": "0x3259c1da0              FFMA R30, R5, R30, RZ"
+    },
+    {
+      "line": 208,
+      "text": "0x3259c1db0              FFMA R31, R5, R31, RZ"
+    },
+    {
+      "line": 209,
+      "text": "0x3259c1dc0              F2FP.BF16.F32.PACK_AB R26, R29, R28"
+    },
+    {
+      "line": 210,
+      "text": "0x3259c1dd0              F2FP.BF16.F32.PACK_AB R27, R31, R30"
+    },
+    {
+      "line": 217,
+      "text": "0x3259c1e40        @UP2  UTMASTG.3D [UR32], [UR26]"
+    },
+    {
+      "line": 218,
+      "text": "0x3259c1e50              UTMACMDFLUSH"
+    },
+    {
+      "line": 225,
+      "text": "0x3259c1ec0              FFMA R16, R5, R16, RZ"
+    },
+    {
+      "line": 226,
+      "text": "0x3259c1ed0              FFMA R17, R5, R17, RZ"
+    },
+    {
+      "line": 227,
+      "text": "0x3259c1ee0              FFMA R18, R5, R18, RZ"
+    },
+    {
+      "line": 228,
+      "text": "0x3259c1ef0              FFMA R19, R5, R19, RZ"
+    },
+    {
+      "line": 229,
+      "text": "0x3259c1f00              FFMA R20, R5, R20, RZ"
+    },
+    {
+      "line": 230,
+      "text": "0x3259c1f10              FFMA R21, R5, R21, RZ"
+    },
+    {
+      "line": 231,
+      "text": "0x3259c1f20              F2FP.BF16.F32.PACK_AB R16, R17, R16"
+    },
+    {
+      "line": 232,
+      "text": "0x3259c1f30              FFMA R22, R5, R22, RZ"
+    },
+    {
+      "line": 233,
+      "text": "0x3259c1f40              F2FP.BF16.F32.PACK_AB R17, R19, R18"
+    },
+    {
+      "line": 234,
+      "text": "0x3259c1f50              FFMA R23, R5, R23, RZ"
+    },
+    {
+      "line": 235,
+      "text": "0x3259c1f60              F2FP.BF16.F32.PACK_AB R18, R21, R20"
+    },
+    {
+      "line": 236,
+      "text": "0x3259c1f70              FFMA R24, R5, R24, RZ"
+    },
+    {
+      "line": 237,
+      "text": "0x3259c1f80              FFMA R25, R5, R25, RZ"
+    },
+    {
+      "line": 238,
+      "text": "0x3259c1f90              FFMA R26, R5, R26, RZ"
+    },
+    {
+      "line": 239,
+      "text": "0x3259c1fa0              F2FP.BF16.F32.PACK_AB R19, R23, R22"
+    },
+    {
+      "line": 240,
+      "text": "0x3259c1fb0              FFMA R27, R5, R27, RZ"
+    },
+    {
+      "line": 241,
+      "text": "0x3259c1fc0              FFMA R28, R5, R28, RZ"
+    },
+    {
+      "line": 242,
+      "text": "0x3259c1fd0              F2FP.BF16.F32.PACK_AB R24, R25, R24"
+    },
+    {
+      "line": 243,
+      "text": "0x3259c1fe0              FFMA R29, R5, R29, RZ"
+    },
+    {
+      "line": 245,
+      "text": "0x3259c2000              F2FP.BF16.F32.PACK_AB R25, R27, R26"
+    },
+    {
+      "line": 246,
+      "text": "0x3259c2010              FFMA R30, R5, R30, RZ"
+    },
+    {
+      "line": 247,
+      "text": "0x3259c2020              FFMA R31, R5, R31, RZ"
+    },
+    {
+      "line": 248,
+      "text": "0x3259c2030              F2FP.BF16.F32.PACK_AB R26, R29, R28"
+    },
+    {
+      "line": 249,
+      "text": "0x3259c2040              F2FP.BF16.F32.PACK_AB R27, R31, R30"
+    },
+    {
+      "line": 257,
+      "text": "0x3259c20c0        @UP2  UTMASTG.3D [UR32], [UR26]"
+    },
+    {
+      "line": 258,
+      "text": "0x3259c20d0              UTMACMDFLUSH"
+    },
+    {
+      "line": 265,
+      "text": "0x3259c2140              FFMA R16, R5, R16, RZ"
+    },
+    {
+      "line": 266,
+      "text": "0x3259c2150              FFMA R17, R5, R17, RZ"
+    },
+    {
+      "line": 267,
+      "text": "0x3259c2160              FFMA R18, R5, R18, RZ"
+    },
+    {
+      "line": 268,
+      "text": "0x3259c2170              FFMA R19, R5, R19, RZ"
+    },
+    {
+      "line": 269,
+      "text": "0x3259c2180              FFMA R20, R5, R20, RZ"
+    },
+    {
+      "line": 270,
+      "text": "0x3259c2190              FFMA R21, R5, R21, RZ"
+    },
+    {
+      "line": 271,
+      "text": "0x3259c21a0              F2FP.BF16.F32.PACK_AB R16, R17, R16"
+    },
+    {
+      "line": 272,
+      "text": "0x3259c21b0              FFMA R22, R5, R22, RZ"
+    },
+    {
+      "line": 273,
+      "text": "0x3259c21c0              F2FP.BF16.F32.PACK_AB R17, R19, R18"
+    },
+    {
+      "line": 274,
+      "text": "0x3259c21d0              FFMA R23, R5, R23, RZ"
+    },
+    {
+      "line": 275,
+      "text": "0x3259c21e0              F2FP.BF16.F32.PACK_AB R18, R21, R20"
+    },
+    {
+      "line": 276,
+      "text": "0x3259c21f0              FFMA R24, R5, R24, RZ"
+    },
+    {
+      "line": 277,
+      "text": "0x3259c2200              FFMA R25, R5, R25, RZ"
+    },
+    {
+      "line": 278,
+      "text": "0x3259c2210              FFMA R26, R5, R26, RZ"
+    },
+    {
+      "line": 279,
+      "text": "0x3259c2220              F2FP.BF16.F32.PACK_AB R19, R23, R22"
+    },
+    {
+      "line": 280,
+      "text": "0x3259c2230              FFMA R27, R5, R27, RZ"
+    },
+    {
+      "line": 281,
+      "text": "0x3259c2240              FFMA R28, R5, R28, RZ"
+    },
+    {
+      "line": 282,
+      "text": "0x3259c2250              F2FP.BF16.F32.PACK_AB R24, R25, R24"
+    },
+    {
+      "line": 283,
+      "text": "0x3259c2260              FFMA R29, R5, R29, RZ"
+    },
+    {
+      "line": 285,
+      "text": "0x3259c2280              F2FP.BF16.F32.PACK_AB R25, R27, R26"
+    },
+    {
+      "line": 286,
+      "text": "0x3259c2290              FFMA R30, R5, R30, RZ"
+    },
+    {
+      "line": 287,
+      "text": "0x3259c22a0              FFMA R31, R5, R31, RZ"
+    },
+    {
+      "line": 288,
+      "text": "0x3259c22b0              F2FP.BF16.F32.PACK_AB R26, R29, R28"
+    },
+    {
+      "line": 289,
+      "text": "0x3259c22c0              F2FP.BF16.F32.PACK_AB R27, R31, R30"
+    },
+    {
+      "line": 298,
+      "text": "0x3259c2350        @UP2  UTMASTG.3D [UR32], [UR26]"
+    },
+    {
+      "line": 299,
+      "text": "0x3259c2360              UTMACMDFLUSH"
+    },
+    {
+      "line": 306,
+      "text": "0x3259c23d0              FFMA R16, R5, R16, RZ"
+    },
+    {
+      "line": 307,
+      "text": "0x3259c23e0              FFMA R17, R5, R17, RZ"
+    },
+    {
+      "line": 308,
+      "text": "0x3259c23f0              FFMA R18, R5, R18, RZ"
+    },
+    {
+      "line": 309,
+      "text": "0x3259c2400              FFMA R19, R5, R19, RZ"
+    },
+    {
+      "line": 310,
+      "text": "0x3259c2410              FFMA R20, R5, R20, RZ"
+    },
+    {
+      "line": 311,
+      "text": "0x3259c2420              FFMA R21, R5, R21, RZ"
+    },
+    {
+      "line": 312,
+      "text": "0x3259c2430              F2FP.BF16.F32.PACK_AB R16, R17, R16"
+    },
+    {
+      "line": 313,
+      "text": "0x3259c2440              FFMA R22, R5, R22, RZ"
+    },
+    {
+      "line": 314,
+      "text": "0x3259c2450              F2FP.BF16.F32.PACK_AB R17, R19, R18"
+    },
+    {
+      "line": 315,
+      "text": "0x3259c2460              FFMA R23, R5, R23, RZ"
+    },
+    {
+      "line": 316,
+      "text": "0x3259c2470              F2FP.BF16.F32.PACK_AB R18, R21, R20"
+    },
+    {
+      "line": 317,
+      "text": "0x3259c2480              FFMA R24, R5, R24, RZ"
+    },
+    {
+      "line": 318,
+      "text": "0x3259c2490              FFMA R25, R5, R25, RZ"
+    },
+    {
+      "line": 319,
+      "text": "0x3259c24a0              FFMA R26, R5, R26, RZ"
+    },
+    {
+      "line": 320,
+      "text": "0x3259c24b0              F2FP.BF16.F32.PACK_AB R19, R23, R22"
+    },
+    {
+      "line": 321,
+      "text": "0x3259c24c0              FFMA R27, R5, R27, RZ"
+    },
+    {
+      "line": 322,
+      "text": "0x3259c24d0              FFMA R28, R5, R28, RZ"
+    },
+    {
+      "line": 323,
+      "text": "0x3259c24e0              F2FP.BF16.F32.PACK_AB R24, R25, R24"
+    },
+    {
+      "line": 324,
+      "text": "0x3259c24f0              FFMA R29, R5, R29, RZ"
+    },
+    {
+      "line": 326,
+      "text": "0x3259c2510              F2FP.BF16.F32.PACK_AB R25, R27, R26"
+    },
+    {
+      "line": 327,
+      "text": "0x3259c2520              FFMA R30, R5, R30, RZ"
+    },
+    {
+      "line": 328,
+      "text": "0x3259c2530              FFMA R31, R5, R31, RZ"
+    },
+    {
+      "line": 329,
+      "text": "0x3259c2540              F2FP.BF16.F32.PACK_AB R26, R29, R28"
+    },
+    {
+      "line": 330,
+      "text": "0x3259c2550              F2FP.BF16.F32.PACK_AB R27, R31, R30"
+    },
+    {
+      "line": 338,
+      "text": "0x3259c25d0        @UP2  UTMASTG.3D [UR32], [UR26]"
+    },
+    {
+      "line": 339,
+      "text": "0x3259c25e0              UTMACMDFLUSH"
+    },
+    {
+      "line": 346,
+      "text": "0x3259c2650              FFMA R16, R5, R16, RZ"
+    },
+    {
+      "line": 347,
+      "text": "0x3259c2660              FFMA R17, R5, R17, RZ"
+    },
+    {
+      "line": 348,
+      "text": "0x3259c2670              FFMA R18, R5, R18, RZ"
+    },
+    {
+      "line": 349,
+      "text": "0x3259c2680              FFMA R19, R5, R19, RZ"
+    },
+    {
+      "line": 350,
+      "text": "0x3259c2690              FFMA R20, R5, R20, RZ"
+    },
+    {
+      "line": 351,
+      "text": "0x3259c26a0              FFMA R21, R5, R21, RZ"
+    },
+    {
+      "line": 352,
+      "text": "0x3259c26b0              F2FP.BF16.F32.PACK_AB R16, R17, R16"
+    },
+    {
+      "line": 353,
+      "text": "0x3259c26c0              FFMA R22, R5, R22, RZ"
+    },
+    {
+      "line": 354,
+      "text": "0x3259c26d0              F2FP.BF16.F32.PACK_AB R17, R19, R18"
+    },
+    {
+      "line": 355,
+      "text": "0x3259c26e0              FFMA R23, R5, R23, RZ"
+    },
+    {
+      "line": 356,
+      "text": "0x3259c26f0              F2FP.BF16.F32.PACK_AB R18, R21, R20"
+    },
+    {
+      "line": 357,
+      "text": "0x3259c2700              FFMA R24, R5, R24, RZ"
+    },
+    {
+      "line": 358,
+      "text": "0x3259c2710              FFMA R25, R5, R25, RZ"
+    },
+    {
+      "line": 359,
+      "text": "0x3259c2720              FFMA R26, R5, R26, RZ"
+    },
+    {
+      "line": 360,
+      "text": "0x3259c2730              F2FP.BF16.F32.PACK_AB R19, R23, R22"
+    },
+    {
+      "line": 361,
+      "text": "0x3259c2740              FFMA R27, R5, R27, RZ"
+    },
+    {
+      "line": 362,
+      "text": "0x3259c2750              FFMA R28, R5, R28, RZ"
+    },
+    {
+      "line": 363,
+      "text": "0x3259c2760              F2FP.BF16.F32.PACK_AB R24, R25, R24"
+    },
+    {
+      "line": 364,
+      "text": "0x3259c2770              FFMA R29, R5, R29, RZ"
+    },
+    {
+      "line": 366,
+      "text": "0x3259c2790              F2FP.BF16.F32.PACK_AB R25, R27, R26"
+    },
+    {
+      "line": 367,
+      "text": "0x3259c27a0              FFMA R30, R5, R30, RZ"
+    },
+    {
+      "line": 368,
+      "text": "0x3259c27b0              FFMA R31, R5, R31, RZ"
+    },
+    {
+      "line": 369,
+      "text": "0x3259c27c0              F2FP.BF16.F32.PACK_AB R26, R29, R28"
+    },
+    {
+      "line": 370,
+      "text": "0x3259c27d0              F2FP.BF16.F32.PACK_AB R27, R31, R30"
+    },
+    {
+      "line": 379,
+      "text": "0x3259c2860        @UP2  UTMASTG.3D [UR32], [UR26]"
+    },
+    {
+      "line": 380,
+      "text": "0x3259c2870              UTMACMDFLUSH"
+    },
+    {
+      "line": 387,
+      "text": "0x3259c28e0              FFMA R16, R5, R16, RZ"
+    },
+    {
+      "line": 388,
+      "text": "0x3259c28f0              FFMA R17, R5, R17, RZ"
+    },
+    {
+      "line": 389,
+      "text": "0x3259c2900              FFMA R18, R5, R18, RZ"
+    },
+    {
+      "line": 390,
+      "text": "0x3259c2910              FFMA R19, R5, R19, RZ"
+    },
+    {
+      "line": 391,
+      "text": "0x3259c2920              FFMA R20, R5, R20, RZ"
+    },
+    {
+      "line": 392,
+      "text": "0x3259c2930              FFMA R21, R5, R21, RZ"
+    },
+    {
+      "line": 393,
+      "text": "0x3259c2940              F2FP.BF16.F32.PACK_AB R16, R17, R16"
+    },
+    {
+      "line": 394,
+      "text": "0x3259c2950              FFMA R22, R5, R22, RZ"
+    },
+    {
+      "line": 395,
+      "text": "0x3259c2960              F2FP.BF16.F32.PACK_AB R17, R19, R18"
+    },
+    {
+      "line": 396,
+      "text": "0x3259c2970              FFMA R23, R5, R23, RZ"
+    },
+    {
+      "line": 397,
+      "text": "0x3259c2980              F2FP.BF16.F32.PACK_AB R18, R21, R20"
+    },
+    {
+      "line": 398,
+      "text": "0x3259c2990              FFMA R24, R5, R24, RZ"
+    },
+    {
+      "line": 399,
+      "text": "0x3259c29a0              FFMA R25, R5, R25, RZ"
+    },
+    {
+      "line": 400,
+      "text": "0x3259c29b0              FFMA R26, R5, R26, RZ"
+    },
+    {
+      "line": 401,
+      "text": "0x3259c29c0              F2FP.BF16.F32.PACK_AB R19, R23, R22"
+    },
+    {
+      "line": 402,
+      "text": "0x3259c29d0              FFMA R27, R5, R27, RZ"
+    },
+    {
+      "line": 403,
+      "text": "0x3259c29e0              FFMA R28, R5, R28, RZ"
+    },
+    {
+      "line": 404,
+      "text": "0x3259c29f0              F2FP.BF16.F32.PACK_AB R24, R25, R24"
+    },
+    {
+      "line": 405,
+      "text": "0x3259c2a00              FFMA R29, R5, R29, RZ"
+    },
+    {
+      "line": 407,
+      "text": "0x3259c2a20              F2FP.BF16.F32.PACK_AB R25, R27, R26"
+    },
+    {
+      "line": 408,
+      "text": "0x3259c2a30              FFMA R30, R5, R30, RZ"
+    },
+    {
+      "line": 409,
+      "text": "0x3259c2a40              FFMA R31, R5, R31, RZ"
+    },
+    {
+      "line": 410,
+      "text": "0x3259c2a50              F2FP.BF16.F32.PACK_AB R26, R29, R28"
+    },
+    {
+      "line": 411,
+      "text": "0x3259c2a60              F2FP.BF16.F32.PACK_AB R27, R31, R30"
+    },
+    {
+      "line": 419,
+      "text": "0x3259c2ae0        @UP2  UTMASTG.3D [UR32], [UR26]"
+    },
+    {
+      "line": 420,
+      "text": "0x3259c2af0              UTMACMDFLUSH"
+    },
+    {
+      "line": 427,
+      "text": "0x3259c2b60              FFMA R16, R5, R16, RZ"
+    },
+    {
+      "line": 428,
+      "text": "0x3259c2b70              FFMA R17, R5, R17, RZ"
+    },
+    {
+      "line": 429,
+      "text": "0x3259c2b80              FFMA R18, R5, R18, RZ"
+    },
+    {
+      "line": 430,
+      "text": "0x3259c2b90              FFMA R19, R5, R19, RZ"
+    },
+    {
+      "line": 431,
+      "text": "0x3259c2ba0              FFMA R20, R5, R20, RZ"
+    },
+    {
+      "line": 432,
+      "text": "0x3259c2bb0              FFMA R21, R5, R21, RZ"
+    },
+    {
+      "line": 433,
+      "text": "0x3259c2bc0              F2FP.BF16.F32.PACK_AB R16, R17, R16"
+    },
+    {
+      "line": 434,
+      "text": "0x3259c2bd0              FFMA R22, R5, R22, RZ"
+    },
+    {
+      "line": 435,
+      "text": "0x3259c2be0              F2FP.BF16.F32.PACK_AB R17, R19, R18"
+    },
+    {
+      "line": 436,
+      "text": "0x3259c2bf0              FFMA R23, R5, R23, RZ"
+    },
+    {
+      "line": 437,
+      "text": "0x3259c2c00              F2FP.BF16.F32.PACK_AB R18, R21, R20"
+    },
+    {
+      "line": 438,
+      "text": "0x3259c2c10              F2FP.BF16.F32.PACK_AB R19, R23, R22"
+    },
+    {
+      "line": 446,
+      "text": "0x3259c2c90        @UP2  UTMASTG.3D [UR32], [UR26]"
+    },
+    {
+      "line": 447,
+      "text": "0x3259c2ca0              UTMACMDFLUSH"
+    },
+    {
+      "line": 454,
+      "text": "0x3259c2d10              FFMA R16, R5, R16, RZ"
+    },
+    {
+      "line": 455,
+      "text": "0x3259c2d20              FFMA R17, R5, R17, RZ"
+    },
+    {
+      "line": 456,
+      "text": "0x3259c2d30              FFMA R18, R5, R18, RZ"
+    },
+    {
+      "line": 457,
+      "text": "0x3259c2d40              FFMA R19, R5, R19, RZ"
+    },
+    {
+      "line": 458,
+      "text": "0x3259c2d50              FFMA R20, R5, R20, RZ"
+    },
+    {
+      "line": 459,
+      "text": "0x3259c2d60              FFMA R21, R5, R21, RZ"
+    },
+    {
+      "line": 460,
+      "text": "0x3259c2d70              F2FP.BF16.F32.PACK_AB R16, R17, R16"
+    },
+    {
+      "line": 461,
+      "text": "0x3259c2d80              FFMA R22, R5, R22, RZ"
+    },
+    {
+      "line": 462,
+      "text": "0x3259c2d90              F2FP.BF16.F32.PACK_AB R17, R19, R18"
+    },
+    {
+      "line": 463,
+      "text": "0x3259c2da0              FFMA R23, R5, R23, RZ"
+    },
+    {
+      "line": 464,
+      "text": "0x3259c2db0              F2FP.BF16.F32.PACK_AB R18, R21, R20"
+    },
+    {
+      "line": 465,
+      "text": "0x3259c2dc0              F2FP.BF16.F32.PACK_AB R19, R23, R22"
+    },
+    {
+      "line": 471,
+      "text": "0x3259c2e20        @UP2  UTMASTG.3D [UR32], [UR26]"
+    },
+    {
+      "line": 472,
+      "text": "0x3259c2e30              UTMACMDFLUSH"
+    },
+    {
+      "line": 624,
+      "text": "0x3259c37b0              UTMALDG.3D [UR8], [UR50]"
+    },
+    {
+      "line": 625,
+      "text": "0x3259c37c0              UTMALDG.3D.MULTICAST [UR16], [UR38], UR42"
+    },
+    {
+      "line": 753,
+      "text": "0x3259c3fc0              UTMALDG.3D [UR8], [UR50]"
+    },
+    {
+      "line": 754,
+      "text": "0x3259c3fd0              UTMALDG.3D.MULTICAST [UR16], [UR38], UR42"
+    },
+    {
+      "line": 911,
+      "text": "0x3259c49a0              UTCHMMA gdesc[UR16], gdesc[UR18], tmem[UR20], tmem[UR14], idesc[UR15], !UP1"
+    },
+    {
+      "line": 914,
+      "text": "0x3259c49d0              UTCHMMA gdesc[UR16], gdesc[UR18], tmem[UR20], tmem[UR14], idesc[UR15], UPT"
+    },
+    {
+      "line": 917,
+      "text": "0x3259c4a00              UTCHMMA gdesc[UR16], gdesc[UR18], tmem[UR20], tmem[UR14], idesc[UR15], UPT"
+    },
+    {
+      "line": 920,
+      "text": "0x3259c4a30              UTCHMMA gdesc[UR16], gdesc[UR18], tmem[UR20], tmem[UR14], idesc[UR15], UPT"
+    },
+    {
+      "line": 984,
+      "text": "0x3259c4e30              UTCHMMA gdesc[UR16], gdesc[UR18], tmem[UR20], tmem[UR14], idesc[UR15], !UP1"
+    },
+    {
+      "line": 987,
+      "text": "0x3259c4e60              UTCHMMA gdesc[UR16], gdesc[UR18], tmem[UR20], tmem[UR14], idesc[UR15], UPT"
+    },
+    {
+      "line": 990,
+      "text": "0x3259c4e90              UTCHMMA gdesc[UR16], gdesc[UR18], tmem[UR20], tmem[UR14], idesc[UR15], UPT"
+    },
+    {
+      "line": 993,
+      "text": "0x3259c4ec0              UTCHMMA gdesc[UR16], gdesc[UR18], tmem[UR20], tmem[UR14], idesc[UR15], UPT"
+    }
+  ],
+  "ncu_report_sha256": "e53d88f3664ee05f97a5e95f052cc38b3769b46ac800901c472b669b3f556f12",
+  "native_A3_calls": 0,
+  "GPU_work": false,
+  "formal_performance": "NOT_RUN"
+}

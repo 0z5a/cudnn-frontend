@@ -1,0 +1,87 @@
+"""Acquire shared GPU lock before profiler/heavy imports; explicit clock-control none; existing lock opened read-only; per-command trusted source; preserve NCU rc."""
+
+import argparse
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import time
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+NCU = "/opt/nvidia/nsight-compute/2026.1.1/ncu"
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    with open("/tmp/codex-thor-perf.lock", "r") as lock:
+        start = time.monotonic()
+        (out / "admission_wait.json").write_text(json.dumps({"stage": "WAITING_FOR_SHARED_LOCK", "pid": os.getpid(), "torch_imported": False}))
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - start > 3600:
+                    (out / "admission.json").write_text(json.dumps({"stage": "NOT_RUN_SHARED_LOCK_BUSY", "torch_imported": False}))
+                    return 75
+                time.sleep(1)
+        source = ROOT / "a3sfdlatest4"
+        assert (
+            subprocess.check_output(["git", "-c", "safe.directory=" + str(source), "-C", str(source), "rev-parse", "HEAD"], text=True).strip()
+            == "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+        )
+        assert not subprocess.check_output(
+            ["git", "-c", "safe.directory=" + str(source), "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True
+        ).strip()
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        (out / "ncu-version.txt").write_text(subprocess.check_output([NCU, "--version"], text=True))
+        probe = Path(__file__).with_name("a3_stock_dot_ncu_probe_20261001.py")
+        argv = [
+            NCU,
+            "--nvtx",
+            "--nvtx-include",
+            "stock_bf16_dot/",
+            "--launch-count",
+            "1",
+            "--section",
+            "LaunchStats",
+            "--cache-control",
+            "none",
+            "--clock-control",
+            "none",
+            "--export",
+            str(out / "stock-dot"),
+            str(ROOT / "venvs/a3sfdlatest4/bin/python"),
+            str(probe),
+            "--out",
+            str(out / "target"),
+        ]
+        with (out / "ncu-stdout.log").open("w") as stdout, (out / "ncu-stderr.log").open("w") as stderr:
+            executed = subprocess.run(argv, stdout=stdout, stderr=stderr)
+        record = {
+            "stage": "NCU_EXITED",
+            "ncu_returncode": executed.returncode,
+            "argv": argv,
+            "admission_and_profile_elapsed_seconds": time.monotonic() - start,
+            "clock_control": "none",
+            "effective_uid": os.geteuid(),
+            "probe_sha256": hashlib.sha256(probe.read_bytes()).hexdigest(),
+            "harness_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+            "boot_id": Path("/proc/sys/kernel/random/boot_id").read_text().strip(),
+            "service_final": subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip(),
+            "formal_performance": "NOT_RUN",
+            "native_A3_calls": 0,
+        }
+        (out / "result.json").write_text(json.dumps(record, indent=2) + "\n")
+        print(json.dumps(record), flush=True)
+        return executed.returncode
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

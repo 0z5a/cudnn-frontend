@@ -1,0 +1,97 @@
+"""Profile exact original first-expert BF16 dot; no native A3/model success."""
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+import torch as t
+from safetensors import safe_open
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+MODEL = Path("/home/jwipc/models/granite-3.1-1b-a400m-instruct-0da7a48b")
+
+
+def sha(path):
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for b in iter(lambda: f.read(4 * 1024 * 1024), b""):
+            h.update(b)
+    return h.hexdigest()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    t.backends.cuda.matmul.allow_tf32 = False
+    t.set_float32_matmul_precision("highest")
+    assert sha(MODEL / "model.safetensors") == "ac02591061f1344027a7e7b11dbb4143f75f166c47dc09b742f5de3ab1dde1d1"
+    prior_path = ROOT / "results/a3-residual-staging-20261001-r1/outputs.pt"
+    prior = t.load(prior_path, map_location="cpu", weights_only=True)
+    hidden, index = prior["stock_input/0"]["original"], prior["stock_route/0"]["index"]
+    order = t.argsort(index.flatten(), stable=True)
+    sizes = t.bincount(index.flatten(), minlength=32).tolist()
+    group = next(i for i, n in enumerate(sizes) if n)
+    offset, n = sum(sizes[:group]), sizes[group]
+    token_ids = order[offset : offset + n] // 8
+    aligned = ((n + 255) // 256) * 256
+    x = t.zeros((aligned, 1024), dtype=t.bfloat16, device="cuda")
+    x[:n] = hidden[token_ids].cuda()
+    with safe_open(str(MODEL / "model.safetensors"), framework="pt", device="cpu") as handle:
+        weight = handle.get_tensor("model.layers.0.block_sparse_moe.input_linear.weight")[group]
+    gate, up = weight.chunk(2, 0)
+    weight = t.stack((gate.reshape(-1, 32, 1024), up.reshape(-1, 32, 1024)), 1).reshape(1024, 1024).cuda()
+    target = prior["local/0"]["original_bf16_local"]["c"][offset : offset + n]
+    x32, w32 = x.float(), weight.float()
+    with t.inference_mode():
+        for _ in range(3):
+            stock = t.nn.functional.linear(x, weight)
+            control = t.nn.functional.linear(x32, w32)
+        t.cuda.synchronize()
+        assert t.equal(stock[:n].cpu().view(t.uint8), target.view(t.uint8)), "Unprofiled control must reproduce original saved stock C"
+        before = stock.detach().clone()
+        t.cuda.nvtx.range_push("stock_bf16_dot")
+        profiled = t.nn.functional.linear(x, weight)
+        t.cuda.nvtx.range_pop()
+        t.cuda.synchronize()
+        assert t.equal(profiled.view(t.uint8), before.view(t.uint8))
+    saved = {
+        "input_bf16": x.cpu(),
+        "weight_bf16": weight.cpu(),
+        "stock_c_before": before.cpu(),
+        "stock_c_profiled": profiled.cpu(),
+        "fp32_control_c": control.cpu(),
+    }
+    t.save(saved, out / "outputs.pt")
+    metadata = {
+        "stage": "STOCK_DOT_PROFILE_TARGET_COMPLETE_NOT_NATIVE_SUCCESS",
+        "layer": 0,
+        "expert": group,
+        "actual_rows": n,
+        "aligned_rows": aligned,
+        "N": 1024,
+        "K": 1024,
+        "stock_C_saved_original_byte_equal": True,
+        "stock_C_before_after_profile_byte_equal": True,
+        "native_A3_calls": 0,
+        "checkpoint_sha256": sha(MODEL / "model.safetensors"),
+        "prior_outputs_sha256": sha(prior_path),
+        "outputs_sha256": sha(out / "outputs.pt"),
+        "harness_sha256": sha(Path(__file__)),
+        "torch": t.__version__,
+        "device": t.cuda.get_device_name(),
+        "allow_bf16_reduced_precision_reduction": t.backends.cuda.matmul.allow_bf16_reduced_precision_reduction,
+        "limits": "Single original expert dot launch, no complete model/recipe/generation/KV or performance success. Profiler symbol/SASS can identify executed implementation; not proof of a numerical fix.",
+    }
+    (out / "result.json").write_text(json.dumps(metadata, indent=2) + "\n")
+    print(json.dumps(metadata), flush=True)
+
+
+if __name__ == "__main__":
+    main()

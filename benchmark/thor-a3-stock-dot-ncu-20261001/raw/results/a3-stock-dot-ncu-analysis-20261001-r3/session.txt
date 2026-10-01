@@ -1,0 +1,46 @@
+Launch Settings
+--------------------- ------------------------------------------------------------------------------------------------------------------------
+Launch Attribute      Value                                                                                                                   
+--------------------- ------------------------------------------------------------------------------------------------------------------------
+Profiler Command Line /opt/nvidia/nsight-compute/2026.1.1/target/linux-desktop-t210-a64/ncu --nvtx --nvtx-include stock_bf16_dot/ --launch-cou
+                      nt 1 --section LaunchStats --cache-control none --clock-control none --export /home/jwipc/experiments/cudnn-sm110-a1-a3-
+                      20260928/results/a3-stock-dot-ncu-20261001-r3/stock-dot /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdla
+                      test4/bin/python /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_stock_dot_ncu_probe_20261001.py --out /home
+                      /jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-stock-dot-ncu-20261001-r3/target                               
+
+Session Info
+---------------------- ------------------------------------------------------------------------------------------------------------------------
+Session Attribute      Value                                                                                                                   
+---------------------- ------------------------------------------------------------------------------------------------------------------------
+Created                2026-Oct-01 19:40:49                                                                                                    
+Host Name              agx-thor-w638                                                                                                           
+Host OS                Linux (L4T 64bit) - #12 SMP PREEMPT Tue Jun  9 10:07:03 CST 2026                                                        
+Host Architecture      ARM64                                                                                                                   
+Host Processor         Neoverse-V3AE                                                                                                           
+Target Name            agx-thor-w638                                                                                                           
+Target IP Addresses    192.168.1.97, 172.17.0.1, 240e:3ba:30bd:39b0:902:9f7b:e730:14e6, 240e:3ba:30bd:39b0:8dc:e850:33d3:a8a1, fe80::9215:894b:
+                       2a50:d521%p2p0                                                                                                          
+Target OS              Linux (L4T 64bit) - #12 SMP PREEMPT Tue Jun  9 10:07:03 CST 2026                                                        
+Target Architecture    ARM64                                                                                                                   
+Target Processor       Neoverse-V3AE                                                                                                           
+CUDA Version           13.2                                                                                                                    
+Display Driver Version 595.78                                                                                                                  
+PerfWorks              0.1.0                                                                                                                   
+Nsight Compute Target  2026.1.1.0 (build 37634170) (public-release)                                                                            
+
+Processes
+---------- -------------------
+Process Id Process Name       
+---------- -------------------
+45735      /usr/bin/python3.12
+
+Device Attributes
+--------------------------- ------------
+Device Attribute            Device 0    
+--------------------------- ------------
+confidential_computing_mode No-CC       
+multiprocessor_count        20          
+display_name                NVIDIA Thor 
+compute_capability_major    11          
+compute_capability_minor    0           
+total_memory                131922612224

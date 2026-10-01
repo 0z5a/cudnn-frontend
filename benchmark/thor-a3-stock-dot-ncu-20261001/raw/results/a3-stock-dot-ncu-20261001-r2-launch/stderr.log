@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/run_a3_stock_dot_ncu_clocknone_queued_20261001.py", line 82, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/run_a3_stock_dot_ncu_clocknone_queued_20261001.py", line 22, in main
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/tmp/codex-thor-perf.lock'

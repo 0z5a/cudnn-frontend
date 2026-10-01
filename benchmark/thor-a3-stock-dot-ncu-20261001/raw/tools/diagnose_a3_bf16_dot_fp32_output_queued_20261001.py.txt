@@ -1,0 +1,96 @@
+"""GPU stock BF16-input/FP32-output dot diagnostic; not native A3 success."""
+
+import argparse
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import time
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(4 * 1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        start = time.monotonic()
+        (out / "admission_wait.json").write_text(json.dumps({"stage": "WAITING_FOR_SHARED_LOCK", "pid": os.getpid(), "torch_imported": False}))
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - start > 3600:
+                    (out / "admission.json").write_text(json.dumps({"stage": "NOT_RUN_SHARED_LOCK_BUSY", "torch_imported": False}))
+                    return 75
+                time.sleep(1)
+        import torch as t
+
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        t.set_num_threads(4)
+        t.backends.cuda.matmul.allow_tf32 = False
+        t.set_float32_matmul_precision("highest")
+        prior = ROOT / "results/a3-stock-dot-ncu-20261001-r3/target"
+        metadata = json.loads((prior / "result.json").read_text())
+        assert sha(prior / "outputs.pt") == metadata["outputs_sha256"]
+        values = t.load(prior / "outputs.pt", map_location="cpu", weights_only=True)
+        x, w = values["input_bf16"].cuda(), values["weight_bf16"].cuda()
+        assert x.shape == (256, 1024) and w.shape == (1024, 1024) and metadata["actual_rows"] == 36
+        saved, rows = {}, []
+        with t.inference_mode():
+            for n in (256, 36):
+                bf16 = t.nn.functional.linear(x[:n], w).cpu()
+                from_bf16 = t.mm(x[:n], w.T, out_dtype=t.float32).cpu()
+                from_fp32 = t.nn.functional.linear(x[:n].float(), w.float()).cpu()
+                target = values["stock_c_before"][:n]
+                assert t.equal(bf16.view(t.uint8), target.view(t.uint8))
+                for name, value in (("bf16_input_bf16_output", bf16), ("bf16_input_fp32_output", from_bf16), ("fp32_input_fp32_output", from_fp32)):
+                    saved[f"{n}/{name}"] = value
+                rows.append(
+                    {
+                        "rows": n,
+                        "stock_bf16_target_byte_equal": True,
+                        "bf16_input_fp32_output_rounded_stock_mismatches": (from_bf16.to(t.bfloat16) != target).sum().item(),
+                        "fp32_input_output_rounded_stock_mismatches": (from_fp32.to(t.bfloat16) != target).sum().item(),
+                        "bf16_input_fp32_output_vs_fp32_input_maxabs": (from_bf16 - from_fp32).abs().max().item(),
+                        "bf16_input_fp32_output_vs_fp32_input_l2": (t.linalg.vector_norm(from_bf16 - from_fp32) / t.linalg.vector_norm(from_fp32)).item(),
+                    }
+                )
+        t.save(saved, out / "outputs.pt")
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        result = {
+            "stage": "DIAGNOSTIC_COMPLETE_NOT_NATIVE_SUCCESS",
+            "rows": rows,
+            "native_A3_calls": 0,
+            "prior_target_metadata_sha256": sha(prior / "result.json"),
+            "prior_target_outputs_sha256": sha(prior / "outputs.pt"),
+            "outputs_sha256": sha(out / "outputs.pt"),
+            "harness_sha256": sha(Path(__file__)),
+            "torch": t.__version__,
+            "device": t.cuda.get_device_name(),
+            "original_baseline_replaced": False,
+            "service_final": "inactive",
+            "formal_performance": "NOT_RUN",
+            "limits": "Single original first-layer expert0 dot at actual36/padded256 rows; Torch supported BF16-input/FP32-output control only, no native A3 policy or whole-model success. Output dtype may select a different kernel; no identical MMA order inferred without profiling.",
+        }
+        (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps(result), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

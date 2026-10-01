@@ -1,0 +1,16 @@
+{
+  "stage": "VERIFIED_COMPLETE",
+  "archive_sha256": "1de5d729a0f6bd48d4914701fb4bf44c3fb602ad211b56ddcea6029b5205b2d8",
+  "archive_size": 33978,
+  "files": 40,
+  "manifest_entries": 39,
+  "path": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-stock-dot-ncu-evidence-20261001",
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    ".pt outputs",
+    "native binaries",
+    "binary ncu-rep kept on Thor with recorded SHA"
+  ]
+}

@@ -1,0 +1,55 @@
+[45735] python3.12@127.0.0.1
+  nvjet_sm110_tst_112x128_64x7_2x1_v_bz_TNN (20, 1, 1)x(256, 1, 1), Context 1, Stream 7, Device 0, CC 11.0
+
+    NVTX Push/Pop Stack for Thread 45735:
+      <default domain>
+        <0,stock_bf16_dot>
+    Warning: Data collection happened without fixed GPU frequencies. Profiling results may be inconsistent.
+    Section: Launch Statistics
+    -------------------------------- --------------- ---------------
+    Metric Name                          Metric Unit    Metric Value
+    -------------------------------- --------------- ---------------
+    Block Size                                                   256
+    Cluster Scheduling Policy                           PolicySpread
+    Cluster Size                                                   2
+    Function Cache Configuration                     CachePreferNone
+    Grid Size                                                     20
+    Preferred Cluster Size                                         0
+    Registers Per Thread             register/thread             255
+    Shared Memory Configuration Size           Kbyte          233.47
+    Driver Shared Memory Per Block       Kbyte/block            1.02
+    Dynamic Shared Memory Per Block      Kbyte/block          223.54
+    Static Shared Memory Per Block        byte/block               0
+    # SMs                                         SM              20
+    Stack Size                                                  1024
+    Threads                                   thread            5120
+    # TPCs                                                        10
+    Enabled TPC IDs                                              all
+    Uses Green Context                                             0
+    Waves Per SM                                                   1
+    Theoretical Occupancy                          %           16.67
+    Achieved Occupancy                             %           13.21
+    -------------------------------- --------------- ---------------
+
+    Table Name : WorkID/CLC Info
+    ----------------------------------- ----------- ------------
+    Metric Name                         Metric Unit Metric Value
+    ----------------------------------- ----------- ------------
+    WorkId/CLC Requests Granted                                0
+    WorkId/CLC Requests Granted                                0
+    WorkId/CLC Requests Granted                                0
+    WorkId/CLC Requests Granted                                0
+    WorkId/CLC Requests Granted as CTAs       block            0
+    WorkId/CLC Requests Granted as CTAs       block            0
+    WorkId/CLC Requests Granted as CTAs       block            0
+    WorkId/CLC Requests Granted as CTAs       block            0
+    WorkId/CLC Requests                                        0
+    WorkId/CLC Requests                                        0
+    WorkId/CLC Requests                                        0
+    WorkId/CLC Requests                                        0
+    ----------------------------------- ----------- ------------
+
+    OPT   If you execute __syncthreads() to synchronize the threads of a block, it is recommended to have at least two  
+          blocks per multiprocessor (compared to the currently executed 1.0 blocks) This way, blocks that aren't        
+          waiting for __syncthreads() can keep the hardware busy.                                                       
+

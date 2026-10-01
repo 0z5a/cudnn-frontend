@@ -1,0 +1,160 @@
+{
+  "stage": "PASS_CPU_STOCK_NCU_AND_OUTPUT_DTYPE_AUDIT_NOT_MODEL_SUCCESS",
+  "cuda_initialized": false,
+  "native_calls": 0,
+  "ncu_run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest4/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/run_a3_stock_dot_ncu_clocknone_readlock_queued_20261001.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-stock-dot-ncu-20261001-r3"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-01T11:31:12.722909+00:00",
+    "deadline_seconds": 4200.0,
+    "status": "EXITED",
+    "selected_env": {},
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 580.480391603
+  },
+  "control_run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest4/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_bf16_dot_fp32_output_queued_20261001.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-bf16-dot-fp32-output-20261001-r1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-01T11:46:10.438148+00:00",
+    "deadline_seconds": 4200.0,
+    "status": "EXITED",
+    "selected_env": {},
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 2.881029441999999
+  },
+  "rows": [
+    {
+      "rows": 256,
+      "bf16_input_fp32_output_stock_cast_mismatches": 0,
+      "fp32_input_stock_cast_mismatches": 18,
+      "comparison_fp64": {
+        "max_abs": 0.00012969970703125,
+        "relative_l2": 1.0704160851750001e-06,
+        "argmax_equal_fraction": 1.0
+      }
+    },
+    {
+      "rows": 36,
+      "bf16_input_fp32_output_stock_cast_mismatches": 0,
+      "fp32_input_stock_cast_mismatches": 19,
+      "comparison_fp64": {
+        "max_abs": 9.918212890625e-05,
+        "relative_l2": 1.0639162409627808e-06,
+        "argmax_equal_fraction": 1.0
+      }
+    }
+  ],
+  "ncu_report_sha256": "e53d88f3664ee05f97a5e95f052cc38b3769b46ac800901c472b669b3f556f12",
+  "original_input_weight_C_and_profile_C_byte_verified": true,
+  "tensor_count": 11,
+  "ncu_tensors": {
+    "input_bf16": {
+      "shape": [
+        256,
+        1024
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "4129f19e4c648f70f70b565d7bd6ede2d289f0eb8df14c35980ddce1b7dfc5ae"
+    },
+    "weight_bf16": {
+      "shape": [
+        1024,
+        1024
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "33acd88b3730d37f362a808d3de3a07100c6453d3a897b383f8133eebe8040a8"
+    },
+    "stock_c_before": {
+      "shape": [
+        256,
+        1024
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "74cebd8fab9d9b45e25ac4c36d2f34ba828661742fcb7eee2cda96cb57b0058f"
+    },
+    "stock_c_profiled": {
+      "shape": [
+        256,
+        1024
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "74cebd8fab9d9b45e25ac4c36d2f34ba828661742fcb7eee2cda96cb57b0058f"
+    },
+    "fp32_control_c": {
+      "shape": [
+        256,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "337c45ce206905979bca76904e4d49ced0e5119cf688ed5baa6c1fc101296302"
+    }
+  },
+  "control_tensors": {
+    "256/bf16_input_bf16_output": {
+      "shape": [
+        256,
+        1024
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "74cebd8fab9d9b45e25ac4c36d2f34ba828661742fcb7eee2cda96cb57b0058f"
+    },
+    "256/bf16_input_fp32_output": {
+      "shape": [
+        256,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "8256535aee6760b5dfb05a3e602a6a559d1092a7168d925841a3be36836bf092"
+    },
+    "256/fp32_input_fp32_output": {
+      "shape": [
+        256,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "337c45ce206905979bca76904e4d49ced0e5119cf688ed5baa6c1fc101296302"
+    },
+    "36/bf16_input_bf16_output": {
+      "shape": [
+        36,
+        1024
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "2f66c7a43a7ac3cb0fd03272078065d25036f0cc6baad67cc772beb6c5896c0c"
+    },
+    "36/bf16_input_fp32_output": {
+      "shape": [
+        36,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "d080ebc47dfdcfe5fd7940a7b9f0acfc2434d1b79ee8c7448e99e306e9c8591f"
+    },
+    "36/fp32_input_fp32_output": {
+      "shape": [
+        36,
+        1024
+      ],
+      "dtype": "torch.float32",
+      "sha256": "62bf20bb15ee41a9cbc21674613904f82a085e5173f1edc5bfda0b6721efe033"
+    }
+  },
+  "static_UTCHMMA_instructions": 8,
+  "kernel": "nvjet_sm110_tst_112x128_64x7_2x1_v_bz_TNN",
+  "harness_sha256": "547566b2893614b6f8739f10e30b2e245cf53861cd862562f0d9508419af39c6",
+  "cpu_helper_sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944",
+  "formal_performance": "NOT_RUN",
+  "limits": "First layer expert0 only, actual36/padded256 rows. Static SASS is not dynamic instruction count or proof of hardware internal accumulation order. Output dtype may select another kernel. No native/full model success."
+}
