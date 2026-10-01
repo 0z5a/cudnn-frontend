@@ -1,0 +1,91 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Independent CPU audit of the saved double-MXFP8 diagnostic tensors."""
+
+import argparse
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+HELPER = Path(__file__).with_name("audit_a3_precision_followup_r2_20261001.py")
+spec = importlib.util.spec_from_file_location("a3_cpu_auditor", HELPER)
+a = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(a)
+t = a.torch
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized()
+    directory = a.ROOT / "results/a3-double-mxfp8-recipe-20261001-r1"
+    meta, run = a.provenance(directory, 48)
+    assert len(meta["rows"]) == 9 and len(meta["policies"]) == 3
+    values = t.load(directory / "outputs.pt", map_location="cpu", weights_only=True)
+    baseline_dir = a.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    baseline = t.load(baseline_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    tensors = a.flatten_tensors(values)
+    assert len(tensors) == 11
+    rows = []
+    with t.inference_mode():
+        for row in meta["rows"]:
+            policy, case = row["policy"], row["case"]
+            assert row["model_parameters"] == 1334628352 and row["mxfp8_layers"] == list(range(24)) and row["gemm_k"] == 4096
+            assert row["input_tokens"] == [73, 70, 256][case]
+            prefix = f"{policy}/{case}/"
+            oracle, stock = values[prefix + "reference"], baseline[f"forward_{case}_stock"]
+            assert oracle.shape == stock.shape == (1, row["input_tokens"], 49155)
+            metrics = a.difference(oracle, stock)
+            norm_ratio = (t.linalg.vector_norm(oracle.double()) / t.linalg.vector_norm(stock.double())).item()
+            bound = max(0.0, metrics["relative_l2"] - 0.01 * norm_ratio)
+            assert metrics["relative_l2"] == row["oracle_bf16_relative_l2_fp64"]
+            assert norm_ratio == row["norm_ratio_fp64"] and bound == row["native_bf16_lower_bound"]
+            assert (bound > 0.05) == row["both_gates_impossible"]
+            record = {"policy": policy, "case": case, "oracle_bf16": metrics, "norm_ratio_fp64": norm_ratio, "native_bf16_lower_bound": bound}
+            if row["native_status"] == "EXECUTED":
+                assert row["native_semantics_supported"] and row["native_calls"] == 24 and case == 2
+                native = values[prefix + "native"]
+                a.compare_metric(a.difference(native, oracle, t.float32), row["native_oracle"])
+                a.compare_metric(a.difference(native, stock, t.float32), row["native_bf16"])
+                native_oracle, native_bf16 = a.difference(native, oracle), a.difference(native, stock)
+                assert (native_oracle["relative_l2"] <= 0.01) == row["oracle_gate_pass"] is False
+                assert (native_bf16["relative_l2"] <= 0.05) == row["bf16_gate_pass"] is True
+                record.update(native_oracle=native_oracle, native_bf16=native_bf16, oracle_gate_pass=False, bf16_gate_pass=True)
+            elif row["native_status"] == "NOT_RUN_FIXED_ORACLE_INCOMPATIBLE":
+                assert row["native_semantics_supported"] and bound > 0.05 and row["native_calls"] == 0
+                assert prefix + "native" not in values
+            else:
+                assert row["native_status"] == "NOT_RUN_UNSUPPORTED_BF16_ACTIVATION_STAGE"
+                assert not row["native_semantics_supported"] and row["native_calls"] == 0
+                assert prefix + "native" not in values
+            rows.append(record)
+    assert sum(row["native_calls"] for row in meta["rows"]) == 48 and not t.cuda.is_initialized()
+    result = {
+        "stage": "PASS_EVIDENCE_AUDIT_DOUBLE_MXFP8_NOT_FULL_MODEL_PASS",
+        "source_head": a.HEAD,
+        "run": run,
+        "cuda_initialized": False,
+        "rows": rows,
+        "tensors": tensors,
+        "outputs_sha256": a.sha_file(directory / "outputs.pt"),
+        "baseline_outputs_sha256": a.sha_file(baseline_dir / "outputs.pt"),
+        "metadata_sha256": a.sha_file(directory / "result.json"),
+        "harness_sha256": a.sha_file(__file__),
+        "audit_helper_sha256": a.sha_file(HELPER),
+        "actual_native_calls": 48,
+        "weight_reconstruction_error_scope": "Producer metric only; component weight tensors not saved",
+        "formal_performance": "NOT_RUN",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "tensor_entries": len(tensors), "cuda_initialized": False}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

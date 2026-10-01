@@ -1,0 +1,259 @@
+{
+  "stage": "PASS_EVIDENCE_AUDIT_DOUBLE_MXFP8_NOT_FULL_MODEL_PASS",
+  "source_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest4/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_double_mxfp8_recipe_probe_20261001.py",
+      "--expected-source",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest4",
+      "--expected-head",
+      "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-double-mxfp8-recipe-20261001-r1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-01T08:04:11.510895+00:00",
+    "deadline_seconds": 1800.0,
+    "status": "EXITED",
+    "selected_env": {},
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 26.52331174100982
+  },
+  "cuda_initialized": false,
+  "rows": [
+    {
+      "policy": "double_mxfp8_bf16_d_down",
+      "case": 0,
+      "oracle_bf16": {
+        "max_abs": 5.03125,
+        "relative_l2": 0.11619427416873208,
+        "argmax_equal_fraction": 0.9452054794520548
+      },
+      "norm_ratio_fp64": 0.996658585008579,
+      "native_bf16_lower_bound": 0.10622768831864629
+    },
+    {
+      "policy": "double_mxfp8_bf16_d_down",
+      "case": 1,
+      "oracle_bf16": {
+        "max_abs": 5.03125,
+        "relative_l2": 0.10894929542926943,
+        "argmax_equal_fraction": 0.9571428571428572
+      },
+      "norm_ratio_fp64": 0.9977038862825949,
+      "native_bf16_lower_bound": 0.09897225656644348
+    },
+    {
+      "policy": "double_mxfp8_bf16_d_down",
+      "case": 2,
+      "oracle_bf16": {
+        "max_abs": 6.5,
+        "relative_l2": 0.04777472673107241,
+        "argmax_equal_fraction": 0.97265625
+      },
+      "norm_ratio_fp64": 0.9986671896237266,
+      "native_bf16_lower_bound": 0.03778805483483514,
+      "native_oracle": {
+        "max_abs": 2.296875,
+        "relative_l2": 0.03236850858070296,
+        "argmax_equal_fraction": 0.98046875
+      },
+      "native_bf16": {
+        "max_abs": 6.75,
+        "relative_l2": 0.044868465300291864,
+        "argmax_equal_fraction": 0.984375
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": true
+    },
+    {
+      "policy": "double_mxfp8_fp16_d_fp32_down_merge",
+      "case": 0,
+      "oracle_bf16": {
+        "max_abs": 6.3125,
+        "relative_l2": 0.11773554777777548,
+        "argmax_equal_fraction": 0.9726027397260274
+      },
+      "norm_ratio_fp64": 0.9985958133735623,
+      "native_bf16_lower_bound": 0.10774958964403986
+    },
+    {
+      "policy": "double_mxfp8_fp16_d_fp32_down_merge",
+      "case": 1,
+      "oracle_bf16": {
+        "max_abs": 6.3125,
+        "relative_l2": 0.10503534912494299,
+        "argmax_equal_fraction": 0.9714285714285714
+      },
+      "norm_ratio_fp64": 1.0011730370106309,
+      "native_bf16_lower_bound": 0.09502361875483668
+    },
+    {
+      "policy": "double_mxfp8_fp16_d_fp32_down_merge",
+      "case": 2,
+      "oracle_bf16": {
+        "max_abs": 7.5,
+        "relative_l2": 0.0514071928946872,
+        "argmax_equal_fraction": 0.96484375
+      },
+      "norm_ratio_fp64": 0.9994451087722648,
+      "native_bf16_lower_bound": 0.04141274180696455,
+      "native_oracle": {
+        "max_abs": 4.578125,
+        "relative_l2": 0.04356298305094966,
+        "argmax_equal_fraction": 0.984375
+      },
+      "native_bf16": {
+        "max_abs": 7.375,
+        "relative_l2": 0.04905392901581178,
+        "argmax_equal_fraction": 0.9765625
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": true
+    },
+    {
+      "policy": "double_mxfp8_bf16_gate_activation_reference_only",
+      "case": 0,
+      "oracle_bf16": {
+        "max_abs": 3.875,
+        "relative_l2": 0.10211846657399348,
+        "argmax_equal_fraction": 0.9178082191780822
+      },
+      "norm_ratio_fp64": 0.9955751955282762,
+      "native_bf16_lower_bound": 0.09216271461871071
+    },
+    {
+      "policy": "double_mxfp8_bf16_gate_activation_reference_only",
+      "case": 1,
+      "oracle_bf16": {
+        "max_abs": 3.875,
+        "relative_l2": 0.09958173496312002,
+        "argmax_equal_fraction": 0.9428571428571428
+      },
+      "norm_ratio_fp64": 0.9955666660740121,
+      "native_bf16_lower_bound": 0.0896260683023799
+    },
+    {
+      "policy": "double_mxfp8_bf16_gate_activation_reference_only",
+      "case": 2,
+      "oracle_bf16": {
+        "max_abs": 3.6875,
+        "relative_l2": 0.045583505202630575,
+        "argmax_equal_fraction": 0.98046875
+      },
+      "norm_ratio_fp64": 0.998934397510878,
+      "native_bf16_lower_bound": 0.03559416122752179
+    }
+  ],
+  "tensors": {
+    "double_mxfp8_bf16_d_down/0/reference": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "8fcb85069aab26e59235ae3d08dede8941c14cf441aea40853dcef1411147160"
+    },
+    "double_mxfp8_bf16_d_down/1/reference": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "20ee791cb5e87a737a500719a2a93fc8e90362bfdbb0feb14df563feabde440e"
+    },
+    "double_mxfp8_bf16_d_down/2/reference": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "7eae9564b72030854ec01312d6c3a4b55016b39607a391da2c81cf102e36e457"
+    },
+    "double_mxfp8_bf16_d_down/2/native": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "1330b906dea4c875a9e2ee07820058c5e9f3272563cc48f9cb3974461be3cae7"
+    },
+    "double_mxfp8_fp16_d_fp32_down_merge/0/reference": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "fe8a4475f7cab70b5a24689a6617818fcea033d78d74a0af8a14f1e206112ecf"
+    },
+    "double_mxfp8_fp16_d_fp32_down_merge/1/reference": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "bfa2d8d4fa8b177b149536eb244c9e9011d5e5eb05301b0201431212643caac6"
+    },
+    "double_mxfp8_fp16_d_fp32_down_merge/2/reference": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "80af4fd040e37d010d78ad0ae7222ab0ca84626a3045c093fa5280a048a2a230"
+    },
+    "double_mxfp8_fp16_d_fp32_down_merge/2/native": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "0bf80547240b1e706eecd47b7499e6d911c92f17eea15fe7b45b37977eb47651"
+    },
+    "double_mxfp8_bf16_gate_activation_reference_only/0/reference": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "152d1bf5bf349df7574fb9e4ddb70eab0011d3f5b0cd195789ece63847c9a82b"
+    },
+    "double_mxfp8_bf16_gate_activation_reference_only/1/reference": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "1a577529ce41cb72942d10ac4be4d5ddbdf8ec7f09504f00a83db0134de15b26"
+    },
+    "double_mxfp8_bf16_gate_activation_reference_only/2/reference": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d90bac128892691b178833ded79666aa9a0413e286796d1921bd958d73b998db"
+    }
+  },
+  "outputs_sha256": "83d8d7a31be38eccd2f0a98e93650cc3a3773cb2881b87b66969ec0a0016a8e7",
+  "baseline_outputs_sha256": "a997dac0bbd8b137ecbf7ddbefc5f356c2633d75a9d3cde1d035335cb028440f",
+  "metadata_sha256": "e7bf01f63d20f117dadbfe16c75eb03408e13647fe02e514a0cf824d70bfe258",
+  "harness_sha256": "952b662c4256c5a58c853392934e1c8c69bc4cfe297596133de1071174172120",
+  "audit_helper_sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944",
+  "actual_native_calls": 48,
+  "weight_reconstruction_error_scope": "Producer metric only; component weight tensors not saved",
+  "formal_performance": "NOT_RUN"
+}

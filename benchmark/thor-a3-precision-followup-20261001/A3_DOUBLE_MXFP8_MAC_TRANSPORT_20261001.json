@@ -1,0 +1,13 @@
+{
+  "archive": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-double-mxfp8-archive-20261001/a3-double-mxfp8-evidence-20261001.tar.gz",
+  "size": 12074,
+  "sha256": "5af022346f2d4edd7ac0335a662e8cee8bc58ba5279bdaef092b435d25d3f549",
+  "files": 12,
+  "payload_bytes": 63672,
+  "stage": "VERIFIED_COMPLETE",
+  "verified_utc": "2026-10-01T08:11:14.001569+00:00",
+  "local_archive": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-precision-followup-20261001/a3-double-mxfp8-evidence-20261001.tar.gz",
+  "local_directory": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-double-mxfp8-evidence-20261001",
+  "manifest_entries_verified": 11,
+  "all_files_size_sha256_verified": true
+}

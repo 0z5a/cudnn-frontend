@@ -1,0 +1,90 @@
+{
+  "source_head": "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744",
+  "scope": "Additional evidence only; first follow-up README/manifest bytes are preserved unchanged",
+  "files": [
+    {
+      "published_path": "results/a3-double-mxfp8-cpu-audit-20261001-r1-launch/run.json",
+      "archive_path": "results/a3-double-mxfp8-cpu-audit-20261001-r1-launch/run.json",
+      "sha256": "b1b640bdda91e9d8a8f85e6e9e2a88a5ebad0efe5208b537144e0566b4e6665c",
+      "size": 622
+    },
+    {
+      "published_path": "results/a3-double-mxfp8-cpu-audit-20261001-r1-launch/stderr.log",
+      "archive_path": "results/a3-double-mxfp8-cpu-audit-20261001-r1-launch/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "published_path": "results/a3-double-mxfp8-cpu-audit-20261001-r1-launch/stdout.log",
+      "archive_path": "results/a3-double-mxfp8-cpu-audit-20261001-r1-launch/stdout.log",
+      "sha256": "a6fdcad4da4cdcf763977c8018fc324ad44db23bee5eeddfe79b13a445c41680",
+      "size": 115
+    },
+    {
+      "published_path": "results/a3-double-mxfp8-cpu-audit-20261001-r1/result.json",
+      "archive_path": "results/a3-double-mxfp8-cpu-audit-20261001-r1/result.json",
+      "sha256": "781c604c9242e60d7c10bbd72af14a122a8b0a3cbb68af125ec267ac2df83525",
+      "size": 8018
+    },
+    {
+      "published_path": "results/a3-double-mxfp8-recipe-20261001-r1-launch/run.json",
+      "archive_path": "results/a3-double-mxfp8-recipe-20261001-r1-launch/run.json",
+      "sha256": "7f35a30517d06aa4e1931476254b637b6a0ba5852394e1e056a398f00bfea346",
+      "size": 760
+    },
+    {
+      "published_path": "results/a3-double-mxfp8-recipe-20261001-r1-launch/stderr.log",
+      "archive_path": "results/a3-double-mxfp8-recipe-20261001-r1-launch/stderr.log",
+      "sha256": "c66972d1a6693289c5e5b23d6f00aa07bfc31a5142323a13627cdf67cf4fefc8",
+      "size": 193
+    },
+    {
+      "published_path": "results/a3-double-mxfp8-recipe-20261001-r1-launch/stdout.log",
+      "archive_path": "results/a3-double-mxfp8-recipe-20261001-r1-launch/stdout.log",
+      "sha256": "9d30e435a1f29758a314b1e29d15fb7c8232304044a35bf8b419bca2c5fb133f",
+      "size": 5196
+    },
+    {
+      "published_path": "results/a3-double-mxfp8-recipe-20261001-r1/partial.json",
+      "archive_path": "results/a3-double-mxfp8-recipe-20261001-r1/partial.json",
+      "sha256": "5a3ce887edc02703ab77121dfcf62c91d66ba69e93be267c71cbb83ffa4f1e0d",
+      "size": 8609
+    },
+    {
+      "published_path": "results/a3-double-mxfp8-recipe-20261001-r1/result.json",
+      "archive_path": "results/a3-double-mxfp8-recipe-20261001-r1/result.json",
+      "sha256": "e7bf01f63d20f117dadbfe16c75eb03408e13647fe02e514a0cf824d70bfe258",
+      "size": 19621
+    },
+    {
+      "published_path": "frozen-harness/a3_double_mxfp8_recipe_probe_20261001.py.txt",
+      "archive_path": "tools/a3_double_mxfp8_recipe_probe_20261001.py",
+      "sha256": "fa63500b8a10122fc7bf16e52aaf10a0ceb64cc23816aeec28ccc55bd257fe7e",
+      "size": 11740
+    },
+    {
+      "published_path": "frozen-harness/audit_a3_double_mxfp8_20261001.py.txt",
+      "archive_path": "tools/audit_a3_double_mxfp8_20261001.py",
+      "sha256": "952b662c4256c5a58c853392934e1c8c69bc4cfe297596133de1071174172120",
+      "size": 4885
+    },
+    {
+      "published_path": "DOUBLE_MXFP8_RAW_ARCHIVE_MANIFEST.json",
+      "archive_path": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-double-mxfp8-evidence-20261001/manifest.json",
+      "sha256": "4c23076a549fab2091ed3ec6134e6cf75de2cc1cef1bd3f2f56dccf30c3d4b58",
+      "size": 3913
+    },
+    {
+      "published_path": "A3_DOUBLE_MXFP8_MAC_TRANSPORT_20261001.json",
+      "archive_path": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_DOUBLE_MXFP8_MAC_TRANSPORT_20261001.json",
+      "sha256": "137abc60e289b0b4406de18e3327bbc7fadf64a38ca82f4528a0482e52b6306a",
+      "size": 711
+    },
+    {
+      "published_path": "DOUBLE_MXFP8_RESULT.md",
+      "archive_path": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_DOUBLE_MXFP8_RESULT_20261001.md",
+      "sha256": "6777ead17b8b576624248cecd88a488231f9c91b7a8bc10db55e4a81e72ce2b0",
+      "size": 7020
+    }
+  ]
+}
