@@ -1460,7 +1460,7 @@ class BlockScaledMoEGroupedGemmGluBiasKernel:
             (tokens_this_group, n_total, mSFDCol_mnl.shape[2]),
             (1, 2, 3),
         )
-        regPerSubtile = self.mma_tiler_d[1] // self.sf_vec_size
+        regPerSubtile = self.mma_tiler_d[1] // 32
         sfd_tile = (
             cute.make_layout(128),
             cute.make_layout(32 * regPerSubtile),
@@ -2517,7 +2517,7 @@ class BlockScaledMoEGroupedGemmGluBiasKernel:
 
             if cutlass.const_expr(self.generate_sfd):
                 norm_const = cutlass.Float32(norm_const_tensor[0])
-                regPerSubtile = self.mma_tiler_d[1] // self.sf_vec_size
+                regPerSubtile = self.mma_tiler_d[1] // 32
                 sfd_row_tile = (
                     cute.make_layout(128),
                     cute.make_layout(32 * regPerSubtile),
