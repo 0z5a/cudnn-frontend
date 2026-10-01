@@ -1,0 +1,71 @@
+"""Archive verified K-order, latest regressions and staged-oracle outcomes."""
+
+import hashlib
+import io
+import json
+from pathlib import Path
+import tarfile
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+PREFIX = "a3-c-float32-storage-parity-evidence-20261001"
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    names = ["a3-c-float32-storage-parity-20261001-r1", "a3-c-float32-storage-parity-cpu-audit-20261001-r1"]
+    selected = {}
+    for name in names:
+        directory = ROOT / "results" / name
+        launch = directory.with_name(name + "-launch")
+        run = json.loads((launch / "run.json").read_text())
+        assert run["status"] == "EXITED" and run["signal"] is None
+        assert run["returncode"] == 0
+        for base in (directory, launch):
+            for path in sorted(base.rglob("*")):
+                if path.is_file() and path.suffix in (".json", ".log", ".xml", ".txt"):
+                    selected[str(path.relative_to(ROOT))] = path
+    stages = [("a3-c-float32-storage-parity-cpu-audit-20261001-r1", "CPU_AUDITED_FULL24_C_STORAGE_BYTE_PARITY_QUALITY_STILL_FAILED")]
+    for name, stage in stages:
+        assert json.loads((ROOT / "results" / name / "result.json").read_text())["stage"] == stage
+    for name in (
+        "a3_c_float32_storage_parity_worker_20261001.py",
+        "a3_c_float32_storage_parity_queued_20261001.py",
+        "audit_a3_c_float32_storage_parity_20261001.py",
+        "a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+        "a3_all24_precision_probe_20261001.py",
+        "a3_model_e2e_mergefix_20261001.py",
+        "audit_a3_precision_followup_r2_20261001.py",
+        "archive_a3_c_float32_storage_parity_20261001.py",
+    ):
+        path = ROOT / "tools" / name
+        selected[str(path.relative_to(ROOT))] = path
+    for name in ("a3-latest-e2-native-provenance-20261001.json",):
+        path = ROOT / "results" / name
+        selected[str(path.relative_to(ROOT))] = path
+    selected["tools/run_logged.py"] = Path("/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py")
+    manifest = {
+        "stage": "COMPLETED_AND_CPU_AUDITED_NOT_FULL24_SUCCESS",
+        "scope": "All3 full24 native C-FP32-storage results byte-identical to frozen C-BF16-storage control; 72nativecalls, six independently audited tensors, unchanged full-logit quality gates still fail; production unchanged",
+        "files": [{"path": name, "size": path.stat().st_size, "sha256": sha(path)} for name, path in sorted(selected.items())],
+        "excluded": ["models", "cache", "engines", ".pt outputs", "native binaries"],
+    }
+    destination = ROOT / "results/a3-c-float32-storage-parity-archive-20261001"
+    destination.mkdir(exist_ok=False)
+    archive = destination / (PREFIX + ".tar.gz")
+    with tarfile.open(archive, "w:gz") as tar:
+        for name, path in selected.items():
+            tar.add(path, arcname=PREFIX + "/" + name, recursive=False)
+        payload = (json.dumps(manifest, indent=2) + "\n").encode()
+        info = tarfile.TarInfo(PREFIX + "/manifest.json")
+        info.size = len(payload)
+        tar.addfile(info, io.BytesIO(payload))
+    record = {"archive": str(archive), "sha256": sha(archive), "size": archive.stat().st_size, "files": len(selected) + 1}
+    (destination / "transport.json").write_text(json.dumps(record, indent=2) + "\n")
+    print(json.dumps(record), flush=True)
+
+
+if __name__ == "__main__":
+    main()

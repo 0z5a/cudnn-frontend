@@ -1,0 +1,118 @@
+{
+  "stage": "COMPLETED_AND_CPU_AUDITED_NOT_FULL24_SUCCESS",
+  "scope": "All3 full24 native C-FP32-storage results byte-identical to frozen C-BF16-storage control; 72nativecalls, six independently audited tensors, unchanged full-logit quality gates still fail; production unchanged",
+  "files": [
+    {
+      "path": "results/a3-c-float32-storage-parity-20261001-r1-launch/run.json",
+      "size": 788,
+      "sha256": "236cc32b90fdade31ac27ee0c9747006842eb36c1d5e9f1f89d8e19b148e02d0"
+    },
+    {
+      "path": "results/a3-c-float32-storage-parity-20261001-r1-launch/stderr.log",
+      "size": 193,
+      "sha256": "b06fec17d21f1c87caa13a969be7861c2385f79df1ee4850080cddeadd911083"
+    },
+    {
+      "path": "results/a3-c-float32-storage-parity-20261001-r1-launch/stdout.log",
+      "size": 2865,
+      "sha256": "a8f49f3823bf48da00b2afef77cf6a0684c26ceaa300003c6882e64267b738d5"
+    },
+    {
+      "path": "results/a3-c-float32-storage-parity-20261001-r1/admission.json",
+      "size": 106,
+      "sha256": "07558b4f726ccfcbd130fe09b64289873fb7523ec0e3c4ff23081b1d5269bd8b"
+    },
+    {
+      "path": "results/a3-c-float32-storage-parity-20261001-r1/admission_wait.json",
+      "size": 76,
+      "sha256": "e20cb93b55ed62527d0ef66d8ff4632751b9d16b0845ec3ddf980708899fb1aa"
+    },
+    {
+      "path": "results/a3-c-float32-storage-parity-20261001-r1/partial.json",
+      "size": 4360,
+      "sha256": "f84ac1fcfe78f9d3fdf4e312ed7b2c62c6f1bcba959131c31d7d027827308e21"
+    },
+    {
+      "path": "results/a3-c-float32-storage-parity-20261001-r1/result.json",
+      "size": 17252,
+      "sha256": "79bfc927214835daf2b2d85f2076ada368df9c95692e52dd1c0d2e4908a39c2e"
+    },
+    {
+      "path": "results/a3-c-float32-storage-parity-cpu-audit-20261001-r1-launch/run.json",
+      "size": 628,
+      "sha256": "fe15ad30359195ed4f73abbc1a35196b3bc5b8db27776dff1cab3b4a45b4dbc0"
+    },
+    {
+      "path": "results/a3-c-float32-storage-parity-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-c-float32-storage-parity-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 131,
+      "sha256": "dbfd4158bed7fb14610e1b9059ff082c4efaed7c5e218e229a2fa87d3b3bdfaa"
+    },
+    {
+      "path": "results/a3-c-float32-storage-parity-cpu-audit-20261001-r1/result.json",
+      "size": 6282,
+      "sha256": "72ad9fc425cb587f51eb3dd401c561100d90aa1e9fea05512a74ab8a8dc427e2"
+    },
+    {
+      "path": "results/a3-latest-e2-native-provenance-20261001.json",
+      "size": 18959,
+      "sha256": "30ea6cd6a09d73b01d22215d98c2d7a5964d04d97489f64b876fa979013b3840"
+    },
+    {
+      "path": "tools/a3_all24_precision_probe_20261001.py",
+      "size": 12896,
+      "sha256": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5"
+    },
+    {
+      "path": "tools/a3_c_float32_storage_parity_queued_20261001.py",
+      "size": 1632,
+      "sha256": "3919be6cd25ebe529a9e27492d76195f067ccd73ad6422bececad75870b3bfbe"
+    },
+    {
+      "path": "tools/a3_c_float32_storage_parity_worker_20261001.py",
+      "size": 14731,
+      "sha256": "668f5f487dea9216d05fec2a35c1b04b22ac02e27d96e6ab17e4587d0eb503e3"
+    },
+    {
+      "path": "tools/a3_model_e2e_mergefix_20261001.py",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "path": "tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+      "size": 131629,
+      "sha256": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3"
+    },
+    {
+      "path": "tools/archive_a3_c_float32_storage_parity_20261001.py",
+      "size": 3487,
+      "sha256": "c7d6e2ec060f13c1b8bfab7c53dde237a4d7d982f200965845ab009cd789b595"
+    },
+    {
+      "path": "tools/audit_a3_c_float32_storage_parity_20261001.py",
+      "size": 9538,
+      "sha256": "3913e17fd60f128654f04b6ebb744402910c056794d21bdaad6260f12f04fa43"
+    },
+    {
+      "path": "tools/audit_a3_precision_followup_r2_20261001.py",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "tools/run_logged.py",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    }
+  ],
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    ".pt outputs",
+    "native binaries"
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "stage": "COMPLETED_AND_CPU_AUDITED_NOT_FULL24_SUCCESS",
+  "scope": "N128 full24 actual native feedback: all3 logit outputs byte-identical to frozen N256 control, 72nativecalls, six full logits plus576 per-layer trace tensors independently audited; route divergence located, quality still fails; production unchanged",
+  "files": [
+    {
+      "path": "results/a3-latest-e2-native-provenance-20261001.json",
+      "size": 18959,
+      "sha256": "30ea6cd6a09d73b01d22215d98c2d7a5964d04d97489f64b876fa979013b3840"
+    },
+    {
+      "path": "results/a3-n128-mxfp8-staged-trace-20261001-r1-launch/run.json",
+      "size": 784,
+      "sha256": "64359e2f120019170ea57d90a9e8aad86e4f29c53cbeb97fd2521306fd61a50c"
+    },
+    {
+      "path": "results/a3-n128-mxfp8-staged-trace-20261001-r1-launch/stderr.log",
+      "size": 193,
+      "sha256": "0312e4afd1dd8d1141b56a41fe6daec15fcb4c97378c0e61ee7d6fa0098e4d83"
+    },
+    {
+      "path": "results/a3-n128-mxfp8-staged-trace-20261001-r1-launch/stdout.log",
+      "size": 32628,
+      "sha256": "7bd35e5b7daba2b23f7b2464601b55485d6be567ca50b6c8766eb1c631046957"
+    },
+    {
+      "path": "results/a3-n128-mxfp8-staged-trace-20261001-r1/admission.json",
+      "size": 105,
+      "sha256": "5c7bb33ce54193967079a538fd4fe9d9ecd07663dcb1012bb9ffd89cbd8a3613"
+    },
+    {
+      "path": "results/a3-n128-mxfp8-staged-trace-20261001-r1/admission_wait.json",
+      "size": 76,
+      "sha256": "178f6ca7fe8f032806ff581b65d68ead026a78c27e8a8c566ccdef21c25ea2a2"
+    },
+    {
+      "path": "results/a3-n128-mxfp8-staged-trace-20261001-r1/partial.json",
+      "size": 50288,
+      "sha256": "150b5fed95eb2471eb9f63fc0a43bf979cd19bb10d173f8a594a31088ad22921"
+    },
+    {
+      "path": "results/a3-n128-mxfp8-staged-trace-20261001-r1/result.json",
+      "size": 63424,
+      "sha256": "72bfe39893e39eb6dd3b19e11925256c93a02c67a3a277250ef95f6d7c4a1fe1"
+    },
+    {
+      "path": "results/a3-n128-mxfp8-staged-trace-cpu-audit-20261001-r1-launch/run.json",
+      "size": 625,
+      "sha256": "6ff39084369b6331ab64bbcdd834a9ed5dcbe309b0bfa26261d8644a2c074cd5"
+    },
+    {
+      "path": "results/a3-n128-mxfp8-staged-trace-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-n128-mxfp8-staged-trace-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 130,
+      "sha256": "6ae0cf5fb426957426d6c6bb0f0fe02afec6ccc54061347b42fe55f34d7e7ba7"
+    },
+    {
+      "path": "results/a3-n128-mxfp8-staged-trace-cpu-audit-20261001-r1/result.json",
+      "size": 185938,
+      "sha256": "c38d9131452ca74828b2a03b87e524e3edab67ef6a94f5a2cb9e9811f6bdb462"
+    },
+    {
+      "path": "tools/a3_all24_precision_probe_20261001.py",
+      "size": 12896,
+      "sha256": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5"
+    },
+    {
+      "path": "tools/a3_model_e2e_mergefix_20261001.py",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "path": "tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+      "size": 131629,
+      "sha256": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3"
+    },
+    {
+      "path": "tools/a3_n128_mxfp8_staged_trace_queued_20261001.py",
+      "size": 1631,
+      "sha256": "1deb7d6e7af69e1e91b84d3fd7ab2fdd041775383e31668ae12e0d1d620d31d8"
+    },
+    {
+      "path": "tools/a3_n128_mxfp8_staged_trace_worker_20261001.py",
+      "size": 15566,
+      "sha256": "820f6adb7206f6e409bacc144d1aaaeb429315478a8c319ca03020f9b2a86664"
+    },
+    {
+      "path": "tools/archive_a3_n128_mxfp8_staged_trace_20261001.py",
+      "size": 3521,
+      "sha256": "d7341c0c2fd77dc3dbb5249ee67f512ef1f016c19e1edbd0c3472c30a0177c1f"
+    },
+    {
+      "path": "tools/audit_a3_n128_mxfp8_staged_trace_20261001.py",
+      "size": 12143,
+      "sha256": "06b9902a9ca0c98b5575cf57fdf755b4b097ecb5d4520758b97464e06b3e2960"
+    },
+    {
+      "path": "tools/audit_a3_precision_followup_r2_20261001.py",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "tools/run_logged.py",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    }
+  ],
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    ".pt outputs",
+    "native binaries"
+  ]
+}

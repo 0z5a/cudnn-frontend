@@ -1,0 +1,150 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Independent CPU full-logit/gate/provenance audit; no producer import or new native calls."""
+
+import argparse
+import importlib.util
+import json
+import math
+import os
+from pathlib import Path
+import subprocess
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+HELPER = Path(__file__).with_name("audit_a3_precision_followup_r2_20261001.py")
+spec = importlib.util.spec_from_file_location("k32_cpu_helper", HELPER)
+a = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(a)
+t = a.torch
+HEAD = "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1"
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    directory = a.ROOT / "results/a3-c-float32-storage-parity-20261001-r1"
+    run = json.loads((directory.with_name(directory.name + "-launch") / "run.json").read_text())
+    meta = json.loads((directory / "result.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    assert meta["stage"] == "DIAGNOSTIC_COMPLETE" and meta["source_head"] == HEAD
+    assert meta["model_parameters"] == 1334628352 and meta["native_calls"] == 72
+    assert not meta["original_baseline_replaced"] and meta["original_baseline_head"] == "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+    assert meta["formal_performance"] == "NOT_RUN" and meta["service_final"] == "inactive"
+    source = Path(meta["source"])
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == HEAD
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    for record in meta["imports"].values():
+        assert Path(record["path"]).resolve().is_relative_to(source / "python")
+        assert a.sha_file(record["path"]) == record["sha256"]
+    prototype = meta["experimental_native_kernel"]
+    assert Path(prototype["path"]).resolve() == a.ROOT / "tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py"
+    assert a.sha_file(prototype["path"]) == prototype["sha256"]
+    assert len(meta["native_plans"]) == 1 and list(meta["native_plans"].values()) == [prototype]
+    assert not meta["production_source_modified"] and meta["native_compute"] == "MXFP8_tensor_core_FP32_accumulation_BF16_C_SiLU_product_rounding"
+    native = json.loads((a.ROOT / "results/a3-latest-e2-native-provenance-20261001.json").read_text())
+    assert native["native_build"] == "FRESH_RC0" and native["head"] == HEAD
+    assert meta["imports"]["binding"]["sha256"] == native["binding"]["sha256"]
+    worker = a.ROOT / "tools/a3_c_float32_storage_parity_worker_20261001.py"
+    wrapper = Path(run["argv"][1])
+    assert a.sha_file(worker) == meta["harness_sha256"]
+    assert a.sha_file(a.ROOT / "tools/a3_all24_precision_probe_20261001.py") == meta["precision_probe_sha256"]
+    assert a.sha_file(a.ROOT / "tools/a3_model_e2e_mergefix_20261001.py") == meta["base_adapter_sha256"]
+    admission = json.loads((directory / "admission.json").read_text())
+    assert admission["stage"] == "LOCK_ADMITTED" and not admission["torch_imported"]
+    baseline_dir = a.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    baseline_meta = json.loads((baseline_dir / "result.json").read_text())
+    assert meta["checkpoint"] == baseline_meta["checkpoint"]
+    baseline = t.load(baseline_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    values = t.load(directory / "outputs.pt", map_location="cpu", weights_only=True)
+    assert len(values) == 6 and len(meta["rows"]) == 3 and len(meta["policies"]) == 1
+    paired_dir = a.ROOT / "results/a3-mxfp8-bf16-staged-full-model-20261001-r1"
+    assert a.sha_file(paired_dir / "result.json") == meta["paired_result_sha256"]
+    assert a.sha_file(paired_dir / "outputs.pt") == meta["paired_outputs_sha256"]
+    paired_meta = json.loads((paired_dir / "result.json").read_text())
+    paired_run = json.loads((paired_dir.with_name(paired_dir.name + "-launch") / "run.json").read_text())
+    assert paired_run == meta["paired_run"] and paired_run["status"] == "EXITED" and paired_run["returncode"] == 0
+    assert paired_meta["source_head"] == HEAD and paired_meta["experimental_native_kernel"] == prototype
+    assert paired_meta["imports"]["binding"] == meta["imports"]["binding"]
+    assert meta["native_c_storage"] == "torch.float32" and meta["C_used_by_model"] is False
+    paired = t.load(paired_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    t.set_num_threads(4)
+    audited = []
+    policies = {}
+    with t.inference_mode():
+        for policy in meta["policies"]:
+            name = policy["policy"]
+            assert policy["native_semantics_supported"]
+            rows = [r for r in meta["rows"] if r["policy"] == name]
+            assert [r["case"] for r in rows] == [0, 1, 2]
+            complete = True
+            for row in rows:
+                case = row["case"]
+                prefix = f"{name}/{case}/"
+                oracle, stock = values[prefix + "reference"], baseline[f"forward_{case}_stock"]
+                assert oracle.shape == stock.shape == (1, (73, 70, 256)[case], 49155)
+                assert row["mxfp8_layers"] == list(range(24)) and row["gemm_k"] == 4096
+                metric = a.difference(oracle, stock)
+                ratio = (t.linalg.vector_norm(oracle.double()) / t.linalg.vector_norm(stock.double())).item()
+                bound = max(0.0, metric["relative_l2"] - 0.01 * ratio)
+                for actual, key in ((metric["relative_l2"], "oracle_bf16_relative_l2_fp64"), (ratio, "norm_ratio_fp64"), (bound, "native_bf16_lower_bound")):
+                    assert math.isclose(actual, row[key], rel_tol=1e-12, abs_tol=1e-14)
+                assert (bound > 0.05) == row["both_gates_impossible"]
+                record = {"policy": name, "case": case, "oracle_bf16_fp64": metric, "native_bf16_lower_bound": bound}
+                if bound > 0.05:
+                    assert row["native_calls"] == 0 and row["native_status"] == "NOT_RUN_FIXED_ORACLE_INCOMPATIBLE"
+                    assert prefix + "native" not in values
+                    complete = False
+                else:
+                    assert row["native_calls"] == 24 and row["native_status"] == "EXECUTED"
+                    v = values[prefix + "native"]
+                    assert v.shape == oracle.shape
+                    prior_prefix = f"k32_mxfp8_dot_bf16_stage/{case}/"
+                    prior_v, prior_oracle = paired[prior_prefix + "native"], paired[prior_prefix + "reference"]
+                    assert t.equal(oracle.view(t.uint8), prior_oracle.view(t.uint8))
+                    assert t.equal(v.view(t.uint8), prior_v.view(t.uint8))
+                    a.compare_metric(a.difference(v, prior_v, t.float32), row["paired_native"])
+                    assert row["paired_native_byte_equal"] is True
+                    assert row["native_c_storage"] == "torch.float32" and row["paired_native_c_storage"] == "torch.bfloat16"
+                    record.update(paired_native_byte_equal=True, paired_oracle_byte_equal=True, paired_native_fp64=a.difference(v, prior_v))
+                    for key, ref in (("native_oracle", oracle), ("native_bf16", stock)):
+                        a.compare_metric(a.difference(v, ref, t.float32), row[key])
+                        record[key + "_fp64"] = a.difference(v, ref)
+                    op = record["native_oracle_fp64"]["relative_l2"] <= 0.01
+                    bp = record["native_bf16_fp64"]["relative_l2"] <= 0.05
+                    assert op == row["oracle_gate_pass"] and bp == row["bf16_gate_pass"]
+                    record.update(oracle_gate_pass=op, bf16_gate_pass=bp)
+                    complete &= op and bp
+                audited.append(record)
+            policies[name] = bool(complete)
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "CPU_AUDITED_FULL24_C_STORAGE_BYTE_PARITY_QUALITY_STILL_FAILED",
+        "head": HEAD,
+        "run": run,
+        "rows": audited,
+        "all_three_cases_both_gates": policies,
+        "native_calls_observed": 72,
+        "new_native_calls": 0,
+        "cuda_initialized": False,
+        "tensor_count": len(values),
+        "tensors": a.flatten_tensors(values),
+        "paired_outputs_sha256": a.sha_file(paired_dir / "outputs.pt"),
+        "paired_result_sha256": a.sha_file(paired_dir / "result.json"),
+        "producer_outputs_sha256": a.sha_file(directory / "outputs.pt"),
+        "baseline_outputs_sha256": a.sha_file(baseline_dir / "outputs.pt"),
+        "harness_sha256": a.sha_file(__file__),
+        "worker_sha256": a.sha_file(worker),
+        "wrapper_sha256": a.sha_file(wrapper),
+        "cpu_helper_sha256": a.sha_file(HELPER),
+        "formal_performance": "NOT_RUN",
+        "limits": "All6 saved full-logit tensors audited against the unchanged full BF16 baseline and prior C-BF16-storage control. All3 complete cases executed24 native calls each; oracle and native full logits are byte-identical to the frozen paired control. All3 native/oracle gates still fail. No candidate accepted, no generation/KV or performance claim.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "all_cases": policies}), flush=True)
+
+
+if __name__ == "__main__":
+    main()
