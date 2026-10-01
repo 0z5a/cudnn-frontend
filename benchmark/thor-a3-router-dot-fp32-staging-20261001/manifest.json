@@ -1,0 +1,123 @@
+{
+  "stage": "COMPLETED_AND_CPU_AUDITED_NOT_FULL24_SUCCESS",
+  "scope": "Router-dot-only FP32 staging, frozen independent oracle/all24/full model unchanged, both short oracle compatibility bounds fail/native not run, long24nativecalls failoracle1%; all4full logits independently audited; production unchanged",
+  "files": [
+    {
+      "path": "results/a3-latest-e2-native-provenance-20261001.json",
+      "size": 18959,
+      "sha256": "30ea6cd6a09d73b01d22215d98c2d7a5964d04d97489f64b876fa979013b3840"
+    },
+    {
+      "path": "results/a3-router-dot-fp32-mxfp8-staged-20261001-r1-launch/run.json",
+      "size": 796,
+      "sha256": "eff591bd79c5f3a35ae01bca565e1b6a87653aab1dd0ebd35af96624bad4bb26"
+    },
+    {
+      "path": "results/a3-router-dot-fp32-mxfp8-staged-20261001-r1-launch/stderr.log",
+      "size": 193,
+      "sha256": "9262c34386dcb5b2f61c7988318a5798260df6aecaa125a815857b40253d0c14"
+    },
+    {
+      "path": "results/a3-router-dot-fp32-mxfp8-staged-20261001-r1-launch/stdout.log",
+      "size": 1843,
+      "sha256": "06c50739dae798ddbec52ca3be8a9bb6d8cddd322e347d00dc2aed4bf4d8d2d4"
+    },
+    {
+      "path": "results/a3-router-dot-fp32-mxfp8-staged-20261001-r1/admission.json",
+      "size": 105,
+      "sha256": "24cd8e7cd0023ba601f46452b4fc2bf5cc7ec7a7aae7bff7f8cd6b85431d64ad"
+    },
+    {
+      "path": "results/a3-router-dot-fp32-mxfp8-staged-20261001-r1/admission_wait.json",
+      "size": 76,
+      "sha256": "e75fe9aca1c27e39fb5d3a39258c1148446cfe12bae5a270df5a766a34fb75af"
+    },
+    {
+      "path": "results/a3-router-dot-fp32-mxfp8-staged-20261001-r1/partial.json",
+      "size": 3000,
+      "sha256": "6ebfee9f0efb6998d46e6226a380602efcc8f3e001ff6acf9a7a9e348e0bd187"
+    },
+    {
+      "path": "results/a3-router-dot-fp32-mxfp8-staged-20261001-r1/result.json",
+      "size": 15444,
+      "sha256": "b9cecfd4c181a73ede5d979835289d25740fd99a9f51fbb9947d36f08a90d5f9"
+    },
+    {
+      "path": "results/a3-router-dot-fp32-mxfp8-staged-cpu-audit-20261001-r1-launch/run.json",
+      "size": 636,
+      "sha256": "215f1d16a6c3908e27b550d7297d2fd38f95028bc50f49c1e1b4c0d662857c65"
+    },
+    {
+      "path": "results/a3-router-dot-fp32-mxfp8-staged-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-router-dot-fp32-mxfp8-staged-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 140,
+      "sha256": "3840057b1013c2c395c1f5f7e80ff83ee3cbac824742e6a4b66b711ebda93535"
+    },
+    {
+      "path": "results/a3-router-dot-fp32-mxfp8-staged-cpu-audit-20261001-r1/result.json",
+      "size": 4401,
+      "sha256": "cc8ddd2e38f1793e30703ab5f5d4dc548a5b5680a8525c0ebba4873fb2f9f518"
+    },
+    {
+      "path": "runtime/modeling_granitemoe.py",
+      "size": 29657,
+      "sha256": "0288f149b1beca4bd1b19bc866886115963a6c11abc2c7e022f417acb2eacd79"
+    },
+    {
+      "path": "tools/a3_all24_precision_probe_20261001.py",
+      "size": 12896,
+      "sha256": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5"
+    },
+    {
+      "path": "tools/a3_model_e2e_mergefix_20261001.py",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "path": "tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+      "size": 131629,
+      "sha256": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3"
+    },
+    {
+      "path": "tools/a3_router_dot_fp32_mxfp8_staged_queued_20261001.py",
+      "size": 1636,
+      "sha256": "7eacfc86d35bee2f04c2dea0d92806b0b0ac6353aa75e66ffdfcb7d9e9ee70df"
+    },
+    {
+      "path": "tools/a3_router_dot_fp32_mxfp8_staged_worker_20261001.py",
+      "size": 14178,
+      "sha256": "d8fe32bb9da0932e79f1fc966fdca89ed255a3842bba800c8ef82fd01923d754"
+    },
+    {
+      "path": "tools/archive_a3_router_dot_fp32_mxfp8_staged_20261001.py",
+      "size": 3842,
+      "sha256": "6677fe8f8ccdab4e4626fb9131c9bd30ee6c061da360af7347766d4ff4f3ac82"
+    },
+    {
+      "path": "tools/audit_a3_precision_followup_r2_20261001.py",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "tools/audit_a3_router_dot_fp32_mxfp8_staged_20261001.py",
+      "size": 8053,
+      "sha256": "5b2ceb32957ef8a78f2c58428776e3958fa172b9730ada957d1ba75adf9394f5"
+    },
+    {
+      "path": "tools/run_logged.py",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    }
+  ],
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    ".pt outputs",
+    "native binaries"
+  ]
+}

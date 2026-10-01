@@ -1,0 +1,121 @@
+{
+  "stage": "CPU_AUDITED_ROUTER_DOT_FP32_MXFP8_STAGE_COMPLETE_POLICY_REJECTED",
+  "head": "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1",
+  "run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_router_dot_fp32_mxfp8_staged_queued_20261001.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-router-dot-fp32-mxfp8-staged-20261001-r1",
+      "--expected-source",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+      "--expected-head",
+      "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+    "started_utc": "2026-10-01T13:28:15.060353+00:00",
+    "deadline_seconds": 5400.0,
+    "status": "EXITED",
+    "selected_env": {},
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 14.137372522000078
+  },
+  "rows": [
+    {
+      "policy": "k32_router_dot_fp32_mxfp8_bf16_stage",
+      "case": 0,
+      "oracle_bf16_fp64": {
+        "max_abs": 5.46875,
+        "relative_l2": 0.16669470492024754,
+        "argmax_equal_fraction": 0.8904109589041096
+      },
+      "native_bf16_lower_bound": 0.15674108929822891
+    },
+    {
+      "policy": "k32_router_dot_fp32_mxfp8_bf16_stage",
+      "case": 1,
+      "oracle_bf16_fp64": {
+        "max_abs": 5.46875,
+        "relative_l2": 0.16646781886976075,
+        "argmax_equal_fraction": 0.9142857142857143
+      },
+      "native_bf16_lower_bound": 0.15652310973194078
+    },
+    {
+      "policy": "k32_router_dot_fp32_mxfp8_bf16_stage",
+      "case": 2,
+      "oracle_bf16_fp64": {
+        "max_abs": 4.1875,
+        "relative_l2": 0.049524542126325864,
+        "argmax_equal_fraction": 0.9765625
+      },
+      "native_bf16_lower_bound": 0.03951860450063289,
+      "native_oracle_fp64": {
+        "max_abs": 3.25,
+        "relative_l2": 0.03703460883086126,
+        "argmax_equal_fraction": 0.98046875
+      },
+      "native_bf16_fp64": {
+        "max_abs": 4.46875,
+        "relative_l2": 0.046430348555831155,
+        "argmax_equal_fraction": 0.984375
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": true
+    }
+  ],
+  "all_three_cases_both_gates": {
+    "k32_router_dot_fp32_mxfp8_bf16_stage": false
+  },
+  "native_calls_observed": 24,
+  "new_native_calls": 0,
+  "cuda_initialized": false,
+  "tensor_count": 4,
+  "tensors": {
+    "k32_router_dot_fp32_mxfp8_bf16_stage/0/reference": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "9252897c20894db435a4d0177eadd65a9414e1e4686c72e7a2b28831d943ea92"
+    },
+    "k32_router_dot_fp32_mxfp8_bf16_stage/1/reference": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "6976c328bdc2ea69d240535b2e0fd81e1db7cafc19be48cc801b2b6801b356e6"
+    },
+    "k32_router_dot_fp32_mxfp8_bf16_stage/2/reference": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "9450fcf06ad1666bcc5e6ba7be7b31cb7f19d527eae662d84cb1808d683cbefb"
+    },
+    "k32_router_dot_fp32_mxfp8_bf16_stage/2/native": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "0362404773da3a325b5ca872fd346f53605ae10c558cf15573fbabf5078ffe2f"
+    }
+  },
+  "producer_outputs_sha256": "c3d0a6f4797c28768ea5c51cd16e3a3d8af2b9f28555002af5e92e4506c7515b",
+  "baseline_outputs_sha256": "a997dac0bbd8b137ecbf7ddbefc5f356c2633d75a9d3cde1d035335cb028440f",
+  "harness_sha256": "5b2ceb32957ef8a78f2c58428776e3958fa172b9730ada957d1ba75adf9394f5",
+  "worker_sha256": "d8fe32bb9da0932e79f1fc966fdca89ed255a3842bba800c8ef82fd01923d754",
+  "wrapper_sha256": "7eacfc86d35bee2f04c2dea0d92806b0b0ac6353aa75e66ffdfcb7d9e9ee70df",
+  "cpu_helper_sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944",
+  "formal_performance": "NOT_RUN",
+  "limits": "All4 saved full-logit tensors audited. FP32 router-dot-only recipe leaves BF16 probabilities/rest of model and actual native MXFP8/BF16-stage compute unchanged. Both short fixed-oracle compatibility bounds fail, no native short execution; long24actualnativecalls fail1%oracle. Complete policy rejected. No accepted feature, generation/KV or performance claim."
+}
