@@ -1,0 +1,295 @@
+{
+  "stage": "CPU_AUDITED_FULL24_PRODUCTION_C_STORE_BYTE_PARITY_QUALITY_STILL_FAILED",
+  "head": "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1",
+  "run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_production_c_store_full24_pair_queued_20261001.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-production-c-store-full24-pair-20261001-r1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+    "started_utc": "2026-10-01T14:30:03.320317+00:00",
+    "deadline_seconds": 5400.0,
+    "status": "EXITED",
+    "selected_env": {},
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 21.967799715999718
+  },
+  "tensor_count": 12,
+  "tensors": {
+    "reference/0": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "1e94eb2d0a10315211e02a38d759c809a1710b7ac530c3a64c41fbc4f9bc28a6"
+    },
+    "reference/1": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "f32a71d378cf281c4386e5c30ce0eed687a5b491ab3f87df4153536fc42eecb0"
+    },
+    "reference/2": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "58a44571128dfe749fee1fe5cdff39b7eb2d7efe73ba19529595d341787493df"
+    },
+    "original_emit/0": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d3edf9da9463a7e27b3ef558b4723becc41c4661973b4682ceb23091aade1e70"
+    },
+    "original_emit/1": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d4c3622d38b773611ede30e78779a5fa4ef08531bbcef5aa05e12be0a1127ed0"
+    },
+    "original_emit/2": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "47e54ecce20efef4d70920acfc3e118f6bf7f093fd9fbba12fd6ed7dc592896f"
+    },
+    "protected_emit/0": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d3edf9da9463a7e27b3ef558b4723becc41c4661973b4682ceb23091aade1e70"
+    },
+    "protected_emit/1": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d4c3622d38b773611ede30e78779a5fa4ef08531bbcef5aa05e12be0a1127ed0"
+    },
+    "protected_emit/2": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "47e54ecce20efef4d70920acfc3e118f6bf7f093fd9fbba12fd6ed7dc592896f"
+    },
+    "protected_omit/0": {
+      "shape": [
+        1,
+        73,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d3edf9da9463a7e27b3ef558b4723becc41c4661973b4682ceb23091aade1e70"
+    },
+    "protected_omit/1": {
+      "shape": [
+        1,
+        70,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "d4c3622d38b773611ede30e78779a5fa4ef08531bbcef5aa05e12be0a1127ed0"
+    },
+    "protected_omit/2": {
+      "shape": [
+        1,
+        256,
+        49155
+      ],
+      "dtype": "torch.bfloat16",
+      "sha256": "47e54ecce20efef4d70920acfc3e118f6bf7f093fd9fbba12fd6ed7dc592896f"
+    }
+  },
+  "rows": [
+    {
+      "case": 0,
+      "mode": "original_emit",
+      "paired_byte_equal": true,
+      "native_oracle": {
+        "max_abs": 7.4375,
+        "relative_l2": 0.19155049285161133,
+        "argmax_equal_fraction": 0.8767123287671232
+      },
+      "native_bf16": {
+        "max_abs": 8.923828125,
+        "relative_l2": 0.24998459677820375,
+        "argmax_equal_fraction": 0.8493150684931506
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "case": 1,
+      "mode": "original_emit",
+      "paired_byte_equal": true,
+      "native_oracle": {
+        "max_abs": 7.4375,
+        "relative_l2": 0.186573928490882,
+        "argmax_equal_fraction": 0.9142857142857143
+      },
+      "native_bf16": {
+        "max_abs": 8.923828125,
+        "relative_l2": 0.2359579546323672,
+        "argmax_equal_fraction": 0.8428571428571429
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "case": 2,
+      "mode": "original_emit",
+      "paired_byte_equal": true,
+      "native_oracle": {
+        "max_abs": 6.0,
+        "relative_l2": 0.07215137522066005,
+        "argmax_equal_fraction": 0.96875
+      },
+      "native_bf16": {
+        "max_abs": 5.9375,
+        "relative_l2": 0.08274962995477206,
+        "argmax_equal_fraction": 0.9453125
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "case": 0,
+      "mode": "protected_emit",
+      "paired_byte_equal": true,
+      "native_oracle": {
+        "max_abs": 7.4375,
+        "relative_l2": 0.19155049285161133,
+        "argmax_equal_fraction": 0.8767123287671232
+      },
+      "native_bf16": {
+        "max_abs": 8.923828125,
+        "relative_l2": 0.24998459677820375,
+        "argmax_equal_fraction": 0.8493150684931506
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "case": 1,
+      "mode": "protected_emit",
+      "paired_byte_equal": true,
+      "native_oracle": {
+        "max_abs": 7.4375,
+        "relative_l2": 0.186573928490882,
+        "argmax_equal_fraction": 0.9142857142857143
+      },
+      "native_bf16": {
+        "max_abs": 8.923828125,
+        "relative_l2": 0.2359579546323672,
+        "argmax_equal_fraction": 0.8428571428571429
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "case": 2,
+      "mode": "protected_emit",
+      "paired_byte_equal": true,
+      "native_oracle": {
+        "max_abs": 6.0,
+        "relative_l2": 0.07215137522066005,
+        "argmax_equal_fraction": 0.96875
+      },
+      "native_bf16": {
+        "max_abs": 5.9375,
+        "relative_l2": 0.08274962995477206,
+        "argmax_equal_fraction": 0.9453125
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "case": 0,
+      "mode": "protected_omit",
+      "paired_byte_equal": true,
+      "native_oracle": {
+        "max_abs": 7.4375,
+        "relative_l2": 0.19155049285161133,
+        "argmax_equal_fraction": 0.8767123287671232
+      },
+      "native_bf16": {
+        "max_abs": 8.923828125,
+        "relative_l2": 0.24998459677820375,
+        "argmax_equal_fraction": 0.8493150684931506
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "case": 1,
+      "mode": "protected_omit",
+      "paired_byte_equal": true,
+      "native_oracle": {
+        "max_abs": 7.4375,
+        "relative_l2": 0.186573928490882,
+        "argmax_equal_fraction": 0.9142857142857143
+      },
+      "native_bf16": {
+        "max_abs": 8.923828125,
+        "relative_l2": 0.2359579546323672,
+        "argmax_equal_fraction": 0.8428571428571429
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    },
+    {
+      "case": 2,
+      "mode": "protected_omit",
+      "paired_byte_equal": true,
+      "native_oracle": {
+        "max_abs": 6.0,
+        "relative_l2": 0.07215137522066005,
+        "argmax_equal_fraction": 0.96875
+      },
+      "native_bf16": {
+        "max_abs": 5.9375,
+        "relative_l2": 0.08274962995477206,
+        "argmax_equal_fraction": 0.9453125
+      },
+      "oracle_gate_pass": false,
+      "bf16_gate_pass": false
+    }
+  ],
+  "model_native_calls_observed": 216,
+  "new_native_calls": 0,
+  "cuda_initialized": false,
+  "producer_outputs_sha256": "fa49eb96e45178a756c051ff1659220207810d954599f3f36dee1ed2e8549b6a",
+  "producer_metadata_sha256": "d9ca543e95a1294af49eef3cc1015fb4632bff79790d7ea4c5f4c8dde448cdf9",
+  "original_baseline_outputs_sha256": "a997dac0bbd8b137ecbf7ddbefc5f356c2633d75a9d3cde1d035335cb028440f",
+  "harness_sha256": "3daa644d3fb3406f5b03887d19bbbd7b5726d359c92863982950a0d7da4e8fc8",
+  "cpu_helper_sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944",
+  "limits": "All9 native full-logit outputs are byteidentical to the new unchanged-production control,216 actualnative calls/all24 percase. All12 savedtensors audited with originaloracle/BF16 gates unchanged. This is private configuration parity, not quality/generation/KV/modelthroughput/publicAPI acceptance. Original recipe is not replaced, and this round does not repeat earlier failed precision recipes as new successes."
+}

@@ -1,0 +1,99 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""CPU-only complete-logit audit of private production C-store configuration parity."""
+
+import argparse
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+HELPER = Path(__file__).with_name("audit_a3_precision_followup_r2_20261001.py")
+spec = importlib.util.spec_from_file_location("full24_c_store_cpu", HELPER)
+a = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(a)
+t = a.torch
+HEAD = "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1"
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    directory = a.ROOT / "results/a3-production-c-store-full24-pair-20261001-r1"
+    meta = json.loads((directory / "result.json").read_text())
+    run = json.loads((directory.with_name(directory.name + "-launch") / "run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    assert meta["stage"] == "FULL24_PRIVATE_C_STORE_BYTE_PARITY_DIAGNOSTIC_COMPLETE" and meta["head"] == HEAD
+    assert meta["model_native_calls"] == 216 and meta["model_parameters"] == 1334628352
+    assert not meta["original_baseline_replaced"] and not meta["public_feature_accepted"] and not meta["production_source_modified"]
+    assert meta["formal_model_performance"] == meta["generation_KV"] == "NOT_RUN" and meta["service_final"] == "inactive"
+    source = Path(meta["source"])
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == HEAD
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    for record in [*meta["imports"].values(), *meta["native_plans"].values(), meta["base_adapter"], meta["original_kernel"], meta["private_kernel"]]:
+        assert a.sha_file(record["path"]) == record["sha256"]
+    for value in meta["imports"].values():
+        assert Path(value["path"]).resolve().is_relative_to(source / "python")
+    assert meta["imports"]["binding"]["sha256"] == "37e7c4e0d16bd0a952ade77ccd577ccadae1888f166a4c897c9e98a104606c2a"
+    assert meta["original_kernel"]["sha256"] == "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+    assert meta["private_kernel"]["sha256"] == "3543ffc3140058646845040a4924278ae2a323d049492d4b5383af0d6ff04482"
+    assert meta["base_adapter"]["sha256"] == "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    assert len(meta["native_plans"]) == 3
+    assert a.sha_file(run["argv"][1]) == meta["harness_sha256"]
+    admission = json.loads((directory / "admission.json").read_text())
+    assert admission["stage"] == "LOCK_ADMITTED" and not admission["torch_imported"]
+    baseline_dir = a.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    assert a.sha_file(baseline_dir / "outputs.pt") == meta["original_baseline_outputs_sha256"]
+    assert meta["checkpoint_sha256"] == "ac02591061f1344027a7e7b11dbb4143f75f166c47dc09b742f5de3ab1dde1d1"
+    values = t.load(directory / "outputs.pt", map_location="cpu", weights_only=True)
+    baseline = t.load(baseline_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    assert len(values) == 12 and len(meta["rows"]) == 9
+    rows = []
+    for row in meta["rows"]:
+        case, mode = row["case"], row["mode"]
+        assert row["mxfp8_layers"] == list(range(24)) and row["native_calls"] == 24 and row["tokens"] == (73, 70, 256)[case]
+        value = values[f"{mode}/{case}"]
+        original = values[f"original_emit/{case}"]
+        oracle, stock = values[f"reference/{case}"], baseline[f"forward_{case}_stock"]
+        assert value.shape == oracle.shape == stock.shape == (1, row["tokens"], 49155)
+        assert value.dtype == original.dtype and t.equal(value.flatten().view(t.uint8), original.flatten().view(t.uint8))
+        assert row["paired_byte_equal"]
+        a.compare_metric(a.difference(value, original, t.float32), row["paired_metric"])
+        metrics = {}
+        for key, reference in (("native_oracle", oracle), ("native_bf16", stock)):
+            a.compare_metric(a.difference(value, reference, t.float32), row[key])
+            metrics[key] = a.difference(value, reference)
+        op, bp = metrics["native_oracle"]["relative_l2"] <= 0.01, metrics["native_bf16"]["relative_l2"] <= 0.05
+        assert op == row["oracle_gate_pass"] and bp == row["bf16_gate_pass"]
+        rows.append({"case": case, "mode": mode, "paired_byte_equal": True, **metrics, "oracle_gate_pass": op, "bf16_gate_pass": bp})
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "CPU_AUDITED_FULL24_PRODUCTION_C_STORE_BYTE_PARITY_QUALITY_STILL_FAILED",
+        "head": HEAD,
+        "run": run,
+        "tensor_count": 12,
+        "tensors": a.flatten_tensors(values),
+        "rows": rows,
+        "model_native_calls_observed": 216,
+        "new_native_calls": 0,
+        "cuda_initialized": False,
+        "producer_outputs_sha256": a.sha_file(directory / "outputs.pt"),
+        "producer_metadata_sha256": a.sha_file(directory / "result.json"),
+        "original_baseline_outputs_sha256": meta["original_baseline_outputs_sha256"],
+        "harness_sha256": a.sha_file(__file__),
+        "cpu_helper_sha256": a.sha_file(HELPER),
+        "limits": "All9 native full-logit outputs are byteidentical to the new unchanged-production control,216 actualnative calls/all24 percase. All12 savedtensors audited with originaloracle/BF16 gates unchanged. This is private configuration parity, not quality/generation/KV/modelthroughput/publicAPI acceptance. Original recipe is not replaced, and this round does not repeat earlier failed precision recipes as new successes.",
+    }
+    assert not any(row["oracle_gate_pass"] and row["bf16_gate_pass"] for row in rows)
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "tensor_count": 12}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

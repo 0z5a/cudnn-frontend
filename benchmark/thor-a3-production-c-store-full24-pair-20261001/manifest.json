@@ -1,0 +1,157 @@
+{
+  "stage": "FULL24_PRIVATE_C_STORE_PARITY_AUDITED_QUALITY_STILL_FAILED",
+  "scope": "All24 production-arithmetic single-component MXFP8 native configuration parity,9complete cases/216native calls/12 saved complete-logit tensors independentlyCPUaudited; unchanged-original/protectedemit/protectedomit byteidentical, original1%/5% gates stillfail. No quality/genKV/performance/publicAPI acceptance.",
+  "runs": {
+    "a3-production-c-store-full24-pair-20261001-r1": 0,
+    "a3-production-c-store-full24-pair-cpu-audit-20261001-r1": 0
+  },
+  "files": [
+    {
+      "path": "results/a3-latest-e2-native-provenance-20261001.json",
+      "size": 18959,
+      "sha256": "30ea6cd6a09d73b01d22215d98c2d7a5964d04d97489f64b876fa979013b3840"
+    },
+    {
+      "path": "results/a3-mxfp8-bf16-staged-full-model-20261001-r1/result.json",
+      "size": 18880,
+      "sha256": "8a1c83b63588328649dfd5d6f9b2f63cad0725852cbdf42ed3139b3da4583147"
+    },
+    {
+      "path": "results/a3-n128-mxfp8-staged-trace-cpu-audit-20261001-r1/result.json",
+      "size": 185938,
+      "sha256": "c38d9131452ca74828b2a03b87e524e3edab67ef6a94f5a2cb9e9811f6bdb462"
+    },
+    {
+      "path": "results/a3-production-c-store-full24-pair-20261001-r1-launch/run.json",
+      "size": 632,
+      "sha256": "75fd9bb4bccf854f6ef2deb5047ae5484686a2ab0910b282c6f89cd931aca597"
+    },
+    {
+      "path": "results/a3-production-c-store-full24-pair-20261001-r1-launch/stderr.log",
+      "size": 193,
+      "sha256": "84c49632b9c7b0e0b7cf6a2662547e34cb8c0b627a96c02ad5373586525c4865"
+    },
+    {
+      "path": "results/a3-production-c-store-full24-pair-20261001-r1-launch/stdout.log",
+      "size": 5268,
+      "sha256": "cdddc1cebba690f23cf8e88ad96e2d013676a217527da45e4a00cefb25c3413b"
+    },
+    {
+      "path": "results/a3-production-c-store-full24-pair-20261001-r1/admission.json",
+      "size": 106,
+      "sha256": "62d9dd998f4fb5f9b525bc7854d9293a808d35fb2b05a5b35933f4195fc7571c"
+    },
+    {
+      "path": "results/a3-production-c-store-full24-pair-20261001-r1/admission_wait.json",
+      "size": 76,
+      "sha256": "04df4cae9543ae2306d1eb587d331448d329ecd7d614048b59f2a07b331ec316"
+    },
+    {
+      "path": "results/a3-production-c-store-full24-pair-20261001-r1/partial.json",
+      "size": 8518,
+      "sha256": "8fb093e829f8fb68c3104564d70c762b99e8d043adb9fbd5d588a1fd58f5464b"
+    },
+    {
+      "path": "results/a3-production-c-store-full24-pair-20261001-r1/result.json",
+      "size": 12237,
+      "sha256": "d9ca543e95a1294af49eef3cc1015fb4632bff79790d7ea4c5f4c8dde448cdf9"
+    },
+    {
+      "path": "results/a3-production-c-store-full24-pair-cpu-audit-20261001-r1-launch/run.json",
+      "size": 640,
+      "sha256": "a8a8396bf2d1339551269b4433e89136b84f4e32c5f0bad04d92793331dbb1a0"
+    },
+    {
+      "path": "results/a3-production-c-store-full24-pair-cpu-audit-20261001-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-production-c-store-full24-pair-cpu-audit-20261001-r1-launch/stdout.log",
+      "size": 104,
+      "sha256": "8e6f01028be7a5102d3ecb27d2e5d3eeda68429479c4e4d712a17d874e40174f"
+    },
+    {
+      "path": "results/a3-production-c-store-full24-pair-cpu-audit-20261001-r1/result.json",
+      "size": 8580,
+      "sha256": "b3b454f1cef9da592624959bd1cd57bb460454a2bd66b6f1f20e313c0d509506"
+    },
+    {
+      "path": "runtime/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+      "size": 52640,
+      "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+    },
+    {
+      "path": "runtime/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+      "size": 131027,
+      "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+    },
+    {
+      "path": "runtime/test/python/gemm/cutedsl/test_grouped_gemm_canonical_layouts.py",
+      "size": 13585,
+      "sha256": "b801a3e8cd5a9f0d88941494a516dd0f57b1d1cfd4cf71da3dd13db4d2a258f4"
+    },
+    {
+      "path": "runtime/test/python/gemm/cutedsl/test_grouped_gemm_swiglu.py",
+      "size": 21413,
+      "sha256": "a2e13e9a82c91f3855c6e3e80bd04d8c1f5ca5dfa610ac8566621b3194e7756c"
+    },
+    {
+      "path": "runtime/test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+      "size": 9189,
+      "sha256": "38f60c55058056ccc222ec0699d664e91d6526f2bdd8fce5832c0a89ff2f4a34"
+    },
+    {
+      "path": "runtime/test/python/gemm/cutedsl/test_swiglu_amax_per_call.py",
+      "size": 2164,
+      "sha256": "d3017b0723ce039fb89e6db5770bdab80e56613e0f6e8cb8873f3b19cda4a465"
+    },
+    {
+      "path": "runtime/test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py",
+      "size": 3535,
+      "sha256": "5c9587dea4ffbf8d33e3b7e25197e9c8a5463763a4390b8f113fb3e68e649af7"
+    },
+    {
+      "path": "tools/a3_model_e2e_mergefix_20261001.py",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "path": "tools/a3_production_c_store_full24_pair_queued_20261001.py",
+      "size": 9342,
+      "sha256": "152334c391b4e970c064528b0609f6ce0841228fe4927584bd915c3f70861f26"
+    },
+    {
+      "path": "tools/a3_production_optional_c_store_native_kernel_20261001.py",
+      "size": 131762,
+      "sha256": "3543ffc3140058646845040a4924278ae2a323d049492d4b5383af0d6ff04482"
+    },
+    {
+      "path": "tools/archive_a3_production_c_store_full24_pair_20261001.py",
+      "size": 4331,
+      "sha256": "ec786845764bda24e5ea6d7283c48d049c7ed5dd6869ca777fb0c104203d37b4"
+    },
+    {
+      "path": "tools/audit_a3_precision_followup_r2_20261001.py",
+      "size": 11436,
+      "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+    },
+    {
+      "path": "tools/audit_a3_production_c_store_full24_pair_20261001.py",
+      "size": 6246,
+      "sha256": "3daa644d3fb3406f5b03887d19bbbd7b5726d359c92863982950a0d7da4e8fc8"
+    },
+    {
+      "path": "tools/run_logged.py",
+      "size": 3157,
+      "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+    }
+  ],
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    ".pt outputs",
+    "native binaries"
+  ]
+}

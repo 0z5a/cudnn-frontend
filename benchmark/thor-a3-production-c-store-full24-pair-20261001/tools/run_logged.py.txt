@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+"""Run one local command, preserving its status, output, and deadline outcome."""
+from __future__ import annotations
+import argparse
+import datetime as dt
+import json
+import math
+import os
+from pathlib import Path
+import signal
+import subprocess
+import time
+
+
+def main() -> int:
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--out', type=Path, required=True, help='New, non-existing output directory')
+    p.add_argument('--cwd', type=Path, default=Path.cwd())
+    p.add_argument('--timeout', type=float, required=True, help='Positive deadline in seconds')
+    p.add_argument('command', nargs=argparse.REMAINDER)
+    a = p.parse_args()
+    cmd = a.command[1:] if a.command[:1] == ['--'] else a.command
+    if not cmd or a.timeout <= 0 or not math.isfinite(a.timeout):
+        p.error('a command and positive --timeout are required')
+    a.out.mkdir(parents=True, exist_ok=False)
+    meta = {'argv': cmd, 'cwd': str(a.cwd.resolve()), 'started_utc': dt.datetime.now(dt.timezone.utc).isoformat(),
+            'deadline_seconds': a.timeout, 'status': 'NOT_STARTED'}
+    # Never export the full environment: tokens and private credentials may be present.
+    meta['selected_env'] = {k: os.environ[k] for k in ('CUDA_VISIBLE_DEVICES', 'CUPY_ACCELERATORS', 'CUPY_CACHE_DIR', 'CUDA_HOME') if k in os.environ}
+    start = time.monotonic()
+    result = 125
+    try:
+        with (a.out/'stdout.log').open('wb') as out, (a.out/'stderr.log').open('wb') as err:
+            proc = subprocess.Popen(cmd, cwd=a.cwd, stdout=out, stderr=err, start_new_session=(os.name == 'posix'))
+            try:
+                code = proc.wait(timeout=a.timeout)
+                meta.update(returncode=code, signal=(-code if code < 0 else None), status='EXITED')
+                result = code if code >= 0 else min(255, 128-code)
+            except subprocess.TimeoutExpired:
+                meta['status'] = 'TIMEOUT'
+                if os.name == 'posix':
+                    try:
+                        os.killpg(proc.pid, signal.SIGTERM)
+                    except ProcessLookupError:
+                        pass  # Process group exited between the timeout and signal.
+                else:
+                    proc.terminate()
+                try:
+                    proc.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    if os.name == 'posix':
+                        try:
+                            os.killpg(proc.pid, signal.SIGKILL)
+                        except ProcessLookupError:
+                            pass
+                    else:
+                        proc.kill()
+                    proc.wait()
+                meta['returncode'] = proc.returncode
+                result = 124
+    except (OSError, ValueError) as exc:
+        meta.update(status='LAUNCH_ERROR', error=f'{type(exc).__name__}: {exc}')
+    finally:
+        meta['elapsed_seconds'] = time.monotonic()-start
+        (a.out/'run.json').write_text(json.dumps(meta, indent=2)+'\n', encoding='utf-8')
+    print(json.dumps(meta, indent=2))
+    return result
+
+if __name__ == '__main__':
+    raise SystemExit(main())

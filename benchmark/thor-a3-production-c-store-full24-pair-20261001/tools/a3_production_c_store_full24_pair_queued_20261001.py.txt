@@ -1,0 +1,171 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Full24 production-arithmetic C-write candidate parity, retaining failed accuracy gates.
+
+Unchanged original single-component MXFP8 recipe, all24 native D consumers,
+full pinned Granite and original BF16 baseline. Three private native arms
+share identical checkpoint/inputs/recipe. This validates an unused-output
+configuration, not a new precision recipe or a public optional-output API.
+The original declared FP32 quantized oracle is retained, even when its gate
+compatibility fails; native execution is required to check full-model parity.
+No Torch replacement, fallback, smaller model or gate relaxation.
+"""
+
+import argparse
+import fcntl
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1"
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        start = time.monotonic()
+        (out / "admission_wait.json").write_text(json.dumps({"stage": "WAITING_FOR_SHARED_LOCK", "pid": os.getpid(), "torch_imported": False}))
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - start > 3600:
+                    return 75
+                time.sleep(1)
+        assert "torch" not in sys.modules
+        (out / "admission.json").write_text(
+            json.dumps({"stage": "LOCK_ADMITTED", "pid": os.getpid(), "torch_imported": False, "wait_seconds": time.monotonic() - start})
+        )
+        base = ROOT / "tools/a3_model_e2e_mergefix_20261001.py"
+        spec = importlib.util.spec_from_file_location("a3_full24_c_store_adapter", base)
+        m = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = m
+        spec.loader.exec_module(m)
+        t = m.torch
+        source = ROOT / "a3sfdlateste2"
+        assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == HEAD
+        assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+        for module in (m.cudnn, m.api, m._compiled_module):
+            assert Path(module.__file__).resolve().is_relative_to(source / "python")
+        assert m.sha_file(base) == "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+        assert m.sha_file(m._compiled_module.__file__) == "37e7c4e0d16bd0a952ade77ccd577ccadae1888f166a4c897c9e98a104606c2a"
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        from cudnn.gemm.cutedsl.grouped.swiglu import grouped_gemm_swiglu_quant as original
+
+        assert m.sha_file(original.__file__) == "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+        path = ROOT / "tools/a3_production_optional_c_store_native_kernel_20261001.py"
+        assert m.sha_file(path) == "3543ffc3140058646845040a4924278ae2a323d049492d4b5383af0d6ff04482"
+        spec = importlib.util.spec_from_file_location("a3_full24_c_store_native", path)
+        candidate = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = candidate
+        spec.loader.exec_module(candidate)
+        t.set_num_threads(4)
+        t.backends.cuda.matmul.allow_tf32 = False
+        t.backends.cudnn.allow_tf32 = False
+        t.set_float32_matmul_precision("highest")
+        assert m.sha_file(m.MODEL / "model.safetensors") == m.WEIGHT_SHA
+        model, loading = m.AutoModelForCausalLM.from_pretrained(
+            m.MODEL, dtype=t.bfloat16, attn_implementation="sdpa", local_files_only=True, trust_remote_code=False, output_loading_info=True
+        )
+        assert not any(loading.values()) and sum(p.numel() for p in model.parameters()) == 1334628352
+        model = model.eval().cuda()
+        experts = [e for e in model.modules() if isinstance(e, m.GraniteMoeExperts)]
+        assert len(experts) == 24
+        adapters = [m.A3ExpertAdapter(e, i, (256, 256)) for i, e in enumerate(experts)]
+        tokenizer = m.AutoTokenizer.from_pretrained(m.MODEL, local_files_only=True, trust_remote_code=False)
+        _, prompts, workloads = m.load_inputs(tokenizer)
+        inputs = [prompts[0], prompts[1], workloads["256"]]
+        assert [v.shape[-1] for v in inputs] == [73, 70, 256]
+        baseline_dir = ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+        baseline = t.load(baseline_dir / "outputs.pt", map_location="cpu", weights_only=True)
+        saved, rows = {}, []
+        with t.inference_mode():
+            m.attach(adapters, "reference")
+            for case, ids in enumerate(inputs):
+                before = m.NATIVE_CALLS
+                saved[f"reference/{case}"] = model(input_ids=ids.cuda(), use_cache=False).logits.cpu()
+                assert before == m.NATIVE_CALLS
+            for mode, cls in (
+                ("original_emit", original.BlockScaledContiguousGroupedGemmKernel),
+                ("protected_emit", candidate.EmitC),
+                ("protected_omit", candidate.OmitC),
+            ):
+                m.api.BlockScaledContiguousGroupedGemmKernel = cls
+                m.api._cache_of_GroupedGemmSwigluSm100Objects = {}
+                m.attach(adapters, "native")
+                for case, ids in enumerate(inputs):
+                    before = m.NATIVE_CALLS
+                    value = model(input_ids=ids.cuda(), use_cache=False).logits.cpu()
+                    assert m.NATIVE_CALLS - before == 24
+                    saved[f"{mode}/{case}"] = value
+                    # Save the complete tensors before any parity assertion.
+                    t.save(saved, out / "outputs.pt")
+                    oracle, stock = saved[f"reference/{case}"], baseline[f"forward_{case}_stock"]
+                    paired = saved[f"original_emit/{case}"]
+                    equal = t.equal(value.flatten().view(t.uint8), paired.flatten().view(t.uint8))
+                    o, b = m.difference(value, oracle), m.difference(value, stock)
+                    row = {
+                        "mode": mode,
+                        "case": case,
+                        "tokens": ids.shape[-1],
+                        "mxfp8_layers": list(range(24)),
+                        "native_calls": 24,
+                        "paired_byte_equal": equal,
+                        "paired_metric": m.difference(value, paired),
+                        "native_oracle": o,
+                        "native_bf16": b,
+                        "oracle_gate_pass": o["relative_l2"] <= 0.01,
+                        "bf16_gate_pass": b["relative_l2"] <= 0.05,
+                    }
+                    rows.append(row)
+                    (out / "partial.json").write_text(json.dumps({"rows": rows}, indent=2) + "\n")
+                    print(json.dumps(row), flush=True)
+                    assert equal, (mode, case)
+        assert m.NATIVE_CALLS == 216
+        m.attach(adapters, "stock")
+        m.api.BlockScaledContiguousGroupedGemmKernel = original.BlockScaledContiguousGroupedGemmKernel
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+        result = {
+            "stage": "FULL24_PRIVATE_C_STORE_BYTE_PARITY_DIAGNOSTIC_COMPLETE",
+            "scope": __doc__,
+            "head": HEAD,
+            "source": str(source),
+            "model_parameters": 1334628352,
+            "checkpoint_sha256": m.WEIGHT_SHA,
+            "rows": rows,
+            "model_native_calls": 216,
+            "native_plans": m.NATIVE_PLANS,
+            "imports": {
+                name: {"path": module.__file__, "sha256": m.sha_file(module.__file__)}
+                for name, module in (("cudnn", m.cudnn), ("api", m.api), ("binding", m._compiled_module))
+            },
+            "base_adapter": {"path": str(base), "sha256": m.sha_file(base)},
+            "original_kernel": {"path": original.__file__, "sha256": m.sha_file(original.__file__)},
+            "private_kernel": {"path": str(path), "sha256": m.sha_file(path)},
+            "harness_sha256": m.sha_file(__file__),
+            "original_baseline_outputs_sha256": m.sha_file(baseline_dir / "outputs.pt"),
+            "original_baseline_replaced": False,
+            "public_feature_accepted": False,
+            "formal_model_performance": "NOT_RUN",
+            "generation_KV": "NOT_RUN",
+            "service_final": "inactive",
+            "production_source_modified": False,
+        }
+        (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps({"stage": result["stage"], "model_native_calls": 216, "all_paired_byte_equal": True}), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

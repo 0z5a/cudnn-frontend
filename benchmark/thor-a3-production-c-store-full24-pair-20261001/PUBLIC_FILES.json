@@ -1,0 +1,147 @@
+[
+  {
+    "source_path": "manifest.json",
+    "public_path": "manifest.json",
+    "sha256": "6a820472a5c96d3ea6c0ade49911d22e5d53c313ac98b4b266927ba17be2f2d7"
+  },
+  {
+    "source_path": "results/a3-latest-e2-native-provenance-20261001.json",
+    "public_path": "results/a3-latest-e2-native-provenance-20261001.json",
+    "sha256": "30ea6cd6a09d73b01d22215d98c2d7a5964d04d97489f64b876fa979013b3840"
+  },
+  {
+    "source_path": "results/a3-mxfp8-bf16-staged-full-model-20261001-r1/result.json",
+    "public_path": "results/a3-mxfp8-bf16-staged-full-model-20261001-r1/result.json",
+    "sha256": "8a1c83b63588328649dfd5d6f9b2f63cad0725852cbdf42ed3139b3da4583147"
+  },
+  {
+    "source_path": "results/a3-n128-mxfp8-staged-trace-cpu-audit-20261001-r1/result.json",
+    "public_path": "results/a3-n128-mxfp8-staged-trace-cpu-audit-20261001-r1/result.json",
+    "sha256": "c38d9131452ca74828b2a03b87e524e3edab67ef6a94f5a2cb9e9811f6bdb462"
+  },
+  {
+    "source_path": "results/a3-production-c-store-full24-pair-20261001-r1/admission.json",
+    "public_path": "results/a3-production-c-store-full24-pair-20261001-r1/admission.json",
+    "sha256": "62d9dd998f4fb5f9b525bc7854d9293a808d35fb2b05a5b35933f4195fc7571c"
+  },
+  {
+    "source_path": "results/a3-production-c-store-full24-pair-20261001-r1/admission_wait.json",
+    "public_path": "results/a3-production-c-store-full24-pair-20261001-r1/admission_wait.json",
+    "sha256": "04df4cae9543ae2306d1eb587d331448d329ecd7d614048b59f2a07b331ec316"
+  },
+  {
+    "source_path": "results/a3-production-c-store-full24-pair-20261001-r1/partial.json",
+    "public_path": "results/a3-production-c-store-full24-pair-20261001-r1/partial.json",
+    "sha256": "8fb093e829f8fb68c3104564d70c762b99e8d043adb9fbd5d588a1fd58f5464b"
+  },
+  {
+    "source_path": "results/a3-production-c-store-full24-pair-20261001-r1/result.json",
+    "public_path": "results/a3-production-c-store-full24-pair-20261001-r1/result.json",
+    "sha256": "d9ca543e95a1294af49eef3cc1015fb4632bff79790d7ea4c5f4c8dde448cdf9"
+  },
+  {
+    "source_path": "results/a3-production-c-store-full24-pair-20261001-r1-launch/run.json",
+    "public_path": "results/a3-production-c-store-full24-pair-20261001-r1-launch/run.json",
+    "sha256": "75fd9bb4bccf854f6ef2deb5047ae5484686a2ab0910b282c6f89cd931aca597"
+  },
+  {
+    "source_path": "results/a3-production-c-store-full24-pair-20261001-r1-launch/stderr.log",
+    "public_path": "results/a3-production-c-store-full24-pair-20261001-r1-launch/stderr.log",
+    "sha256": "84c49632b9c7b0e0b7cf6a2662547e34cb8c0b627a96c02ad5373586525c4865"
+  },
+  {
+    "source_path": "results/a3-production-c-store-full24-pair-20261001-r1-launch/stdout.log",
+    "public_path": "results/a3-production-c-store-full24-pair-20261001-r1-launch/stdout.log",
+    "sha256": "cdddc1cebba690f23cf8e88ad96e2d013676a217527da45e4a00cefb25c3413b"
+  },
+  {
+    "source_path": "results/a3-production-c-store-full24-pair-cpu-audit-20261001-r1/result.json",
+    "public_path": "results/a3-production-c-store-full24-pair-cpu-audit-20261001-r1/result.json",
+    "sha256": "b3b454f1cef9da592624959bd1cd57bb460454a2bd66b6f1f20e313c0d509506"
+  },
+  {
+    "source_path": "results/a3-production-c-store-full24-pair-cpu-audit-20261001-r1-launch/run.json",
+    "public_path": "results/a3-production-c-store-full24-pair-cpu-audit-20261001-r1-launch/run.json",
+    "sha256": "a8a8396bf2d1339551269b4433e89136b84f4e32c5f0bad04d92793331dbb1a0"
+  },
+  {
+    "source_path": "results/a3-production-c-store-full24-pair-cpu-audit-20261001-r1-launch/stderr.log",
+    "public_path": "results/a3-production-c-store-full24-pair-cpu-audit-20261001-r1-launch/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "source_path": "results/a3-production-c-store-full24-pair-cpu-audit-20261001-r1-launch/stdout.log",
+    "public_path": "results/a3-production-c-store-full24-pair-cpu-audit-20261001-r1-launch/stdout.log",
+    "sha256": "8e6f01028be7a5102d3ecb27d2e5d3eeda68429479c4e4d712a17d874e40174f"
+  },
+  {
+    "source_path": "runtime/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+    "public_path": "runtime/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py.txt",
+    "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+  },
+  {
+    "source_path": "runtime/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+    "public_path": "runtime/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py.txt",
+    "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+  },
+  {
+    "source_path": "runtime/test/python/gemm/cutedsl/test_grouped_gemm_canonical_layouts.py",
+    "public_path": "runtime/test/python/gemm/cutedsl/test_grouped_gemm_canonical_layouts.py.txt",
+    "sha256": "b801a3e8cd5a9f0d88941494a516dd0f57b1d1cfd4cf71da3dd13db4d2a258f4"
+  },
+  {
+    "source_path": "runtime/test/python/gemm/cutedsl/test_grouped_gemm_swiglu.py",
+    "public_path": "runtime/test/python/gemm/cutedsl/test_grouped_gemm_swiglu.py.txt",
+    "sha256": "a2e13e9a82c91f3855c6e3e80bd04d8c1f5ca5dfa610ac8566621b3194e7756c"
+  },
+  {
+    "source_path": "runtime/test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+    "public_path": "runtime/test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py.txt",
+    "sha256": "38f60c55058056ccc222ec0699d664e91d6526f2bdd8fce5832c0a89ff2f4a34"
+  },
+  {
+    "source_path": "runtime/test/python/gemm/cutedsl/test_swiglu_amax_per_call.py",
+    "public_path": "runtime/test/python/gemm/cutedsl/test_swiglu_amax_per_call.py.txt",
+    "sha256": "d3017b0723ce039fb89e6db5770bdab80e56613e0f6e8cb8873f3b19cda4a465"
+  },
+  {
+    "source_path": "runtime/test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py",
+    "public_path": "runtime/test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py.txt",
+    "sha256": "5c9587dea4ffbf8d33e3b7e25197e9c8a5463763a4390b8f113fb3e68e649af7"
+  },
+  {
+    "source_path": "tools/a3_model_e2e_mergefix_20261001.py",
+    "public_path": "tools/a3_model_e2e_mergefix_20261001.py.txt",
+    "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+  },
+  {
+    "source_path": "tools/a3_production_c_store_full24_pair_queued_20261001.py",
+    "public_path": "tools/a3_production_c_store_full24_pair_queued_20261001.py.txt",
+    "sha256": "152334c391b4e970c064528b0609f6ce0841228fe4927584bd915c3f70861f26"
+  },
+  {
+    "source_path": "tools/a3_production_optional_c_store_native_kernel_20261001.py",
+    "public_path": "tools/a3_production_optional_c_store_native_kernel_20261001.py.txt",
+    "sha256": "3543ffc3140058646845040a4924278ae2a323d049492d4b5383af0d6ff04482"
+  },
+  {
+    "source_path": "tools/archive_a3_production_c_store_full24_pair_20261001.py",
+    "public_path": "tools/archive_a3_production_c_store_full24_pair_20261001.py.txt",
+    "sha256": "ec786845764bda24e5ea6d7283c48d049c7ed5dd6869ca777fb0c104203d37b4"
+  },
+  {
+    "source_path": "tools/audit_a3_precision_followup_r2_20261001.py",
+    "public_path": "tools/audit_a3_precision_followup_r2_20261001.py.txt",
+    "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+  },
+  {
+    "source_path": "tools/audit_a3_production_c_store_full24_pair_20261001.py",
+    "public_path": "tools/audit_a3_production_c_store_full24_pair_20261001.py.txt",
+    "sha256": "3daa644d3fb3406f5b03887d19bbbd7b5726d359c92863982950a0d7da4e8fc8"
+  },
+  {
+    "source_path": "tools/run_logged.py",
+    "public_path": "tools/run_logged.py.txt",
+    "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+  }
+]
