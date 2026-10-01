@@ -1,0 +1,24 @@
+{
+  "stage": "PASS_MAC_TRANSPORT_ALL_MANIFEST_BYTES",
+  "archive_sha256": "3c37bae080a9d35ade3f9c5065a74654aebb7691172d7553431ac5237726ea4c",
+  "files": 36,
+  "manifest_entries": 35,
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    ".pt outputs",
+    "native binaries",
+    ".ncu-rep"
+  ],
+  "additional_reference_files": [
+    {
+      "path": "source-reference/LICENSE",
+      "sha256": "de2fc8f53a3a7f26c4ef4a2f6a1aefc1d05fc6cebeae6a696374cb1990becce8"
+    },
+    {
+      "path": "source-reference/MODEL.md",
+      "sha256": "570aaca16801ded21e9c62981ca7509e9df83fce5df0636aa095791f2bb50147"
+    }
+  ]
+}

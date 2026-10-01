@@ -1,0 +1,1 @@
+{"stage": "CPU_AUDITED_WINDOW_BF16_AND_NATIVE_MXFP8_MATCH_NOT_FULL24_SUCCESS", "tensor_count": 160, "bf16_vs_mxfp8_grouping_fp32_mismatches": 31821, "bf16_vs_mxfp8_grouping_bf16_mismatches": 1, "exact_dot_reconstruction_mismatches": 969, "exact_dot_reconstruction_max_abs": 3.3527612686157227e-07}

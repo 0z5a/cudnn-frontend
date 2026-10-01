@@ -1,0 +1,166 @@
+"""Read-only independent byte/count/provenance audit of CPU arithmetic runs."""
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+import torch as t
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for data in iter(lambda: f.read(4194304), b""):
+            h.update(data)
+    return h.hexdigest()
+
+
+def eq(a, b):
+    return t.equal(a.contiguous().reshape(-1).view(t.uint8), b.contiguous().reshape(-1).view(t.uint8))
+
+
+def load(name):
+    directory = ROOT / "results" / name
+    run = json.loads(directory.with_name(name + "-launch").joinpath("run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    result = json.loads((directory / "result.json").read_text())
+    assert result["cuda_initialized"] is False and result["native_calls"] == 0
+    assert sha(directory / "outputs.pt") == result["outputs_sha256"]
+    assert sha(Path(run["argv"][1])) == result["harness_sha256"]
+    outputs = t.load(directory / "outputs.pt", map_location="cpu", weights_only=True)
+    tensors = [
+        {
+            "name": k,
+            "shape": list(v.shape),
+            "dtype": str(v.dtype),
+            "sha256": hashlib.sha256(v.contiguous().reshape(-1).view(t.uint8).numpy().tobytes()).hexdigest(),
+        }
+        for k, v in outputs.items()
+    ]
+    return result, outputs, run, tensors
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized()
+    r1, p1, run1, t1 = load("a3-fixed-window-cpu-20261001-r1")
+    r2, p2, run2, t2 = load("a3-fixed-window-all24-cpu-20261001-r1")
+    r3, p3, run3, t3 = load("a3-mxfp8-window-cpu-20261001-r1")
+    helper = ROOT / "tools/diagnose_a3_fixed_window_cpu_20261001.py"
+    assert sha(helper) == r1["harness_sha256"] == r2["helper_sha256"] == r3["helper_sha256"]
+    bfpath = ROOT / "results/a3-bf16-dot-fp32-output-20261001-r1/outputs.pt"
+    assert sha(bfpath) == r1["gpu_fp32_outputs_sha256"]
+    bf = t.load(bfpath, map_location="cpu", weights_only=True)
+    assert eq(p1["raw_window25_k16"], bf["36/bf16_input_fp32_output"])
+    assert eq(bf["36/bf16_input_fp32_output"], bf["256/bf16_input_fp32_output"][:36])
+    bf_counts = {}
+    targetpath = ROOT / "results/a3-stock-dot-ncu-20261001-r3/target/outputs.pt"
+    assert sha(targetpath) == r1["input_outputs_sha256"] == r3["input_outputs_sha256"]
+    stock_first = t.load(targetpath, map_location="cpu", weights_only=True)["stock_c_before"][:36]
+    for row in r1["rows"]:
+        value = p1[row["name"]]
+        mismatches = (value.view(t.int32) != bf["36/bf16_input_fp32_output"].view(t.int32)).sum().item()
+        stock_mismatches = (value.to(t.bfloat16).view(t.int16) != stock_first.view(t.int16)).sum().item()
+        assert mismatches == row["all36_unconditioned_rows"]["fp32_word_mismatches"]
+        assert stock_mismatches == row["all36_unconditioned_rows"]["stock_bf16_word_mismatches"]
+        bf_counts[row["name"]] = {"fp32": mismatches, "bf16": stock_mismatches}
+    priorpath = ROOT / "results/a3-residual-staging-20261001-r1/outputs.pt"
+    assert sha(priorpath) == r2["prior_outputs_sha256"]
+    prior = t.load(priorpath, map_location="cpu", weights_only=True)
+    cols = r2["fixed_unconditioned_packed_columns"]
+    total = heldout_total = 0
+    counts = {n["name"]: {"bf16": 0, "heldout_bf16": 0} for n in r2["totals"]}
+    for layer in range(24):
+        index = prior[f"stock_route/{layer}"]["index"].flatten()
+        order = t.argsort(index, stable=True)
+        assert eq(p2[f"{layer}/route_expert_ids"], index[order])
+        stock = prior[f"local/{layer}"]["original_bf16_local"]["c"][:, cols].contiguous()
+        assert eq(stock, p2[f"{layer}/stock_bf16"])
+        heldout = index[order] != 0 if layer == 0 else t.ones(584, dtype=t.bool)
+        for c in r2["rows"][layer]["comparisons"]:
+            mismatch = p2[f"{layer}/{c['name']}"].to(t.bfloat16).view(t.int16) != stock.view(t.int16)
+            assert mismatch.sum().item() == c["stock_bf16_word_mismatches"]
+            assert mismatch[heldout].sum().item() == c["heldout_stock_bf16_word_mismatches"]
+            counts[c["name"]]["bf16"] += mismatch.sum().item()
+            counts[c["name"]]["heldout_bf16"] += mismatch[heldout].sum().item()
+        total += stock.numel()
+        heldout_total += heldout.sum().item() * len(cols)
+    assert total == r2["total_sampled_outputs"] == 224256
+    assert heldout_total == r2["total_heldout_outputs"] == 223680
+    for row in r2["totals"]:
+        assert counts[row["name"]]["bf16"] == row["stock_bf16_word_mismatches"]
+        assert counts[row["name"]]["heldout_bf16"] == row["heldout_stock_bf16_word_mismatches"]
+    assert counts["raw_window25_k16"]["bf16"] == 0
+    mxpath = ROOT / "results/a3-all24-actual-c-stage-20261001-r2/outputs.pt"
+    assert sha(mxpath) == r3["native_outputs_sha256"]
+    mx = t.load(mxpath, map_location="cpu", weights_only=True)
+    truth = mx["0/torch.bfloat16/c"][:36].contiguous()
+    assert eq(truth, mx["0/torch.float16/c"][:36])
+    assert eq(p3["mxfp8_raw_window25_k32"], truth)
+    mx_counts = {}
+    for row in r3["rows"]:
+        value = p3[row["name"]]
+        mismatches = (value.view(t.int32) != truth.view(t.int32)).sum().item()
+        stock_mismatches = (value.to(t.bfloat16).view(t.int16) != stock_first.view(t.int16)).sum().item()
+        assert mismatches == row["all36_unconditioned"]["fp32_word_mismatches"]
+        assert stock_mismatches == row["all36_unconditioned"]["stock_bf16_word_mismatches"]
+        mx_counts[row["name"]] = {"fp32": mismatches, "bf16": stock_mismatches}
+    # Exact same original dot is not bit-identical after changing the MMA grouping.
+    grouping_fp32_mismatches = (p1["raw_window25_k16"].view(t.int32) != p3["mxfp8_raw_window25_k32"].view(t.int32)).sum().item()
+    grouping_bf16_mismatches = (p1["raw_window25_k16"].to(t.bfloat16).view(t.int16) != p3["mxfp8_raw_window25_k32"].to(t.bfloat16).view(t.int16)).sum().item()
+    reconstruction_exact_mismatches = (p1["exact_dot_fp64"] != p3["exact_dot_fp64"]).sum().item()
+    reconstruction_max_abs = (p1["exact_dot_fp64"] - p3["exact_dot_fp64"]).abs().max().item()
+    assert len(t1) == 11 and len(t2) == 144 and len(t3) == 5
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "CPU_AUDITED_WINDOW_BF16_AND_NATIVE_MXFP8_MATCH_NOT_FULL24_SUCCESS",
+        "cuda_initialized": False,
+        "native_calls": 0,
+        "run_records": [run1, run2, run3],
+        "tensor_count": len(t1) + len(t2) + len(t3),
+        "tensor_records": {"bf16_fp32_prediction": t1, "all24_bf16_holdout": t2, "mxfp8_native_prediction": t3},
+        "bf16_prediction_counts": bf_counts,
+        "all24_holdout_counts": counts,
+        "mxfp8_prediction_counts": mx_counts,
+        "bf16_vs_mxfp8_grouping_fp32_mismatches": grouping_fp32_mismatches,
+        "bf16_vs_mxfp8_grouping_bf16_mismatches": grouping_bf16_mismatches,
+        "exact_dot_reconstruction_mismatches": reconstruction_exact_mismatches,
+        "exact_dot_reconstruction_max_abs": reconstruction_max_abs,
+        "all24_sample_count": total,
+        "all24_heldout_sample_count": heldout_total,
+        "harness_sha256": sha(Path(__file__)),
+        "mathematical_helper_sha256": sha(helper),
+        "scope": "Independent comparison against frozen GPU and original-stock bytes plus160 saved CPU tensor hashes; no mathematical CPU prediction replaces native model execution",
+        "limits": "Original BF16 firstexpert36x1024 FP32 and separate actual MXFP8 firstexpert36x1024 FP32; all24 original BF16 sampled16 columns/all584routes. Remaining pure-MXFP8 full-model gate failure unchanged, no ISA universality, new native/generation/KV or performance success.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(
+        json.dumps(
+            {
+                k: result[k]
+                for k in (
+                    "stage",
+                    "tensor_count",
+                    "bf16_vs_mxfp8_grouping_fp32_mismatches",
+                    "bf16_vs_mxfp8_grouping_bf16_mismatches",
+                    "exact_dot_reconstruction_mismatches",
+                    "exact_dot_reconstruction_max_abs",
+                )
+            }
+        ),
+        flush=True,
+    )
+
+
+if __name__ == "__main__":
+    main()

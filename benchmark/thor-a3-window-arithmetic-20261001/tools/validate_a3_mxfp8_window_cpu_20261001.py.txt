@@ -1,0 +1,165 @@
+"""CPU-only arithmetic prediction of a frozen actual MXFP8 native C.
+
+Logical high/residual quantization and K32 cross-term packing are recomputed
+from original BF16 inputs/weights. No GPU execution or model/oracle change.
+"""
+
+import argparse
+import importlib.util
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+HELPER = Path(__file__).with_name("diagnose_a3_fixed_window_cpu_20261001.py")
+spec = importlib.util.spec_from_file_location("a3_mx_window_math", HELPER)
+d = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(d)
+t = d.t
+
+
+def component(value):
+    blocks = value.float().reshape(*value.shape[:-1], 32, 32)
+    maximum = blocks.abs().amax(-1)
+    exponent = t.where(maximum > 0, t.ceil(t.log2(maximum * (1.0 / 448.0))), 0).clamp(-126, 127).int()
+    scale = t.pow(2.0, exponent)
+    code = (blocks / scale[..., None]).clamp(-448, 448).to(t.float8_e4m3fn)
+    effective = code.float() * scale[..., None]
+    raw = ((code.view(t.uint8).int() >> 3) & 15).clamp(min=1) - 7 + exponent[..., None]
+    return code.reshape(value.shape), effective.reshape(value.shape), raw.reshape(value.shape), exponent
+
+
+def expanded(value, operand):
+    high = component(value)
+    low = component(value.float() - high[1])
+    indices = [0, 0, 1, 1] if operand == "A" else [0, 1, 0, 1]
+    parts = [high, low]
+    # Frozen native repack: each original K32 block contains HH, HL, LH, LL.
+    permutation = t.arange(4096).reshape(4, 32, 32).permute(1, 0, 2).reshape(-1)
+    codes = t.cat([parts[i][0].view(t.uint8) for i in indices], -1).index_select(-1, permutation)
+    effective = t.cat([parts[i][1] for i in indices], -1).index_select(-1, permutation)
+    raw = t.cat([parts[i][2] for i in indices], -1).index_select(-1, permutation)
+    exponents = t.cat([parts[i][3].repeat_interleave(32, -1) for i in indices], -1).index_select(-1, permutation)
+    return codes, effective, raw, exponents, high[1] + low[1]
+
+
+def decode_e4m3(word):
+    encoded = (word >> 3) & 15
+    fraction = word & 7
+    assert not (encoded == 15 and fraction == 7)
+    mantissa = fraction + (8 if encoded else 0)
+    if word & 128:
+        mantissa = -mantissa
+    raw = max(encoded, 1) - 7
+    return mantissa, raw - 3, raw
+
+
+def scalar_scaled_prediction(a, b, sa, sb):
+    accumulator = 0
+    for k in range(0, 4096, 32):
+        terms, raw = [], []
+        for i in range(k, k + 32):
+            ma, ea, ra = decode_e4m3(a[i])
+            mb, eb, rb = decode_e4m3(b[i])
+            if ma and mb:
+                terms.append((ma * mb, ea + eb + sa[i] + sb[i]))
+                raw.append(ra + rb + sa[i] + sb[i])
+        mc, ec, rc = d.decode(accumulator, 23)
+        if mc:
+            terms.append((mc, ec))
+            raw.append(rc)
+        if not terms:
+            accumulator = 0
+            continue
+        quantum = max(raw) - 25
+        units = sum(d.integer_rtz_units(m, e, quantum) for m, e in terms)
+        accumulator = d.pack_f32_rtz(units, quantum)
+    return accumulator
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--expected-helper-sha", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized() and d.sha(HELPER) == args.expected_helper_sha
+    assert d.sha(d.INPUT / "outputs.pt") == "0aafa01f30a4d4bcc4941ac0d507da94b28d7fa76417e034067dd58ee1d13ab6"
+    target = d.ROOT / "results/a3-all24-actual-c-stage-20261001-r2"
+    assert d.sha(target / "outputs.pt") == "846d6a3778850d9fde1fe8dfa3cc2329d5aec053a77f318f6f972507b2c96190"
+    prior = t.load(d.INPUT / "outputs.pt", map_location="cpu", weights_only=True)
+    native = t.load(target / "outputs.pt", map_location="cpu", weights_only=True)
+    x, w = prior["input_bf16"][:36], prior["weight_bf16"]
+    truth = native["0/torch.bfloat16/c"][:36].contiguous()
+    assert truth.shape == (36, 1024) and truth.dtype == t.float32
+    assert t.equal(d.words(truth), d.words(native["0/torch.float16/c"][:36]))
+    a, ae, ar, sa, ax = expanded(x, "A")
+    b, be, br, sb, bx = expanded(w, "B")
+    products = (ae[:, None, :].double() * be[None, :, :].double()).reshape(-1, 4096)
+    exponents = (ar[:, None, :] + br[None, :, :]).reshape(-1, 4096)
+    exponents = t.where(products == 0, -10000, exponents)
+    assert t.equal(products, products.float().double())
+    predictions = {"mxfp8_raw_window25_k32": d.fixed_window(products, exponents, 25, 32)}
+    predictions["mxfp8_raw_window24_k32"] = d.fixed_window(products, exponents, 24, 32)
+    predictions["mxfp8_raw_window26_k32"] = d.fixed_window(products, exponents, 26, 32)
+    exact = products.sum(1)
+    predictions["expanded_exact_dot_rn_f32"] = exact.float()
+    positions = t.randperm(36 * 1024, generator=t.Generator().manual_seed(2026100103))[:32].tolist()
+    scalar_audit = []
+    for pos in positions:
+        row, column = divmod(pos, 1024)
+        scalar = scalar_scaled_prediction(a[row].tolist(), b[column].tolist(), sa[row].tolist(), sb[column].tolist())
+        vector = d.words(predictions["mxfp8_raw_window25_k32"])[pos].item() & 0xFFFFFFFF
+        assert scalar == vector
+        scalar_audit.append({"row": row, "column": column, "word": scalar})
+    rows = []
+    stock = prior["stock_c_before"][:36].flatten()
+    observed = truth.flatten()
+    for name, value in predictions.items():
+        rows.append(
+            {
+                "name": name,
+                "all36_unconditioned": d.stats(value, observed, stock, exact),
+                "heldout_rows18to35": d.stats(value[18 * 1024 :], observed[18 * 1024 :], stock[18 * 1024 :], exact[18 * 1024 :]),
+            }
+        )
+    t.save({"exact_dot_fp64": exact.reshape(36, 1024), **{n: v.reshape(36, 1024) for n, v in predictions.items()}}, out / "outputs.pt")
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "CPU_MXFP8_WINDOW_VALIDATION_COMPLETE_NOT_MODEL_SUCCESS",
+        "cuda_initialized": False,
+        "native_calls": 0,
+        "predeclared_hypothesis": "25 raw-exponent fraction bits including UE8M0 exponents, K32 cross-term interleaving matching frozen native packing, per-term RTZ then F32 RTZ",
+        "rows": rows,
+        "logical_input_reconstruction_max_abs": (ax.double() - x.double()).abs().max().item(),
+        "logical_weight_reconstruction_max_abs": (bx.double() - w.double()).abs().max().item(),
+        "saved_native_bf16D_vs_fp16D_C_byte_equal": True,
+        "scalar_independent_audited_coordinates": 32,
+        "scalar_integer_audit": scalar_audit,
+        "input_outputs_sha256": d.sha(d.INPUT / "outputs.pt"),
+        "native_outputs_sha256": d.sha(target / "outputs.pt"),
+        "native_metadata_sha256": d.sha(target / "result.json"),
+        "outputs_sha256": d.sha(out / "outputs.pt"),
+        "helper_sha256": d.sha(HELPER),
+        "harness_sha256": d.sha(Path(__file__)),
+        "torch": t.__version__,
+        "limits": "Single original first-layer expert0, all36 actual rows and1024 columns. Logical quantization/packing recomputed; no new physical-buffer audit, actual kernel replay, model feedback, recipe acceptance, oracle/baseline replacement, generation/KV or performance. BF16 reference and MXFP8 predictions use different instruction grouping; neither is substituted for native results.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(
+        json.dumps(
+            {
+                "stage": result["stage"],
+                "rows": rows,
+                "input_reconstruction": result["logical_input_reconstruction_max_abs"],
+                "weight_reconstruction": result["logical_weight_reconstruction_max_abs"],
+            }
+        ),
+        flush=True,
+    )
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,1572 @@
+{
+  "stage": "CPU_AUDITED_WINDOW_BF16_AND_NATIVE_MXFP8_MATCH_NOT_FULL24_SUCCESS",
+  "cuda_initialized": false,
+  "native_calls": 0,
+  "run_records": [
+    {
+      "argv": [
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_fixed_window_cpu_20261001.py",
+        "--out",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fixed-window-cpu-20261001-r1"
+      ],
+      "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+      "started_utc": "2026-10-01T14:46:21.323067+00:00",
+      "deadline_seconds": 600.0,
+      "status": "EXITED",
+      "selected_env": {},
+      "returncode": 0,
+      "signal": null,
+      "elapsed_seconds": 10.216923518999465
+    },
+    {
+      "argv": [
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/validate_a3_fixed_window_all24_cpu_20261001.py",
+        "--out",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fixed-window-all24-cpu-20261001-r1",
+        "--expected-helper-sha",
+        "91533128b0e22ec3d65b5778c61aed4a9c4bf0d2d0cd4fccfa9d2d0579d84c97"
+      ],
+      "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+      "started_utc": "2026-10-01T14:48:59.851614+00:00",
+      "deadline_seconds": 600.0,
+      "status": "EXITED",
+      "selected_env": {},
+      "returncode": 0,
+      "signal": null,
+      "elapsed_seconds": 22.965645401000074
+    },
+    {
+      "argv": [
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/validate_a3_mxfp8_window_cpu_20261001.py",
+        "--out",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-mxfp8-window-cpu-20261001-r1",
+        "--expected-helper-sha",
+        "91533128b0e22ec3d65b5778c61aed4a9c4bf0d2d0cd4fccfa9d2d0579d84c97"
+      ],
+      "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+      "started_utc": "2026-10-01T14:50:50.753640+00:00",
+      "deadline_seconds": 600.0,
+      "status": "EXITED",
+      "selected_env": {},
+      "returncode": 0,
+      "signal": null,
+      "elapsed_seconds": 17.30395653100095
+    }
+  ],
+  "tensor_count": 160,
+  "tensor_records": {
+    "bf16_fp32_prediction": [
+      {
+        "name": "exact_dot_fp64",
+        "shape": [
+          36,
+          1024
+        ],
+        "dtype": "torch.float64",
+        "sha256": "89354065114a6c3ce40158494bce47d8fd979d1d781d2a9754fc12189360f547"
+      },
+      {
+        "name": "raw_window25_k16",
+        "shape": [
+          36,
+          1024
+        ],
+        "dtype": "torch.float32",
+        "sha256": "d080ebc47dfdcfe5fd7940a7b9f0acfc2434d1b79ee8c7448e99e306e9c8591f"
+      },
+      {
+        "name": "raw_window24_k16",
+        "shape": [
+          36,
+          1024
+        ],
+        "dtype": "torch.float32",
+        "sha256": "3fae1ef89503c9e53783962dd267193042325d5b96075e691a9a7103d802332f"
+      },
+      {
+        "name": "raw_window26_k16",
+        "shape": [
+          36,
+          1024
+        ],
+        "dtype": "torch.float32",
+        "sha256": "898466719d7b0d298640b5a3df7d37b8bd51941ba756050a2483b3aa2bc0c9b8"
+      },
+      {
+        "name": "raw_window25_k32_control",
+        "shape": [
+          36,
+          1024
+        ],
+        "dtype": "torch.float32",
+        "sha256": "85ff92a8c8d3d94231ba0ca5f8f58f5abd5bd1254b37f0cd839322f7ca5f2b7b"
+      },
+      {
+        "name": "exact_dot_rn_f32",
+        "shape": [
+          36,
+          1024
+        ],
+        "dtype": "torch.float32",
+        "sha256": "52523c92aae95ee4ed1b0e85e1f1face340bd466ed46bfbdc34ca6da66230ee3"
+      },
+      {
+        "name": "exact_dot_rtz_f32",
+        "shape": [
+          36,
+          1024
+        ],
+        "dtype": "torch.float32",
+        "sha256": "1984287cbeda75bcf1029f7104d662e3cd35065c2cd2cb6e342417b83c527fd8"
+      },
+      {
+        "name": "ieee_k16_group_rn_add_rn",
+        "shape": [
+          36,
+          1024
+        ],
+        "dtype": "torch.float32",
+        "sha256": "9327529b2346d05f18cf4b3e7c73c94bd20848bd2ad5e9a9a2144460a78286b5"
+      },
+      {
+        "name": "ieee_k16_group_rn_add_rz",
+        "shape": [
+          36,
+          1024
+        ],
+        "dtype": "torch.float32",
+        "sha256": "efc657d43926a13a0065b331b54c36718fa1eb84e7f2876db518eb2d8a1c9d60"
+      },
+      {
+        "name": "ieee_k16_group_rz_add_rn",
+        "shape": [
+          36,
+          1024
+        ],
+        "dtype": "torch.float32",
+        "sha256": "90e67ad37e6a4565ebb45ead5a80913dfb5ceec22adaa022781e5c3d48842674"
+      },
+      {
+        "name": "ieee_k16_group_rz_add_rz",
+        "shape": [
+          36,
+          1024
+        ],
+        "dtype": "torch.float32",
+        "sha256": "a81b288a5a7790c8d790b88bee40a5b243caf85fdff49851459fc72198f8510f"
+      }
+    ],
+    "all24_bf16_holdout": [
+      {
+        "name": "0/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "86ecd49fef1fec3ad30ad38e8d1caf7e6a531e1b2597d9825e51451a669969ef"
+      },
+      {
+        "name": "0/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "69cd825c709c61bd9a9585d0b35dbadd6362c4f62ba8313b788dc1a194da5aac"
+      },
+      {
+        "name": "0/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "809c14a6cc6046f202738ceb1c55cc57f7b07a6ae3eb0f8aa5c4070f1e2f23d7"
+      },
+      {
+        "name": "0/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "2ede130dccc2bff477ddae076f972fe7046d9f5cb30b27d3962205cd106ef384"
+      },
+      {
+        "name": "0/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "9d127f705422fd9aa913480d862f5659555f96dfadc9d6931fb2582054c0dbad"
+      },
+      {
+        "name": "0/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "5e5b1c9290e32b1b547d05e467f2e78dd351d8341f1adbe0ee77c606c4f53ca1"
+      },
+      {
+        "name": "1/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "92b419662cc3349b6a0e6fbcfdb5836e37ed3104e14682e3e2e2a0cf7182ed07"
+      },
+      {
+        "name": "1/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "113408eb74dec0ee3369cf924dfb0152ced0f84bf0fe6c8277e3b0460481a6a7"
+      },
+      {
+        "name": "1/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "82971a3279cb022eac9f8d52134d7835889e7c8d0cd3ed173f10b8a6c33d179e"
+      },
+      {
+        "name": "1/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "5014816d9b5207b9df8bb7a850cc2d672ebe727e07ae25d1c0402abf414636e3"
+      },
+      {
+        "name": "1/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "abcc5f9045fb1d015ce48c830b9840a21a3fc7c287289237a888c3ee0bb4a716"
+      },
+      {
+        "name": "1/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "7c4faf926f56e5d2618dec6b698f4523001070d60a22e18256ff49a80aeb3d2b"
+      },
+      {
+        "name": "2/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "b42b70735124b237601c481cc4663e8a40e86d6bdf82e8579a2dedc16a30e95a"
+      },
+      {
+        "name": "2/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "ae21902b022551f01aff61e0228c76d891f4a8c75f30b42706aeb933e6d33c14"
+      },
+      {
+        "name": "2/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "86e6b1676801f836f537fbe5b0364bb55d9b9e52138173e80a79cf7f6fe6fe41"
+      },
+      {
+        "name": "2/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "b3c44a337bb2830a9aa918ddf33a968481d82babbb3e98ce2709b8a4503e1852"
+      },
+      {
+        "name": "2/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "4a4c9a719d87cb896909943040ffd6a63b2ce0be20c8cc2fdd0c637200a4829a"
+      },
+      {
+        "name": "2/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "0283feaa7ef0787fc64e74d3272980c02a58bdb42612da35dcfdac421138cb31"
+      },
+      {
+        "name": "3/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "d53cc6d1040cb07f49526e87c36575f598329042efeb4340fc0382a0dbd311a5"
+      },
+      {
+        "name": "3/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "782af92fec8378016c471807b68b52065093141d7c790a7fae7f80878557aabb"
+      },
+      {
+        "name": "3/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "8bed9495839edb6ffb8a258a024b5a2eba635dd2b2c71b0b20edb359f87a23d0"
+      },
+      {
+        "name": "3/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "c237e6bce8e417bcca4e61647635eec7975501156452e0647bd1b6e43b8cf2e5"
+      },
+      {
+        "name": "3/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "9b69362acd244f0f4f415641fddfc02b5aa5d643f81e561726c6f96085aa0d9e"
+      },
+      {
+        "name": "3/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "7cc8c48a1fa3c453b249d7d953109744d5ce37b82a25a2fba492fdd0f37c2ad4"
+      },
+      {
+        "name": "4/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "a6f9f3ad96e9d075afe0d16f93c4fd67e832642abcd2251b711d5b4d1d48e9a7"
+      },
+      {
+        "name": "4/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "d643918e304b9e4ef95f7909c947f85d88b6740ab48b3ddeb627431387854070"
+      },
+      {
+        "name": "4/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "1a0cb468c248915b4adc993d4e4836860173494c827a197a57c4c3d53c8ef4bd"
+      },
+      {
+        "name": "4/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "7475a0936a36b90dff2fef16208e20e22025f136f65339a619895ae830c477a1"
+      },
+      {
+        "name": "4/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "bd3af8219e7ee9cfc9311f38aca961a1918030e08cdff239d60129185d812ca8"
+      },
+      {
+        "name": "4/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "c97ddfa01937510f81ed1dfb4a48bccc63f73a4b1bee4ddb419ffa466aa5646f"
+      },
+      {
+        "name": "5/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "0a2192042812442e3a6aebed8c159011ca54bf34f78bee4e8ee1f3aa31f2d004"
+      },
+      {
+        "name": "5/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "5efbb3b8b02eb8836322571391db34c1985b71e49fc0a96ac633dd4f3b0221d2"
+      },
+      {
+        "name": "5/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "04b76ee12f197d4a684aab40e6b217e880493af17b1dd976dcd550a4d1cd2963"
+      },
+      {
+        "name": "5/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "d95f34484be8eaa9b4ea3bb32ad05bfb17bc93cb71ecf42fcd47d5830d10438e"
+      },
+      {
+        "name": "5/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "1554f080f52696ea23191a393c6f1eafd31e4987765ca0b4938a32a782078bfb"
+      },
+      {
+        "name": "5/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "46c78f596f8616e75cc94f0658cee6376b3e3f8c81ed1ba7f35055f008d571cc"
+      },
+      {
+        "name": "6/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "572eb5fd2c6b5e414eb0161b6e69d58c914eda37c90d7c71d6384566812fa838"
+      },
+      {
+        "name": "6/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "48d9451fe436c55755446a5f08b483545e9fb465e629e060c140ad7bf340bf42"
+      },
+      {
+        "name": "6/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "3eccae666b59405f5d3d8a4dd9ff44ce001274e6d6d406448f271c59f52326f6"
+      },
+      {
+        "name": "6/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "f836972b96706b390f8d6d0c086c64cc55baf20822aca1daf6c389814d0d75ab"
+      },
+      {
+        "name": "6/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "a4332e662a206ca5e27b839b495bb1537135abdcf8ea93635593fc5755c17e75"
+      },
+      {
+        "name": "6/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "a6c6dc4b8df81214d1a957c03a1d88f58ff054671d711caabb9664fe633f13c5"
+      },
+      {
+        "name": "7/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "bc506c9153aa7b9679b815027ef7f29ad19309a912809255803d1429515a7d95"
+      },
+      {
+        "name": "7/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "f7e0964783a74b535596f2f2c0329010153bab9349727b69ff1690b2655cccc3"
+      },
+      {
+        "name": "7/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "0350f1e19e1bdeb46ea8e68664410f51cbddf3577d8120b94e23026fe6964763"
+      },
+      {
+        "name": "7/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "68863de7dfffdf10703f6e0e5b0b2ca2a577874a486f2dd9aa35a1312474e243"
+      },
+      {
+        "name": "7/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "dd70475b4ed804f497f275fe5562f2ce67728d10617b5d688b41236440bb1736"
+      },
+      {
+        "name": "7/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "8f18dab5cf64f20d28c05bdf69535f9b0849a043e2b64d14c30b4067154229d6"
+      },
+      {
+        "name": "8/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "10fbe0dafcfa5219052f9d283407135ec44b75b2959dc2a86b64a607a3a679c1"
+      },
+      {
+        "name": "8/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "ca7b736a969f789ccdcc7af3e21cecbc0b02eae1ea7a1c157b955a2ffb682957"
+      },
+      {
+        "name": "8/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "f00503f37a9f5100b38f4d4e72aaebfd147fce26d7d5c303ad57b595f06f916e"
+      },
+      {
+        "name": "8/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "0283ff998a1ba20f7b797249206a57d93adbfd6d8c4325aa94f6b36324fd60b7"
+      },
+      {
+        "name": "8/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "ea64817d4d11283af0599474b5a72541b8e6dc2d7a54a39f32dfe497e0356662"
+      },
+      {
+        "name": "8/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "9ee0bc317a2c32e40cd1174815a8428b8e8da7d683a5a47f66eff7e206e794bc"
+      },
+      {
+        "name": "9/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "66ee56fd6fb43165b520aa4a4e2628d28342c387ecb06a705f9e96caf1ea653d"
+      },
+      {
+        "name": "9/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "a475eda3f7533e121624e4a6d85b51adc045b622fdc6229eb5c574528372d4b0"
+      },
+      {
+        "name": "9/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "4d23e9e65e137659d9de92258bc8801a7d7ab84f7daab070b673f9f946ebaff6"
+      },
+      {
+        "name": "9/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "b39206edd0b74b8f90342060f35b8a9ac9668966c6bcf5eca9a0bf7b5651596e"
+      },
+      {
+        "name": "9/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "2b6530665c9510d42e2cb69e1d2d6053ff2985c2ee55933ca37c69ed78c584cc"
+      },
+      {
+        "name": "9/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "9dd0b99c4ccc224c710e0acb1693a5c3f2eea407c88fc29afb7a4db354362d80"
+      },
+      {
+        "name": "10/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "1db628143e803ed59644267e2744c03b00581abeac66eb839dafbf74fd3941bf"
+      },
+      {
+        "name": "10/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "3e4e5ec2dfe664e29e75f4c7a7ac53ca922100f0cfcdaad5c06d941714194b60"
+      },
+      {
+        "name": "10/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "87e40d4d304f8c9e0050e5ee84998167acec9cea6198743db11b66a179d3b479"
+      },
+      {
+        "name": "10/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "0aa0d0fd1467e869d0dc7166b96163db78cf8a55fb8d91436c0328a9acda006d"
+      },
+      {
+        "name": "10/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "6c7f98a8d62d6e2d557065f9e869602b6f6ef794e06bd7804827a73e8ca71131"
+      },
+      {
+        "name": "10/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "72bc607d5351cf5245b6806b6cd069b18c2fe1e67c61ae1d468946a824e2d4eb"
+      },
+      {
+        "name": "11/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "bebe8d30c888fa79464f34eeb93848c61c56a609f5db5beac2c19beab51ae04c"
+      },
+      {
+        "name": "11/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "3a9cdd636771d6fc32fd3e01adfe10d426eead0f766a2b07da0d1b6e54bf86f4"
+      },
+      {
+        "name": "11/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "9aad7622d4ee6942b8d60426063690e76163f80391a4ab6ea7d590a1d91b94d8"
+      },
+      {
+        "name": "11/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "03e04b92c096b920623df7910ac4d3c9258342869fe77e271862ff617f5d4a3a"
+      },
+      {
+        "name": "11/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "a774637d324d373731ec368d38872eb032b6db11d8061cfcaa82775344c2a6ec"
+      },
+      {
+        "name": "11/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "6625afc4e46dae42383aabc4019a53e2c34343fc4940bc61edc56bbf96194e6c"
+      },
+      {
+        "name": "12/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "b2d26c07a95fa34ae91cf71b5b20983af1173280ae8e7cf3fd5f20e9049595aa"
+      },
+      {
+        "name": "12/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "519aea6ca6390c2d471b7a6a2a35dc30e61dd808c6ae4cb6514977155931db68"
+      },
+      {
+        "name": "12/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "9a0f86cf9b98d8e23590edf7b9b8144e4caf1e01d3950f9ce08446ccb9ff671d"
+      },
+      {
+        "name": "12/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "ed14d38683307e94aa6c0b72c2dd17550cb9c35084faa25ce67bbeca864afdb6"
+      },
+      {
+        "name": "12/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "a2c5960e46b7a96f95c4f7f7ee0be7192bd14e6f1f7021602cf8d9313df5348e"
+      },
+      {
+        "name": "12/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "d5896e59368525149643d951e83bd37e5ce6db37a524d60a6df6b057480b2124"
+      },
+      {
+        "name": "13/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "4afded6468371a7bfe66f2eed3e468538888f337b21de9c6fa9450c4ff8b1db9"
+      },
+      {
+        "name": "13/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "d173b3fd0990b73c1f95601952117b73dfd00492be1a8cef300468c4bb31c193"
+      },
+      {
+        "name": "13/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "d04e33fc42d11e57c4156e0a388c0ef1c083bd50c44a4676bd89cb6a4674d01a"
+      },
+      {
+        "name": "13/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "1c01240c7017739125a39728f2b161e1711dde1f233ef218c451b4e2be47a642"
+      },
+      {
+        "name": "13/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "478ba35d2b269fc8ffd124b98ebf62e8aaf462cef3f36f4bc5ebdfb01e7d5a47"
+      },
+      {
+        "name": "13/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "07ab91015a7749e86ef8df39e3027530388553a49626ec717894320da40ee3b3"
+      },
+      {
+        "name": "14/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "cd45d1d117dce093917533f54d6b8e5ac871aaf2ffa156fa522a7a8a07e96597"
+      },
+      {
+        "name": "14/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "ebbe9a3abbab4009bc758fdd2456d28b10bb5b016704f775c4b0569df33ab9d1"
+      },
+      {
+        "name": "14/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "f391166e3e1619bf03233d85779288db4fe941d1db9b407b0f080b184c06c693"
+      },
+      {
+        "name": "14/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "a38db82238cad1435a4d197fac62aa5097c1e5459c9f612c2772a49445adafb3"
+      },
+      {
+        "name": "14/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "3619f81caa06809e43be70eca6a889504c3a9c524cb537b7a0aad444d057de3d"
+      },
+      {
+        "name": "14/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "3a9fd62ed1aa730fdd5599e1631576e1b2f53ecd045fad03498009893d101075"
+      },
+      {
+        "name": "15/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "abcbdfbb44582d60dabaaaf591bd925d2c8a1a5dd878aa5bbb90f7f41f817050"
+      },
+      {
+        "name": "15/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "3f28e3586f9b122dd020ff42187426f6b2907b69764dd4fb39450e34d05675cb"
+      },
+      {
+        "name": "15/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "6f0bc92c592786b216dd67eb76eadb1a82c79477dc0a2fecd5e0c5f9a1b85589"
+      },
+      {
+        "name": "15/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "88719efdf59bfd4222574bdb65cb4c688c0710f8fc23aa16f8f4f7f797bac88c"
+      },
+      {
+        "name": "15/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "7bd1dab52c95a94b974d0eb6f251d6f928b39e029382295177bf30f790792a71"
+      },
+      {
+        "name": "15/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "04f825c83fec5f23c37e0f2681e920e987cd24c8bc28ef46b0141ecc795811b6"
+      },
+      {
+        "name": "16/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "eee7d42913f8de4d36589aa229a9e722d911164e4b47b4e2d8840b8f2737bf8b"
+      },
+      {
+        "name": "16/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "2107c2c1986b5ce666c3350055140889cb18da5671cdacabe344cd227289dbf1"
+      },
+      {
+        "name": "16/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "e4d219d6991214efb409e49eb9abb3f9916c2ab218936b33b669ce3b62537260"
+      },
+      {
+        "name": "16/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "c8f50dcd2a66b1b51f1208fc759f91773b9d971877f46918a87ddbaa102683f9"
+      },
+      {
+        "name": "16/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "af674d3ff94da8ea93b8e543a8f9af4a5f2e05e329b59760e321c7b7342e1329"
+      },
+      {
+        "name": "16/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "846fbc6644fd2e8724aabadd7ff25836f70b80b3a1a8d3fc5c99ab8a88dc170f"
+      },
+      {
+        "name": "17/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "b328ca2dc96f16a0963215ba272d862fe80fbdf66b74a8f8588d70f251eb6eaa"
+      },
+      {
+        "name": "17/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "0987c161e8789cd98928c668c6ad71ad11d951a44c1652455ecdca0f286091d5"
+      },
+      {
+        "name": "17/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "cfa53f21c5a4243b36619530163f1774bf2c4817515c6fb140ae9feb329bcd3b"
+      },
+      {
+        "name": "17/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "4fb01620618057d2bdba8f85d3a1b57f78342926862d045e55537a971e0e42f0"
+      },
+      {
+        "name": "17/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "d88650ac3c298b35ae03ccea1e3080e4b305493cadee9e962b80efbe3fa52b03"
+      },
+      {
+        "name": "17/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "9c784bbe405ac3f2a56268e8fd6bb5281fe8ec8a3fb10e39a1517f14966fdac0"
+      },
+      {
+        "name": "18/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "ce62cae008565469a0ce9894810e8176a164f7fbb378c65c151696ca3863259b"
+      },
+      {
+        "name": "18/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "ef5bf3d80404d88afb6ead8477ee26efbb426eb849303ac654189927f0ffd5eb"
+      },
+      {
+        "name": "18/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "f5f0aea8cd1999829d581f2fc13a1cf93f477de098774f19399c8706f74ab287"
+      },
+      {
+        "name": "18/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "09639e45ed15c169d7903a61782057202145c0f6b9cb4b86a820909c8d538dc7"
+      },
+      {
+        "name": "18/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "fb3a597b99828e1810e59c0e1459da0af0c3e1b2cd994c06947957c9d6b4a379"
+      },
+      {
+        "name": "18/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "5d51c80c93a19ba9872a9d7a6d871786bf57c007004cc3a1e7bcd9ba63d5ab96"
+      },
+      {
+        "name": "19/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "1ee2f1f0d4446b32faeef0e9436d42e9ad83839a04f2dffd90a9cad8f4a31096"
+      },
+      {
+        "name": "19/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "1ea5a0830b5c56e0f6092ba57d213821c09efcfe377224b96db3fbbd9ee1478b"
+      },
+      {
+        "name": "19/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "79fb8999599db80737807ee83fab5f8dc92a3eb5a99ddb606524821a61f226bb"
+      },
+      {
+        "name": "19/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "fc0d975231bacf31800994d3094f002c00096605063b0d3245c9f950bbdb0feb"
+      },
+      {
+        "name": "19/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "1907fe9f5d502358422b1a48a5193902c03a9f1bcebf52b7772ddc245f7b2bcb"
+      },
+      {
+        "name": "19/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "c5aaf316f11774071673aebbacf875cd6ce7ff7db766ff5700228f5050976977"
+      },
+      {
+        "name": "20/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "8a1296648ba07370b6e08d2c6ef56f7e9c0e8df30ce9749740e6c578b6f67084"
+      },
+      {
+        "name": "20/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "af6a9fb27cb6adbb5b8df6cb564dbd2478186b445c5c6425ac07eaadae9cb99c"
+      },
+      {
+        "name": "20/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "8247bac2e6ce17068725c466c5f3506d3c13d22c3eb5059185527a70c48aa2a1"
+      },
+      {
+        "name": "20/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "1bf088d1f8a0d287cc5f83ecda2547de6905d55c5ac140427e6b6daa5c5c9bcb"
+      },
+      {
+        "name": "20/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "ff7a2684196ff410a7397194a1e81e971c8c7109f6d21f8154bee4410ad59027"
+      },
+      {
+        "name": "20/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "5e3ab873057ed981b5984786f4db1ba357628797f1403dfdf573bfa9f10d4d77"
+      },
+      {
+        "name": "21/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "d48d0e000a6ab67af2bf9a88b801ec8602370b31d4dd6c1c0e4ce91558c29241"
+      },
+      {
+        "name": "21/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "42ad51e91f16f47dd914db2b8ada306d2ac7813e12b59c2ee89c89b8e6affe36"
+      },
+      {
+        "name": "21/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "837fbfd7924f7f14b99e29030bee788fbbcf716f5dcdb6578326ab6d6003cbb5"
+      },
+      {
+        "name": "21/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "869770cc238e5f4137e25ebd2143f3fd316581c4950b24c8305d748d6a41ab21"
+      },
+      {
+        "name": "21/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "fef4b895e13a59f7642f44e3575756f7a975c6133ff68d42b1b64b409674d947"
+      },
+      {
+        "name": "21/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "4c3737b9ee12681c20945b49270fb0472f6b6ad196a93eda08c14daf2d34db02"
+      },
+      {
+        "name": "22/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "2c8a430d90d8d072a02571532e44759edc8c4768bce611b356c587de065323f7"
+      },
+      {
+        "name": "22/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "baa7c104571e106ceff7f80b787424f1a7fc3b54e726093a1631e2a9993407d4"
+      },
+      {
+        "name": "22/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "c2cbc7b57918a111d799e7e3e84d503586b548be28277f3c9ea14c70051f71c9"
+      },
+      {
+        "name": "22/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "f474a9b92de145dc05f4579528d6b7cac0e14171190d09e5dc8f2cfbdde97e7d"
+      },
+      {
+        "name": "22/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "0cd2b0dd83a0f076f584d6498b873c3212411e36c6c75fdccbf2c4f81577eb33"
+      },
+      {
+        "name": "22/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "c2e446abc8f34fe5ddd72a8dd04f6f7f5614dafabf90e34c6c2d61785106864b"
+      },
+      {
+        "name": "23/raw_window25_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "c2be9bfa52e28ed51ba6d25b0d3a313b4c6bba11d238cff6e5a0386016bd5afa"
+      },
+      {
+        "name": "23/raw_window24_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "c0b647b6fe4ac116a77bad35626a7bf160c61709a2b0bf31e0fa7852c196613c"
+      },
+      {
+        "name": "23/raw_window26_k16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "5eae05369de48233e3cf0d3efc66fbf8c7a6642f2682dc0e6cd68b00e497d720"
+      },
+      {
+        "name": "23/ieee_k16_group_rn_add_rz",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.float32",
+        "sha256": "469bc3f46553d6f35d1f0f66272cdc5d6939d08fd11c0a4acdcf0dc9b1b2bdb9"
+      },
+      {
+        "name": "23/stock_bf16",
+        "shape": [
+          584,
+          16
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "37a2b60148e70af786048baabc67647172f5c449d81a8aebb0caecbef97e01f9"
+      },
+      {
+        "name": "23/route_expert_ids",
+        "shape": [
+          584
+        ],
+        "dtype": "torch.int64",
+        "sha256": "ba332eb7559f493dc0f28c526e588dfbd1155d57ee03ba7c31b5ead3211d8254"
+      }
+    ],
+    "mxfp8_native_prediction": [
+      {
+        "name": "exact_dot_fp64",
+        "shape": [
+          36,
+          1024
+        ],
+        "dtype": "torch.float64",
+        "sha256": "837d79d4427e4f405c07c0ee1aa181918cec874b81c80d586f634a0f47e546c7"
+      },
+      {
+        "name": "mxfp8_raw_window25_k32",
+        "shape": [
+          36,
+          1024
+        ],
+        "dtype": "torch.float32",
+        "sha256": "6ec14c2eb7bd449b363c8e9f1c40be06d50b761d3e230ab9d1a85dbe3806fe0f"
+      },
+      {
+        "name": "mxfp8_raw_window24_k32",
+        "shape": [
+          36,
+          1024
+        ],
+        "dtype": "torch.float32",
+        "sha256": "a35e4c10ebc72b3052e582d6983a16ca801ba009a29ab4539d45beb068e72081"
+      },
+      {
+        "name": "mxfp8_raw_window26_k32",
+        "shape": [
+          36,
+          1024
+        ],
+        "dtype": "torch.float32",
+        "sha256": "d1fd6c9f49ff95e358c2622857d7f97008e4d0e2c143515aab589e15efa179d8"
+      },
+      {
+        "name": "expanded_exact_dot_rn_f32",
+        "shape": [
+          36,
+          1024
+        ],
+        "dtype": "torch.float32",
+        "sha256": "8a8f3fe11cf2ed3ce6360567ef8c8f9186049849493e20eaa4970d983edde032"
+      }
+    ]
+  },
+  "bf16_prediction_counts": {
+    "raw_window25_k16": {
+      "fp32": 0,
+      "bf16": 0
+    },
+    "raw_window24_k16": {
+      "fp32": 33136,
+      "bf16": 3
+    },
+    "raw_window26_k16": {
+      "fp32": 25335,
+      "bf16": 1
+    },
+    "raw_window25_k32_control": {
+      "fp32": 35434,
+      "bf16": 7
+    },
+    "exact_dot_rn_f32": {
+      "fp32": 36498,
+      "bf16": 20
+    },
+    "exact_dot_rtz_f32": {
+      "fp32": 36452,
+      "bf16": 19
+    },
+    "ieee_k16_group_rn_add_rn": {
+      "fp32": 36439,
+      "bf16": 17
+    },
+    "ieee_k16_group_rn_add_rz": {
+      "fp32": 28483,
+      "bf16": 0
+    },
+    "ieee_k16_group_rz_add_rn": {
+      "fp32": 36418,
+      "bf16": 17
+    },
+    "ieee_k16_group_rz_add_rz": {
+      "fp32": 29534,
+      "bf16": 0
+    }
+  },
+  "all24_holdout_counts": {
+    "raw_window25_k16": {
+      "bf16": 0,
+      "heldout_bf16": 0
+    },
+    "raw_window24_k16": {
+      "bf16": 31,
+      "heldout_bf16": 31
+    },
+    "raw_window26_k16": {
+      "bf16": 14,
+      "heldout_bf16": 14
+    },
+    "ieee_k16_group_rn_add_rz": {
+      "bf16": 21,
+      "heldout_bf16": 21
+    }
+  },
+  "mxfp8_prediction_counts": {
+    "mxfp8_raw_window25_k32": {
+      "fp32": 0,
+      "bf16": 1
+    },
+    "mxfp8_raw_window24_k32": {
+      "fp32": 33018,
+      "bf16": 4
+    },
+    "mxfp8_raw_window26_k32": {
+      "fp32": 25347,
+      "bf16": 4
+    },
+    "expanded_exact_dot_rn_f32": {
+      "fp32": 36543,
+      "bf16": 20
+    }
+  },
+  "bf16_vs_mxfp8_grouping_fp32_mismatches": 31821,
+  "bf16_vs_mxfp8_grouping_bf16_mismatches": 1,
+  "exact_dot_reconstruction_mismatches": 969,
+  "exact_dot_reconstruction_max_abs": 3.3527612686157227e-07,
+  "all24_sample_count": 224256,
+  "all24_heldout_sample_count": 223680,
+  "harness_sha256": "f7d27bebafa92a234d4a78e33d3f1eec7ce1da606aa525440500772e4425c17c",
+  "mathematical_helper_sha256": "91533128b0e22ec3d65b5778c61aed4a9c4bf0d2d0cd4fccfa9d2d0579d84c97",
+  "scope": "Independent comparison against frozen GPU and original-stock bytes plus160 saved CPU tensor hashes; no mathematical CPU prediction replaces native model execution",
+  "limits": "Original BF16 firstexpert36x1024 FP32 and separate actual MXFP8 firstexpert36x1024 FP32; all24 original BF16 sampled16 columns/all584routes. Remaining pure-MXFP8 full-model gate failure unchanged, no ISA universality, new native/generation/KV or performance success."
+}

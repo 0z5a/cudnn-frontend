@@ -1,0 +1,151 @@
+"""Holdout CPU window validation on original Granite stock trajectories.
+
+No model execution, no oracle replacement and no native kernel changes.
+All24 layers, all584 original expert routes per layer, fixed16 unconditioned
+packed gate/up column positions. Layer0/expert0 discovery is reported separately.
+"""
+
+import argparse
+import importlib.util
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+HELPER = Path(__file__).with_name("diagnose_a3_fixed_window_cpu_20261001.py")
+spec = importlib.util.spec_from_file_location("a3_window_math", HELPER)
+d = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(d)
+t = d.t
+from safetensors import safe_open
+
+CHECKPOINT = Path("/home/jwipc/models/granite-3.1-1b-a400m-instruct-0da7a48b/model.safetensors")
+COLUMNS = [0, 1, 15, 16, 31, 32, 33, 63, 64, 127, 255, 511, 512, 767, 991, 1023]
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--expected-helper-sha", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized()
+    assert d.sha(HELPER) == args.expected_helper_sha
+    prior = d.ROOT / "results/a3-residual-staging-20261001-r1"
+    assert d.sha(prior / "outputs.pt") == "34be866726f1e7c30c66af3d1009e07070b88ea045e8966d037772dd9d240ed1"
+    meta = json.loads((prior / "result.json").read_text())
+    assert meta["stock_baseline_byte_exact"] and meta["source_head"] == "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+    assert d.sha(CHECKPOINT) == "ac02591061f1344027a7e7b11dbb4143f75f166c47dc09b742f5de3ab1dde1d1"
+    captured = t.load(prior / "outputs.pt", map_location="cpu", weights_only=True)
+    columns = t.tensor(COLUMNS)
+    names = ["raw_window25_k16", "raw_window24_k16", "raw_window26_k16", "ieee_k16_group_rn_add_rz"]
+    rows, saved = [], {}
+    with safe_open(str(CHECKPOINT), framework="pt", device="cpu") as checkpoint:
+        for layer in range(24):
+            hidden = captured[f"stock_input/{layer}"]["original"]
+            index = captured[f"stock_route/{layer}"]["index"]
+            assert hidden.shape == (73, 1024) and index.shape == (73, 8)
+            order = t.argsort(index.flatten(), stable=True)
+            experts = index.flatten()[order]
+            x = hidden[order // 8]
+            original = checkpoint.get_tensor(f"model.layers.{layer}.block_sparse_moe.input_linear.weight")
+            gate, up = original.chunk(2, 1)
+            packed = t.stack((gate.reshape(32, -1, 32, 1024), up.reshape(32, -1, 32, 1024)), 2).reshape(32, 1024, 1024)
+            w = packed[:, columns][experts]
+            assert x.shape == (584, 1024) and w.shape == (584, 16, 1024)
+            assert t.isfinite(x).all() and t.isfinite(w).all()
+            products = (x[:, None, :].double() * w.double()).reshape(-1, 1024)
+            assert t.equal(products, products.float().double())
+            exponents = (d.raw_exp(x.float())[:, None, :] + d.raw_exp(w.float())).reshape(-1, 1024)
+            exponents = t.where(products == 0, -10000, exponents)
+            predictions = {
+                "raw_window25_k16": d.fixed_window(products, exponents, 25),
+                "raw_window24_k16": d.fixed_window(products, exponents, 24),
+                "raw_window26_k16": d.fixed_window(products, exponents, 26),
+                "ieee_k16_group_rn_add_rz": d.ieee_groups(products, "rn", "rz"),
+            }
+            stock = captured[f"local/{layer}"]["original_bf16_local"]["c"][:, columns].contiguous()
+            assert stock.dtype == t.bfloat16 and stock.shape == (584, 16)
+            heldout = (experts != 0) if layer == 0 else t.ones(584, dtype=t.bool)
+            scalar_coordinates = t.randperm(584 * 16, generator=t.Generator().manual_seed(2026100102 + layer))[:8].tolist()
+            scalar_audit = []
+            for pos in scalar_coordinates:
+                row, ci = divmod(pos, 16)
+                xbits = (x[row].view(t.int16).to(t.int32) & 65535).tolist()
+                wbits = (w[row, ci].view(t.int16).to(t.int32) & 65535).tolist()
+                scalar = d.scalar_prediction(xbits, wbits, 25)
+                vector = d.words(predictions["raw_window25_k16"])[pos].item() & 0xFFFFFFFF
+                assert scalar == vector
+                scalar_audit.append({"route_row": row, "packed_column": COLUMNS[ci], "expert": experts[row].item(), "word": scalar})
+            comparisons = []
+            for name in names:
+                pred = predictions[name].reshape(584, 16)
+                bf = pred.to(t.bfloat16)
+                mismatch = bf.view(t.int16) != stock.view(t.int16)
+                comparisons.append(
+                    {
+                        "name": name,
+                        "stock_bf16_word_mismatches": mismatch.sum().item(),
+                        "heldout_stock_bf16_word_mismatches": mismatch[heldout].sum().item(),
+                        "fp32_word_mismatches_vs_window25": (d.words(pred) != d.words(predictions["raw_window25_k16"].reshape(584, 16))).sum().item(),
+                        "max_abs_bf16_vs_stock": (bf.float() - stock.float()).abs().max().item(),
+                    }
+                )
+                saved[f"{layer}/{name}"] = pred
+            saved[f"{layer}/stock_bf16"] = stock
+            saved[f"{layer}/route_expert_ids"] = experts
+            row = {
+                "layer": layer,
+                "actual_routes": 584,
+                "sampled_outputs": 584 * 16,
+                "heldout_outputs": heldout.sum().item() * 16,
+                "expert_counts": t.bincount(experts, minlength=32).tolist(),
+                "comparisons": comparisons,
+                "scalar_integer_audit": scalar_audit,
+            }
+            rows.append(row)
+            print(json.dumps(row), flush=True)
+            (out / "partial.json").write_text(json.dumps({"stage": "CPU_VALIDATION_RUNNING", "rows": rows}, indent=2) + "\n")
+            del packed, original, w, products, exponents, predictions
+    t.save(saved, out / "outputs.pt")
+    totals = []
+    for name in names:
+        values = [next(c for c in r["comparisons"] if c["name"] == name) for r in rows]
+        totals.append(
+            {
+                "name": name,
+                "stock_bf16_word_mismatches": sum(c["stock_bf16_word_mismatches"] for c in values),
+                "heldout_stock_bf16_word_mismatches": sum(c["heldout_stock_bf16_word_mismatches"] for c in values),
+                "fp32_word_mismatches_vs_window25": sum(c["fp32_word_mismatches_vs_window25"] for c in values),
+            }
+        )
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "CPU_ALL24_WINDOW_HOLDOUT_VALIDATION_COMPLETE_NOT_MODEL_SUCCESS",
+        "cuda_initialized": False,
+        "native_calls": 0,
+        "layers": 24,
+        "fixed_unconditioned_packed_columns": COLUMNS,
+        "total_sampled_outputs": sum(r["sampled_outputs"] for r in rows),
+        "total_heldout_outputs": sum(r["heldout_outputs"] for r in rows),
+        "scalar_integer_audited_coordinates": sum(len(r["scalar_integer_audit"]) for r in rows),
+        "totals": totals,
+        "rows": rows,
+        "original_source_head": meta["source_head"],
+        "checkpoint_sha256": d.sha(CHECKPOINT),
+        "prior_outputs_sha256": d.sha(prior / "outputs.pt"),
+        "prior_metadata_sha256": d.sha(prior / "result.json"),
+        "outputs_sha256": d.sha(out / "outputs.pt"),
+        "helper_sha256": d.sha(HELPER),
+        "harness_sha256": d.sha(Path(__file__)),
+        "torch": t.__version__,
+        "limits": "Fixed-input sampled C only on original73-token stock trajectory: not all output columns, not native A3 feedback, full logits, generation/KV or performance. BF16 match does not establish all24 underlying FP32 words because those were not saved. No production/oracle/baseline replacement.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "totals": totals, "total_sampled_outputs": result["total_sampled_outputs"]}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

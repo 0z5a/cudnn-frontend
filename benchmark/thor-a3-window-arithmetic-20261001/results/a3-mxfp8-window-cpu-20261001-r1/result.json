@@ -1,0 +1,274 @@
+{
+  "stage": "CPU_MXFP8_WINDOW_VALIDATION_COMPLETE_NOT_MODEL_SUCCESS",
+  "cuda_initialized": false,
+  "native_calls": 0,
+  "predeclared_hypothesis": "25 raw-exponent fraction bits including UE8M0 exponents, K32 cross-term interleaving matching frozen native packing, per-term RTZ then F32 RTZ",
+  "rows": [
+    {
+      "name": "mxfp8_raw_window25_k32",
+      "all36_unconditioned": {
+        "count": 36864,
+        "fp32_word_mismatches": 0,
+        "stock_bf16_word_mismatches": 1,
+        "max_abs_vs_gpu_fp32": 0.0,
+        "l2_vs_gpu_fp32": 0.0,
+        "mean_error_vs_exact": 2.3362133389122817e-06,
+        "max_abs_vs_exact": 0.00014246348291635513,
+        "toward_zero_vs_exact_count": 33462
+      },
+      "heldout_rows18to35": {
+        "count": 18432,
+        "fp32_word_mismatches": 0,
+        "stock_bf16_word_mismatches": 0,
+        "max_abs_vs_gpu_fp32": 0.0,
+        "l2_vs_gpu_fp32": 0.0,
+        "mean_error_vs_exact": 2.009235183996082e-06,
+        "max_abs_vs_exact": 0.00014246348291635513,
+        "toward_zero_vs_exact_count": 16647
+      }
+    },
+    {
+      "name": "mxfp8_raw_window24_k32",
+      "all36_unconditioned": {
+        "count": 36864,
+        "fp32_word_mismatches": 33018,
+        "stock_bf16_word_mismatches": 4,
+        "max_abs_vs_gpu_fp32": 6.866455078125e-05,
+        "l2_vs_gpu_fp32": 4.5799503564035e-07,
+        "mean_error_vs_exact": 1.6950682826563955e-06,
+        "max_abs_vs_exact": 0.00014246348291635513,
+        "toward_zero_vs_exact_count": 33376
+      },
+      "heldout_rows18to35": {
+        "count": 18432,
+        "fp32_word_mismatches": 16449,
+        "stock_bf16_word_mismatches": 3,
+        "max_abs_vs_gpu_fp32": 6.866455078125e-05,
+        "l2_vs_gpu_fp32": 4.885273080575846e-07,
+        "mean_error_vs_exact": 1.454285365946421e-06,
+        "max_abs_vs_exact": 0.00014246348291635513,
+        "toward_zero_vs_exact_count": 16585
+      }
+    },
+    {
+      "name": "mxfp8_raw_window26_k32",
+      "all36_unconditioned": {
+        "count": 36864,
+        "fp32_word_mismatches": 25347,
+        "stock_bf16_word_mismatches": 4,
+        "max_abs_vs_gpu_fp32": 3.814697265625e-05,
+        "l2_vs_gpu_fp32": 2.1133290534432223e-07,
+        "mean_error_vs_exact": 2.5842343630751627e-06,
+        "max_abs_vs_exact": 0.00016535166651010513,
+        "toward_zero_vs_exact_count": 33462
+      },
+      "heldout_rows18to35": {
+        "count": 18432,
+        "fp32_word_mismatches": 12523,
+        "stock_bf16_word_mismatches": 1,
+        "max_abs_vs_gpu_fp32": 3.0517578125e-05,
+        "l2_vs_gpu_fp32": 2.1829372814524585e-07,
+        "mean_error_vs_exact": 2.221272353448218e-06,
+        "max_abs_vs_exact": 0.00016535166651010513,
+        "toward_zero_vs_exact_count": 16638
+      }
+    },
+    {
+      "name": "expanded_exact_dot_rn_f32",
+      "all36_unconditioned": {
+        "count": 36864,
+        "fp32_word_mismatches": 36543,
+        "stock_bf16_word_mismatches": 20,
+        "max_abs_vs_gpu_fp32": 0.00014495849609375,
+        "l2_vs_gpu_fp32": 1.4111943332942976e-06,
+        "mean_error_vs_exact": 3.5896163202369596e-10,
+        "max_abs_vs_exact": 3.594672307372093e-06,
+        "toward_zero_vs_exact_count": 18274
+      },
+      "heldout_rows18to35": {
+        "count": 18432,
+        "fp32_word_mismatches": 18261,
+        "stock_bf16_word_mismatches": 14,
+        "max_abs_vs_gpu_fp32": 0.00014495849609375,
+        "l2_vs_gpu_fp32": 1.4681061361052333e-06,
+        "mean_error_vs_exact": -7.12137756172145e-12,
+        "max_abs_vs_exact": 2.495013177394867e-06,
+        "toward_zero_vs_exact_count": 9148
+      }
+    }
+  ],
+  "logical_input_reconstruction_max_abs": 0.0,
+  "logical_weight_reconstruction_max_abs": 7.450580596923828e-09,
+  "saved_native_bf16D_vs_fp16D_C_byte_equal": true,
+  "scalar_independent_audited_coordinates": 32,
+  "scalar_integer_audit": [
+    {
+      "row": 24,
+      "column": 897,
+      "word": 3227886951
+    },
+    {
+      "row": 24,
+      "column": 356,
+      "word": 3230935052
+    },
+    {
+      "row": 32,
+      "column": 517,
+      "word": 1074830610
+    },
+    {
+      "row": 5,
+      "column": 227,
+      "word": 1030449564
+    },
+    {
+      "row": 16,
+      "column": 779,
+      "word": 3225778364
+    },
+    {
+      "row": 16,
+      "column": 749,
+      "word": 1101213105
+    },
+    {
+      "row": 22,
+      "column": 334,
+      "word": 3202564032
+    },
+    {
+      "row": 12,
+      "column": 704,
+      "word": 3226615756
+    },
+    {
+      "row": 21,
+      "column": 302,
+      "word": 1062086576
+    },
+    {
+      "row": 28,
+      "column": 886,
+      "word": 1073303576
+    },
+    {
+      "row": 1,
+      "column": 723,
+      "word": 3222253148
+    },
+    {
+      "row": 11,
+      "column": 58,
+      "word": 1049358982
+    },
+    {
+      "row": 34,
+      "column": 914,
+      "word": 3230799925
+    },
+    {
+      "row": 13,
+      "column": 611,
+      "word": 1044228264
+    },
+    {
+      "row": 35,
+      "column": 168,
+      "word": 1023789928
+    },
+    {
+      "row": 19,
+      "column": 624,
+      "word": 1068864460
+    },
+    {
+      "row": 9,
+      "column": 433,
+      "word": 3221026600
+    },
+    {
+      "row": 18,
+      "column": 533,
+      "word": 3236965054
+    },
+    {
+      "row": 3,
+      "column": 644,
+      "word": 3236697653
+    },
+    {
+      "row": 11,
+      "column": 12,
+      "word": 3232593673
+    },
+    {
+      "row": 9,
+      "column": 479,
+      "word": 3234752302
+    },
+    {
+      "row": 6,
+      "column": 660,
+      "word": 3242275022
+    },
+    {
+      "row": 11,
+      "column": 838,
+      "word": 3217000250
+    },
+    {
+      "row": 31,
+      "column": 667,
+      "word": 3226884684
+    },
+    {
+      "row": 0,
+      "column": 766,
+      "word": 3223074877
+    },
+    {
+      "row": 30,
+      "column": 191,
+      "word": 1067660805
+    },
+    {
+      "row": 7,
+      "column": 259,
+      "word": 3238045396
+    },
+    {
+      "row": 27,
+      "column": 408,
+      "word": 3202857503
+    },
+    {
+      "row": 29,
+      "column": 542,
+      "word": 3235574852
+    },
+    {
+      "row": 29,
+      "column": 165,
+      "word": 3214631137
+    },
+    {
+      "row": 8,
+      "column": 468,
+      "word": 3233779416
+    },
+    {
+      "row": 25,
+      "column": 181,
+      "word": 1076134084
+    }
+  ],
+  "input_outputs_sha256": "0aafa01f30a4d4bcc4941ac0d507da94b28d7fa76417e034067dd58ee1d13ab6",
+  "native_outputs_sha256": "846d6a3778850d9fde1fe8dfa3cc2329d5aec053a77f318f6f972507b2c96190",
+  "native_metadata_sha256": "55be68ffc8dcdf7caf1f3504bacf7c8025164f16dfb6b4788949d4e12a9efe72",
+  "outputs_sha256": "8814371b8414c1d09e5f1a07789ce1f36bd8c559258f01cd4c7e852933086372",
+  "helper_sha256": "91533128b0e22ec3d65b5778c61aed4a9c4bf0d2d0cd4fccfa9d2d0579d84c97",
+  "harness_sha256": "28277feb56f6fd2f254b9f54301dd68d477703a0caf3c4c34e0acc1e27b7617f",
+  "torch": "2.13.0+cu130",
+  "limits": "Single original first-layer expert0, all36 actual rows and1024 columns. Logical quantization/packing recomputed; no new physical-buffer audit, actual kernel replay, model feedback, recipe acceptance, oracle/baseline replacement, generation/KV or performance. BF16 reference and MXFP8 predictions use different instruction grouping; neither is substituted for native results."
+}

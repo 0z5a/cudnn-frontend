@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_fixed_window_cpu_20261001.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-fixed-window-cpu-20261001-r1"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+  "started_utc": "2026-10-01T14:46:21.323067+00:00",
+  "deadline_seconds": 600.0,
+  "status": "EXITED",
+  "selected_env": {},
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 10.216923518999465
+}

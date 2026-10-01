@@ -1,0 +1,6 @@
+{
+  "stage": "PRESERVED_ARCHIVE_SETUP_FAILURE",
+  "returncode": 2,
+  "stderr": "python3: can't open file '/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/archive_a3_window_cpu_20261001.py': [Errno 2] No such file or directory",
+  "reason": "SSH archive invocation occurred before the yielded SCP session completed. SCP later exited0; no experiment or GPU failure. Retry uses identical frozen archiver after completed copy."
+}

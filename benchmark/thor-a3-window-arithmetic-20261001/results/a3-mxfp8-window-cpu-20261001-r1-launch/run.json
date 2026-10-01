@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/validate_a3_mxfp8_window_cpu_20261001.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-mxfp8-window-cpu-20261001-r1",
+    "--expected-helper-sha",
+    "91533128b0e22ec3d65b5778c61aed4a9c4bf0d2d0cd4fccfa9d2d0579d84c97"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+  "started_utc": "2026-10-01T14:50:50.753640+00:00",
+  "deadline_seconds": 600.0,
+  "status": "EXITED",
+  "selected_env": {},
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 17.30395653100095
+}
