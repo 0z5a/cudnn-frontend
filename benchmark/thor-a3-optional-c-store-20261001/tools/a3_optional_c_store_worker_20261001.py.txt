@@ -1,0 +1,385 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Full24 optional-C-write private prototype parity and captured execution timing.
+
+Same original checkpoint/all24/E32/top8/H1024/I512 and original baseline/gates.
+Actual MXFP8 tensor-core native D is consumed. Explicit experimental kernel
+rounds C, SiLU and product to BF16 before SFD normalization. Frozen independent
+oracle recasts reconstructed logical operands to BF16, applies stock BF16 dot,
+and BF16 SiLU/product. This declared numerical recipe is fixed before tests;
+it is not a replacement for failed native execution. K32 native dot order is retained; the only new execution configuration is
+Omit intermediate C stores, versus emit C stores. C output is explicitly
+unavailable in the private omit mode; its workspace is still allocated by
+the unmodified wrapper. This is not a public wrapper/API contract change.
+This can save write traffic but does not save allocation or shared memory. The independent oracle is unchanged. No native BF16
+matrix multiplication, fallback, support bypass or production edit.
+"""
+
+import argparse
+import importlib.util
+import json
+import sys
+from pathlib import Path
+import subprocess
+
+PROBE = Path(__file__).with_name("a3_all24_precision_probe_20261001.py")
+spec = importlib.util.spec_from_file_location("a3_precision_probe", PROBE)
+p = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(p)
+m, t = p.m, p.t
+quantize = m.quantize_mxfp8
+K_BLOCK = 32
+prototype_path = Path(__file__).with_name("a3_optional_c_store_native_kernel_20261001.py")
+prototype_spec = importlib.util.spec_from_file_location("a3_optional_c_store_native", prototype_path)
+prototype = importlib.util.module_from_spec(prototype_spec)
+sys.modules[prototype_spec.name] = prototype
+prototype_spec.loader.exec_module(prototype)
+original_kernel = m.api.BlockScaledContiguousGroupedGemmKernel
+m.api.BlockScaledContiguousGroupedGemmKernel = prototype.BlockScaledContiguousGroupedGemmKernel
+
+
+class EmitC(prototype.BlockScaledContiguousGroupedGemmKernel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs, emit_intermediate_c=True)
+
+
+class OmitC(prototype.BlockScaledContiguousGroupedGemmKernel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs, emit_intermediate_c=False)
+
+
+def expanded_quantize(value, operand):
+    high, _, scale_high = quantize(value)
+    low, _, scale_low = quantize(value.float() - m.dequantize(high, scale_high))
+    q_parts, s_parts = (
+        ((high, high, low, low), (scale_high, scale_high, scale_low, scale_low))
+        if operand == "A"
+        else (
+            (high, low, high, low),
+            (scale_high, scale_low, scale_high, scale_low),
+        )
+    )
+    q = t.cat([x.view(t.uint8) for x in q_parts], dim=-1).view(t.float8_e4m3fn)
+    scale = t.cat(s_parts, dim=-1)
+    # Component-major -> originalK32-block-major, with matched scale groups.
+    permutation = t.arange(4096, device=q.device).reshape(4, 32, 32).permute(1, 0, 2).reshape(-1) if K_BLOCK else t.arange(4096, device=q.device)
+    sf_permutation = permutation.reshape(-1, 32)[:, 0] // 32
+    q = q.view(t.uint8).index_select(-1, permutation).view(t.float8_e4m3fn)
+    scale = scale.index_select(-1, sf_permutation)
+    rows, cols = q.shape[-2:]
+    assert cols == 4096
+    codes = (t.log2(scale).int() + 127).to(t.uint8)
+    raw = codes.reshape(-1, rows // 128, 4, 32, cols // 128, 4)
+    packed = raw.permute(0, 1, 4, 3, 2, 5).contiguous().view(t.float8_e8m0fnu)
+    effective = m.dequantize(high, scale_high) + m.dequantize(low, scale_low)
+    return q, packed, scale, effective
+
+
+def make_adapter(base, expert, layer, bf16_stage=False):
+    class DoubleAdapter(base):
+        def __init__(self):
+            super().__init__(expert, layer, (256, 256))
+            gate, up = expert.gate_up_proj.detach().chunk(2, 1)
+            weight = t.stack((gate.reshape(32, -1, 32, 1024), up.reshape(32, -1, 32, 1024)), 2).reshape(32, 1024, 1024)
+            self.b, self.sfb, self.bscale, effective = expanded_quantize(weight, "B")
+            self.weight_error = m.difference(effective, weight)
+            self.bref = effective.to(t.bfloat16)
+            if isinstance(self, p.PrecisionAdapter):
+                self.policy = "merge_fp32"
+
+        def reference_staged(self, hidden, index, probability):
+            x, ends, destinations, order, token_ids, sizes, aligned = self.routing(hidden, index)
+            a, sfa, scale, effective = expanded_quantize(x, "A")
+            adeq = effective.to(t.bfloat16)
+            if self.bref is None:
+                self.bref = m.dequantize(self.b, self.bscale)
+            d = t.zeros((x.shape[0], self.i), dtype=t.bfloat16, device=x.device)
+            start = 0
+            for expert, n in enumerate(aligned):
+                if n:
+                    c = m.F.linear(adeq[start : start + n], self.bref[expert]).to(t.bfloat16).reshape(n, -1, 2, 32)
+                    d[start : start + n] = (m.F.silu(c[:, :, 0]) * c[:, :, 1]).reshape(n, self.i)
+                start += n
+            live = d[destinations]
+            routes = t.empty((order.numel(), self.h), dtype=t.bfloat16, device=x.device)
+            weight = probability.flatten()[order]
+            start = 0
+            for expert, n in enumerate(sizes):
+                if n:
+                    y = m.F.linear(live[start : start + n], self.expert.down_proj[expert])
+                    routes[start : start + n] = (y * weight[start : start + n, None]).to(t.bfloat16)
+                start += n
+            unsorted = t.empty_like(routes)
+            unsorted[order] = routes
+            return unsorted.reshape(hidden.shape[0], index.shape[-1], self.h).sum(1)
+
+        def forward(self, *args):
+            if bf16_stage:
+                if self.mode == "reference":
+                    return self.reference_staged(*args)
+            assert m.quantize_mxfp8 is quantize
+            m.quantize_mxfp8 = lambda x: expanded_quantize(x, "A")[:3]
+            try:
+                return super().forward(*args)
+            finally:
+                m.quantize_mxfp8 = quantize
+
+    return DoubleAdapter()
+
+
+def compatibility(oracle, stock):
+    r, b = oracle.double(), stock.double()
+    error = (t.linalg.vector_norm(r - b) / t.linalg.vector_norm(b)).item()
+    ratio = (t.linalg.vector_norm(r) / t.linalg.vector_norm(b)).item()
+    bound = max(0.0, error - 0.01 * ratio)
+    return {"oracle_bf16_relative_l2_fp64": error, "norm_ratio_fp64": ratio, "native_bf16_lower_bound": bound, "both_gates_impossible": bound > 0.05}
+
+
+def main():
+    global K_BLOCK
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--expected-source", required=True)
+    parser.add_argument("--expected-head", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    assert out.is_dir() and not (out / "result.json").exists()
+    assert __import__("os").environ.get("A3_BF16_STAGE_LOCK_ADMITTED") == "1"
+    source = Path(args.expected_source).resolve()
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == args.expected_head
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    for module in (m.cudnn, m.api, m._compiled_module):
+        assert Path(module.__file__).resolve().is_relative_to(source / "python")
+    t.set_num_threads(4)
+    t.backends.cuda.matmul.allow_tf32 = False
+    t.backends.cudnn.allow_tf32 = False
+    t.set_float32_matmul_precision("highest")
+    rows, saved, policies = [], {}, []
+    mode_caches = {}
+    assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+    model, loading = m.AutoModelForCausalLM.from_pretrained(
+        m.MODEL, dtype=t.bfloat16, attn_implementation="sdpa", trust_remote_code=False, local_files_only=True, output_loading_info=True
+    )
+    assert not any(loading.values()) and sum(v.numel() for v in model.parameters()) == 1334628352
+    model = model.eval().cuda()
+    experts = [e for e in model.modules() if isinstance(e, m.GraniteMoeExperts)]
+    assert len(experts) == 24
+    tokenizer = m.AutoTokenizer.from_pretrained(m.MODEL, local_files_only=True, trust_remote_code=False)
+    _, prompts, workloads = m.load_inputs(tokenizer)
+    cases = [prompts[0], prompts[1], workloads["256"]]
+    baseline_dir = m.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    baseline_meta = json.loads((baseline_dir / "result.json").read_text())
+    assert baseline_meta["source_head"] == "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+    baseline = t.load(baseline_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    paired_dir = m.ROOT / "results/a3-mxfp8-bf16-staged-full-model-20261001-r1"
+    paired_meta = json.loads((paired_dir / "result.json").read_text())
+    paired_run = json.loads((paired_dir.with_name(paired_dir.name + "-launch") / "run.json").read_text())
+    assert paired_run["status"] == "EXITED" and paired_run["returncode"] == 0
+    assert (
+        paired_meta["source_head"] == args.expected_head
+        and paired_meta["experimental_native_kernel"]["sha256"] == "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3"
+    )
+    assert paired_meta["imports"]["binding"]["sha256"] == m.sha_file(m._compiled_module.__file__)
+    paired = t.load(paired_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    for name, k_block in (("k32_emit_c", 32), ("k32_omit_c", 32)):
+        m.api.BlockScaledContiguousGroupedGemmKernel = EmitC if name == "k32_emit_c" else OmitC
+        m.api._cache_of_GroupedGemmSwigluSm100Objects = {}
+        K_BLOCK = k_block
+        base, bf16_stage = m.A3ExpertAdapter, True
+        adapters = [make_adapter(base, expert, layer, bf16_stage) for layer, expert in enumerate(experts)]
+        policies.append(
+            {
+                "policy": name,
+                "weight_error_max_l2": max(a.weight_error["relative_l2"] for a in adapters),
+                "weight_error_max_abs": max(a.weight_error["max_abs"] for a in adapters),
+                "native_semantics_supported": True,
+            }
+        )
+        with t.inference_mode():
+            for case, ids in enumerate(cases):
+                m.attach(adapters, "reference")
+                before = m.NATIVE_CALLS
+                oracle = model(input_ids=ids.cuda(), use_cache=False).logits.cpu()
+                assert m.NATIVE_CALLS == before
+                saved[f"{name}/{case}/reference"] = oracle
+                compare = compatibility(oracle, baseline[f"forward_{case}_stock"])
+                row = {
+                    "policy": name,
+                    "case": case,
+                    "input_tokens": ids.shape[-1],
+                    "native_semantics_supported": True,
+                    "model_parameters": 1334628352,
+                    "mxfp8_layers": list(range(24)),
+                    "gemm_k": 4096,
+                    **compare,
+                    "native_calls": 0,
+                }
+                if compare["both_gates_impossible"]:
+                    row["native_status"] = "NOT_RUN_FIXED_ORACLE_INCOMPATIBLE"
+                else:
+                    m.attach(adapters, "native")
+                    before = m.NATIVE_CALLS
+                    native = model(input_ids=ids.cuda(), use_cache=False).logits.cpu()
+                    assert m.NATIVE_CALLS - before == 24
+                    saved[f"{name}/{case}/native"] = native
+                    oracle_error = m.difference(native, oracle)
+                    bf16_error = m.difference(native, baseline[f"forward_{case}_stock"])
+                    paired_native = paired[f"k32_mxfp8_dot_bf16_stage/{case}/native"]
+                    paired_oracle = paired[f"k32_mxfp8_dot_bf16_stage/{case}/reference"]
+                    assert t.equal(oracle.view(t.uint8), paired_oracle.view(t.uint8))
+                    row.update(
+                        intermediate_c_valid=name == "k32_emit_c",
+                        paired_native=m.difference(native, paired_native),
+                        paired_native_byte_equal=t.equal(native.view(t.uint8), paired_native.view(t.uint8)),
+                        native_status="EXECUTED",
+                        native_calls=24,
+                        native_oracle=oracle_error,
+                        native_bf16=bf16_error,
+                        oracle_gate_pass=oracle_error["relative_l2"] <= 0.01,
+                        bf16_gate_pass=bf16_error["relative_l2"] <= 0.05,
+                    )
+                rows.append(row)
+                print(json.dumps(row), flush=True)
+                (out / "partial.json").write_text(json.dumps({"rows": rows, "policies": policies}, indent=2))
+        mode_caches[name] = m.api._cache_of_GroupedGemmSwigluSm100Objects
+        m.attach(adapters, "stock")
+    assert m.quantize_mxfp8 is quantize
+    captured_dir = m.ROOT / "results/a3-n128-mxfp8-staged-trace-20261001-r1"
+    captured = t.load(captured_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    paired_timing = []
+    from statistics import median, mean
+
+    for case in range(3):
+        trace = captured[f"k32_n128_mxfp8_bf16_stage/{case}/reference_trace"][0]
+        hidden, indices = trace["x"].cuda(), trace["index"].cuda()
+        x, ends, _, _, _, sizes, _ = adapters[0].routing(hidden, indices)
+        codes, sfa, _ = expanded_quantize(x, "A")[:3]
+        kwargs = dict(
+            a_tensor=codes,
+            b_tensor=adapters[0].b,
+            sfa_tensor=sfa,
+            sfb_tensor=adapters[0].sfb,
+            padded_offsets=ends,
+            alpha_tensor=adapters[0].alpha,
+            norm_const_tensor=adapters[0].norm,
+            prob_tensor=None,
+            acc_dtype=t.float32,
+            c_dtype=t.bfloat16,
+            d_dtype=t.bfloat16,
+            mma_tiler_mn=(256, 256),
+            cluster_shape_mn=(2, 1),
+            sf_vec_size=32,
+            m_aligned=256,
+        )
+        graphs, outputs = {}, {}
+        graph_call_counts = {}
+        for mode in ("k32_emit_c", "k32_omit_c"):
+            m.api.BlockScaledContiguousGroupedGemmKernel = EmitC if mode == "k32_emit_c" else OmitC
+            m.api._cache_of_GroupedGemmSwigluSm100Objects = mode_caches[mode]
+            before = m.NATIVE_CALLS
+            for _ in range(10):
+                result = m.api.grouped_gemm_swiglu_wrapper_sm100(**kwargs)
+            t.cuda.synchronize()
+            graph = t.cuda.CUDAGraph()
+            with t.cuda.graph(graph):
+                result = m.api.grouped_gemm_swiglu_wrapper_sm100(**kwargs)
+            graph_call_counts[mode] = m.NATIVE_CALLS - before
+            assert graph_call_counts[mode] == 11
+            graphs[mode], outputs[mode] = graph, result
+            graph.replay()
+        t.cuda.synchronize()
+        for key in ("d_tensor", "d_col_tensor", "sfd_row_tensor", "sfd_col_tensor", "amax_tensor"):
+            av, bv = outputs["k32_emit_c"][key], outputs["k32_omit_c"][key]
+            assert av is not None and bv is not None
+            assert t.equal(av.view(t.uint8), bv.view(t.uint8)), (case, key)
+            saved[f"paired_c_store/{case}/emit/{key}"] = av.cpu()
+            saved[f"paired_c_store/{case}/omit/{key}"] = bv.cpu()
+        samples = []
+        for block in range(8):
+            order = ("k32_emit_c", "k32_omit_c", "k32_omit_c", "k32_emit_c") if block % 2 == 0 else ("k32_omit_c", "k32_emit_c", "k32_emit_c", "k32_omit_c")
+            for mode in order:
+                start, stop = t.cuda.Event(enable_timing=True), t.cuda.Event(enable_timing=True)
+                start.record()
+                for _ in range(50):
+                    graphs[mode].replay()
+                stop.record()
+                stop.synchronize()
+                samples.append({"block": block, "mode": mode, "replays": 50, "captured_execution_ms": start.elapsed_time(stop) / 50})
+        for mode in graphs:
+            graphs[mode].replay()
+        t.cuda.synchronize()
+        for mode, result in outputs.items():
+            for key in ("d_tensor", "d_col_tensor", "sfd_row_tensor", "sfd_col_tensor", "amax_tensor"):
+                current = result[key].cpu()
+                phase_name = "emit" if mode == "k32_emit_c" else "omit"
+                assert t.equal(current.view(t.uint8), saved[f"paired_c_store/{case}/{phase_name}/{key}"].view(t.uint8))
+        modes = {
+            mode: {
+                "median_ms": median(r["captured_execution_ms"] for r in samples if r["mode"] == mode),
+                "mean_ms": mean(r["captured_execution_ms"] for r in samples if r["mode"] == mode),
+            }
+            for mode in graphs
+        }
+        paired_timing.append(
+            {
+                "case": case,
+                "padded_m": x.shape[0],
+                "original_tokens": hidden.shape[0],
+                "actual_expert_counts": sizes,
+                "samples": samples,
+                "modes": modes,
+                "graph_captured_python_calls": graph_call_counts,
+                "timed_graph_replays": 1600,
+                "omit_over_emit_median": modes["k32_omit_c"]["median_ms"] / modes["k32_emit_c"]["median_ms"],
+                "C_valid_in_omit_mode": False,
+                "C_workspace_still_allocated": True,
+                "numerical_outputs_byte_equal": True,
+            }
+        )
+    t.save(saved, out / "outputs.pt")
+    assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    result = {
+        "stage": "DIAGNOSTIC_COMPLETE",
+        "scope": __doc__,
+        "source_head": args.expected_head,
+        "source": str(source),
+        "checkpoint": baseline_meta["checkpoint"],
+        "model_parameters": 1334628352,
+        "rows": rows,
+        "policies": policies,
+        "native_calls": m.NATIVE_CALLS,
+        "native_plans": m.NATIVE_PLANS,
+        "imports": {
+            name: {"path": module.__file__, "sha256": m.sha_file(module.__file__)}
+            for name, module in (("cudnn", m.cudnn), ("api", m.api), ("binding", m._compiled_module))
+        },
+        "harness_sha256": m.sha_file(__file__),
+        "precision_probe_sha256": m.sha_file(PROBE),
+        "base_adapter_sha256": m.sha_file(p.BASE),
+        "original_baseline_head": baseline_meta["source_head"],
+        "k_order": "K32_same_HH_HL_LH_LL_order",
+        "optional_c_store": "private_constructor_option_no_public_API_change_omit_C_invalid_workspace_still_allocated",
+        "paired_c_store_captured_timing": paired_timing,
+        "formal_model_performance": "NOT_RUN",
+        "model_native_calls": 144,
+        "source_control_prototype_sha256": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3",
+        "paired_result_sha256": m.sha_file(paired_dir / "result.json"),
+        "paired_outputs_sha256": m.sha_file(paired_dir / "outputs.pt"),
+        "paired_run": paired_run,
+        "C_used_by_model": False,
+        "experimental_native_kernel": {"path": str(prototype_path), "sha256": m.sha_file(prototype_path)},
+        "production_source_modified": False,
+        "native_compute": "MXFP8_tensor_core_FP32_accumulation_BF16_C_SiLU_product_rounding",
+        "declared_oracle": "reconstructed_logical_operands_recast_BF16_then_BF16_dot_and_BF16_activation",
+        "original_baseline_replaced": False,
+        "formal_performance": "NOT_RUN",
+        "service_final": "inactive",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2))
+    m.api.BlockScaledContiguousGroupedGemmKernel = original_kernel
+    print(json.dumps({"stage": result["stage"], "native_calls": m.NATIVE_CALLS}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

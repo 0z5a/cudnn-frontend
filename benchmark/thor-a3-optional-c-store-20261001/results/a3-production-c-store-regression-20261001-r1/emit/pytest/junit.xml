@@ -1,0 +1,817 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="16" skipped="0" tests="63" time="208.524" timestamp="2026-10-01T22:14:59.915020+08:00" hostname="agx-thor-w638"><testcase classname="gemm.cutedsl.test_grouped_swiglu_sfd_tiles" name="test_narrow_sfd_matches_wide_and_independent_activation[True-1-256]" time="3.876" /><testcase classname="gemm.cutedsl.test_grouped_swiglu_sfd_tiles" name="test_narrow_sfd_matches_wide_and_independent_activation[True-4-512]" time="2.853" /><testcase classname="gemm.cutedsl.test_grouped_swiglu_sfd_tiles" name="test_narrow_sfd_matches_wide_and_independent_activation[True-31-1024]" time="3.395" /><testcase classname="gemm.cutedsl.test_grouped_swiglu_sfd_tiles" name="test_narrow_sfd_matches_wide_and_independent_activation[True-33-1024]" time="3.452" /><testcase classname="gemm.cutedsl.test_grouped_swiglu_sfd_tiles" name="test_narrow_sfd_matches_wide_and_independent_activation[False-1-256]" time="2.857" /><testcase classname="gemm.cutedsl.test_grouped_swiglu_sfd_tiles" name="test_narrow_sfd_matches_wide_and_independent_activation[False-4-512]" time="2.773" /><testcase classname="gemm.cutedsl.test_grouped_swiglu_sfd_tiles" name="test_narrow_sfd_matches_wide_and_independent_activation[False-31-1024]" time="3.314" /><testcase classname="gemm.cutedsl.test_grouped_swiglu_sfd_tiles" name="test_narrow_sfd_matches_wide_and_independent_activation[False-33-1024]" time="3.317" /><testcase classname="gemm.cutedsl.test_grouped_swiglu_sfd_tiles" name="test_narrow_sfd_plan_reuse_preserves_previous_outputs[True]" time="0.110" /><testcase classname="gemm.cutedsl.test_grouped_swiglu_sfd_tiles" name="test_narrow_sfd_plan_reuse_preserves_previous_outputs[False]" time="0.076" /><testcase classname="gemm.cutedsl.test_grouped_swiglu_sfd_tiles" name="test_narrow_sfd_graph_replay_changes_live_scales" time="0.060" /><testcase classname="gemm.cutedsl.test_swiglu_amax_per_call" name="test_cached_swiglu_amax_is_per_call" time="1.434" /><testcase classname="gemm.cutedsl.test_swiglu_wrapper_launch_stream" name="test_swiglu_wrapper_outputs_and_amax_use_launch_stream[side-False]" time="1.483" /><testcase classname="gemm.cutedsl.test_swiglu_wrapper_launch_stream" name="test_swiglu_wrapper_outputs_and_amax_use_launch_stream[side-True]" time="1.559" /><testcase classname="gemm.cutedsl.test_swiglu_wrapper_launch_stream" name="test_swiglu_wrapper_outputs_and_amax_use_launch_stream[default-False]" time="1.488" /><testcase classname="gemm.cutedsl.test_swiglu_wrapper_launch_stream" name="test_swiglu_wrapper_outputs_and_amax_use_launch_stream[default-True]" time="1.540" /><testcase classname="gemm.cutedsl.test_grouped_gemm_swiglu" name="test_grouped_gemm_swiglu_wrapper_fp4[16-sf_dtype0-False-mma_tiler_mn0-True-cluster_shape_mn0-acc_dtype0-n-d_dtype0-c_dtype0-ab_dtype0]" time="1.225" /><testcase classname="gemm.cutedsl.test_grouped_gemm_swiglu" name="test_grouped_gemm_swiglu_wrapper_fp4[16-sf_dtype0-False-mma_tiler_mn0-False-cluster_shape_mn0-acc_dtype0-n-d_dtype0-c_dtype0-ab_dtype0]" time="1.030" /><testcase classname="gemm.cutedsl.test_grouped_gemm_swiglu" name="test_grouped_gemm_swiglu_wrapper_fp4[16-sf_dtype0-False-mma_tiler_mn1-True-cluster_shape_mn1-acc_dtype0-n-d_dtype0-c_dtype0-ab_dtype0]" time="1.026" /><testcase classname="gemm.cutedsl.test_grouped_gemm_swiglu" name="test_grouped_gemm_swiglu_wrapper_fp4[16-sf_dtype0-False-mma_tiler_mn1-False-cluster_shape_mn1-acc_dtype0-n-d_dtype0-c_dtype0-ab_dtype0]" time="0.987" /><testcase classname="gemm.cutedsl.test_grouped_gemm_swiglu" name="test_grouped_gemm_swiglu_wrapper_fp4[32-sf_dtype2-False-mma_tiler_mn0-True-cluster_shape_mn0-acc_dtype0-n-d_dtype1-c_dtype0-ab_dtype0]" time="1.075" /><testcase classname="gemm.cutedsl.test_grouped_gemm_swiglu" name="test_grouped_gemm_swiglu_wrapper_fp4[32-sf_dtype2-False-mma_tiler_mn0-False-cluster_shape_mn0-acc_dtype0-n-d_dtype1-c_dtype0-ab_dtype0]" time="0.998" /><testcase classname="gemm.cutedsl.test_grouped_gemm_swiglu" name="test_grouped_gemm_swiglu_wrapper_fp8[True-32-sf_dtype0-mma_tiler_mn0-True-cluster_shape_mn0-acc_dtype0-n-d_dtype0-c_dtype0-ab_dtype0]" time="1.783" /><testcase classname="gemm.cutedsl.test_grouped_gemm_swiglu" name="test_grouped_gemm_swiglu_wrapper_fp8[True-32-sf_dtype0-mma_tiler_mn0-False-cluster_shape_mn0-acc_dtype0-n-d_dtype0-c_dtype0-ab_dtype0]" time="1.501" /><testcase classname="gemm.cutedsl.test_grouped_gemm_swiglu" name="test_grouped_gemm_swiglu_wrapper_fp8[False-32-sf_dtype0-mma_tiler_mn0-True-cluster_shape_mn0-acc_dtype0-n-d_dtype0-c_dtype0-ab_dtype0]" time="1.545" /><testcase classname="gemm.cutedsl.test_grouped_gemm_swiglu" name="test_grouped_gemm_swiglu_wrapper_fp8[False-32-sf_dtype0-mma_tiler_mn0-False-cluster_shape_mn0-acc_dtype0-n-d_dtype0-c_dtype0-ab_dtype0]" time="1.668" /><testcase classname="gemm.cutedsl.test_grouped_gemm_canonical_layouts" name="test_grouped_gemm_swiglu_canonical_matches_legacy[fp8-physical_sf]" time="2.903" /><testcase classname="gemm.cutedsl.test_grouped_gemm_canonical_layouts" name="test_grouped_gemm_swiglu_canonical_matches_legacy[fp8-flat_sf]" time="1.431" /><testcase classname="gemm.cutedsl.test_grouped_gemm_canonical_layouts" name="test_grouped_gemm_swiglu_canonical_matches_legacy[fp4-physical_sf]" time="2.063" /><testcase classname="gemm.cutedsl.test_grouped_gemm_canonical_layouts" name="test_grouped_gemm_swiglu_canonical_matches_legacy[fp4-flat_sf]" time="0.979" /><testcase classname="gemm.cutedsl.test_grouped_gemm_canonical_layouts" name="test_grouped_gemm_swiglu_canonical_bf16_prob" time="1.403" /><testcase classname="" name="test_production_c_store_three_arm_pair[False-d_dtype0-True-1-256]" time="4.450" /><testcase classname="" name="test_production_c_store_three_arm_pair[False-d_dtype0-True-4-512]" time="4.471" /><testcase classname="" name="test_production_c_store_three_arm_pair[False-d_dtype0-True-31-1024]" time="4.774" /><testcase classname="" name="test_production_c_store_three_arm_pair[False-d_dtype0-True-33-1024]" time="4.799" /><testcase classname="" name="test_production_c_store_three_arm_pair[False-d_dtype0-False-1-256]" time="4.038"><failure message="RuntimeError: self.stride(-1) must be 1 to view BFloat16 as Byte (different element sizes), but got 65536">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xfffc74d30800&gt;
+experts = 1, n = 256, canonical = False, d_dtype = torch.bfloat16
+vector_f32 = False
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    @pytest.mark.parametrize("d_dtype", [torch.bfloat16, torch.float16])
+    @pytest.mark.parametrize("vector_f32", [False, True])
+    def test_production_c_store_three_arm_pair(monkeypatch, experts, n, canonical, d_dtype, vector_f32):
+        inputs, counts, _, _ = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        previous = api.BlockScaledContiguousGroupedGemmKernel
+        previous_cache = api._cache_of_GroupedGemmSwigluSm100Objects
+        snapshots = {}
+        execute = api.GroupedGemmSwigluSm100.execute
+    
+        def poison(api_object, *args, **kwargs):
+            kwargs["c_tensor"].fill_(float("nan"))
+            return execute(api_object, *args, **kwargs)
+    
+        monkeypatch.setattr(api.GroupedGemmSwigluSm100, "execute", poison)
+        try:
+            for mode, cls in (("original", original.BlockScaledContiguousGroupedGemmKernel), ("emit", candidate.EmitC), ("omit", candidate.OmitC)):
+                api.BlockScaledContiguousGroupedGemmKernel = cls
+                api._cache_of_GroupedGemmSwigluSm100Objects = {}
+                result = api.grouped_gemm_swiglu_wrapper_sm100(
+                    **inputs,
+                    sf_vec_size=32,
+                    c_dtype=torch.bfloat16,
+                    d_dtype=d_dtype,
+                    mma_tiler_mn=(256, 128),
+                    cluster_shape_mn=(2, 1),
+                    m_aligned=256,
+                    vector_f32=vector_f32,
+                )
+                torch.cuda.synchronize()
+                c = result["c_tensor"]
+                assert bool(torch.isnan(c).all()) if mode == "omit" else bool(torch.isfinite(c).all())
+                snapshots[mode] = {k: v.cpu().contiguous() for k, v in result.items() if isinstance(v, torch.Tensor) and k != "c_tensor"}
+                live = torch.tensor([v &gt; 0 for v in counts], device="cuda")
+                assert bool(torch.isfinite(result["amax_tensor"][live]).all())
+                assert bool(torch.isneginf(result["amax_tensor"][~live]).all())
+            assert snapshots["original"].keys() == snapshots["emit"].keys() == snapshots["omit"].keys()
+            for key, value in snapshots["original"].items():
+                for mode in ("emit", "omit"):
+                    actual = snapshots[mode][key]
+                    assert actual.dtype == value.dtype and actual.shape == value.shape
+&gt;                   assert torch.equal(actual.view(torch.uint8), value.view(torch.uint8)), (mode, key)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+E                   RuntimeError: self.stride(-1) must be 1 to view BFloat16 as Byte (different element sizes), but got 65536
+
+../../../tools/test_a3_production_c_store_pair_20261001.py:57: RuntimeError</failure></testcase><testcase classname="" name="test_production_c_store_three_arm_pair[False-d_dtype0-False-4-512]" time="4.090"><failure message="RuntimeError: self.stride(-1) must be 1 to view BFloat16 as Byte (different element sizes), but got 327680">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xfffc9818f8f0&gt;
+experts = 4, n = 512, canonical = False, d_dtype = torch.bfloat16
+vector_f32 = False
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    @pytest.mark.parametrize("d_dtype", [torch.bfloat16, torch.float16])
+    @pytest.mark.parametrize("vector_f32", [False, True])
+    def test_production_c_store_three_arm_pair(monkeypatch, experts, n, canonical, d_dtype, vector_f32):
+        inputs, counts, _, _ = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        previous = api.BlockScaledContiguousGroupedGemmKernel
+        previous_cache = api._cache_of_GroupedGemmSwigluSm100Objects
+        snapshots = {}
+        execute = api.GroupedGemmSwigluSm100.execute
+    
+        def poison(api_object, *args, **kwargs):
+            kwargs["c_tensor"].fill_(float("nan"))
+            return execute(api_object, *args, **kwargs)
+    
+        monkeypatch.setattr(api.GroupedGemmSwigluSm100, "execute", poison)
+        try:
+            for mode, cls in (("original", original.BlockScaledContiguousGroupedGemmKernel), ("emit", candidate.EmitC), ("omit", candidate.OmitC)):
+                api.BlockScaledContiguousGroupedGemmKernel = cls
+                api._cache_of_GroupedGemmSwigluSm100Objects = {}
+                result = api.grouped_gemm_swiglu_wrapper_sm100(
+                    **inputs,
+                    sf_vec_size=32,
+                    c_dtype=torch.bfloat16,
+                    d_dtype=d_dtype,
+                    mma_tiler_mn=(256, 128),
+                    cluster_shape_mn=(2, 1),
+                    m_aligned=256,
+                    vector_f32=vector_f32,
+                )
+                torch.cuda.synchronize()
+                c = result["c_tensor"]
+                assert bool(torch.isnan(c).all()) if mode == "omit" else bool(torch.isfinite(c).all())
+                snapshots[mode] = {k: v.cpu().contiguous() for k, v in result.items() if isinstance(v, torch.Tensor) and k != "c_tensor"}
+                live = torch.tensor([v &gt; 0 for v in counts], device="cuda")
+                assert bool(torch.isfinite(result["amax_tensor"][live]).all())
+                assert bool(torch.isneginf(result["amax_tensor"][~live]).all())
+            assert snapshots["original"].keys() == snapshots["emit"].keys() == snapshots["omit"].keys()
+            for key, value in snapshots["original"].items():
+                for mode in ("emit", "omit"):
+                    actual = snapshots[mode][key]
+                    assert actual.dtype == value.dtype and actual.shape == value.shape
+&gt;                   assert torch.equal(actual.view(torch.uint8), value.view(torch.uint8)), (mode, key)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+E                   RuntimeError: self.stride(-1) must be 1 to view BFloat16 as Byte (different element sizes), but got 327680
+
+../../../tools/test_a3_production_c_store_pair_20261001.py:57: RuntimeError</failure></testcase><testcase classname="" name="test_production_c_store_three_arm_pair[False-d_dtype0-False-31-1024]" time="4.623"><failure message="RuntimeError: self.stride(-1) must be 1 to view BFloat16 as Byte (different element sizes), but got 5373952">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xfffc981bf980&gt;
+experts = 31, n = 1024, canonical = False, d_dtype = torch.bfloat16
+vector_f32 = False
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    @pytest.mark.parametrize("d_dtype", [torch.bfloat16, torch.float16])
+    @pytest.mark.parametrize("vector_f32", [False, True])
+    def test_production_c_store_three_arm_pair(monkeypatch, experts, n, canonical, d_dtype, vector_f32):
+        inputs, counts, _, _ = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        previous = api.BlockScaledContiguousGroupedGemmKernel
+        previous_cache = api._cache_of_GroupedGemmSwigluSm100Objects
+        snapshots = {}
+        execute = api.GroupedGemmSwigluSm100.execute
+    
+        def poison(api_object, *args, **kwargs):
+            kwargs["c_tensor"].fill_(float("nan"))
+            return execute(api_object, *args, **kwargs)
+    
+        monkeypatch.setattr(api.GroupedGemmSwigluSm100, "execute", poison)
+        try:
+            for mode, cls in (("original", original.BlockScaledContiguousGroupedGemmKernel), ("emit", candidate.EmitC), ("omit", candidate.OmitC)):
+                api.BlockScaledContiguousGroupedGemmKernel = cls
+                api._cache_of_GroupedGemmSwigluSm100Objects = {}
+                result = api.grouped_gemm_swiglu_wrapper_sm100(
+                    **inputs,
+                    sf_vec_size=32,
+                    c_dtype=torch.bfloat16,
+                    d_dtype=d_dtype,
+                    mma_tiler_mn=(256, 128),
+                    cluster_shape_mn=(2, 1),
+                    m_aligned=256,
+                    vector_f32=vector_f32,
+                )
+                torch.cuda.synchronize()
+                c = result["c_tensor"]
+                assert bool(torch.isnan(c).all()) if mode == "omit" else bool(torch.isfinite(c).all())
+                snapshots[mode] = {k: v.cpu().contiguous() for k, v in result.items() if isinstance(v, torch.Tensor) and k != "c_tensor"}
+                live = torch.tensor([v &gt; 0 for v in counts], device="cuda")
+                assert bool(torch.isfinite(result["amax_tensor"][live]).all())
+                assert bool(torch.isneginf(result["amax_tensor"][~live]).all())
+            assert snapshots["original"].keys() == snapshots["emit"].keys() == snapshots["omit"].keys()
+            for key, value in snapshots["original"].items():
+                for mode in ("emit", "omit"):
+                    actual = snapshots[mode][key]
+                    assert actual.dtype == value.dtype and actual.shape == value.shape
+&gt;                   assert torch.equal(actual.view(torch.uint8), value.view(torch.uint8)), (mode, key)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+E                   RuntimeError: self.stride(-1) must be 1 to view BFloat16 as Byte (different element sizes), but got 5373952
+
+../../../tools/test_a3_production_c_store_pair_20261001.py:57: RuntimeError</failure></testcase><testcase classname="" name="test_production_c_store_three_arm_pair[False-d_dtype0-False-33-1024]" time="4.632"><failure message="RuntimeError: self.stride(-1) must be 1 to view BFloat16 as Byte (different element sizes), but got 5636096">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xfffc74dbae10&gt;
+experts = 33, n = 1024, canonical = False, d_dtype = torch.bfloat16
+vector_f32 = False
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    @pytest.mark.parametrize("d_dtype", [torch.bfloat16, torch.float16])
+    @pytest.mark.parametrize("vector_f32", [False, True])
+    def test_production_c_store_three_arm_pair(monkeypatch, experts, n, canonical, d_dtype, vector_f32):
+        inputs, counts, _, _ = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        previous = api.BlockScaledContiguousGroupedGemmKernel
+        previous_cache = api._cache_of_GroupedGemmSwigluSm100Objects
+        snapshots = {}
+        execute = api.GroupedGemmSwigluSm100.execute
+    
+        def poison(api_object, *args, **kwargs):
+            kwargs["c_tensor"].fill_(float("nan"))
+            return execute(api_object, *args, **kwargs)
+    
+        monkeypatch.setattr(api.GroupedGemmSwigluSm100, "execute", poison)
+        try:
+            for mode, cls in (("original", original.BlockScaledContiguousGroupedGemmKernel), ("emit", candidate.EmitC), ("omit", candidate.OmitC)):
+                api.BlockScaledContiguousGroupedGemmKernel = cls
+                api._cache_of_GroupedGemmSwigluSm100Objects = {}
+                result = api.grouped_gemm_swiglu_wrapper_sm100(
+                    **inputs,
+                    sf_vec_size=32,
+                    c_dtype=torch.bfloat16,
+                    d_dtype=d_dtype,
+                    mma_tiler_mn=(256, 128),
+                    cluster_shape_mn=(2, 1),
+                    m_aligned=256,
+                    vector_f32=vector_f32,
+                )
+                torch.cuda.synchronize()
+                c = result["c_tensor"]
+                assert bool(torch.isnan(c).all()) if mode == "omit" else bool(torch.isfinite(c).all())
+                snapshots[mode] = {k: v.cpu().contiguous() for k, v in result.items() if isinstance(v, torch.Tensor) and k != "c_tensor"}
+                live = torch.tensor([v &gt; 0 for v in counts], device="cuda")
+                assert bool(torch.isfinite(result["amax_tensor"][live]).all())
+                assert bool(torch.isneginf(result["amax_tensor"][~live]).all())
+            assert snapshots["original"].keys() == snapshots["emit"].keys() == snapshots["omit"].keys()
+            for key, value in snapshots["original"].items():
+                for mode in ("emit", "omit"):
+                    actual = snapshots[mode][key]
+                    assert actual.dtype == value.dtype and actual.shape == value.shape
+&gt;                   assert torch.equal(actual.view(torch.uint8), value.view(torch.uint8)), (mode, key)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+E                   RuntimeError: self.stride(-1) must be 1 to view BFloat16 as Byte (different element sizes), but got 5636096
+
+../../../tools/test_a3_production_c_store_pair_20261001.py:57: RuntimeError</failure></testcase><testcase classname="" name="test_production_c_store_three_arm_pair[False-d_dtype1-True-1-256]" time="4.184" /><testcase classname="" name="test_production_c_store_three_arm_pair[False-d_dtype1-True-4-512]" time="4.581" /><testcase classname="" name="test_production_c_store_three_arm_pair[False-d_dtype1-True-31-1024]" time="5.071" /><testcase classname="" name="test_production_c_store_three_arm_pair[False-d_dtype1-True-33-1024]" time="5.017" /><testcase classname="" name="test_production_c_store_three_arm_pair[False-d_dtype1-False-1-256]" time="4.214"><failure message="RuntimeError: self.stride(-1) must be 1 to view Half as Byte (different element sizes), but got 65536">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xfffc6c054830&gt;
+experts = 1, n = 256, canonical = False, d_dtype = torch.float16
+vector_f32 = False
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    @pytest.mark.parametrize("d_dtype", [torch.bfloat16, torch.float16])
+    @pytest.mark.parametrize("vector_f32", [False, True])
+    def test_production_c_store_three_arm_pair(monkeypatch, experts, n, canonical, d_dtype, vector_f32):
+        inputs, counts, _, _ = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        previous = api.BlockScaledContiguousGroupedGemmKernel
+        previous_cache = api._cache_of_GroupedGemmSwigluSm100Objects
+        snapshots = {}
+        execute = api.GroupedGemmSwigluSm100.execute
+    
+        def poison(api_object, *args, **kwargs):
+            kwargs["c_tensor"].fill_(float("nan"))
+            return execute(api_object, *args, **kwargs)
+    
+        monkeypatch.setattr(api.GroupedGemmSwigluSm100, "execute", poison)
+        try:
+            for mode, cls in (("original", original.BlockScaledContiguousGroupedGemmKernel), ("emit", candidate.EmitC), ("omit", candidate.OmitC)):
+                api.BlockScaledContiguousGroupedGemmKernel = cls
+                api._cache_of_GroupedGemmSwigluSm100Objects = {}
+                result = api.grouped_gemm_swiglu_wrapper_sm100(
+                    **inputs,
+                    sf_vec_size=32,
+                    c_dtype=torch.bfloat16,
+                    d_dtype=d_dtype,
+                    mma_tiler_mn=(256, 128),
+                    cluster_shape_mn=(2, 1),
+                    m_aligned=256,
+                    vector_f32=vector_f32,
+                )
+                torch.cuda.synchronize()
+                c = result["c_tensor"]
+                assert bool(torch.isnan(c).all()) if mode == "omit" else bool(torch.isfinite(c).all())
+                snapshots[mode] = {k: v.cpu().contiguous() for k, v in result.items() if isinstance(v, torch.Tensor) and k != "c_tensor"}
+                live = torch.tensor([v &gt; 0 for v in counts], device="cuda")
+                assert bool(torch.isfinite(result["amax_tensor"][live]).all())
+                assert bool(torch.isneginf(result["amax_tensor"][~live]).all())
+            assert snapshots["original"].keys() == snapshots["emit"].keys() == snapshots["omit"].keys()
+            for key, value in snapshots["original"].items():
+                for mode in ("emit", "omit"):
+                    actual = snapshots[mode][key]
+                    assert actual.dtype == value.dtype and actual.shape == value.shape
+&gt;                   assert torch.equal(actual.view(torch.uint8), value.view(torch.uint8)), (mode, key)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+E                   RuntimeError: self.stride(-1) must be 1 to view Half as Byte (different element sizes), but got 65536
+
+../../../tools/test_a3_production_c_store_pair_20261001.py:57: RuntimeError</failure></testcase><testcase classname="" name="test_production_c_store_three_arm_pair[False-d_dtype1-False-4-512]" time="4.253"><failure message="RuntimeError: self.stride(-1) must be 1 to view Half as Byte (different element sizes), but got 327680">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xfffc981bf410&gt;
+experts = 4, n = 512, canonical = False, d_dtype = torch.float16
+vector_f32 = False
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    @pytest.mark.parametrize("d_dtype", [torch.bfloat16, torch.float16])
+    @pytest.mark.parametrize("vector_f32", [False, True])
+    def test_production_c_store_three_arm_pair(monkeypatch, experts, n, canonical, d_dtype, vector_f32):
+        inputs, counts, _, _ = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        previous = api.BlockScaledContiguousGroupedGemmKernel
+        previous_cache = api._cache_of_GroupedGemmSwigluSm100Objects
+        snapshots = {}
+        execute = api.GroupedGemmSwigluSm100.execute
+    
+        def poison(api_object, *args, **kwargs):
+            kwargs["c_tensor"].fill_(float("nan"))
+            return execute(api_object, *args, **kwargs)
+    
+        monkeypatch.setattr(api.GroupedGemmSwigluSm100, "execute", poison)
+        try:
+            for mode, cls in (("original", original.BlockScaledContiguousGroupedGemmKernel), ("emit", candidate.EmitC), ("omit", candidate.OmitC)):
+                api.BlockScaledContiguousGroupedGemmKernel = cls
+                api._cache_of_GroupedGemmSwigluSm100Objects = {}
+                result = api.grouped_gemm_swiglu_wrapper_sm100(
+                    **inputs,
+                    sf_vec_size=32,
+                    c_dtype=torch.bfloat16,
+                    d_dtype=d_dtype,
+                    mma_tiler_mn=(256, 128),
+                    cluster_shape_mn=(2, 1),
+                    m_aligned=256,
+                    vector_f32=vector_f32,
+                )
+                torch.cuda.synchronize()
+                c = result["c_tensor"]
+                assert bool(torch.isnan(c).all()) if mode == "omit" else bool(torch.isfinite(c).all())
+                snapshots[mode] = {k: v.cpu().contiguous() for k, v in result.items() if isinstance(v, torch.Tensor) and k != "c_tensor"}
+                live = torch.tensor([v &gt; 0 for v in counts], device="cuda")
+                assert bool(torch.isfinite(result["amax_tensor"][live]).all())
+                assert bool(torch.isneginf(result["amax_tensor"][~live]).all())
+            assert snapshots["original"].keys() == snapshots["emit"].keys() == snapshots["omit"].keys()
+            for key, value in snapshots["original"].items():
+                for mode in ("emit", "omit"):
+                    actual = snapshots[mode][key]
+                    assert actual.dtype == value.dtype and actual.shape == value.shape
+&gt;                   assert torch.equal(actual.view(torch.uint8), value.view(torch.uint8)), (mode, key)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+E                   RuntimeError: self.stride(-1) must be 1 to view Half as Byte (different element sizes), but got 327680
+
+../../../tools/test_a3_production_c_store_pair_20261001.py:57: RuntimeError</failure></testcase><testcase classname="" name="test_production_c_store_three_arm_pair[False-d_dtype1-False-31-1024]" time="4.740"><failure message="RuntimeError: self.stride(-1) must be 1 to view Half as Byte (different element sizes), but got 5373952">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xfffc98187680&gt;
+experts = 31, n = 1024, canonical = False, d_dtype = torch.float16
+vector_f32 = False
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    @pytest.mark.parametrize("d_dtype", [torch.bfloat16, torch.float16])
+    @pytest.mark.parametrize("vector_f32", [False, True])
+    def test_production_c_store_three_arm_pair(monkeypatch, experts, n, canonical, d_dtype, vector_f32):
+        inputs, counts, _, _ = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        previous = api.BlockScaledContiguousGroupedGemmKernel
+        previous_cache = api._cache_of_GroupedGemmSwigluSm100Objects
+        snapshots = {}
+        execute = api.GroupedGemmSwigluSm100.execute
+    
+        def poison(api_object, *args, **kwargs):
+            kwargs["c_tensor"].fill_(float("nan"))
+            return execute(api_object, *args, **kwargs)
+    
+        monkeypatch.setattr(api.GroupedGemmSwigluSm100, "execute", poison)
+        try:
+            for mode, cls in (("original", original.BlockScaledContiguousGroupedGemmKernel), ("emit", candidate.EmitC), ("omit", candidate.OmitC)):
+                api.BlockScaledContiguousGroupedGemmKernel = cls
+                api._cache_of_GroupedGemmSwigluSm100Objects = {}
+                result = api.grouped_gemm_swiglu_wrapper_sm100(
+                    **inputs,
+                    sf_vec_size=32,
+                    c_dtype=torch.bfloat16,
+                    d_dtype=d_dtype,
+                    mma_tiler_mn=(256, 128),
+                    cluster_shape_mn=(2, 1),
+                    m_aligned=256,
+                    vector_f32=vector_f32,
+                )
+                torch.cuda.synchronize()
+                c = result["c_tensor"]
+                assert bool(torch.isnan(c).all()) if mode == "omit" else bool(torch.isfinite(c).all())
+                snapshots[mode] = {k: v.cpu().contiguous() for k, v in result.items() if isinstance(v, torch.Tensor) and k != "c_tensor"}
+                live = torch.tensor([v &gt; 0 for v in counts], device="cuda")
+                assert bool(torch.isfinite(result["amax_tensor"][live]).all())
+                assert bool(torch.isneginf(result["amax_tensor"][~live]).all())
+            assert snapshots["original"].keys() == snapshots["emit"].keys() == snapshots["omit"].keys()
+            for key, value in snapshots["original"].items():
+                for mode in ("emit", "omit"):
+                    actual = snapshots[mode][key]
+                    assert actual.dtype == value.dtype and actual.shape == value.shape
+&gt;                   assert torch.equal(actual.view(torch.uint8), value.view(torch.uint8)), (mode, key)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+E                   RuntimeError: self.stride(-1) must be 1 to view Half as Byte (different element sizes), but got 5373952
+
+../../../tools/test_a3_production_c_store_pair_20261001.py:57: RuntimeError</failure></testcase><testcase classname="" name="test_production_c_store_three_arm_pair[False-d_dtype1-False-33-1024]" time="4.696"><failure message="RuntimeError: self.stride(-1) must be 1 to view Half as Byte (different element sizes), but got 5636096">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xfffc74da6240&gt;
+experts = 33, n = 1024, canonical = False, d_dtype = torch.float16
+vector_f32 = False
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    @pytest.mark.parametrize("d_dtype", [torch.bfloat16, torch.float16])
+    @pytest.mark.parametrize("vector_f32", [False, True])
+    def test_production_c_store_three_arm_pair(monkeypatch, experts, n, canonical, d_dtype, vector_f32):
+        inputs, counts, _, _ = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        previous = api.BlockScaledContiguousGroupedGemmKernel
+        previous_cache = api._cache_of_GroupedGemmSwigluSm100Objects
+        snapshots = {}
+        execute = api.GroupedGemmSwigluSm100.execute
+    
+        def poison(api_object, *args, **kwargs):
+            kwargs["c_tensor"].fill_(float("nan"))
+            return execute(api_object, *args, **kwargs)
+    
+        monkeypatch.setattr(api.GroupedGemmSwigluSm100, "execute", poison)
+        try:
+            for mode, cls in (("original", original.BlockScaledContiguousGroupedGemmKernel), ("emit", candidate.EmitC), ("omit", candidate.OmitC)):
+                api.BlockScaledContiguousGroupedGemmKernel = cls
+                api._cache_of_GroupedGemmSwigluSm100Objects = {}
+                result = api.grouped_gemm_swiglu_wrapper_sm100(
+                    **inputs,
+                    sf_vec_size=32,
+                    c_dtype=torch.bfloat16,
+                    d_dtype=d_dtype,
+                    mma_tiler_mn=(256, 128),
+                    cluster_shape_mn=(2, 1),
+                    m_aligned=256,
+                    vector_f32=vector_f32,
+                )
+                torch.cuda.synchronize()
+                c = result["c_tensor"]
+                assert bool(torch.isnan(c).all()) if mode == "omit" else bool(torch.isfinite(c).all())
+                snapshots[mode] = {k: v.cpu().contiguous() for k, v in result.items() if isinstance(v, torch.Tensor) and k != "c_tensor"}
+                live = torch.tensor([v &gt; 0 for v in counts], device="cuda")
+                assert bool(torch.isfinite(result["amax_tensor"][live]).all())
+                assert bool(torch.isneginf(result["amax_tensor"][~live]).all())
+            assert snapshots["original"].keys() == snapshots["emit"].keys() == snapshots["omit"].keys()
+            for key, value in snapshots["original"].items():
+                for mode in ("emit", "omit"):
+                    actual = snapshots[mode][key]
+                    assert actual.dtype == value.dtype and actual.shape == value.shape
+&gt;                   assert torch.equal(actual.view(torch.uint8), value.view(torch.uint8)), (mode, key)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+E                   RuntimeError: self.stride(-1) must be 1 to view Half as Byte (different element sizes), but got 5636096
+
+../../../tools/test_a3_production_c_store_pair_20261001.py:57: RuntimeError</failure></testcase><testcase classname="" name="test_production_c_store_three_arm_pair[True-d_dtype0-True-1-256]" time="4.357" /><testcase classname="" name="test_production_c_store_three_arm_pair[True-d_dtype0-True-4-512]" time="4.907" /><testcase classname="" name="test_production_c_store_three_arm_pair[True-d_dtype0-True-31-1024]" time="5.217" /><testcase classname="" name="test_production_c_store_three_arm_pair[True-d_dtype0-True-33-1024]" time="5.135" /><testcase classname="" name="test_production_c_store_three_arm_pair[True-d_dtype0-False-1-256]" time="4.210"><failure message="RuntimeError: self.stride(-1) must be 1 to view BFloat16 as Byte (different element sizes), but got 65536">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xfffc74ce5520&gt;
+experts = 1, n = 256, canonical = False, d_dtype = torch.bfloat16
+vector_f32 = True
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    @pytest.mark.parametrize("d_dtype", [torch.bfloat16, torch.float16])
+    @pytest.mark.parametrize("vector_f32", [False, True])
+    def test_production_c_store_three_arm_pair(monkeypatch, experts, n, canonical, d_dtype, vector_f32):
+        inputs, counts, _, _ = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        previous = api.BlockScaledContiguousGroupedGemmKernel
+        previous_cache = api._cache_of_GroupedGemmSwigluSm100Objects
+        snapshots = {}
+        execute = api.GroupedGemmSwigluSm100.execute
+    
+        def poison(api_object, *args, **kwargs):
+            kwargs["c_tensor"].fill_(float("nan"))
+            return execute(api_object, *args, **kwargs)
+    
+        monkeypatch.setattr(api.GroupedGemmSwigluSm100, "execute", poison)
+        try:
+            for mode, cls in (("original", original.BlockScaledContiguousGroupedGemmKernel), ("emit", candidate.EmitC), ("omit", candidate.OmitC)):
+                api.BlockScaledContiguousGroupedGemmKernel = cls
+                api._cache_of_GroupedGemmSwigluSm100Objects = {}
+                result = api.grouped_gemm_swiglu_wrapper_sm100(
+                    **inputs,
+                    sf_vec_size=32,
+                    c_dtype=torch.bfloat16,
+                    d_dtype=d_dtype,
+                    mma_tiler_mn=(256, 128),
+                    cluster_shape_mn=(2, 1),
+                    m_aligned=256,
+                    vector_f32=vector_f32,
+                )
+                torch.cuda.synchronize()
+                c = result["c_tensor"]
+                assert bool(torch.isnan(c).all()) if mode == "omit" else bool(torch.isfinite(c).all())
+                snapshots[mode] = {k: v.cpu().contiguous() for k, v in result.items() if isinstance(v, torch.Tensor) and k != "c_tensor"}
+                live = torch.tensor([v &gt; 0 for v in counts], device="cuda")
+                assert bool(torch.isfinite(result["amax_tensor"][live]).all())
+                assert bool(torch.isneginf(result["amax_tensor"][~live]).all())
+            assert snapshots["original"].keys() == snapshots["emit"].keys() == snapshots["omit"].keys()
+            for key, value in snapshots["original"].items():
+                for mode in ("emit", "omit"):
+                    actual = snapshots[mode][key]
+                    assert actual.dtype == value.dtype and actual.shape == value.shape
+&gt;                   assert torch.equal(actual.view(torch.uint8), value.view(torch.uint8)), (mode, key)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+E                   RuntimeError: self.stride(-1) must be 1 to view BFloat16 as Byte (different element sizes), but got 65536
+
+../../../tools/test_a3_production_c_store_pair_20261001.py:57: RuntimeError</failure></testcase><testcase classname="" name="test_production_c_store_three_arm_pair[True-d_dtype0-False-4-512]" time="4.315"><failure message="RuntimeError: self.stride(-1) must be 1 to view BFloat16 as Byte (different element sizes), but got 327680">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xfffc74d6cbc0&gt;
+experts = 4, n = 512, canonical = False, d_dtype = torch.bfloat16
+vector_f32 = True
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    @pytest.mark.parametrize("d_dtype", [torch.bfloat16, torch.float16])
+    @pytest.mark.parametrize("vector_f32", [False, True])
+    def test_production_c_store_three_arm_pair(monkeypatch, experts, n, canonical, d_dtype, vector_f32):
+        inputs, counts, _, _ = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        previous = api.BlockScaledContiguousGroupedGemmKernel
+        previous_cache = api._cache_of_GroupedGemmSwigluSm100Objects
+        snapshots = {}
+        execute = api.GroupedGemmSwigluSm100.execute
+    
+        def poison(api_object, *args, **kwargs):
+            kwargs["c_tensor"].fill_(float("nan"))
+            return execute(api_object, *args, **kwargs)
+    
+        monkeypatch.setattr(api.GroupedGemmSwigluSm100, "execute", poison)
+        try:
+            for mode, cls in (("original", original.BlockScaledContiguousGroupedGemmKernel), ("emit", candidate.EmitC), ("omit", candidate.OmitC)):
+                api.BlockScaledContiguousGroupedGemmKernel = cls
+                api._cache_of_GroupedGemmSwigluSm100Objects = {}
+                result = api.grouped_gemm_swiglu_wrapper_sm100(
+                    **inputs,
+                    sf_vec_size=32,
+                    c_dtype=torch.bfloat16,
+                    d_dtype=d_dtype,
+                    mma_tiler_mn=(256, 128),
+                    cluster_shape_mn=(2, 1),
+                    m_aligned=256,
+                    vector_f32=vector_f32,
+                )
+                torch.cuda.synchronize()
+                c = result["c_tensor"]
+                assert bool(torch.isnan(c).all()) if mode == "omit" else bool(torch.isfinite(c).all())
+                snapshots[mode] = {k: v.cpu().contiguous() for k, v in result.items() if isinstance(v, torch.Tensor) and k != "c_tensor"}
+                live = torch.tensor([v &gt; 0 for v in counts], device="cuda")
+                assert bool(torch.isfinite(result["amax_tensor"][live]).all())
+                assert bool(torch.isneginf(result["amax_tensor"][~live]).all())
+            assert snapshots["original"].keys() == snapshots["emit"].keys() == snapshots["omit"].keys()
+            for key, value in snapshots["original"].items():
+                for mode in ("emit", "omit"):
+                    actual = snapshots[mode][key]
+                    assert actual.dtype == value.dtype and actual.shape == value.shape
+&gt;                   assert torch.equal(actual.view(torch.uint8), value.view(torch.uint8)), (mode, key)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+E                   RuntimeError: self.stride(-1) must be 1 to view BFloat16 as Byte (different element sizes), but got 327680
+
+../../../tools/test_a3_production_c_store_pair_20261001.py:57: RuntimeError</failure></testcase><testcase classname="" name="test_production_c_store_three_arm_pair[True-d_dtype0-False-31-1024]" time="4.838"><failure message="RuntimeError: self.stride(-1) must be 1 to view BFloat16 as Byte (different element sizes), but got 5373952">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xfffc981d5070&gt;
+experts = 31, n = 1024, canonical = False, d_dtype = torch.bfloat16
+vector_f32 = True
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    @pytest.mark.parametrize("d_dtype", [torch.bfloat16, torch.float16])
+    @pytest.mark.parametrize("vector_f32", [False, True])
+    def test_production_c_store_three_arm_pair(monkeypatch, experts, n, canonical, d_dtype, vector_f32):
+        inputs, counts, _, _ = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        previous = api.BlockScaledContiguousGroupedGemmKernel
+        previous_cache = api._cache_of_GroupedGemmSwigluSm100Objects
+        snapshots = {}
+        execute = api.GroupedGemmSwigluSm100.execute
+    
+        def poison(api_object, *args, **kwargs):
+            kwargs["c_tensor"].fill_(float("nan"))
+            return execute(api_object, *args, **kwargs)
+    
+        monkeypatch.setattr(api.GroupedGemmSwigluSm100, "execute", poison)
+        try:
+            for mode, cls in (("original", original.BlockScaledContiguousGroupedGemmKernel), ("emit", candidate.EmitC), ("omit", candidate.OmitC)):
+                api.BlockScaledContiguousGroupedGemmKernel = cls
+                api._cache_of_GroupedGemmSwigluSm100Objects = {}
+                result = api.grouped_gemm_swiglu_wrapper_sm100(
+                    **inputs,
+                    sf_vec_size=32,
+                    c_dtype=torch.bfloat16,
+                    d_dtype=d_dtype,
+                    mma_tiler_mn=(256, 128),
+                    cluster_shape_mn=(2, 1),
+                    m_aligned=256,
+                    vector_f32=vector_f32,
+                )
+                torch.cuda.synchronize()
+                c = result["c_tensor"]
+                assert bool(torch.isnan(c).all()) if mode == "omit" else bool(torch.isfinite(c).all())
+                snapshots[mode] = {k: v.cpu().contiguous() for k, v in result.items() if isinstance(v, torch.Tensor) and k != "c_tensor"}
+                live = torch.tensor([v &gt; 0 for v in counts], device="cuda")
+                assert bool(torch.isfinite(result["amax_tensor"][live]).all())
+                assert bool(torch.isneginf(result["amax_tensor"][~live]).all())
+            assert snapshots["original"].keys() == snapshots["emit"].keys() == snapshots["omit"].keys()
+            for key, value in snapshots["original"].items():
+                for mode in ("emit", "omit"):
+                    actual = snapshots[mode][key]
+                    assert actual.dtype == value.dtype and actual.shape == value.shape
+&gt;                   assert torch.equal(actual.view(torch.uint8), value.view(torch.uint8)), (mode, key)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+E                   RuntimeError: self.stride(-1) must be 1 to view BFloat16 as Byte (different element sizes), but got 5373952
+
+../../../tools/test_a3_production_c_store_pair_20261001.py:57: RuntimeError</failure></testcase><testcase classname="" name="test_production_c_store_three_arm_pair[True-d_dtype0-False-33-1024]" time="4.888"><failure message="RuntimeError: self.stride(-1) must be 1 to view BFloat16 as Byte (different element sizes), but got 5636096">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xfffc74d06a50&gt;
+experts = 33, n = 1024, canonical = False, d_dtype = torch.bfloat16
+vector_f32 = True
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    @pytest.mark.parametrize("d_dtype", [torch.bfloat16, torch.float16])
+    @pytest.mark.parametrize("vector_f32", [False, True])
+    def test_production_c_store_three_arm_pair(monkeypatch, experts, n, canonical, d_dtype, vector_f32):
+        inputs, counts, _, _ = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        previous = api.BlockScaledContiguousGroupedGemmKernel
+        previous_cache = api._cache_of_GroupedGemmSwigluSm100Objects
+        snapshots = {}
+        execute = api.GroupedGemmSwigluSm100.execute
+    
+        def poison(api_object, *args, **kwargs):
+            kwargs["c_tensor"].fill_(float("nan"))
+            return execute(api_object, *args, **kwargs)
+    
+        monkeypatch.setattr(api.GroupedGemmSwigluSm100, "execute", poison)
+        try:
+            for mode, cls in (("original", original.BlockScaledContiguousGroupedGemmKernel), ("emit", candidate.EmitC), ("omit", candidate.OmitC)):
+                api.BlockScaledContiguousGroupedGemmKernel = cls
+                api._cache_of_GroupedGemmSwigluSm100Objects = {}
+                result = api.grouped_gemm_swiglu_wrapper_sm100(
+                    **inputs,
+                    sf_vec_size=32,
+                    c_dtype=torch.bfloat16,
+                    d_dtype=d_dtype,
+                    mma_tiler_mn=(256, 128),
+                    cluster_shape_mn=(2, 1),
+                    m_aligned=256,
+                    vector_f32=vector_f32,
+                )
+                torch.cuda.synchronize()
+                c = result["c_tensor"]
+                assert bool(torch.isnan(c).all()) if mode == "omit" else bool(torch.isfinite(c).all())
+                snapshots[mode] = {k: v.cpu().contiguous() for k, v in result.items() if isinstance(v, torch.Tensor) and k != "c_tensor"}
+                live = torch.tensor([v &gt; 0 for v in counts], device="cuda")
+                assert bool(torch.isfinite(result["amax_tensor"][live]).all())
+                assert bool(torch.isneginf(result["amax_tensor"][~live]).all())
+            assert snapshots["original"].keys() == snapshots["emit"].keys() == snapshots["omit"].keys()
+            for key, value in snapshots["original"].items():
+                for mode in ("emit", "omit"):
+                    actual = snapshots[mode][key]
+                    assert actual.dtype == value.dtype and actual.shape == value.shape
+&gt;                   assert torch.equal(actual.view(torch.uint8), value.view(torch.uint8)), (mode, key)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+E                   RuntimeError: self.stride(-1) must be 1 to view BFloat16 as Byte (different element sizes), but got 5636096
+
+../../../tools/test_a3_production_c_store_pair_20261001.py:57: RuntimeError</failure></testcase><testcase classname="" name="test_production_c_store_three_arm_pair[True-d_dtype1-True-1-256]" time="4.408" /><testcase classname="" name="test_production_c_store_three_arm_pair[True-d_dtype1-True-4-512]" time="5.016" /><testcase classname="" name="test_production_c_store_three_arm_pair[True-d_dtype1-True-31-1024]" time="5.181" /><testcase classname="" name="test_production_c_store_three_arm_pair[True-d_dtype1-True-33-1024]" time="5.173" /><testcase classname="" name="test_production_c_store_three_arm_pair[True-d_dtype1-False-1-256]" time="4.301"><failure message="RuntimeError: self.stride(-1) must be 1 to view Half as Byte (different element sizes), but got 65536">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xfffc985d2690&gt;
+experts = 1, n = 256, canonical = False, d_dtype = torch.float16
+vector_f32 = True
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    @pytest.mark.parametrize("d_dtype", [torch.bfloat16, torch.float16])
+    @pytest.mark.parametrize("vector_f32", [False, True])
+    def test_production_c_store_three_arm_pair(monkeypatch, experts, n, canonical, d_dtype, vector_f32):
+        inputs, counts, _, _ = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        previous = api.BlockScaledContiguousGroupedGemmKernel
+        previous_cache = api._cache_of_GroupedGemmSwigluSm100Objects
+        snapshots = {}
+        execute = api.GroupedGemmSwigluSm100.execute
+    
+        def poison(api_object, *args, **kwargs):
+            kwargs["c_tensor"].fill_(float("nan"))
+            return execute(api_object, *args, **kwargs)
+    
+        monkeypatch.setattr(api.GroupedGemmSwigluSm100, "execute", poison)
+        try:
+            for mode, cls in (("original", original.BlockScaledContiguousGroupedGemmKernel), ("emit", candidate.EmitC), ("omit", candidate.OmitC)):
+                api.BlockScaledContiguousGroupedGemmKernel = cls
+                api._cache_of_GroupedGemmSwigluSm100Objects = {}
+                result = api.grouped_gemm_swiglu_wrapper_sm100(
+                    **inputs,
+                    sf_vec_size=32,
+                    c_dtype=torch.bfloat16,
+                    d_dtype=d_dtype,
+                    mma_tiler_mn=(256, 128),
+                    cluster_shape_mn=(2, 1),
+                    m_aligned=256,
+                    vector_f32=vector_f32,
+                )
+                torch.cuda.synchronize()
+                c = result["c_tensor"]
+                assert bool(torch.isnan(c).all()) if mode == "omit" else bool(torch.isfinite(c).all())
+                snapshots[mode] = {k: v.cpu().contiguous() for k, v in result.items() if isinstance(v, torch.Tensor) and k != "c_tensor"}
+                live = torch.tensor([v &gt; 0 for v in counts], device="cuda")
+                assert bool(torch.isfinite(result["amax_tensor"][live]).all())
+                assert bool(torch.isneginf(result["amax_tensor"][~live]).all())
+            assert snapshots["original"].keys() == snapshots["emit"].keys() == snapshots["omit"].keys()
+            for key, value in snapshots["original"].items():
+                for mode in ("emit", "omit"):
+                    actual = snapshots[mode][key]
+                    assert actual.dtype == value.dtype and actual.shape == value.shape
+&gt;                   assert torch.equal(actual.view(torch.uint8), value.view(torch.uint8)), (mode, key)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+E                   RuntimeError: self.stride(-1) must be 1 to view Half as Byte (different element sizes), but got 65536
+
+../../../tools/test_a3_production_c_store_pair_20261001.py:57: RuntimeError</failure></testcase><testcase classname="" name="test_production_c_store_three_arm_pair[True-d_dtype1-False-4-512]" time="4.359"><failure message="RuntimeError: self.stride(-1) must be 1 to view Half as Byte (different element sizes), but got 327680">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xfffc9859e5d0&gt;
+experts = 4, n = 512, canonical = False, d_dtype = torch.float16
+vector_f32 = True
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    @pytest.mark.parametrize("d_dtype", [torch.bfloat16, torch.float16])
+    @pytest.mark.parametrize("vector_f32", [False, True])
+    def test_production_c_store_three_arm_pair(monkeypatch, experts, n, canonical, d_dtype, vector_f32):
+        inputs, counts, _, _ = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        previous = api.BlockScaledContiguousGroupedGemmKernel
+        previous_cache = api._cache_of_GroupedGemmSwigluSm100Objects
+        snapshots = {}
+        execute = api.GroupedGemmSwigluSm100.execute
+    
+        def poison(api_object, *args, **kwargs):
+            kwargs["c_tensor"].fill_(float("nan"))
+            return execute(api_object, *args, **kwargs)
+    
+        monkeypatch.setattr(api.GroupedGemmSwigluSm100, "execute", poison)
+        try:
+            for mode, cls in (("original", original.BlockScaledContiguousGroupedGemmKernel), ("emit", candidate.EmitC), ("omit", candidate.OmitC)):
+                api.BlockScaledContiguousGroupedGemmKernel = cls
+                api._cache_of_GroupedGemmSwigluSm100Objects = {}
+                result = api.grouped_gemm_swiglu_wrapper_sm100(
+                    **inputs,
+                    sf_vec_size=32,
+                    c_dtype=torch.bfloat16,
+                    d_dtype=d_dtype,
+                    mma_tiler_mn=(256, 128),
+                    cluster_shape_mn=(2, 1),
+                    m_aligned=256,
+                    vector_f32=vector_f32,
+                )
+                torch.cuda.synchronize()
+                c = result["c_tensor"]
+                assert bool(torch.isnan(c).all()) if mode == "omit" else bool(torch.isfinite(c).all())
+                snapshots[mode] = {k: v.cpu().contiguous() for k, v in result.items() if isinstance(v, torch.Tensor) and k != "c_tensor"}
+                live = torch.tensor([v &gt; 0 for v in counts], device="cuda")
+                assert bool(torch.isfinite(result["amax_tensor"][live]).all())
+                assert bool(torch.isneginf(result["amax_tensor"][~live]).all())
+            assert snapshots["original"].keys() == snapshots["emit"].keys() == snapshots["omit"].keys()
+            for key, value in snapshots["original"].items():
+                for mode in ("emit", "omit"):
+                    actual = snapshots[mode][key]
+                    assert actual.dtype == value.dtype and actual.shape == value.shape
+&gt;                   assert torch.equal(actual.view(torch.uint8), value.view(torch.uint8)), (mode, key)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+E                   RuntimeError: self.stride(-1) must be 1 to view Half as Byte (different element sizes), but got 327680
+
+../../../tools/test_a3_production_c_store_pair_20261001.py:57: RuntimeError</failure></testcase><testcase classname="" name="test_production_c_store_three_arm_pair[True-d_dtype1-False-31-1024]" time="4.907"><failure message="RuntimeError: self.stride(-1) must be 1 to view Half as Byte (different element sizes), but got 5373952">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xfffc9859c980&gt;
+experts = 31, n = 1024, canonical = False, d_dtype = torch.float16
+vector_f32 = True
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    @pytest.mark.parametrize("d_dtype", [torch.bfloat16, torch.float16])
+    @pytest.mark.parametrize("vector_f32", [False, True])
+    def test_production_c_store_three_arm_pair(monkeypatch, experts, n, canonical, d_dtype, vector_f32):
+        inputs, counts, _, _ = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        previous = api.BlockScaledContiguousGroupedGemmKernel
+        previous_cache = api._cache_of_GroupedGemmSwigluSm100Objects
+        snapshots = {}
+        execute = api.GroupedGemmSwigluSm100.execute
+    
+        def poison(api_object, *args, **kwargs):
+            kwargs["c_tensor"].fill_(float("nan"))
+            return execute(api_object, *args, **kwargs)
+    
+        monkeypatch.setattr(api.GroupedGemmSwigluSm100, "execute", poison)
+        try:
+            for mode, cls in (("original", original.BlockScaledContiguousGroupedGemmKernel), ("emit", candidate.EmitC), ("omit", candidate.OmitC)):
+                api.BlockScaledContiguousGroupedGemmKernel = cls
+                api._cache_of_GroupedGemmSwigluSm100Objects = {}
+                result = api.grouped_gemm_swiglu_wrapper_sm100(
+                    **inputs,
+                    sf_vec_size=32,
+                    c_dtype=torch.bfloat16,
+                    d_dtype=d_dtype,
+                    mma_tiler_mn=(256, 128),
+                    cluster_shape_mn=(2, 1),
+                    m_aligned=256,
+                    vector_f32=vector_f32,
+                )
+                torch.cuda.synchronize()
+                c = result["c_tensor"]
+                assert bool(torch.isnan(c).all()) if mode == "omit" else bool(torch.isfinite(c).all())
+                snapshots[mode] = {k: v.cpu().contiguous() for k, v in result.items() if isinstance(v, torch.Tensor) and k != "c_tensor"}
+                live = torch.tensor([v &gt; 0 for v in counts], device="cuda")
+                assert bool(torch.isfinite(result["amax_tensor"][live]).all())
+                assert bool(torch.isneginf(result["amax_tensor"][~live]).all())
+            assert snapshots["original"].keys() == snapshots["emit"].keys() == snapshots["omit"].keys()
+            for key, value in snapshots["original"].items():
+                for mode in ("emit", "omit"):
+                    actual = snapshots[mode][key]
+                    assert actual.dtype == value.dtype and actual.shape == value.shape
+&gt;                   assert torch.equal(actual.view(torch.uint8), value.view(torch.uint8)), (mode, key)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+E                   RuntimeError: self.stride(-1) must be 1 to view Half as Byte (different element sizes), but got 5373952
+
+../../../tools/test_a3_production_c_store_pair_20261001.py:57: RuntimeError</failure></testcase><testcase classname="" name="test_production_c_store_three_arm_pair[True-d_dtype1-False-33-1024]" time="5.090"><failure message="RuntimeError: self.stride(-1) must be 1 to view Half as Byte (different element sizes), but got 5636096">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xfffc981d4140&gt;
+experts = 33, n = 1024, canonical = False, d_dtype = torch.float16
+vector_f32 = True
+
+    @pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+    @pytest.mark.parametrize("canonical", [True, False])
+    @pytest.mark.parametrize("d_dtype", [torch.bfloat16, torch.float16])
+    @pytest.mark.parametrize("vector_f32", [False, True])
+    def test_production_c_store_three_arm_pair(monkeypatch, experts, n, canonical, d_dtype, vector_f32):
+        inputs, counts, _, _ = _operands(experts, n, canonical)
+        guards = _poison_outputs(monkeypatch)
+        previous = api.BlockScaledContiguousGroupedGemmKernel
+        previous_cache = api._cache_of_GroupedGemmSwigluSm100Objects
+        snapshots = {}
+        execute = api.GroupedGemmSwigluSm100.execute
+    
+        def poison(api_object, *args, **kwargs):
+            kwargs["c_tensor"].fill_(float("nan"))
+            return execute(api_object, *args, **kwargs)
+    
+        monkeypatch.setattr(api.GroupedGemmSwigluSm100, "execute", poison)
+        try:
+            for mode, cls in (("original", original.BlockScaledContiguousGroupedGemmKernel), ("emit", candidate.EmitC), ("omit", candidate.OmitC)):
+                api.BlockScaledContiguousGroupedGemmKernel = cls
+                api._cache_of_GroupedGemmSwigluSm100Objects = {}
+                result = api.grouped_gemm_swiglu_wrapper_sm100(
+                    **inputs,
+                    sf_vec_size=32,
+                    c_dtype=torch.bfloat16,
+                    d_dtype=d_dtype,
+                    mma_tiler_mn=(256, 128),
+                    cluster_shape_mn=(2, 1),
+                    m_aligned=256,
+                    vector_f32=vector_f32,
+                )
+                torch.cuda.synchronize()
+                c = result["c_tensor"]
+                assert bool(torch.isnan(c).all()) if mode == "omit" else bool(torch.isfinite(c).all())
+                snapshots[mode] = {k: v.cpu().contiguous() for k, v in result.items() if isinstance(v, torch.Tensor) and k != "c_tensor"}
+                live = torch.tensor([v &gt; 0 for v in counts], device="cuda")
+                assert bool(torch.isfinite(result["amax_tensor"][live]).all())
+                assert bool(torch.isneginf(result["amax_tensor"][~live]).all())
+            assert snapshots["original"].keys() == snapshots["emit"].keys() == snapshots["omit"].keys()
+            for key, value in snapshots["original"].items():
+                for mode in ("emit", "omit"):
+                    actual = snapshots[mode][key]
+                    assert actual.dtype == value.dtype and actual.shape == value.shape
+&gt;                   assert torch.equal(actual.view(torch.uint8), value.view(torch.uint8)), (mode, key)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+E                   RuntimeError: self.stride(-1) must be 1 to view Half as Byte (different element sizes), but got 5636096
+
+../../../tools/test_a3_production_c_store_pair_20261001.py:57: RuntimeError</failure></testcase></testsuite></testsuites>

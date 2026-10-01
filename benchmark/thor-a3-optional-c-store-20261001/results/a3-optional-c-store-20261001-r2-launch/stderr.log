@@ -1,0 +1,13 @@
+Loading weights:   0%|          | 0/218 [00:00<?, ?it/s]Loading weights: 100%|██████████| 218/218 [00:00<00:00, 7196.05it/s]
+GroupedGemmSwigluSm100 is an experimental API
+Traceback (most recent call last):
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_optional_c_store_queued_r2_20261001.py", line 42, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_optional_c_store_queued_r2_20261001.py", line 37, in main
+    result = module.main()
+             ^^^^^^^^^^^^^
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_optional_c_store_worker_20261001.py", line 294, in main
+    assert t.equal(av.view(t.uint8), bv.view(t.uint8)), (case, key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: (0, 'd_tensor')

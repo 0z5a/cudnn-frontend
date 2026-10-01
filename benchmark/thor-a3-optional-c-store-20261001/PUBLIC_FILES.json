@@ -1,0 +1,542 @@
+[
+  {
+    "source_path": "manifest.json",
+    "public_path": "manifest.json",
+    "sha256": "368f0622f4d69c1de1790fd014d423eeda3ed718004db8f13912c8a4404e635e"
+  },
+  {
+    "source_path": "results/a3-c-store-original-control-20261001-r1/admission.json",
+    "public_path": "results/a3-c-store-original-control-20261001-r1/admission.json",
+    "sha256": "5c502d40ef5cb796c73dcbcc1e4776e6abacff1050c68e168b942266d4b55e84"
+  },
+  {
+    "source_path": "results/a3-c-store-original-control-20261001-r1/admission_wait.json",
+    "public_path": "results/a3-c-store-original-control-20261001-r1/admission_wait.json",
+    "sha256": "5f0fc4ddb02e063261fff34a0d9a703687595f105393a537394f9b2fd9912e54"
+  },
+  {
+    "source_path": "results/a3-c-store-original-control-20261001-r1/partial.json",
+    "public_path": "results/a3-c-store-original-control-20261001-r1/partial.json",
+    "sha256": "34a7fd0945f15904cbabdc35cf62c4a3e842ed64c47d29fc60c8717fc4147bd5"
+  },
+  {
+    "source_path": "results/a3-c-store-original-control-20261001-r1/result.json",
+    "public_path": "results/a3-c-store-original-control-20261001-r1/result.json",
+    "sha256": "be8f80d40af417081aecd3f207960d0299c205de18e21b8de4572e118a86e1ec"
+  },
+  {
+    "source_path": "results/a3-c-store-original-control-20261001-r1-launch/run.json",
+    "public_path": "results/a3-c-store-original-control-20261001-r1-launch/run.json",
+    "sha256": "4d4b607c53ed0e134bda541fbbddd6269a5c42837d72fbaf50e8b3c397ff68de"
+  },
+  {
+    "source_path": "results/a3-c-store-original-control-20261001-r1-launch/stderr.log",
+    "public_path": "results/a3-c-store-original-control-20261001-r1-launch/stderr.log",
+    "sha256": "bab263f13a33d6b2b9ce70e31d148d336592785d047811fa955a5f9054b0c4d3"
+  },
+  {
+    "source_path": "results/a3-c-store-original-control-20261001-r1-launch/stdout.log",
+    "public_path": "results/a3-c-store-original-control-20261001-r1-launch/stdout.log",
+    "sha256": "b4bdc73e23077ac118f36b2b19dff69fd250d86b83c67c9b63835ece177029d2"
+  },
+  {
+    "source_path": "results/a3-latest-e2-native-provenance-20261001.json",
+    "public_path": "results/a3-latest-e2-native-provenance-20261001.json",
+    "sha256": "30ea6cd6a09d73b01d22215d98c2d7a5964d04d97489f64b876fa979013b3840"
+  },
+  {
+    "source_path": "results/a3-mxfp8-bf16-staged-full-model-20261001-r1/result.json",
+    "public_path": "results/a3-mxfp8-bf16-staged-full-model-20261001-r1/result.json",
+    "sha256": "8a1c83b63588328649dfd5d6f9b2f63cad0725852cbdf42ed3139b3da4583147"
+  },
+  {
+    "source_path": "results/a3-n128-mxfp8-staged-trace-cpu-audit-20261001-r1/result.json",
+    "public_path": "results/a3-n128-mxfp8-staged-trace-cpu-audit-20261001-r1/result.json",
+    "sha256": "c38d9131452ca74828b2a03b87e524e3edab67ef6a94f5a2cb9e9811f6bdb462"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-20261001-r1/admission.json",
+    "public_path": "results/a3-optional-c-store-20261001-r1/admission.json",
+    "sha256": "2b13358aeae4b5133640d830065672157ef73382037c3aa6e5da55b425332db3"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-20261001-r1/admission_wait.json",
+    "public_path": "results/a3-optional-c-store-20261001-r1/admission_wait.json",
+    "sha256": "3bd6db2fb911e7ad97fd859d6b5e5f7fe5dfee96f156137cdb72508a138bbdf3"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-20261001-r1-launch/run.json",
+    "public_path": "results/a3-optional-c-store-20261001-r1-launch/run.json",
+    "sha256": "4f28855711b729215e305bd78e68d7cef3b4b95b1410fcad776535359c11702c"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-20261001-r1-launch/stderr.log",
+    "public_path": "results/a3-optional-c-store-20261001-r1-launch/stderr.log",
+    "sha256": "1b0410aab4b8c6e0e346e2a918e365a9ff2536718322784c3023b873b3bb7456"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-20261001-r1-launch/stdout.log",
+    "public_path": "results/a3-optional-c-store-20261001-r1-launch/stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-20261001-r2/admission.json",
+    "public_path": "results/a3-optional-c-store-20261001-r2/admission.json",
+    "sha256": "21f8111c3a36fec67c12958a2dc466cabb2064a6a9eb5ea55c922ba2f053817f"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-20261001-r2/admission_wait.json",
+    "public_path": "results/a3-optional-c-store-20261001-r2/admission_wait.json",
+    "sha256": "eec5ddab3d4ef43908a4841023c57f2cf4f57189f881641177dc1d0067854339"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-20261001-r2/partial.json",
+    "public_path": "results/a3-optional-c-store-20261001-r2/partial.json",
+    "sha256": "f182115ece24808415322afc9b61ffa303e957729230afba146ef9319c738796"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-20261001-r2-launch/run.json",
+    "public_path": "results/a3-optional-c-store-20261001-r2-launch/run.json",
+    "sha256": "348bf0b0b1f1437020c39428aa12a0da84cec88d6e7d72f73d1c6efc1ade4850"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-20261001-r2-launch/stderr.log",
+    "public_path": "results/a3-optional-c-store-20261001-r2-launch/stderr.log",
+    "sha256": "9abf078cdf1b42323de7be46cdef75abaeab85f774a31d43f09d209b63005517"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-20261001-r2-launch/stdout.log",
+    "public_path": "results/a3-optional-c-store-20261001-r2-launch/stdout.log",
+    "sha256": "c1ca7846d4ba06ec8a9641309791bcae7a565245fd3e73cc5c8d687fefe10c54"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-20261001-r3/admission.json",
+    "public_path": "results/a3-optional-c-store-20261001-r3/admission.json",
+    "sha256": "05aee27c52f6aeff59f5575c8c207f3aae038b1a858822e13b21354240e923e7"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-20261001-r3/admission_wait.json",
+    "public_path": "results/a3-optional-c-store-20261001-r3/admission_wait.json",
+    "sha256": "78802b52d7b6e605bb757ba45b162ce1c334aa95d3752bac9298e79ae5cad282"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-20261001-r3/partial.json",
+    "public_path": "results/a3-optional-c-store-20261001-r3/partial.json",
+    "sha256": "d9407332cd3c00de9611bb81f7f534b81e7be370082fb7a389e05f33bcd64f53"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-20261001-r3/result.json",
+    "public_path": "results/a3-optional-c-store-20261001-r3/result.json",
+    "sha256": "f04d21c3a283e8e8341ce88c68d266b4f6c7e3e33845e4b212d68ea807465368"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-20261001-r3-launch/run.json",
+    "public_path": "results/a3-optional-c-store-20261001-r3-launch/run.json",
+    "sha256": "6c66ed45b640d2eebd533e23d6d484361d2f36a47d02d2674886dd0d11dfe21b"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-20261001-r3-launch/stderr.log",
+    "public_path": "results/a3-optional-c-store-20261001-r3-launch/stderr.log",
+    "sha256": "fe0510942acc3cd6083040ccdab7e6ef4c7ac929bd7bff349f8c4ad17a453fd0"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-20261001-r3-launch/stdout.log",
+    "public_path": "results/a3-optional-c-store-20261001-r3-launch/stdout.log",
+    "sha256": "6ed89e293323ec4a7025e5438281cda4dea2a2f7ea2242f426cd34253fc3a150"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-cpu-audit-20261001-r1/result.json",
+    "public_path": "results/a3-optional-c-store-cpu-audit-20261001-r1/result.json",
+    "sha256": "6f6d5ab625f07590888984712505f6228ea739fbc99db228dad1fc95a6946dce"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-cpu-audit-20261001-r1-launch/run.json",
+    "public_path": "results/a3-optional-c-store-cpu-audit-20261001-r1-launch/run.json",
+    "sha256": "2158edc75203e8e1b41aba8781190467e88916aad7adf1ba02500132c0b11d12"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-cpu-audit-20261001-r1-launch/stderr.log",
+    "public_path": "results/a3-optional-c-store-cpu-audit-20261001-r1-launch/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "source_path": "results/a3-optional-c-store-cpu-audit-20261001-r1-launch/stdout.log",
+    "public_path": "results/a3-optional-c-store-cpu-audit-20261001-r1-launch/stdout.log",
+    "sha256": "28e1ffb72d3c53f4c5851e2966903f1115cc83a41a58ee04f2d8b0e8db90b075"
+  },
+  {
+    "source_path": "results/a3-production-c-store-cpu-audit-20261001-r1/result.json",
+    "public_path": "results/a3-production-c-store-cpu-audit-20261001-r1/result.json",
+    "sha256": "6e577cc47a912df0422fc6d45562b12a2da2c352de955a8d8710afb34239ee42"
+  },
+  {
+    "source_path": "results/a3-production-c-store-cpu-audit-20261001-r1-launch/run.json",
+    "public_path": "results/a3-production-c-store-cpu-audit-20261001-r1-launch/run.json",
+    "sha256": "fffdf78ba918700943b93096f890e7141596f3c01e39e267abebe8f466db7fd6"
+  },
+  {
+    "source_path": "results/a3-production-c-store-cpu-audit-20261001-r1-launch/stderr.log",
+    "public_path": "results/a3-production-c-store-cpu-audit-20261001-r1-launch/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "source_path": "results/a3-production-c-store-cpu-audit-20261001-r1-launch/stdout.log",
+    "public_path": "results/a3-production-c-store-cpu-audit-20261001-r1-launch/stdout.log",
+    "sha256": "087554fa60b2f27bcd418a1a8e7089bf604695c2a96e4275145f1d7a0845aac7"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r1/admission.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r1/admission.json",
+    "sha256": "047bb132ce815409505e2fde339c488e4e692badbf41f4a11d704108ca1c7e4c"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r1/admission_wait.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r1/admission_wait.json",
+    "sha256": "be4ea3f84b379af2f361ef805b0519a98684ecd9df6b5942cfa5ec939edb00f3"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r1/emit/imports/142939.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r1/emit/imports/142939.json",
+    "sha256": "7324b8e7f8ee7354ba2b976ce3fcbbfc0daba0eb1bb586f0a17019cb0266ec43"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r1/emit/imports/142987.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r1/emit/imports/142987.json",
+    "sha256": "90a9839d7c5670f857c13b489d7dc3454cb38388930c2e3fde37febb5997aa92"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r1/emit/imports/matrix-selection-142987.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r1/emit/imports/matrix-selection-142987.json",
+    "sha256": "1a74928c41b6162c74fc1168d59b73380afe598865d87c94749d002d66312452"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r1/emit/pytest/junit.xml",
+    "public_path": "results/a3-production-c-store-regression-20261001-r1/emit/pytest/junit.xml",
+    "sha256": "52fa0611716b57150b3d7204425fd9dae3fac4d7a847b8a7c5b687fbcac30a08"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r1/emit/pytest/run.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r1/emit/pytest/run.json",
+    "sha256": "81a6dea9e9151fec4fbb1540f3f41fcf5d62262babf94e0005cf35d51c736485"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r1/emit/pytest/stderr.log",
+    "public_path": "results/a3-production-c-store-regression-20261001-r1/emit/pytest/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r1/emit/pytest/stdout.log",
+    "public_path": "results/a3-production-c-store-regression-20261001-r1/emit/pytest/stdout.log",
+    "sha256": "ddf9887843e912b6b3ebd4c66be099bae2a38e07e3ec0f61afbda15c88cc154e"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r1-launch/run.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r1-launch/run.json",
+    "sha256": "474c80b05e935f2eac5288f61af12a2a09b993e82055166d5cb22e54df953ee1"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r1-launch/stderr.log",
+    "public_path": "results/a3-production-c-store-regression-20261001-r1-launch/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r1-launch/stdout.log",
+    "public_path": "results/a3-production-c-store-regression-20261001-r1-launch/stdout.log",
+    "sha256": "81a6dea9e9151fec4fbb1540f3f41fcf5d62262babf94e0005cf35d51c736485"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2/admission.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2/admission.json",
+    "sha256": "370db291d1ac33e7d2329374a2fe6c543af9707d3b56ac0ae310486857d5d87e"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2/admission_wait.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2/admission_wait.json",
+    "sha256": "a3a83c9890e7cdafef048603844d1efa9f581e7b9aa9beeb96f1cb38df1ed640"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2/emit/imports/145430.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2/emit/imports/145430.json",
+    "sha256": "bc9b3f3df620dfcb88dd706a33e6320188ac272cafbf5aa01dbf9911333d317c"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2/emit/imports/145460.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2/emit/imports/145460.json",
+    "sha256": "0ac861bed2e71f492891bf86d2cd7340db750a78d8cfd8633e47d8934615368d"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2/emit/imports/matrix-selection-145460.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2/emit/imports/matrix-selection-145460.json",
+    "sha256": "1a74928c41b6162c74fc1168d59b73380afe598865d87c94749d002d66312452"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2/emit/pytest/junit.xml",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2/emit/pytest/junit.xml",
+    "sha256": "cc349f6d4603e9a32717148b753e84caeb23ff91796cadab9b2394fa628350f3"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2/emit/pytest/run.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2/emit/pytest/run.json",
+    "sha256": "ff59e4c2c474634abfe0f40c66ad3042789cae7ffc1bcf803091ec81f5f198b1"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2/emit/pytest/stderr.log",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2/emit/pytest/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2/emit/pytest/stdout.log",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2/emit/pytest/stdout.log",
+    "sha256": "4fa4f5dbe5d7b0a896fc1f45421f9bb662cee1d8b70daf42a07b102fb8750bf8"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2/omit/imports/147510.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2/omit/imports/147510.json",
+    "sha256": "63a69bbeb8eedc56aedac0666ad82b1e7447885141b07a5fcd1201a27a36e285"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2/omit/imports/147568.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2/omit/imports/147568.json",
+    "sha256": "553d7feb9bb3a8eb4f36e71798d235a4fd355ff3449040662bf61dced7b240f5"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2/omit/imports/matrix-selection-147568.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2/omit/imports/matrix-selection-147568.json",
+    "sha256": "ff9c23181c8438a1a159112a6a7b9f6588de61eb26fc3058a717cea40d1a8ffd"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2/omit/pytest/junit.xml",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2/omit/pytest/junit.xml",
+    "sha256": "2ba29202849fa552e2504e072faa4c19689b20b086e070dee99e72ba7a6aadb8"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2/omit/pytest/run.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2/omit/pytest/run.json",
+    "sha256": "3d91bbd56d885d17cd426a0d582eb477d31c92c05174e7eab56ccb5a1c55aff6"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2/omit/pytest/stderr.log",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2/omit/pytest/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2/omit/pytest/stdout.log",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2/omit/pytest/stdout.log",
+    "sha256": "07c5903e10a9f5a9346712a362b72433a6341b868f26181f7dc9f67baf9a2694"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2/result.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2/result.json",
+    "sha256": "eaf016d3a0df37a9205f338881b54e4dfd739ec628ff9702c3d859e4fce1947b"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2-launch/run.json",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2-launch/run.json",
+    "sha256": "4c14301b5f56fd50d4cac97fb6c69d38911e5d0cfb066f2506382c213ecc70be"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2-launch/stderr.log",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2-launch/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "source_path": "results/a3-production-c-store-regression-20261001-r2-launch/stdout.log",
+    "public_path": "results/a3-production-c-store-regression-20261001-r2-launch/stdout.log",
+    "sha256": "d3c33d90e521cfee2981dba84c4bd3dd511a73f88fe76fdb1ff942f9bd948b5d"
+  },
+  {
+    "source_path": "results/a3-production-c-store-three-arm-20261001-r1/admission.json",
+    "public_path": "results/a3-production-c-store-three-arm-20261001-r1/admission.json",
+    "sha256": "b7fda0c71ce095b9268ded86b89745dba8a2e32f7ae22abe614a9e1cab81acda"
+  },
+  {
+    "source_path": "results/a3-production-c-store-three-arm-20261001-r1/admission_wait.json",
+    "public_path": "results/a3-production-c-store-three-arm-20261001-r1/admission_wait.json",
+    "sha256": "b7be50cfc99d58ce7eb3d77b801dc04a7497a4006c8fa45945052f69dc98e332"
+  },
+  {
+    "source_path": "results/a3-production-c-store-three-arm-20261001-r1/partial.json",
+    "public_path": "results/a3-production-c-store-three-arm-20261001-r1/partial.json",
+    "sha256": "3e2057c473bdebac7765ccf9aca35665f819b69f5454c364a6f6b6e5607bbd88"
+  },
+  {
+    "source_path": "results/a3-production-c-store-three-arm-20261001-r1/result.json",
+    "public_path": "results/a3-production-c-store-three-arm-20261001-r1/result.json",
+    "sha256": "021abb53b7ad55e975fd57ff0764f75c2e36cc50b83a291f1e02c7b285be0e3c"
+  },
+  {
+    "source_path": "results/a3-production-c-store-three-arm-20261001-r1-launch/run.json",
+    "public_path": "results/a3-production-c-store-three-arm-20261001-r1-launch/run.json",
+    "sha256": "ffd3004a7889637c810a40b513378db699da71444d5811ce9ab0ec71c598012b"
+  },
+  {
+    "source_path": "results/a3-production-c-store-three-arm-20261001-r1-launch/stderr.log",
+    "public_path": "results/a3-production-c-store-three-arm-20261001-r1-launch/stderr.log",
+    "sha256": "ad161ef6e742ce1021d404f5ccd065b1baf06ba62459612e57ce4dd6ab11cf43"
+  },
+  {
+    "source_path": "results/a3-production-c-store-three-arm-20261001-r1-launch/stdout.log",
+    "public_path": "results/a3-production-c-store-three-arm-20261001-r1-launch/stdout.log",
+    "sha256": "b2620d15e33b17374f34ccc9ac64b153708f5a9a6ff49c19cbefc89bd148cc62"
+  },
+  {
+    "source_path": "runtime/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+    "public_path": "runtime/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py.txt",
+    "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+  },
+  {
+    "source_path": "runtime/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+    "public_path": "runtime/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py.txt",
+    "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+  },
+  {
+    "source_path": "runtime/test/python/gemm/cutedsl/test_grouped_gemm_canonical_layouts.py",
+    "public_path": "runtime/test/python/gemm/cutedsl/test_grouped_gemm_canonical_layouts.py.txt",
+    "sha256": "b801a3e8cd5a9f0d88941494a516dd0f57b1d1cfd4cf71da3dd13db4d2a258f4"
+  },
+  {
+    "source_path": "runtime/test/python/gemm/cutedsl/test_grouped_gemm_swiglu.py",
+    "public_path": "runtime/test/python/gemm/cutedsl/test_grouped_gemm_swiglu.py.txt",
+    "sha256": "a2e13e9a82c91f3855c6e3e80bd04d8c1f5ca5dfa610ac8566621b3194e7756c"
+  },
+  {
+    "source_path": "runtime/test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+    "public_path": "runtime/test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py.txt",
+    "sha256": "38f60c55058056ccc222ec0699d664e91d6526f2bdd8fce5832c0a89ff2f4a34"
+  },
+  {
+    "source_path": "runtime/test/python/gemm/cutedsl/test_swiglu_amax_per_call.py",
+    "public_path": "runtime/test/python/gemm/cutedsl/test_swiglu_amax_per_call.py.txt",
+    "sha256": "d3017b0723ce039fb89e6db5770bdab80e56613e0f6e8cb8873f3b19cda4a465"
+  },
+  {
+    "source_path": "runtime/test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py",
+    "public_path": "runtime/test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py.txt",
+    "sha256": "5c9587dea4ffbf8d33e3b7e25197e9c8a5463763a4390b8f113fb3e68e649af7"
+  },
+  {
+    "source_path": "tools/a3_all24_precision_probe_20261001.py",
+    "public_path": "tools/a3_all24_precision_probe_20261001.py.txt",
+    "sha256": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5"
+  },
+  {
+    "source_path": "tools/a3_c_store_original_control_queued_20261001.py",
+    "public_path": "tools/a3_c_store_original_control_queued_20261001.py.txt",
+    "sha256": "e5376b5c15927e7417861cf7e30bf2eac6fd44457afdc8ba74def38a315adf10"
+  },
+  {
+    "source_path": "tools/a3_model_e2e_mergefix_20261001.py",
+    "public_path": "tools/a3_model_e2e_mergefix_20261001.py.txt",
+    "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+  },
+  {
+    "source_path": "tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+    "public_path": "tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py.txt",
+    "sha256": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3"
+  },
+  {
+    "source_path": "tools/a3_optional_c_store_native_kernel_20261001.py",
+    "public_path": "tools/a3_optional_c_store_native_kernel_20261001.py.txt",
+    "sha256": "61a3a9bb32df1cf09c0ae253eb6531afeb76bfd0fa5db78161782b36204bb40e"
+  },
+  {
+    "source_path": "tools/a3_optional_c_store_native_kernel_r3_20261001.py",
+    "public_path": "tools/a3_optional_c_store_native_kernel_r3_20261001.py.txt",
+    "sha256": "333cb79ca85af6b7f15375177a3e74c90865711f40003434fcf9a1aca18e98ce"
+  },
+  {
+    "source_path": "tools/a3_optional_c_store_queued_20261001.py",
+    "public_path": "tools/a3_optional_c_store_queued_20261001.py.txt",
+    "sha256": "b6f42ebbf08ae3dc1283ed5d91fd19c1293d7367185f8316ee3bb6a722d389b1"
+  },
+  {
+    "source_path": "tools/a3_optional_c_store_queued_r2_20261001.py",
+    "public_path": "tools/a3_optional_c_store_queued_r2_20261001.py.txt",
+    "sha256": "794eb755801c1bae54dc82148375b1fd49fe5a9f2a98989e778d2f6d7fdaf5c6"
+  },
+  {
+    "source_path": "tools/a3_optional_c_store_queued_r3_20261001.py",
+    "public_path": "tools/a3_optional_c_store_queued_r3_20261001.py.txt",
+    "sha256": "fb8bdf8660520933b36f4693321234ebbbba998e29bd4e46bb0d8c02758ad893"
+  },
+  {
+    "source_path": "tools/a3_optional_c_store_worker_20261001.py",
+    "public_path": "tools/a3_optional_c_store_worker_20261001.py.txt",
+    "sha256": "8fbac0bc8e021eee09e65019416dd1e1aa912611f5fa49a2241cbd980bce1a34"
+  },
+  {
+    "source_path": "tools/a3_optional_c_store_worker_r3_20261001.py",
+    "public_path": "tools/a3_optional_c_store_worker_r3_20261001.py.txt",
+    "sha256": "11dff6f829042eedf195f7efbff5b3566dd27f33e8554f524437e5e6845aeeed"
+  },
+  {
+    "source_path": "tools/a3_production_c_store_pytest_plugin_20261001.py",
+    "public_path": "tools/a3_production_c_store_pytest_plugin_20261001.py.txt",
+    "sha256": "6d034f48a86bdba252acbd085414c7f1383291c11519cc54d4465a749f36629b"
+  },
+  {
+    "source_path": "tools/a3_production_c_store_three_arm_queued_20261001.py",
+    "public_path": "tools/a3_production_c_store_three_arm_queued_20261001.py.txt",
+    "sha256": "f7f99fd165c2c7c7232b41704b47d2673b9f1ba23aed8a7d33cdb82b2a7a2b52"
+  },
+  {
+    "source_path": "tools/a3_production_optional_c_store_native_kernel_20261001.py",
+    "public_path": "tools/a3_production_optional_c_store_native_kernel_20261001.py.txt",
+    "sha256": "3543ffc3140058646845040a4924278ae2a323d049492d4b5383af0d6ff04482"
+  },
+  {
+    "source_path": "tools/a3_repair_matrix_select_20261001.py",
+    "public_path": "tools/a3_repair_matrix_select_20261001.py.txt",
+    "sha256": "0dc9823c8ce28b42491600dfb8327dd1e6495e08fb7cb9df9cab5b0e8314fa45"
+  },
+  {
+    "source_path": "tools/archive_a3_optional_c_store_20261001.py",
+    "public_path": "tools/archive_a3_optional_c_store_20261001.py.txt",
+    "sha256": "2b8bc5f6412125a34ceb6f5e63157771d27eaedea6a77d8fd179301302fe5e46"
+  },
+  {
+    "source_path": "tools/audit_a3_optional_c_store_20261001.py",
+    "public_path": "tools/audit_a3_optional_c_store_20261001.py.txt",
+    "sha256": "41a24222a1a8d2cfc8df34b6295f916ec56358b8d13e91d2382f54d4843e2ed0"
+  },
+  {
+    "source_path": "tools/audit_a3_precision_followup_r2_20261001.py",
+    "public_path": "tools/audit_a3_precision_followup_r2_20261001.py.txt",
+    "sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944"
+  },
+  {
+    "source_path": "tools/audit_a3_production_c_store_20261001.py",
+    "public_path": "tools/audit_a3_production_c_store_20261001.py.txt",
+    "sha256": "198fb6b219f78db333b2f8dfa1a501b404d9a29d953e09dc62f766b4896c08da"
+  },
+  {
+    "source_path": "tools/audit_a3_production_c_store_r2_20261001.py",
+    "public_path": "tools/audit_a3_production_c_store_r2_20261001.py.txt",
+    "sha256": "967e6928e8c52b886ac85d1fc500c927ac182091208c6a68a7d75ebfd8bd0916"
+  },
+  {
+    "source_path": "tools/run_a3_production_c_store_regression_queued_20261001.py",
+    "public_path": "tools/run_a3_production_c_store_regression_queued_20261001.py.txt",
+    "sha256": "2ff3d6f54b3f6d2fba6c1e5ba48a8cb430ea753efd004773134920485473b505"
+  },
+  {
+    "source_path": "tools/run_a3_production_c_store_regression_queued_r2_20261001.py",
+    "public_path": "tools/run_a3_production_c_store_regression_queued_r2_20261001.py.txt",
+    "sha256": "747d2a750aa55445c869a81b93906c90fb33b21e1947aac951540c3e6890cfa1"
+  },
+  {
+    "source_path": "tools/run_logged.py",
+    "public_path": "tools/run_logged.py.txt",
+    "sha256": "ba9cf0200d58ac901934b575be40cea5cb2acf17ff5ee677104f16eb2b897598"
+  },
+  {
+    "source_path": "tools/test_a3_production_c_store_pair_20261001.py",
+    "public_path": "tools/test_a3_production_c_store_pair_20261001.py.txt",
+    "sha256": "d8eaef517b52f1d99bb6452a8fb23c4dbe64a7c4e10c17596904792fa677bdf9"
+  },
+  {
+    "source_path": "tools/test_a3_production_c_store_pair_r2_20261001.py",
+    "public_path": "tools/test_a3_production_c_store_pair_r2_20261001.py.txt",
+    "sha256": "2c8e1398769344564768d677755241dc7f01834e25d74040fe3dfda3a64f7eb2"
+  }
+]

@@ -1,0 +1,106 @@
+[
+  {
+    "nodeid": "gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_matches_wide_and_independent_activation[True-1-256]",
+    "params": {
+      "canonical": "True",
+      "experts": "1",
+      "n": "256"
+    }
+  },
+  {
+    "nodeid": "gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_matches_wide_and_independent_activation[True-4-512]",
+    "params": {
+      "canonical": "True",
+      "experts": "4",
+      "n": "512"
+    }
+  },
+  {
+    "nodeid": "gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_matches_wide_and_independent_activation[True-31-1024]",
+    "params": {
+      "canonical": "True",
+      "experts": "31",
+      "n": "1024"
+    }
+  },
+  {
+    "nodeid": "gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_matches_wide_and_independent_activation[True-33-1024]",
+    "params": {
+      "canonical": "True",
+      "experts": "33",
+      "n": "1024"
+    }
+  },
+  {
+    "nodeid": "gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_matches_wide_and_independent_activation[False-1-256]",
+    "params": {
+      "canonical": "False",
+      "experts": "1",
+      "n": "256"
+    }
+  },
+  {
+    "nodeid": "gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_matches_wide_and_independent_activation[False-4-512]",
+    "params": {
+      "canonical": "False",
+      "experts": "4",
+      "n": "512"
+    }
+  },
+  {
+    "nodeid": "gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_matches_wide_and_independent_activation[False-31-1024]",
+    "params": {
+      "canonical": "False",
+      "experts": "31",
+      "n": "1024"
+    }
+  },
+  {
+    "nodeid": "gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_matches_wide_and_independent_activation[False-33-1024]",
+    "params": {
+      "canonical": "False",
+      "experts": "33",
+      "n": "1024"
+    }
+  },
+  {
+    "nodeid": "gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_plan_reuse_preserves_previous_outputs[True]",
+    "params": {
+      "side_stream": "True"
+    }
+  },
+  {
+    "nodeid": "gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py::test_narrow_sfd_plan_reuse_preserves_previous_outputs[False]",
+    "params": {
+      "side_stream": "False"
+    }
+  },
+  {
+    "nodeid": "gemm/cutedsl/test_swiglu_wrapper_launch_stream.py::test_swiglu_wrapper_outputs_and_amax_use_launch_stream[side-False]",
+    "params": {
+      "target": "side",
+      "warm": "False"
+    }
+  },
+  {
+    "nodeid": "gemm/cutedsl/test_swiglu_wrapper_launch_stream.py::test_swiglu_wrapper_outputs_and_amax_use_launch_stream[side-True]",
+    "params": {
+      "target": "side",
+      "warm": "True"
+    }
+  },
+  {
+    "nodeid": "gemm/cutedsl/test_swiglu_wrapper_launch_stream.py::test_swiglu_wrapper_outputs_and_amax_use_launch_stream[default-False]",
+    "params": {
+      "target": "default",
+      "warm": "False"
+    }
+  },
+  {
+    "nodeid": "gemm/cutedsl/test_swiglu_wrapper_launch_stream.py::test_swiglu_wrapper_outputs_and_amax_use_launch_stream[default-True]",
+    "params": {
+      "target": "default",
+      "warm": "True"
+    }
+  }
+]

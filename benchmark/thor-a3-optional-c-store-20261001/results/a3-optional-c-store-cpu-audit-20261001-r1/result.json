@@ -1,0 +1,1278 @@
+{
+  "stage": "CPU_AUDITED_C_STORE_PARITY_AND_THREE_ARM_CAPTURED_TIMING_NOT_MODEL_SUCCESS",
+  "head": "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1",
+  "tensor_count": 102,
+  "full_model": {
+    "run": {
+      "argv": [
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_optional_c_store_queued_r3_20261001.py",
+        "--out",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-optional-c-store-20261001-r3",
+        "--expected-source",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+        "--expected-head",
+        "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1"
+      ],
+      "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+      "started_utc": "2026-10-01T13:59:19.468269+00:00",
+      "deadline_seconds": 5400.0,
+      "status": "EXITED",
+      "selected_env": {},
+      "returncode": 0,
+      "signal": null,
+      "elapsed_seconds": 25.62670324499959
+    },
+    "producer_metadata_sha256": "f04d21c3a283e8e8341ce88c68d266b4f6c7e3e33845e4b212d68ea807465368",
+    "producer_outputs_sha256": "8e1c9999531fa874c53a24962de6acbd7aedd001012141d65f978a78d85fa162",
+    "tensor_count": 48,
+    "tensors": {
+      "k32_emit_c/0/reference": {
+        "shape": [
+          1,
+          73,
+          49155
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "d821f2ba2944f24a4bbd62604d4fdc0249efba46529f018f7ceed0b0faf25c03"
+      },
+      "k32_emit_c/0/native": {
+        "shape": [
+          1,
+          73,
+          49155
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "326e0e3def589ad7fe1d5cb07b6c670d1a78373e878bf8c0df64ce7c5d18b016"
+      },
+      "k32_emit_c/1/reference": {
+        "shape": [
+          1,
+          70,
+          49155
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "11ecfe7300f0a2e2c8d26b5983344bec3c14117d141f794d948bf7f8ef5a1129"
+      },
+      "k32_emit_c/1/native": {
+        "shape": [
+          1,
+          70,
+          49155
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "47d54168fb0cf082e6eeacb690f7ee750270fda143836f77fabffdcfecbb2f1a"
+      },
+      "k32_emit_c/2/reference": {
+        "shape": [
+          1,
+          256,
+          49155
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "c63e951c109fbc68847fb04f95760a7946eb8c23e96b1a94a8969229fca6c05c"
+      },
+      "k32_emit_c/2/native": {
+        "shape": [
+          1,
+          256,
+          49155
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "fffaf065d472a2a463c1dd02bcdcc579ec7a67e53eb54e59f12134e0b4fab2b6"
+      },
+      "k32_omit_c/0/reference": {
+        "shape": [
+          1,
+          73,
+          49155
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "d821f2ba2944f24a4bbd62604d4fdc0249efba46529f018f7ceed0b0faf25c03"
+      },
+      "k32_omit_c/0/native": {
+        "shape": [
+          1,
+          73,
+          49155
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "326e0e3def589ad7fe1d5cb07b6c670d1a78373e878bf8c0df64ce7c5d18b016"
+      },
+      "k32_omit_c/1/reference": {
+        "shape": [
+          1,
+          70,
+          49155
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "11ecfe7300f0a2e2c8d26b5983344bec3c14117d141f794d948bf7f8ef5a1129"
+      },
+      "k32_omit_c/1/native": {
+        "shape": [
+          1,
+          70,
+          49155
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "47d54168fb0cf082e6eeacb690f7ee750270fda143836f77fabffdcfecbb2f1a"
+      },
+      "k32_omit_c/2/reference": {
+        "shape": [
+          1,
+          256,
+          49155
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "c63e951c109fbc68847fb04f95760a7946eb8c23e96b1a94a8969229fca6c05c"
+      },
+      "k32_omit_c/2/native": {
+        "shape": [
+          1,
+          256,
+          49155
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "fffaf065d472a2a463c1dd02bcdcc579ec7a67e53eb54e59f12134e0b4fab2b6"
+      },
+      "c_write_probe/0/k32_emit_c/c_tensor": {
+        "shape": [
+          8192,
+          1024
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "33ce8cd390af724f6f26df21db43a3af12f1cd647f878c139845aaaf95b22d29"
+      },
+      "c_write_probe/0/k32_omit_c/c_tensor": {
+        "shape": [
+          8192,
+          1024
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "16b675adeb98601885a2eed7a7636831c3309c6294148f43fa30b069114cd07c",
+        "allowed_nonfinite": "All NaN: poisoned unavailable C output was not written"
+      },
+      "paired_c_store/0/emit/d_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "1ccc27d607fb9d5bc74f3fd00ac2ec1af79bb6e1adcd3d16e4c579358464ddc3"
+      },
+      "paired_c_store/0/omit/d_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "1ccc27d607fb9d5bc74f3fd00ac2ec1af79bb6e1adcd3d16e4c579358464ddc3"
+      },
+      "paired_c_store/0/emit/d_col_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "860dcbd763fa4d504f93cd9d2eaca578af978b13d536ad82635c662f6b810936"
+      },
+      "paired_c_store/0/omit/d_col_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "860dcbd763fa4d504f93cd9d2eaca578af978b13d536ad82635c662f6b810936"
+      },
+      "paired_c_store/0/emit/sfd_row_tensor": {
+        "shape": [
+          1,
+          64,
+          4,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "62a1fcabcd5a7307877c6a27242a8bcdb400c2f7fff63198f4421d6addf7cd83"
+      },
+      "paired_c_store/0/omit/sfd_row_tensor": {
+        "shape": [
+          1,
+          64,
+          4,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "62a1fcabcd5a7307877c6a27242a8bcdb400c2f7fff63198f4421d6addf7cd83"
+      },
+      "paired_c_store/0/emit/sfd_col_tensor": {
+        "shape": [
+          1,
+          4,
+          64,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "9122e52a92d2532d26ed8384a875581569b9fcedbbe72220d67314124cf5b0b8"
+      },
+      "paired_c_store/0/omit/sfd_col_tensor": {
+        "shape": [
+          1,
+          4,
+          64,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "9122e52a92d2532d26ed8384a875581569b9fcedbbe72220d67314124cf5b0b8"
+      },
+      "paired_c_store/0/emit/amax_tensor": {
+        "shape": [
+          32,
+          1
+        ],
+        "dtype": "torch.float32",
+        "sha256": "fe16307541353fa4afd0cfa54f2163cf3991fc0f1ad9385f80e99309b3b07335"
+      },
+      "paired_c_store/0/omit/amax_tensor": {
+        "shape": [
+          32,
+          1
+        ],
+        "dtype": "torch.float32",
+        "sha256": "fe16307541353fa4afd0cfa54f2163cf3991fc0f1ad9385f80e99309b3b07335"
+      },
+      "c_write_probe/1/k32_emit_c/c_tensor": {
+        "shape": [
+          8192,
+          1024
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "ed62547126eb3c37279d9b54530c11cb9f3f1e0abc21cce42a347eb867cfaad3"
+      },
+      "c_write_probe/1/k32_omit_c/c_tensor": {
+        "shape": [
+          8192,
+          1024
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "16b675adeb98601885a2eed7a7636831c3309c6294148f43fa30b069114cd07c",
+        "allowed_nonfinite": "All NaN: poisoned unavailable C output was not written"
+      },
+      "paired_c_store/1/emit/d_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "62be06021508e49d63cff71d73860f83f1d9fb8621c7c40018bbe574c0113faf"
+      },
+      "paired_c_store/1/omit/d_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "62be06021508e49d63cff71d73860f83f1d9fb8621c7c40018bbe574c0113faf"
+      },
+      "paired_c_store/1/emit/d_col_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "5eeecec4e7a2e40946a6937f0ffccfc12f97a434e1f7f3d8601397b8eb5f8b43"
+      },
+      "paired_c_store/1/omit/d_col_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "5eeecec4e7a2e40946a6937f0ffccfc12f97a434e1f7f3d8601397b8eb5f8b43"
+      },
+      "paired_c_store/1/emit/sfd_row_tensor": {
+        "shape": [
+          1,
+          64,
+          4,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "2edbf162974877d4b083788338c5c1deca26510a58101e04b01f0678e146a98e"
+      },
+      "paired_c_store/1/omit/sfd_row_tensor": {
+        "shape": [
+          1,
+          64,
+          4,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "2edbf162974877d4b083788338c5c1deca26510a58101e04b01f0678e146a98e"
+      },
+      "paired_c_store/1/emit/sfd_col_tensor": {
+        "shape": [
+          1,
+          4,
+          64,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "2fcd30cf533df60e734ae2373d881eb27f255ba1d3fb8af731ea0bc636d72dd7"
+      },
+      "paired_c_store/1/omit/sfd_col_tensor": {
+        "shape": [
+          1,
+          4,
+          64,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "2fcd30cf533df60e734ae2373d881eb27f255ba1d3fb8af731ea0bc636d72dd7"
+      },
+      "paired_c_store/1/emit/amax_tensor": {
+        "shape": [
+          32,
+          1
+        ],
+        "dtype": "torch.float32",
+        "sha256": "50674b43dbe355746b4abe440f646688e7fa191967bff056cbcd4ff09db250f1"
+      },
+      "paired_c_store/1/omit/amax_tensor": {
+        "shape": [
+          32,
+          1
+        ],
+        "dtype": "torch.float32",
+        "sha256": "50674b43dbe355746b4abe440f646688e7fa191967bff056cbcd4ff09db250f1"
+      },
+      "c_write_probe/2/k32_emit_c/c_tensor": {
+        "shape": [
+          8192,
+          1024
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "54c55a280ba07bfb56c09206cbb756d62ee3b0a0d57f175c0232397727398ebc"
+      },
+      "c_write_probe/2/k32_omit_c/c_tensor": {
+        "shape": [
+          8192,
+          1024
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "16b675adeb98601885a2eed7a7636831c3309c6294148f43fa30b069114cd07c",
+        "allowed_nonfinite": "All NaN: poisoned unavailable C output was not written"
+      },
+      "paired_c_store/2/emit/d_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "c30b3fa477e0c323df0b0fcc8cf5b00e3a9c32179a87ab326a477a85a88097c1"
+      },
+      "paired_c_store/2/omit/d_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "c30b3fa477e0c323df0b0fcc8cf5b00e3a9c32179a87ab326a477a85a88097c1"
+      },
+      "paired_c_store/2/emit/d_col_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "fde4dbab134f948358f7cd38dae5e1c55fd21fd25ee73977e51047e3631c8517"
+      },
+      "paired_c_store/2/omit/d_col_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "fde4dbab134f948358f7cd38dae5e1c55fd21fd25ee73977e51047e3631c8517"
+      },
+      "paired_c_store/2/emit/sfd_row_tensor": {
+        "shape": [
+          1,
+          64,
+          4,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "1ce5fc0f233c6dde5ef60951dd0041e81db0f5acefa9ead1969093f388381824"
+      },
+      "paired_c_store/2/omit/sfd_row_tensor": {
+        "shape": [
+          1,
+          64,
+          4,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "1ce5fc0f233c6dde5ef60951dd0041e81db0f5acefa9ead1969093f388381824"
+      },
+      "paired_c_store/2/emit/sfd_col_tensor": {
+        "shape": [
+          1,
+          4,
+          64,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "67fa82736495bbcaae53c84361905328cce46b1e0c3ab9ca294d1de6681101af"
+      },
+      "paired_c_store/2/omit/sfd_col_tensor": {
+        "shape": [
+          1,
+          4,
+          64,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "67fa82736495bbcaae53c84361905328cce46b1e0c3ab9ca294d1de6681101af"
+      },
+      "paired_c_store/2/emit/amax_tensor": {
+        "shape": [
+          32,
+          1
+        ],
+        "dtype": "torch.float32",
+        "sha256": "7be02d5e26b37e6b18ce0d8bfe1fdb96cd99ae8c885cb175c302889e57742991"
+      },
+      "paired_c_store/2/omit/amax_tensor": {
+        "shape": [
+          32,
+          1
+        ],
+        "dtype": "torch.float32",
+        "sha256": "7be02d5e26b37e6b18ce0d8bfe1fdb96cd99ae8c885cb175c302889e57742991"
+      }
+    },
+    "full_model_rows": [
+      {
+        "case": 0,
+        "policy": "k32_emit_c",
+        "legacy_full_logits_byte_equal": true,
+        "native_oracle": {
+          "max_abs": 4.78125,
+          "relative_l2": 0.10408586605790084,
+          "argmax_equal_fraction": 0.9178082191780822
+        },
+        "native_bf16": {
+          "max_abs": 4.78125,
+          "relative_l2": 0.10408586605790084,
+          "argmax_equal_fraction": 0.9178082191780822
+        }
+      },
+      {
+        "case": 1,
+        "policy": "k32_emit_c",
+        "legacy_full_logits_byte_equal": true,
+        "native_oracle": {
+          "max_abs": 4.78125,
+          "relative_l2": 0.10497938301343157,
+          "argmax_equal_fraction": 0.9285714285714286
+        },
+        "native_bf16": {
+          "max_abs": 4.78125,
+          "relative_l2": 0.10497938301343157,
+          "argmax_equal_fraction": 0.9285714285714286
+        }
+      },
+      {
+        "case": 2,
+        "policy": "k32_emit_c",
+        "legacy_full_logits_byte_equal": true,
+        "native_oracle": {
+          "max_abs": 3.8125,
+          "relative_l2": 0.04337400890214134,
+          "argmax_equal_fraction": 0.97265625
+        },
+        "native_bf16": {
+          "max_abs": 6.25,
+          "relative_l2": 0.04313020439450244,
+          "argmax_equal_fraction": 0.98828125
+        }
+      },
+      {
+        "case": 0,
+        "policy": "k32_omit_c",
+        "legacy_full_logits_byte_equal": true,
+        "native_oracle": {
+          "max_abs": 4.78125,
+          "relative_l2": 0.10408586605790084,
+          "argmax_equal_fraction": 0.9178082191780822
+        },
+        "native_bf16": {
+          "max_abs": 4.78125,
+          "relative_l2": 0.10408586605790084,
+          "argmax_equal_fraction": 0.9178082191780822
+        }
+      },
+      {
+        "case": 1,
+        "policy": "k32_omit_c",
+        "legacy_full_logits_byte_equal": true,
+        "native_oracle": {
+          "max_abs": 4.78125,
+          "relative_l2": 0.10497938301343157,
+          "argmax_equal_fraction": 0.9285714285714286
+        },
+        "native_bf16": {
+          "max_abs": 4.78125,
+          "relative_l2": 0.10497938301343157,
+          "argmax_equal_fraction": 0.9285714285714286
+        }
+      },
+      {
+        "case": 2,
+        "policy": "k32_omit_c",
+        "legacy_full_logits_byte_equal": true,
+        "native_oracle": {
+          "max_abs": 3.8125,
+          "relative_l2": 0.04337400890214134,
+          "argmax_equal_fraction": 0.97265625
+        },
+        "native_bf16": {
+          "max_abs": 6.25,
+          "relative_l2": 0.04313020439450244,
+          "argmax_equal_fraction": 0.98828125
+        }
+      }
+    ],
+    "captured_timing": [
+      {
+        "case": 0,
+        "ratios": {
+          "k32_emit_c": {
+            "block_ratios": [
+              0.8339247510940182,
+              0.8987859196253946,
+              0.8933051720424329,
+              0.8926281439013903,
+              0.8959069185033582,
+              0.9002631997233508,
+              0.8987976318752876,
+              0.8970017124623617
+            ],
+            "median_ratio": 0.8964543154828599
+          }
+        }
+      },
+      {
+        "case": 1,
+        "ratios": {
+          "k32_emit_c": {
+            "block_ratios": [
+              0.9010332139295645,
+              0.9001624377704808,
+              0.9012485923143474,
+              0.9087237076990672,
+              0.9040814078111856,
+              0.9016667701326355,
+              0.898048574955068,
+              0.9014596821968583
+            ],
+            "median_ratio": 0.9013541372556029
+          }
+        }
+      },
+      {
+        "case": 2,
+        "ratios": {
+          "k32_emit_c": {
+            "block_ratios": [
+              0.9117154330494397,
+              0.9126733458856847,
+              0.9149592157504801,
+              0.9160270033166432,
+              0.9151856154077697,
+              0.9160065136549219,
+              0.914601778930295,
+              0.9107620400889916
+            ],
+            "median_ratio": 0.9147804973403876
+          }
+        }
+      }
+    ],
+    "model_native_calls": 144,
+    "python_execute_calls_including_capture": 216,
+    "graph_capture_calls": 6,
+    "timed_graph_replay_calls": 4800
+  },
+  "original_control": {
+    "run": {
+      "argv": [
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_c_store_original_control_queued_20261001.py",
+        "--out",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-c-store-original-control-20261001-r1",
+        "--expected-source",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+        "--expected-head",
+        "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1"
+      ],
+      "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2",
+      "started_utc": "2026-10-01T14:06:30.895210+00:00",
+      "deadline_seconds": 5400.0,
+      "status": "EXITED",
+      "selected_env": {},
+      "returncode": 0,
+      "signal": null,
+      "elapsed_seconds": 32.610186652000266
+    },
+    "producer_metadata_sha256": "be8f80d40af417081aecd3f207960d0299c205de18e21b8de4572e118a86e1ec",
+    "producer_outputs_sha256": "3c9e21898eb6da91fc341d10e9ac053764f4bcd2c466fc1f1bf28346c187ba5d",
+    "tensor_count": 54,
+    "tensors": {
+      "0/original_emit/c_sentinel": {
+        "shape": [
+          8192,
+          1024
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "33ce8cd390af724f6f26df21db43a3af12f1cd647f878c139845aaaf95b22d29"
+      },
+      "0/protected_emit/c_sentinel": {
+        "shape": [
+          8192,
+          1024
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "33ce8cd390af724f6f26df21db43a3af12f1cd647f878c139845aaaf95b22d29"
+      },
+      "0/protected_omit/c_sentinel": {
+        "shape": [
+          8192,
+          1024
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "16b675adeb98601885a2eed7a7636831c3309c6294148f43fa30b069114cd07c",
+        "allowed_nonfinite": "All NaN: poisoned unavailable C output was not written"
+      },
+      "0/original_emit/d_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "1ccc27d607fb9d5bc74f3fd00ac2ec1af79bb6e1adcd3d16e4c579358464ddc3"
+      },
+      "0/original_emit/d_col_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "860dcbd763fa4d504f93cd9d2eaca578af978b13d536ad82635c662f6b810936"
+      },
+      "0/original_emit/sfd_row_tensor": {
+        "shape": [
+          1,
+          64,
+          4,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "62a1fcabcd5a7307877c6a27242a8bcdb400c2f7fff63198f4421d6addf7cd83"
+      },
+      "0/original_emit/sfd_col_tensor": {
+        "shape": [
+          1,
+          4,
+          64,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "9122e52a92d2532d26ed8384a875581569b9fcedbbe72220d67314124cf5b0b8"
+      },
+      "0/original_emit/amax_tensor": {
+        "shape": [
+          32,
+          1
+        ],
+        "dtype": "torch.float32",
+        "sha256": "fe16307541353fa4afd0cfa54f2163cf3991fc0f1ad9385f80e99309b3b07335"
+      },
+      "0/protected_emit/d_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "1ccc27d607fb9d5bc74f3fd00ac2ec1af79bb6e1adcd3d16e4c579358464ddc3"
+      },
+      "0/protected_emit/d_col_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "860dcbd763fa4d504f93cd9d2eaca578af978b13d536ad82635c662f6b810936"
+      },
+      "0/protected_emit/sfd_row_tensor": {
+        "shape": [
+          1,
+          64,
+          4,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "62a1fcabcd5a7307877c6a27242a8bcdb400c2f7fff63198f4421d6addf7cd83"
+      },
+      "0/protected_emit/sfd_col_tensor": {
+        "shape": [
+          1,
+          4,
+          64,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "9122e52a92d2532d26ed8384a875581569b9fcedbbe72220d67314124cf5b0b8"
+      },
+      "0/protected_emit/amax_tensor": {
+        "shape": [
+          32,
+          1
+        ],
+        "dtype": "torch.float32",
+        "sha256": "fe16307541353fa4afd0cfa54f2163cf3991fc0f1ad9385f80e99309b3b07335"
+      },
+      "0/protected_omit/d_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "1ccc27d607fb9d5bc74f3fd00ac2ec1af79bb6e1adcd3d16e4c579358464ddc3"
+      },
+      "0/protected_omit/d_col_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "860dcbd763fa4d504f93cd9d2eaca578af978b13d536ad82635c662f6b810936"
+      },
+      "0/protected_omit/sfd_row_tensor": {
+        "shape": [
+          1,
+          64,
+          4,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "62a1fcabcd5a7307877c6a27242a8bcdb400c2f7fff63198f4421d6addf7cd83"
+      },
+      "0/protected_omit/sfd_col_tensor": {
+        "shape": [
+          1,
+          4,
+          64,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "9122e52a92d2532d26ed8384a875581569b9fcedbbe72220d67314124cf5b0b8"
+      },
+      "0/protected_omit/amax_tensor": {
+        "shape": [
+          32,
+          1
+        ],
+        "dtype": "torch.float32",
+        "sha256": "fe16307541353fa4afd0cfa54f2163cf3991fc0f1ad9385f80e99309b3b07335"
+      },
+      "1/original_emit/c_sentinel": {
+        "shape": [
+          8192,
+          1024
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "ed62547126eb3c37279d9b54530c11cb9f3f1e0abc21cce42a347eb867cfaad3"
+      },
+      "1/protected_emit/c_sentinel": {
+        "shape": [
+          8192,
+          1024
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "ed62547126eb3c37279d9b54530c11cb9f3f1e0abc21cce42a347eb867cfaad3"
+      },
+      "1/protected_omit/c_sentinel": {
+        "shape": [
+          8192,
+          1024
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "16b675adeb98601885a2eed7a7636831c3309c6294148f43fa30b069114cd07c",
+        "allowed_nonfinite": "All NaN: poisoned unavailable C output was not written"
+      },
+      "1/original_emit/d_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "62be06021508e49d63cff71d73860f83f1d9fb8621c7c40018bbe574c0113faf"
+      },
+      "1/original_emit/d_col_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "5eeecec4e7a2e40946a6937f0ffccfc12f97a434e1f7f3d8601397b8eb5f8b43"
+      },
+      "1/original_emit/sfd_row_tensor": {
+        "shape": [
+          1,
+          64,
+          4,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "2edbf162974877d4b083788338c5c1deca26510a58101e04b01f0678e146a98e"
+      },
+      "1/original_emit/sfd_col_tensor": {
+        "shape": [
+          1,
+          4,
+          64,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "2fcd30cf533df60e734ae2373d881eb27f255ba1d3fb8af731ea0bc636d72dd7"
+      },
+      "1/original_emit/amax_tensor": {
+        "shape": [
+          32,
+          1
+        ],
+        "dtype": "torch.float32",
+        "sha256": "50674b43dbe355746b4abe440f646688e7fa191967bff056cbcd4ff09db250f1"
+      },
+      "1/protected_emit/d_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "62be06021508e49d63cff71d73860f83f1d9fb8621c7c40018bbe574c0113faf"
+      },
+      "1/protected_emit/d_col_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "5eeecec4e7a2e40946a6937f0ffccfc12f97a434e1f7f3d8601397b8eb5f8b43"
+      },
+      "1/protected_emit/sfd_row_tensor": {
+        "shape": [
+          1,
+          64,
+          4,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "2edbf162974877d4b083788338c5c1deca26510a58101e04b01f0678e146a98e"
+      },
+      "1/protected_emit/sfd_col_tensor": {
+        "shape": [
+          1,
+          4,
+          64,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "2fcd30cf533df60e734ae2373d881eb27f255ba1d3fb8af731ea0bc636d72dd7"
+      },
+      "1/protected_emit/amax_tensor": {
+        "shape": [
+          32,
+          1
+        ],
+        "dtype": "torch.float32",
+        "sha256": "50674b43dbe355746b4abe440f646688e7fa191967bff056cbcd4ff09db250f1"
+      },
+      "1/protected_omit/d_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "62be06021508e49d63cff71d73860f83f1d9fb8621c7c40018bbe574c0113faf"
+      },
+      "1/protected_omit/d_col_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "5eeecec4e7a2e40946a6937f0ffccfc12f97a434e1f7f3d8601397b8eb5f8b43"
+      },
+      "1/protected_omit/sfd_row_tensor": {
+        "shape": [
+          1,
+          64,
+          4,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "2edbf162974877d4b083788338c5c1deca26510a58101e04b01f0678e146a98e"
+      },
+      "1/protected_omit/sfd_col_tensor": {
+        "shape": [
+          1,
+          4,
+          64,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "2fcd30cf533df60e734ae2373d881eb27f255ba1d3fb8af731ea0bc636d72dd7"
+      },
+      "1/protected_omit/amax_tensor": {
+        "shape": [
+          32,
+          1
+        ],
+        "dtype": "torch.float32",
+        "sha256": "50674b43dbe355746b4abe440f646688e7fa191967bff056cbcd4ff09db250f1"
+      },
+      "2/original_emit/c_sentinel": {
+        "shape": [
+          8192,
+          1024
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "54c55a280ba07bfb56c09206cbb756d62ee3b0a0d57f175c0232397727398ebc"
+      },
+      "2/protected_emit/c_sentinel": {
+        "shape": [
+          8192,
+          1024
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "54c55a280ba07bfb56c09206cbb756d62ee3b0a0d57f175c0232397727398ebc"
+      },
+      "2/protected_omit/c_sentinel": {
+        "shape": [
+          8192,
+          1024
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "16b675adeb98601885a2eed7a7636831c3309c6294148f43fa30b069114cd07c",
+        "allowed_nonfinite": "All NaN: poisoned unavailable C output was not written"
+      },
+      "2/original_emit/d_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "c30b3fa477e0c323df0b0fcc8cf5b00e3a9c32179a87ab326a477a85a88097c1"
+      },
+      "2/original_emit/d_col_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "fde4dbab134f948358f7cd38dae5e1c55fd21fd25ee73977e51047e3631c8517"
+      },
+      "2/original_emit/sfd_row_tensor": {
+        "shape": [
+          1,
+          64,
+          4,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "1ce5fc0f233c6dde5ef60951dd0041e81db0f5acefa9ead1969093f388381824"
+      },
+      "2/original_emit/sfd_col_tensor": {
+        "shape": [
+          1,
+          4,
+          64,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "67fa82736495bbcaae53c84361905328cce46b1e0c3ab9ca294d1de6681101af"
+      },
+      "2/original_emit/amax_tensor": {
+        "shape": [
+          32,
+          1
+        ],
+        "dtype": "torch.float32",
+        "sha256": "7be02d5e26b37e6b18ce0d8bfe1fdb96cd99ae8c885cb175c302889e57742991"
+      },
+      "2/protected_emit/d_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "c30b3fa477e0c323df0b0fcc8cf5b00e3a9c32179a87ab326a477a85a88097c1"
+      },
+      "2/protected_emit/d_col_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "fde4dbab134f948358f7cd38dae5e1c55fd21fd25ee73977e51047e3631c8517"
+      },
+      "2/protected_emit/sfd_row_tensor": {
+        "shape": [
+          1,
+          64,
+          4,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "1ce5fc0f233c6dde5ef60951dd0041e81db0f5acefa9ead1969093f388381824"
+      },
+      "2/protected_emit/sfd_col_tensor": {
+        "shape": [
+          1,
+          4,
+          64,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "67fa82736495bbcaae53c84361905328cce46b1e0c3ab9ca294d1de6681101af"
+      },
+      "2/protected_emit/amax_tensor": {
+        "shape": [
+          32,
+          1
+        ],
+        "dtype": "torch.float32",
+        "sha256": "7be02d5e26b37e6b18ce0d8bfe1fdb96cd99ae8c885cb175c302889e57742991"
+      },
+      "2/protected_omit/d_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "c30b3fa477e0c323df0b0fcc8cf5b00e3a9c32179a87ab326a477a85a88097c1"
+      },
+      "2/protected_omit/d_col_tensor": {
+        "shape": [
+          8192,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "sha256": "fde4dbab134f948358f7cd38dae5e1c55fd21fd25ee73977e51047e3631c8517"
+      },
+      "2/protected_omit/sfd_row_tensor": {
+        "shape": [
+          1,
+          64,
+          4,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "1ce5fc0f233c6dde5ef60951dd0041e81db0f5acefa9ead1969093f388381824"
+      },
+      "2/protected_omit/sfd_col_tensor": {
+        "shape": [
+          1,
+          4,
+          64,
+          32,
+          4,
+          4
+        ],
+        "dtype": "torch.float8_e8m0fnu",
+        "sha256": "67fa82736495bbcaae53c84361905328cce46b1e0c3ab9ca294d1de6681101af"
+      },
+      "2/protected_omit/amax_tensor": {
+        "shape": [
+          32,
+          1
+        ],
+        "dtype": "torch.float32",
+        "sha256": "7be02d5e26b37e6b18ce0d8bfe1fdb96cd99ae8c885cb175c302889e57742991"
+      }
+    },
+    "rows": [
+      {
+        "case": 0,
+        "tokens": 73,
+        "ratios": {
+          "original_emit": {
+            "block_ratios": [
+              0.9507830198258971,
+              0.9547695856125961,
+              0.9417546925781537,
+              0.9568688372188373,
+              0.9615200796079397,
+              0.9579386887865319,
+              0.9512648149478664,
+              0.9442839919976841
+            ],
+            "median_ratio": 0.9530172002802313
+          },
+          "protected_emit": {
+            "block_ratios": [
+              0.9566481714733277,
+              0.9617941982719744,
+              0.9510591844102064,
+              0.9531350453792465,
+              0.9592160008258368,
+              0.9397884930256631,
+              0.9445412547479326,
+              0.9514525038172363
+            ],
+            "median_ratio": 0.9522937745982414
+          }
+        },
+        "non_C_byte_equal": true,
+        "emitted_C_byte_equal": true
+      },
+      {
+        "case": 1,
+        "tokens": 70,
+        "ratios": {
+          "original_emit": {
+            "block_ratios": [
+              0.8373326013772595,
+              0.898317235570462,
+              0.9032153887466312,
+              0.9005283676572571,
+              0.8984564461200064,
+              0.8989326105830664,
+              0.9022817097639755,
+              0.9023302948346595
+            ],
+            "median_ratio": 0.8997304891201617
+          },
+          "protected_emit": {
+            "block_ratios": [
+              0.9015405629777757,
+              0.8964674965118425,
+              0.7655737471478983,
+              0.8966409133830445,
+              0.898369998188292,
+              0.8982312985042756,
+              0.9004720603095109,
+              0.898519017550897
+            ],
+            "median_ratio": 0.8983006483462839
+          }
+        },
+        "non_C_byte_equal": true,
+        "emitted_C_byte_equal": true
+      },
+      {
+        "case": 2,
+        "tokens": 256,
+        "ratios": {
+          "original_emit": {
+            "block_ratios": [
+              0.9429939428741043,
+              0.9421480106942985,
+              0.941449787904403,
+              0.938015105985914,
+              0.9351302602936907,
+              0.9374321724619441,
+              0.937842503655933,
+              0.935400374573388
+            ],
+            "median_ratio": 0.9379288048209236
+          },
+          "protected_emit": {
+            "block_ratios": [
+              0.9483506642041688,
+              0.9510315940236139,
+              0.8562749303644105,
+              0.9509070580526741,
+              0.9374508729767734,
+              0.9424234499618099,
+              0.9398222579544045,
+              0.9373357138562208
+            ],
+            "median_ratio": 0.9411228539581072
+          }
+        },
+        "non_C_byte_equal": true,
+        "emitted_C_byte_equal": true
+      }
+    ],
+    "python_execute_calls_including_capture": 108,
+    "graph_capture_calls": 9,
+    "timed_graph_replay_calls": 4800,
+    "model_native_calls": 0
+  },
+  "new_native_calls": 0,
+  "cuda_initialized": false,
+  "harness_sha256": "41a24222a1a8d2cfc8df34b6295f916ec56358b8d13e91d2382f54d4843e2ed0",
+  "cpu_helper_sha256": "fceaeb6a966e5e3f260e16ba3d91fe32cd9d9da24b3c531b33e8d82bbdb17944",
+  "limits": "All102 saved tensor entries audited,6 complete native model cases byteidentical frozen68d control but all1%oracle gates still fail. Timing records balanced/recomputed, not independently GPU remeasured. Experimental BF16-stage private kernel only; no production FP32-activation gain, boundary/reuse coverage, end-to-end model throughput or accepted public omit-C API. Sentinel C deliberately invalid; allocation/shared memory unchanged. Physical input hashes are producer assertions matched to a previously audited capture, not an independent pack proof. No empty expert in these timing captures; empty AMAX semantics remain to be tested."
+}

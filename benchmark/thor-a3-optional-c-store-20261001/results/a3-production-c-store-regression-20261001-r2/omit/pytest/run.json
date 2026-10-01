@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+    "-m",
+    "pytest",
+    "-p",
+    "a3_production_c_store_pytest_plugin_20261001",
+    "-p",
+    "a3_repair_matrix_select_20261001",
+    "-o",
+    "addopts=",
+    "-q",
+    "--grouped-gemm-nkl=1024,1024,4",
+    "--junitxml=/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-production-c-store-regression-20261001-r2/omit/pytest/junit.xml",
+    "gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+    "gemm/cutedsl/test_swiglu_amax_per_call.py",
+    "gemm/cutedsl/test_swiglu_wrapper_launch_stream.py"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/test/python",
+  "started_utc": "2026-10-01T14:22:40.212561+00:00",
+  "deadline_seconds": 1800.0,
+  "status": "EXITED",
+  "selected_env": {},
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 39.75461792000169
+}

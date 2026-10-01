@@ -1,0 +1,61 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Exact three-arm output and C-write checks over supported production geometry."""
+
+import pytest
+import torch
+from cudnn.gemm.cutedsl.grouped.swiglu import api, grouped_gemm_swiglu_quant as original
+from gemm.cutedsl.test_grouped_swiglu_sfd_tiles import _assert_guards, _operands, _poison_outputs
+import a3_production_optional_c_store_native as candidate
+
+pytestmark = pytest.mark.L0
+
+
+@pytest.mark.parametrize("experts,n", [(1, 256), (4, 512), (31, 1024), (33, 1024)])
+@pytest.mark.parametrize("canonical", [True, False])
+@pytest.mark.parametrize("d_dtype", [torch.bfloat16, torch.float16])
+@pytest.mark.parametrize("vector_f32", [False, True])
+def test_production_c_store_three_arm_pair(monkeypatch, experts, n, canonical, d_dtype, vector_f32):
+    inputs, counts, _, _ = _operands(experts, n, canonical)
+    guards = _poison_outputs(monkeypatch)
+    previous = api.BlockScaledContiguousGroupedGemmKernel
+    previous_cache = api._cache_of_GroupedGemmSwigluSm100Objects
+    snapshots = {}
+    execute = api.GroupedGemmSwigluSm100.execute
+
+    def poison(api_object, *args, **kwargs):
+        kwargs["c_tensor"].fill_(float("nan"))
+        return execute(api_object, *args, **kwargs)
+
+    monkeypatch.setattr(api.GroupedGemmSwigluSm100, "execute", poison)
+    try:
+        for mode, cls in (("original", original.BlockScaledContiguousGroupedGemmKernel), ("emit", candidate.EmitC), ("omit", candidate.OmitC)):
+            api.BlockScaledContiguousGroupedGemmKernel = cls
+            api._cache_of_GroupedGemmSwigluSm100Objects = {}
+            result = api.grouped_gemm_swiglu_wrapper_sm100(
+                **inputs,
+                sf_vec_size=32,
+                c_dtype=torch.bfloat16,
+                d_dtype=d_dtype,
+                mma_tiler_mn=(256, 128),
+                cluster_shape_mn=(2, 1),
+                m_aligned=256,
+                vector_f32=vector_f32,
+            )
+            torch.cuda.synchronize()
+            c = result["c_tensor"]
+            assert bool(torch.isnan(c).all()) if mode == "omit" else bool(torch.isfinite(c).all())
+            snapshots[mode] = {k: v.cpu().contiguous() for k, v in result.items() if isinstance(v, torch.Tensor) and k != "c_tensor"}
+            live = torch.tensor([v > 0 for v in counts], device="cuda")
+            assert bool(torch.isfinite(result["amax_tensor"][live]).all())
+            assert bool(torch.isneginf(result["amax_tensor"][~live]).all())
+        assert snapshots["original"].keys() == snapshots["emit"].keys() == snapshots["omit"].keys()
+        for key, value in snapshots["original"].items():
+            for mode in ("emit", "omit"):
+                actual = snapshots[mode][key]
+                assert actual.dtype == value.dtype and actual.shape == value.shape
+                assert torch.equal(actual.view(torch.uint8), value.view(torch.uint8)), (mode, key)
+        _assert_guards(guards)
+    finally:
+        api.BlockScaledContiguousGroupedGemmKernel = previous
+        api._cache_of_GroupedGemmSwigluSm100Objects = previous_cache

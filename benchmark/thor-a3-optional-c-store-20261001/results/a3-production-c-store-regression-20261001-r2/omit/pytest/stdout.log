@@ -1,0 +1,16 @@
+===== cudnn-frontend conftest.py ====
+cuDNN Frontend Version: 1.31.0
+cuDNN Frontend Path: /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/python/cudnn/__init__.py
+cuDNN Backend Version: 92000
+GPU Name: NVIDIA Thor
+SM Arch Version: (11, 0)
+PyTorch Version: 2.13.0+cu130
+PyTorch Path: /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/lib/python3.12/site-packages/torch/__init__.py
+PyTorch CUDA Version: 13.0
+PyTorch cuDNN Version: 92000
+bringing up nodes...
+bringing up nodes...
+
+................                                                         [100%]
+- generated xml file: /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-production-c-store-regression-20261001-r2/omit/pytest/junit.xml -
+16 passed in 36.70s

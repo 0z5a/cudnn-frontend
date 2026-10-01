@@ -1,0 +1,252 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Frozen three-arm captured execution comparison, not model accuracy or throughput success.
+
+Production FP32-activation original emit-C versus explicit-D-wait emit-C and omit-C.
+No experimental BF16 activation staging is used in these actual native calls.
+Same full pinned checkpoint first-layer weights and three original full-model
+first-layer input/route captures. D/SFD/AMAX and actual C-write sentinel checked.
+C workspace remains allocated and unavailable as a valid output in omit mode.
+"""
+
+import argparse
+import fcntl
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import statistics
+import subprocess
+import sys
+import time
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--expected-source", required=True)
+    parser.add_argument("--expected-head", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        begin = time.monotonic()
+        (out / "admission_wait.json").write_text(json.dumps({"pid": os.getpid(), "torch_imported": False, "stage": "WAITING_FOR_SHARED_LOCK"}))
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - begin > 3600:
+                    return 75
+                time.sleep(1)
+        assert "torch" not in sys.modules
+        (out / "admission.json").write_text(
+            json.dumps({"pid": os.getpid(), "torch_imported": False, "stage": "LOCK_ADMITTED", "wait_seconds": time.monotonic() - begin})
+        )
+        helper_path = ROOT / "tools/a3_optional_c_store_worker_r3_20261001.py"
+        spec = importlib.util.spec_from_file_location("a3_c_store_prepared_helpers", helper_path)
+        q = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = q
+        spec.loader.exec_module(q)
+        m, t = q.m, q.t
+        from cudnn.gemm.cutedsl.grouped.swiglu import grouped_gemm_swiglu_quant as original
+
+        original_path = Path(original.__file__)
+        assert m.sha_file(original_path) == "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+        protected_path = ROOT / "tools/a3_production_optional_c_store_native_kernel_20261001.py"
+        spec = importlib.util.spec_from_file_location("a3_production_c_store_performance_native", protected_path)
+        protected = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = protected
+        spec.loader.exec_module(protected)
+        source = Path(args.expected_source).resolve()
+        assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == args.expected_head
+        assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+        for module in (m.cudnn, m.api, m._compiled_module):
+            assert Path(module.__file__).resolve().is_relative_to(source / "python")
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        t.set_num_threads(4)
+        t.backends.cuda.matmul.allow_tf32 = False
+        t.backends.cudnn.allow_tf32 = False
+        t.set_float32_matmul_precision("highest")
+        assert m.sha_file(m.MODEL / "model.safetensors") == m.WEIGHT_SHA
+        model, loading = m.AutoModelForCausalLM.from_pretrained(
+            m.MODEL, dtype=t.bfloat16, attn_implementation="sdpa", local_files_only=True, trust_remote_code=False, output_loading_info=True
+        )
+        assert not any(loading.values()) and sum(p.numel() for p in model.parameters()) == 1334628352
+        model = model.eval().cuda()
+        experts = [e for e in model.modules() if isinstance(e, m.GraniteMoeExperts)]
+        assert len(experts) == 24
+        adapter = q.make_adapter(m.A3ExpertAdapter, experts[0], 0, True)
+        captured_dir = ROOT / "results/a3-n128-mxfp8-staged-trace-20261001-r1"
+        audit_dir = ROOT / "results/a3-n128-mxfp8-staged-trace-cpu-audit-20261001-r1"
+        captured_sha = m.sha_file(captured_dir / "outputs.pt")
+        prior_audit = json.loads((audit_dir / "result.json").read_text())
+        assert prior_audit["producer_outputs_sha256"] == captured_sha
+        captured = t.load(captured_dir / "outputs.pt", map_location="cpu", weights_only=True)
+        classes = {"original_emit": original.BlockScaledContiguousGroupedGemmKernel, "protected_emit": protected.EmitC, "protected_omit": protected.OmitC}
+        saved, rows = {}, []
+        b_info, sf_info = m.tensor_info(adapter.b), m.tensor_info(adapter.sfb)
+        keys = ("d_tensor", "d_col_tensor", "sfd_row_tensor", "sfd_col_tensor", "amax_tensor")
+        with t.inference_mode():
+            for case in range(3):
+                record = captured[f"k32_n128_mxfp8_bf16_stage/{case}/reference_trace"][0]
+                x, ends, _, _, _, sizes, _ = adapter.routing(record["x"].cuda(), record["index"].cuda())
+                codes, sfa, _ = q.expanded_quantize(x, "A")[:3]
+                kwargs = dict(
+                    a_tensor=codes,
+                    b_tensor=adapter.b,
+                    sfa_tensor=sfa,
+                    sfb_tensor=adapter.sfb,
+                    padded_offsets=ends,
+                    alpha_tensor=adapter.alpha,
+                    norm_const_tensor=adapter.norm,
+                    prob_tensor=None,
+                    acc_dtype=t.float32,
+                    c_dtype=t.bfloat16,
+                    d_dtype=t.bfloat16,
+                    mma_tiler_mn=(256, 256),
+                    cluster_shape_mn=(2, 1),
+                    sf_vec_size=32,
+                    m_aligned=256,
+                )
+                caches, graphs, outputs, checks = {}, {}, {}, {}
+                for mode, cls in classes.items():
+                    m.api.BlockScaledContiguousGroupedGemmKernel = cls
+                    m.api._cache_of_GroupedGemmSwigluSm100Objects = {}
+                    regular_execute = m.api.GroupedGemmSwigluSm100.execute
+
+                    def poison_execute(api_object, *call_args, **call_kwargs):
+                        assert not call_args and call_kwargs["current_stream"] is None
+                        call_kwargs["c_tensor"].fill_(float("nan"))
+                        return regular_execute(api_object, *call_args, **call_kwargs)
+
+                    try:
+                        m.api.GroupedGemmSwigluSm100.execute = poison_execute
+                        result = m.api.grouped_gemm_swiglu_wrapper_sm100(**kwargs)
+                        c = result["c_tensor"].cpu()
+                        assert bool(t.isnan(c).all()) if mode == "protected_omit" else bool(t.isfinite(c).all())
+                        saved[f"{case}/{mode}/c_sentinel"] = c
+                        checks[mode] = {"nan_values": int(t.isnan(c).sum()), "finite_values": int(t.isfinite(c).sum())}
+                    finally:
+                        m.api.GroupedGemmSwigluSm100.execute = regular_execute
+                    for _ in range(10):
+                        result = m.api.grouped_gemm_swiglu_wrapper_sm100(**kwargs)
+                    t.cuda.synchronize()
+                    graph = t.cuda.CUDAGraph()
+                    with t.cuda.graph(graph):
+                        result = m.api.grouped_gemm_swiglu_wrapper_sm100(**kwargs)
+                    caches[mode] = m.api._cache_of_GroupedGemmSwigluSm100Objects
+                    graphs[mode], outputs[mode] = graph, result
+                    graph.replay()
+                t.cuda.synchronize()
+                for mode in classes:
+                    for key in keys:
+                        av, bv = outputs["original_emit"][key], outputs[mode][key]
+                        assert av.dtype == bv.dtype and av.shape == bv.shape and t.equal(av.view(t.uint8), bv.view(t.uint8)), (case, mode, key)
+                        saved[f"{case}/{mode}/{key}"] = bv.cpu()
+                samples = []
+                for block in range(8):
+                    controls = ("original_emit", "protected_emit") if block % 2 == 0 else ("protected_emit", "original_emit")
+                    for control in controls:
+                        order = (
+                            (control, "protected_omit", "protected_omit", control) if block % 2 == 0 else ("protected_omit", control, control, "protected_omit")
+                        )
+                        for mode in order:
+                            start, stop = t.cuda.Event(enable_timing=True), t.cuda.Event(enable_timing=True)
+                            start.record()
+                            for _ in range(25):
+                                graphs[mode].replay()
+                            stop.record()
+                            stop.synchronize()
+                            samples.append(
+                                {"block": block, "comparison": control, "mode": mode, "replays": 25, "captured_execution_ms": start.elapsed_time(stop) / 25}
+                            )
+                for mode in classes:
+                    graphs[mode].replay()
+                t.cuda.synchronize()
+                for mode in classes:
+                    for key in keys:
+                        assert t.equal(outputs[mode][key].cpu().view(t.uint8), saved[f"{case}/{mode}/{key}"].view(t.uint8))
+                modes = {
+                    mode: {
+                        "median_ms": statistics.median(s["captured_execution_ms"] for s in samples if s["mode"] == mode),
+                        "mean_ms": statistics.mean(s["captured_execution_ms"] for s in samples if s["mode"] == mode),
+                    }
+                    for mode in classes
+                }
+                pair_ratios = {control: [] for control in ("original_emit", "protected_emit")}
+                for control in pair_ratios:
+                    for block in range(8):
+                        data = [s for s in samples if s["block"] == block and s["comparison"] == control]
+                        pair_ratios[control].append(
+                            statistics.mean(s["captured_execution_ms"] for s in data if s["mode"] == "protected_omit")
+                            / statistics.mean(s["captured_execution_ms"] for s in data if s["mode"] == control)
+                        )
+                rows.append(
+                    {
+                        "case": case,
+                        "tokens": record["x"].shape[0],
+                        "padded_m": x.shape[0],
+                        "actual_expert_counts": sizes,
+                        "frozen_a": m.tensor_info(codes),
+                        "frozen_sfa": m.tensor_info(sfa),
+                        "frozen_offsets": m.tensor_info(ends),
+                        "samples": samples,
+                        "modes": modes,
+                        "paired_block_ratios": pair_ratios,
+                        "median_paired_ratios": {k: statistics.median(v) for k, v in pair_ratios.items()},
+                        "C_sentinel": checks,
+                        "timed_graph_replay_calls": 1600,
+                        "non_C_outputs_byte_equal": True,
+                        "C_workspace_still_allocated": True,
+                    }
+                )
+                (out / "partial.json").write_text(json.dumps({"rows": rows}, indent=2))
+        assert m.tensor_info(adapter.b) == b_info and m.tensor_info(adapter.sfb) == sf_info
+        t.save(saved, out / "outputs.pt")
+        assert m.NATIVE_CALLS == 108
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+        result = {
+            "stage": "DIAGNOSTIC_COMPLETE",
+            "scope": __doc__,
+            "head": args.expected_head,
+            "source": str(source),
+            "rows": rows,
+            "python_execute_calls_including_graph_capture": m.NATIVE_CALLS,
+            "graph_capture_calls": 9,
+            "timed_graph_replay_calls": 4800,
+            "model_native_calls": 0,
+            "formal_model_performance": "NOT_RUN",
+            "full_model_quality_pass": False,
+            "imports": {
+                name: {"path": mod.__file__, "sha256": m.sha_file(mod.__file__)}
+                for name, mod in (("cudnn", m.cudnn), ("api", m.api), ("binding", m._compiled_module))
+            },
+            "native_plans": m.NATIVE_PLANS,
+            "original_kernel": {"path": str(original_path), "sha256": m.sha_file(original_path)},
+            "protected_kernel": {"path": str(protected_path), "sha256": m.sha_file(protected_path)},
+            "helper": {"path": str(helper_path), "sha256": m.sha_file(helper_path)},
+            "frozen_input_outputs_sha256": captured_sha,
+            "frozen_input_audit_sha256": m.sha_file(audit_dir / "result.json"),
+            "checkpoint_sha256": m.WEIGHT_SHA,
+            "model_parameters": 1334628352,
+            "b_input": b_info,
+            "sfb_input": sf_info,
+            "harness_sha256": m.sha_file(__file__),
+            "service_final": "inactive",
+            "production_source_modified": False,
+            "feature_accepted": False,
+            "native_activation_semantics": "unchanged_production_FP32_activation",
+            "comparison_source_sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d",
+        }
+        (out / "result.json").write_text(json.dumps(result, indent=2))
+        print(json.dumps({"stage": result["stage"], "ratios": [r["median_paired_ratios"] for r in rows]}), flush=True)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

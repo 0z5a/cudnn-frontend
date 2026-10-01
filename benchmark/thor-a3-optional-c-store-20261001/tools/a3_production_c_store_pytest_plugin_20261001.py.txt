@@ -1,0 +1,61 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Private frozen kernel substitution after conftest, preserving all public API gates."""
+
+import hashlib
+import importlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+
+records = {}
+calls = 0
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def pytest_sessionstart(session):
+    import cudnn
+    from cudnn import _compiled_module
+    from cudnn.gemm.cutedsl.grouped.swiglu import api
+
+    source = Path(os.environ["A3_EXPECT_SOURCE"])
+    head = subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip()
+    assert head == "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1"
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    for name, module in (("cudnn", cudnn), ("api", api), ("binding", _compiled_module)):
+        assert Path(module.__file__).resolve().is_relative_to(source / "python")
+        records[name] = {"path": module.__file__, "sha256": sha(module.__file__)}
+    assert records["binding"]["sha256"] == "37e7c4e0d16bd0a952ade77ccd577ccadae1888f166a4c897c9e98a104606c2a"
+    path = Path(__file__).with_name("a3_production_optional_c_store_native_kernel_20261001.py")
+    spec = importlib.util.spec_from_file_location("a3_production_optional_c_store_native", path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    api.BlockScaledContiguousGroupedGemmKernel = module.EmitC if os.environ["A3_C_STORE_MODE"] == "emit" else module.OmitC
+    api._cache_of_GroupedGemmSwigluSm100Objects.clear()
+    records.update(source_head=head, mode=os.environ["A3_C_STORE_MODE"], prototype={"path": str(path), "sha256": sha(path)}, plans={})
+    original = api.GroupedGemmSwigluSm100.execute
+
+    def execute(self, *args, **kwargs):
+        global calls
+        result = original(self, *args, **kwargs)
+        calls += 1
+        kernel = self._kernel
+        mod = importlib.import_module(kernel.__module__)
+        records["plans"][kernel.__module__ + "." + kernel.__name__] = {"path": mod.__file__, "sha256": sha(mod.__file__)}
+        return result
+
+    api.GroupedGemmSwigluSm100.execute = execute
+
+
+def pytest_sessionfinish(session, exitstatus):
+    out = Path(os.environ["A3_IMPORT_LOG"])
+    out.mkdir(exist_ok=True, parents=True)
+    records.update(python_execute_calls_including_capture=calls, pytest_exitstatus=int(exitstatus), worker=os.environ.get("PYTEST_XDIST_WORKER"))
+    (out / (str(os.getpid()) + ".json")).write_text(json.dumps(records, indent=2) + "\n")

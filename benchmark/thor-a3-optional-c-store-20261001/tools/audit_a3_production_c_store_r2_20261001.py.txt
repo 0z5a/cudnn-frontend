@@ -1,0 +1,165 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Independent CPU audit of private production-arithmetic tests and captured outputs."""
+
+import argparse
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import statistics
+import subprocess
+import xml.etree.ElementTree as ET
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+HELPER = Path(__file__).with_name("audit_a3_optional_c_store_20261001.py")
+spec = importlib.util.spec_from_file_location("c_store_cpu_audit_helper", HELPER)
+a = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(a)
+t = a.t
+ROOT = a.a.ROOT
+sha = a.a.sha_file
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    source = ROOT / "a3sfdlateste2"
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == a.HEAD
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    prototype = ROOT / "tools/a3_production_optional_c_store_native_kernel_20261001.py"
+    baseline_kernel = source / "python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py"
+    assert sha(baseline_kernel) == "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+    regression_dir = ROOT / "results/a3-production-c-store-regression-20261001-r2"
+    meta = json.loads((regression_dir / "result.json").read_text())
+    outer = json.loads((regression_dir.with_name(regression_dir.name + "-launch") / "run.json").read_text())
+    assert outer["status"] == "EXITED" and outer["returncode"] == 0 and outer["signal"] is None
+    assert meta["stage"] == "PRIVATE_PRODUCTION_C_STORE_REGRESSION_PASS_NOT_MODEL_SUCCESS" and meta["head"] == a.HEAD
+    assert not meta["feature_accepted"] and not meta["production_source_modified"]
+    assert meta["service_final"] == "inactive" and meta["formal_model_performance"] == "NOT_RUN"
+    for name, digest in meta["frozen_sources"].items():
+        assert sha(ROOT / "tools" / name) == digest
+    assert sha(outer["argv"][1]) == meta["harness_sha256"]
+    regression = []
+    for arm in meta["results"]:
+        mode = arm["mode"]
+        expected = 63 if mode == "emit" else 16
+        run = json.loads((regression_dir / mode / "pytest/run.json").read_text())
+        assert run == arm["run"] and run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+        junit = regression_dir / mode / "pytest/junit.xml"
+        tree = ET.parse(junit).getroot()
+        cases = list(tree.iter("testcase"))
+        assert len(cases) == expected and not any(list(tree.iter(tag)) for tag in ("failure", "error", "skipped"))
+        if mode == "emit":
+            assert sum(v.attrib["name"].startswith("test_production_c_store_three_arm_pair") for v in cases) == 32
+        workers = [v for v in arm["imports"] if v["worker"] is not None]
+        assert workers and all(v["python_execute_calls_including_capture"] > 0 for v in workers)
+        for record in arm["imports"]:
+            assert record["source_head"] == a.HEAD and record["pytest_exitstatus"] == 0 and record["mode"] == mode
+            assert sha(record["prototype"]["path"]) == record["prototype"]["sha256"] == sha(prototype)
+            for key in ("cudnn", "api", "binding"):
+                assert Path(record[key]["path"]).resolve().is_relative_to(source / "python")
+                assert sha(record[key]["path"]) == record[key]["sha256"]
+            assert record["binding"]["sha256"] == "37e7c4e0d16bd0a952ade77ccd577ccadae1888f166a4c897c9e98a104606c2a"
+            for value in record["plans"].values():
+                assert sha(value["path"]) == value["sha256"]
+        plans = {k for v in workers for k in v["plans"]}
+        assert any(k.endswith(".OmitC") for k in plans) if mode == "omit" else any(k.endswith(".EmitC") for k in plans)
+        regression.append(
+            {
+                "mode": mode,
+                "passed": expected,
+                "skipped": 0,
+                "junit_sha256": sha(junit),
+                "test_names": [v.attrib["name"] for v in cases],
+                "python_execute_calls_including_capture": sum(v["python_execute_calls_including_capture"] for v in workers),
+                "actual_plans": sorted(plans),
+            }
+        )
+    directory = ROOT / "results/a3-production-c-store-three-arm-20261001-r1"
+    meta = json.loads((directory / "result.json").read_text())
+    run = json.loads((directory.with_name(directory.name + "-launch") / "run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    assert meta["head"] == a.HEAD and meta["stage"] == "DIAGNOSTIC_COMPLETE"
+    assert meta["native_activation_semantics"] == "unchanged_production_FP32_activation"
+    assert meta["original_kernel"]["sha256"] == meta["comparison_source_sha256"] == sha(baseline_kernel)
+    assert meta["protected_kernel"]["sha256"] == sha(prototype)
+    assert meta["python_execute_calls_including_graph_capture"] == 108 and meta["graph_capture_calls"] == 9 and meta["timed_graph_replay_calls"] == 4800
+    assert meta["model_native_calls"] == 0 and meta["formal_model_performance"] == "NOT_RUN" and not meta["feature_accepted"]
+    assert meta["model_parameters"] == 1334628352 and meta["service_final"] == "inactive" and not meta["production_source_modified"]
+    for key in ("original_kernel", "protected_kernel", "helper"):
+        assert sha(meta[key]["path"]) == meta[key]["sha256"]
+    for value in [*meta["imports"].values(), *meta["native_plans"].values()]:
+        assert sha(value["path"]) == value["sha256"]
+    assert meta["imports"]["binding"]["sha256"] == "37e7c4e0d16bd0a952ade77ccd577ccadae1888f166a4c897c9e98a104606c2a"
+    assert sha(run["argv"][1]) == meta["harness_sha256"]
+    captured = ROOT / "results/a3-n128-mxfp8-staged-trace-20261001-r1/outputs.pt"
+    input_audit = ROOT / "results/a3-n128-mxfp8-staged-trace-cpu-audit-20261001-r1/result.json"
+    assert sha(captured) == meta["frozen_input_outputs_sha256"] == json.loads(input_audit.read_text())["producer_outputs_sha256"]
+    assert sha(input_audit) == meta["frozen_input_audit_sha256"]
+    admission = json.loads((directory / "admission.json").read_text())
+    assert admission["stage"] == "LOCK_ADMITTED" and not admission["torch_imported"]
+    values = t.load(directory / "outputs.pt", map_location="cpu", weights_only=True)
+    assert len(values) == 54 and len(meta["rows"]) == 3
+    rows = []
+    for row in meta["rows"]:
+        case = row["case"]
+        assert row["padded_m"] == 8192 and all(v > 0 for v in row["actual_expert_counts"])
+        assert row["tokens"] == (73, 70, 256)[case] and sum(row["actual_expert_counts"]) == row["tokens"] * 8
+        for mode in ("original_emit", "protected_emit", "protected_omit"):
+            for key in a.KEYS:
+                assert a.byte_equal(values[f"{case}/original_emit/{key}"], values[f"{case}/{mode}/{key}"])
+            c = values[f"{case}/{mode}/c_sentinel"]
+            assert int(t.isnan(c).sum()) == row["C_sentinel"][mode]["nan_values"]
+            assert int(t.isfinite(c).sum()) == row["C_sentinel"][mode]["finite_values"]
+        assert a.byte_equal(values[f"{case}/original_emit/c_sentinel"], values[f"{case}/protected_emit/c_sentinel"])
+        ratios = a.timing(row, True)
+        rows.append({"case": case, "tokens": row["tokens"], "ratios": ratios, "non_C_byte_equal": True, "emitted_C_byte_equal": True})
+    failed_dir = ROOT / "results/a3-production-c-store-regression-20261001-r1"
+    failed_outer = json.loads((failed_dir.with_name(failed_dir.name + "-launch") / "run.json").read_text())
+    failed_run = json.loads((failed_dir / "emit/pytest/run.json").read_text())
+    assert failed_outer["returncode"] == failed_run["returncode"] == 1
+    failed_tree = ET.parse(failed_dir / "emit/pytest/junit.xml").getroot()
+    failed_cases = list(failed_tree.iter("testcase"))
+    failed_assertions = list(failed_tree.iter("failure"))
+    assert len(failed_cases) == 63 and len(failed_assertions) == 16
+    assert not list(failed_tree.iter("error")) and not list(failed_tree.iter("skipped"))
+    assert all("self.stride(-1) must be 1" in failure.attrib["message"] for failure in failed_assertions)
+    for name, rc, text in (("a3-optional-c-store-20261001-r1", 1, "ModuleNotFoundError"), ("a3-optional-c-store-20261001-r2", 1, "d_tensor")):
+        failed = ROOT / "results" / (name + "-launch")
+        record = json.loads((failed / "run.json").read_text())
+        assert record["status"] == "EXITED" and record["returncode"] == rc and record["signal"] is None
+        assert text in (failed / "stderr.log").read_text()
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "CPU_AUDITED_PRIVATE_PRODUCTION_C_STORE_79_TESTS_54_TENSORS_NOT_MODEL_SUCCESS",
+        "head": a.HEAD,
+        "regression": regression,
+        "regression_outer_run": outer,
+        "captured_timing_run": run,
+        "rows": rows,
+        "tensor_count": 54,
+        "tensors": {k: a.inspect_tensor(k, v) for k, v in values.items()},
+        "producer_outputs_sha256": sha(directory / "outputs.pt"),
+        "producer_metadata_sha256": sha(directory / "result.json"),
+        "regression_metadata_sha256": sha(regression_dir / "result.json"),
+        "prototype_sha256": sha(prototype),
+        "source_kernel_sha256": sha(baseline_kernel),
+        "harness_sha256": sha(__file__),
+        "cpu_helper_sha256": sha(HELPER),
+        "preserved_regression_r1": {"passed": 47, "CPU_byte_view_exceptions": 16, "run": failed_outer},
+        "new_native_calls": 0,
+        "cuda_initialized": False,
+        "limits": "IndependentCPU verifies79JUnitcases/noerrors/skips plus actualmodule/source provenance, not independently repeats GPUassertions or saved boundary tensors. All54 primitive performanceoutputs saved/bytepaired/audited, balanced timing recalculated, not independently GPUremeasured. Production FP32 activation math unchanged, same fixed fullmodel captures and original weights; no modelnativecall, public API/cache flag validation, modelaccuracypass or end-to-end throughput claim. C unavailable in privateomitmode, stillallocated.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "ratios": [v["ratios"]["original_emit"]["median_ratio"] for v in rows]}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

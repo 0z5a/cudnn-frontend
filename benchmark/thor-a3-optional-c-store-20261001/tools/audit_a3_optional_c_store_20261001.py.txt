@@ -1,0 +1,231 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""CPU-only audit of both C-store experiments, including explicit nonfinite sentinels.
+
+No producer/kernel imports, CUDA initialization or new native executions.
+Saved model logits, primitive outputs and balanced timing records are checked.
+This is not a full model precision pass or production optimization acceptance.
+"""
+
+import argparse
+import hashlib
+import importlib.util
+import json
+import math
+import os
+from pathlib import Path
+import statistics
+import subprocess
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+HELPER = Path(__file__).with_name("audit_a3_precision_followup_r2_20261001.py")
+spec = importlib.util.spec_from_file_location("c_store_cpu_helpers", HELPER)
+a = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(a)
+t = a.torch
+HEAD = "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1"
+KEYS = ("d_tensor", "d_col_tensor", "sfd_row_tensor", "sfd_col_tensor", "amax_tensor")
+
+
+def byte_equal(x, y):
+    assert x.dtype == y.dtype and x.shape == y.shape
+    return t.equal(x.contiguous().view(t.uint8), y.contiguous().view(t.uint8))
+
+
+def inspect_tensor(key, value):
+    assert value.device.type == "cpu"
+    raw = value.contiguous().flatten().view(t.uint8)
+    record = {"shape": list(value.shape), "dtype": str(value.dtype), "sha256": hashlib.sha256(raw.numpy().tobytes()).hexdigest()}
+    # Only the explicitly unavailable omit-C outputs may contain NaNs.
+    omit_sentinel = ("c_write_probe" in key and "omit" in key) or key.endswith("protected_omit/c_sentinel")
+    if omit_sentinel:
+        assert bool(t.isnan(value).all()) and value.numel() == 8388608
+        record["allowed_nonfinite"] = "All NaN: poisoned unavailable C output was not written"
+    elif value.dtype == t.float8_e8m0fnu:
+        assert not bool((raw == 255).any())
+    elif key.endswith("amax_tensor"):
+        assert bool(t.isfinite(value).all())  # All experts are nonempty in these three captures.
+        assert bool((value > 0).all())
+    elif value.is_floating_point():
+        assert bool(t.isfinite(value.float()).all())
+    return record
+
+
+def provenance(name):
+    directory = a.ROOT / "results" / name
+    meta = json.loads((directory / "result.json").read_text())
+    run = json.loads((directory.with_name(name + "-launch") / "run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    assert meta["stage"] == "DIAGNOSTIC_COMPLETE" and meta.get("source_head", meta.get("head")) == HEAD
+    assert meta["model_parameters"] == 1334628352 and meta["service_final"] == "inactive"
+    assert meta["formal_model_performance"] == "NOT_RUN" and not meta["production_source_modified"]
+    source = Path(meta["source"])
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == HEAD
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    for record in meta["imports"].values():
+        assert Path(record["path"]).resolve().is_relative_to(source / "python")
+        assert a.sha_file(record["path"]) == record["sha256"]
+    assert meta["imports"]["binding"]["sha256"] == "37e7c4e0d16bd0a952ade77ccd577ccadae1888f166a4c897c9e98a104606c2a"
+    for record in meta["native_plans"].values():
+        assert Path(record["path"]).resolve().is_relative_to(a.ROOT / "tools")
+        assert a.sha_file(record["path"]) == record["sha256"]
+    kernel = meta.get("experimental_native_kernel", meta.get("protected_kernel"))
+    assert kernel["sha256"] == "333cb79ca85af6b7f15375177a3e74c90865711f40003434fcf9a1aca18e98ce"
+    assert a.sha_file(kernel["path"]) == kernel["sha256"]
+    worker = a.ROOT / "tools/a3_optional_c_store_worker_r3_20261001.py" if "source_head" in meta else Path(run["argv"][1])
+    assert a.sha_file(worker) == meta["harness_sha256"]
+    admission = json.loads((directory / "admission.json").read_text())
+    assert admission["stage"] == "LOCK_ADMITTED" and not admission["torch_imported"]
+    return directory, meta, run
+
+
+def timing(row, three_arm):
+    samples = row["samples"]
+    controls = ("original_emit", "protected_emit") if three_arm else ("k32_emit_c",)
+    omit = "protected_omit" if three_arm else "k32_omit_c"
+    replay_count = 25 if three_arm else 50
+    assert len(samples) == (64 if three_arm else 32)
+    assert sum(v["replays"] for v in samples) == 1600
+    for sample in samples:
+        assert sample["replays"] == replay_count and math.isfinite(sample["captured_execution_ms"]) and sample["captured_execution_ms"] > 0
+    ratios = {}
+    for control in controls:
+        paired = []
+        for block in range(8):
+            items = [v for v in samples if v["block"] == block and (not three_arm or v["comparison"] == control)]
+            order = [control, omit, omit, control] if block % 2 == 0 else [omit, control, control, omit]
+            assert [v["mode"] for v in items] == order
+            means = {mode: statistics.mean(v["captured_execution_ms"] for v in items if v["mode"] == mode) for mode in (control, omit)}
+            paired.append(means[omit] / means[control])
+        ratios[control] = {"block_ratios": paired, "median_ratio": statistics.median(paired)}
+        if three_arm:
+            assert paired == row["paired_block_ratios"][control]
+            assert statistics.median(paired) == row["median_paired_ratios"][control]
+    for mode, recorded in row["modes"].items():
+        vals = [v["captured_execution_ms"] for v in samples if v["mode"] == mode]
+        assert statistics.mean(vals) == recorded["mean_ms"] and statistics.median(vals) == recorded["median_ms"]
+    return ratios
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    directory, meta, run = provenance("a3-optional-c-store-20261001-r3")
+    assert meta["native_calls"] == 216 and meta["model_native_calls"] == 144
+    assert meta["explicit_D_store_producer_acquire"] and not meta["C_used_by_model"]
+    assert not meta["original_baseline_replaced"] and meta["formal_performance"] == "NOT_RUN"
+    paired_dir = a.ROOT / "results/a3-mxfp8-bf16-staged-full-model-20261001-r1"
+    assert a.sha_file(paired_dir / "outputs.pt") == meta["paired_outputs_sha256"]
+    assert a.sha_file(paired_dir / "result.json") == meta["paired_result_sha256"]
+    paired = t.load(paired_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    baseline_dir = a.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    baseline = t.load(baseline_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    values = t.load(directory / "outputs.pt", map_location="cpu", weights_only=True)
+    model_only = t.load(directory / "model_outputs.pt", map_location="cpu", weights_only=True)
+    assert len(values) == 48 and len(model_only) == 12 and len(meta["rows"]) == 6
+    for key, value in model_only.items():
+        assert byte_equal(value, values[key])
+    model_rows = []
+    for row in meta["rows"]:
+        case, policy = row["case"], row["policy"]
+        assert row["mxfp8_layers"] == list(range(24)) and row["native_calls"] == 24 and row["gemm_k"] == 4096
+        prefix = f"{policy}/{case}/"
+        native, oracle = values[prefix + "native"], values[prefix + "reference"]
+        assert native.shape == oracle.shape == (1, (73, 70, 256)[case], 49155)
+        for suffix in ("native", "reference"):
+            assert byte_equal(values[prefix + suffix], paired[f"k32_mxfp8_dot_bf16_stage/{case}/{suffix}"])
+        metrics = {}
+        for key, ref in (("native_oracle", oracle), ("native_bf16", baseline[f"forward_{case}_stock"])):
+            a.compare_metric(a.difference(native, ref, t.float32), row[key])
+            metrics[key] = a.difference(native, ref)
+        assert not row["oracle_gate_pass"] and metrics["native_oracle"]["relative_l2"] > 0.01
+        assert (metrics["native_bf16"]["relative_l2"] <= 0.05) == row["bf16_gate_pass"]
+        model_rows.append({"case": case, "policy": policy, "legacy_full_logits_byte_equal": True, **metrics})
+    r3_timing = []
+    for row in meta["paired_c_store_captured_timing"]:
+        case = row["case"]
+        assert row["padded_m"] == 8192 and sum(row["actual_expert_counts"]) == (73, 70, 256)[case] * 8
+        assert all(v > 0 for v in row["actual_expert_counts"])
+        for key in KEYS:
+            assert byte_equal(values[f"paired_c_store/{case}/emit/{key}"], values[f"paired_c_store/{case}/omit/{key}"])
+        for mode in ("k32_emit_c", "k32_omit_c"):
+            c = values[f"c_write_probe/{case}/{mode}/c_tensor"]
+            counts = {"nan_values": int(t.isnan(c).sum()), "finite_values": int(t.isfinite(c).sum())}
+            assert all(counts[k] == row["c_write_sentinel"][mode][k] for k in counts)
+        r3_timing.append({"case": case, "ratios": timing(row, False)})
+    first = {
+        "run": run,
+        "producer_metadata_sha256": a.sha_file(directory / "result.json"),
+        "producer_outputs_sha256": a.sha_file(directory / "outputs.pt"),
+        "tensor_count": 48,
+        "tensors": {k: inspect_tensor(k, v) for k, v in values.items()},
+        "full_model_rows": model_rows,
+        "captured_timing": r3_timing,
+        "model_native_calls": 144,
+        "python_execute_calls_including_capture": 216,
+        "graph_capture_calls": 6,
+        "timed_graph_replay_calls": 4800,
+    }
+    del values, model_only, paired, baseline
+    directory, meta, run = provenance("a3-c-store-original-control-20261001-r1")
+    assert meta["python_execute_calls_including_graph_capture"] == 108 and meta["graph_capture_calls"] == 9
+    assert meta["timed_graph_replay_calls"] == 4800 and meta["model_native_calls"] == 0 and not meta["feature_accepted"]
+    for key in ("original_kernel", "protected_kernel", "helper"):
+        assert a.sha_file(meta[key]["path"]) == meta[key]["sha256"]
+    captured_dir = a.ROOT / "results/a3-n128-mxfp8-staged-trace-20261001-r1"
+    audit_dir = a.ROOT / "results/a3-n128-mxfp8-staged-trace-cpu-audit-20261001-r1"
+    assert a.sha_file(captured_dir / "outputs.pt") == meta["frozen_input_outputs_sha256"]
+    assert a.sha_file(audit_dir / "result.json") == meta["frozen_input_audit_sha256"]
+    assert json.loads((audit_dir / "result.json").read_text())["producer_outputs_sha256"] == meta["frozen_input_outputs_sha256"]
+    values = t.load(directory / "outputs.pt", map_location="cpu", weights_only=True)
+    assert len(values) == 54 and len(meta["rows"]) == 3
+    three_rows = []
+    for row in meta["rows"]:
+        case = row["case"]
+        assert all(v > 0 for v in row["actual_expert_counts"]) and sum(row["actual_expert_counts"]) == row["tokens"] * 8
+        for mode in ("original_emit", "protected_emit", "protected_omit"):
+            for key in KEYS:
+                assert byte_equal(values[f"{case}/original_emit/{key}"], values[f"{case}/{mode}/{key}"])
+            c = values[f"{case}/{mode}/c_sentinel"]
+            assert int(t.isnan(c).sum()) == row["C_sentinel"][mode]["nan_values"]
+            assert int(t.isfinite(c).sum()) == row["C_sentinel"][mode]["finite_values"]
+        assert byte_equal(values[f"{case}/original_emit/c_sentinel"], values[f"{case}/protected_emit/c_sentinel"])
+        three_rows.append({"case": case, "tokens": row["tokens"], "ratios": timing(row, True), "non_C_byte_equal": True, "emitted_C_byte_equal": True})
+    second = {
+        "run": run,
+        "producer_metadata_sha256": a.sha_file(directory / "result.json"),
+        "producer_outputs_sha256": a.sha_file(directory / "outputs.pt"),
+        "tensor_count": 54,
+        "tensors": {k: inspect_tensor(k, v) for k, v in values.items()},
+        "rows": three_rows,
+        "python_execute_calls_including_capture": 108,
+        "graph_capture_calls": 9,
+        "timed_graph_replay_calls": 4800,
+        "model_native_calls": 0,
+    }
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "CPU_AUDITED_C_STORE_PARITY_AND_THREE_ARM_CAPTURED_TIMING_NOT_MODEL_SUCCESS",
+        "head": HEAD,
+        "tensor_count": 102,
+        "full_model": first,
+        "original_control": second,
+        "new_native_calls": 0,
+        "cuda_initialized": False,
+        "harness_sha256": a.sha_file(__file__),
+        "cpu_helper_sha256": a.sha_file(HELPER),
+        "limits": "All102 saved tensor entries audited,6 complete native model cases byteidentical frozen68d control but all1%oracle gates still fail. Timing records balanced/recomputed, not independently GPU remeasured. Experimental BF16-stage private kernel only; no production FP32-activation gain, boundary/reuse coverage, end-to-end model throughput or accepted public omit-C API. Sentinel C deliberately invalid; allocation/shared memory unchanged. Physical input hashes are producer assertions matched to a previously audited capture, not an independent pack proof. No empty expert in these timing captures; empty AMAX semantics remain to be tested.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(
+        json.dumps({"stage": result["stage"], "tensor_count": 102, "net_ratios": [v["ratios"]["original_emit"]["median_ratio"] for v in three_rows]}),
+        flush=True,
+    )
+
+
+if __name__ == "__main__":
+    main()

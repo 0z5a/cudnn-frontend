@@ -1,0 +1,205 @@
+{
+  "stage": "PRIVATE_PRODUCTION_C_STORE_REGRESSION_PASS_NOT_MODEL_SUCCESS",
+  "head": "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1",
+  "results": [
+    {
+      "mode": "emit",
+      "passed": 63,
+      "skipped": 0,
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+          "-m",
+          "pytest",
+          "-p",
+          "a3_production_c_store_pytest_plugin_20261001",
+          "-p",
+          "a3_repair_matrix_select_20261001",
+          "-o",
+          "addopts=",
+          "-q",
+          "--grouped-gemm-nkl=1024,1024,4",
+          "--junitxml=/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-production-c-store-regression-20261001-r2/emit/pytest/junit.xml",
+          "gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+          "gemm/cutedsl/test_swiglu_amax_per_call.py",
+          "gemm/cutedsl/test_swiglu_wrapper_launch_stream.py",
+          "gemm/cutedsl/test_grouped_gemm_swiglu.py::test_grouped_gemm_swiglu_wrapper_fp4",
+          "gemm/cutedsl/test_grouped_gemm_swiglu.py::test_grouped_gemm_swiglu_wrapper_fp8",
+          "gemm/cutedsl/test_grouped_gemm_canonical_layouts.py::test_grouped_gemm_swiglu_canonical_matches_legacy",
+          "gemm/cutedsl/test_grouped_gemm_canonical_layouts.py::test_grouped_gemm_swiglu_canonical_bf16_prob",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/test_a3_production_c_store_pair_r2_20261001.py"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/test/python",
+        "started_utc": "2026-10-01T14:19:06.838583+00:00",
+        "deadline_seconds": 1800.0,
+        "status": "EXITED",
+        "selected_env": {},
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 213.32276620300036
+      },
+      "imports": [
+        {
+          "cudnn": {
+            "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/python/cudnn/__init__.py",
+            "sha256": "ee53bcbde07f59b89ca9378184a7a54beb5d36d216df1f15d7e6d810d9b7f1f9"
+          },
+          "api": {
+            "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+            "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+          },
+          "binding": {
+            "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+            "sha256": "37e7c4e0d16bd0a952ade77ccd577ccadae1888f166a4c897c9e98a104606c2a"
+          },
+          "source_head": "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1",
+          "mode": "emit",
+          "prototype": {
+            "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_production_optional_c_store_native_kernel_20261001.py",
+            "sha256": "3543ffc3140058646845040a4924278ae2a323d049492d4b5383af0d6ff04482"
+          },
+          "plans": {
+            "a3_production_optional_c_store_native.EmitC": {
+              "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_production_optional_c_store_native_kernel_20261001.py",
+              "sha256": "3543ffc3140058646845040a4924278ae2a323d049492d4b5383af0d6ff04482"
+            },
+            "cudnn.gemm.cutedsl.grouped.swiglu.grouped_gemm_swiglu_quant.BlockScaledContiguousGroupedGemmKernel": {
+              "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+              "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+            },
+            "a3_production_optional_c_store_native.OmitC": {
+              "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_production_optional_c_store_native_kernel_20261001.py",
+              "sha256": "3543ffc3140058646845040a4924278ae2a323d049492d4b5383af0d6ff04482"
+            }
+          },
+          "python_execute_calls_including_capture": 157,
+          "pytest_exitstatus": 0,
+          "worker": "gw0"
+        },
+        {
+          "cudnn": {
+            "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/python/cudnn/__init__.py",
+            "sha256": "ee53bcbde07f59b89ca9378184a7a54beb5d36d216df1f15d7e6d810d9b7f1f9"
+          },
+          "api": {
+            "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+            "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+          },
+          "binding": {
+            "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+            "sha256": "37e7c4e0d16bd0a952ade77ccd577ccadae1888f166a4c897c9e98a104606c2a"
+          },
+          "source_head": "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1",
+          "mode": "emit",
+          "prototype": {
+            "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_production_optional_c_store_native_kernel_20261001.py",
+            "sha256": "3543ffc3140058646845040a4924278ae2a323d049492d4b5383af0d6ff04482"
+          },
+          "plans": {},
+          "python_execute_calls_including_capture": 0,
+          "pytest_exitstatus": 0,
+          "worker": null
+        }
+      ]
+    },
+    {
+      "mode": "omit",
+      "passed": 16,
+      "skipped": 0,
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste2/bin/python",
+          "-m",
+          "pytest",
+          "-p",
+          "a3_production_c_store_pytest_plugin_20261001",
+          "-p",
+          "a3_repair_matrix_select_20261001",
+          "-o",
+          "addopts=",
+          "-q",
+          "--grouped-gemm-nkl=1024,1024,4",
+          "--junitxml=/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-production-c-store-regression-20261001-r2/omit/pytest/junit.xml",
+          "gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+          "gemm/cutedsl/test_swiglu_amax_per_call.py",
+          "gemm/cutedsl/test_swiglu_wrapper_launch_stream.py"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/test/python",
+        "started_utc": "2026-10-01T14:22:40.212561+00:00",
+        "deadline_seconds": 1800.0,
+        "status": "EXITED",
+        "selected_env": {},
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 39.75461792000169
+      },
+      "imports": [
+        {
+          "cudnn": {
+            "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/python/cudnn/__init__.py",
+            "sha256": "ee53bcbde07f59b89ca9378184a7a54beb5d36d216df1f15d7e6d810d9b7f1f9"
+          },
+          "api": {
+            "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+            "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+          },
+          "binding": {
+            "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+            "sha256": "37e7c4e0d16bd0a952ade77ccd577ccadae1888f166a4c897c9e98a104606c2a"
+          },
+          "source_head": "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1",
+          "mode": "omit",
+          "prototype": {
+            "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_production_optional_c_store_native_kernel_20261001.py",
+            "sha256": "3543ffc3140058646845040a4924278ae2a323d049492d4b5383af0d6ff04482"
+          },
+          "plans": {
+            "a3_production_optional_c_store_native.OmitC": {
+              "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_production_optional_c_store_native_kernel_20261001.py",
+              "sha256": "3543ffc3140058646845040a4924278ae2a323d049492d4b5383af0d6ff04482"
+            }
+          },
+          "python_execute_calls_including_capture": 31,
+          "pytest_exitstatus": 0,
+          "worker": "gw0"
+        },
+        {
+          "cudnn": {
+            "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/python/cudnn/__init__.py",
+            "sha256": "ee53bcbde07f59b89ca9378184a7a54beb5d36d216df1f15d7e6d810d9b7f1f9"
+          },
+          "api": {
+            "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+            "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+          },
+          "binding": {
+            "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste2/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+            "sha256": "37e7c4e0d16bd0a952ade77ccd577ccadae1888f166a4c897c9e98a104606c2a"
+          },
+          "source_head": "741e10ffa5e93dbc0a8a41e06e66e0c81c1f85b1",
+          "mode": "omit",
+          "prototype": {
+            "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_production_optional_c_store_native_kernel_20261001.py",
+            "sha256": "3543ffc3140058646845040a4924278ae2a323d049492d4b5383af0d6ff04482"
+          },
+          "plans": {},
+          "python_execute_calls_including_capture": 0,
+          "pytest_exitstatus": 0,
+          "worker": null
+        }
+      ]
+    }
+  ],
+  "frozen_sources": {
+    "a3_production_optional_c_store_native_kernel_20261001.py": "3543ffc3140058646845040a4924278ae2a323d049492d4b5383af0d6ff04482",
+    "a3_production_c_store_pytest_plugin_20261001.py": "6d034f48a86bdba252acbd085414c7f1383291c11519cc54d4465a749f36629b",
+    "test_a3_production_c_store_pair_r2_20261001.py": "2c8e1398769344564768d677755241dc7f01834e25d74040fe3dfda3a64f7eb2",
+    "a3_repair_matrix_select_20261001.py": "0dc9823c8ce28b42491600dfb8327dd1e6495e08fb7cb9df9cab5b0e8314fa45"
+  },
+  "harness_sha256": "747d2a750aa55445c869a81b93906c90fb33b21e1947aac951540c3e6890cfa1",
+  "service_final": "inactive",
+  "production_source_modified": false,
+  "feature_accepted": false,
+  "formal_model_performance": "NOT_RUN",
+  "limits": "Original production FP32 activation/support/stream semantics, private kernel classes outside source. Emit31 existing +32 three-arm exact geometry/vector/dtype comparisons; omit16 existing SFD/AMAX/reuse/graph/stream cases. No public flag/cache-key/API contract, no model accuracy pass or model throughput claim."
+}
