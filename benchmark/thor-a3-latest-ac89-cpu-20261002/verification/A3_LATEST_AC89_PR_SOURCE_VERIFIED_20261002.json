@@ -1,0 +1,10 @@
+{
+  "source_head": "ff6adf01e51f22de504470eb493e94bbf112f7fa",
+  "upstream": "ac89fd14a91556680f486c31b8ad69a368197336",
+  "normal_fast_forward_push_returncode": 0,
+  "draft": true,
+  "last_GPU_qualified_head": "a24a7401bb7d26d42d88d98b316f634ef487301c",
+  "current_head_GPU_tests": "NOT_RUN",
+  "head_fork": "0z5a/cudnn-frontend",
+  "branch": "codex/a3-sm110-correctness"
+}

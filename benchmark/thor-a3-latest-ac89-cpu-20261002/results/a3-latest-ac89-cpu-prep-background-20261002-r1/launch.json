@@ -1,0 +1,22 @@
+{
+  "pid": 687387,
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestb1fe/bin/python",
+    "/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/prepare-reuse-a3-latest-ac89-20261002-r1",
+    "--cwd",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "--timeout",
+    "1800",
+    "--",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestb1fe/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_reuse_a3_latest_ac89_20261002_r1.py"
+  ],
+  "source_sha256": {
+    "prepare_reuse_a3_latest_ac89_20261002_r1.py": "2dd5e4741d65e03824184860b912a7d8326462a1561acb6ef72a342598bccb6c",
+    "a3-latest-ac89-20261002.bundle": "70ff937b716acdf20d9989a9c7ed963651f362803206faab99e9a8e498703be7"
+  },
+  "GPU_tests": "NOT_RUN",
+  "CUDA_VISIBLE_DEVICES": ""
+}

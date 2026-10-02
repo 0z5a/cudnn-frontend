@@ -1,0 +1,21 @@
+{
+  "upstream": "ac89fd14a91556680f486c31b8ad69a368197336",
+  "head": "ff6adf01e51f22de504470eb493e94bbf112f7fa",
+  "diff_paths": [
+    "python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+    "python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+    "test/AGENTS.md",
+    "test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py",
+    "test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+    "test/python/gemm/cutedsl/test_swiglu_amax_per_call.py",
+    "test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py"
+  ],
+  "formatting": {
+    "returncode": 0,
+    "scope": "all7diffpaths",
+    "black": "Passed",
+    "black-jupyter": "Passed",
+    "SPDX": "Passed"
+  },
+  "source_clean": true
+}

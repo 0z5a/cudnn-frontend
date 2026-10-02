@@ -1,0 +1,18 @@
+{
+  "head": "ff6adf01e51f22de504470eb493e94bbf112f7fa",
+  "base": "ac89fd14a91556680f486c31b8ad69a368197336",
+  "binding_reuse_from": "b57c65f1a1b60c2405e1e04c6b5ec6c6b2903bb5",
+  "native_inputs_identical": 114,
+  "A3_code_test_paths_identical": [
+    "python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+    "python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+    "test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py",
+    "test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+    "test/python/gemm/cutedsl/test_swiglu_amax_per_call.py",
+    "test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py"
+  ],
+  "test_AGENTS": "merged original A3 notes plus upstream23lines",
+  "bundle_sha256": "70ff937b716acdf20d9989a9c7ed963651f362803206faab99e9a8e498703be7",
+  "GPU_tests": "NOT_RUN",
+  "initial_merge_rc128": "stale fsmonitor index; git -c core.fsmonitor=false -c core.untrackedCache=false merge succeeds0"
+}

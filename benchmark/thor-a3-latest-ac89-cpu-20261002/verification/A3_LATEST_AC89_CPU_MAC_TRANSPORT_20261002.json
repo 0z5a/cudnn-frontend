@@ -1,0 +1,13 @@
+{
+  "pack_returncode": 0,
+  "transfer_returncode": 0,
+  "archive_sha256": "1c3795a683837bad392248792add660256fcd602fc5a81d571b5baad4070f182",
+  "payload_files_verified": 17,
+  "manifest_sha256": "b0e2b94ed318787c8dfcd08cc68dae244eea821141e45a451c9a7dd535d87012",
+  "archive": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-ac89-cpu-evidence-20261002.tar.gz",
+  "extraction": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-ac89-cpu-evidence-20261002",
+  "safe_regular_members": true,
+  "CPU_prepare_returncode": 0,
+  "CPU_prepare_elapsed_seconds": 51.41655410399835,
+  "GPU_tests": "NOT_RUN_AT_CHECKPOINT"
+}

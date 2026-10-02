@@ -1,0 +1,6 @@
+Cloning into '/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestac89'...
+/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3-latest-ac89-20261002.bundle is okay
+From /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3-latest-ac89-20261002.bundle
+ * branch            codex/a3-sfd-latest-ac89-20261002 -> FETCH_HEAD
+Previous HEAD position was b57c65f Merge verified upstream develop b1fe8a0f into A3 correctness
+HEAD is now at ff6adf0 Merge verified upstream develop ac89fd14 into A3 correctness

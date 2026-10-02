@@ -1,0 +1,88 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Archive closed CPU-only latest-source preparation without GPU/model artifacts."""
+
+import hashlib
+import json
+from pathlib import Path
+import tarfile
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "ff6adf01e51f22de504470eb493e94bbf112f7fa"
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    closed = ROOT / "results/prepare-reuse-a3-latest-ac89-20261002-r1"
+    run = json.loads((closed / "run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    provenance = ROOT / "results/a3-latest-ac89-native-provenance-20261002.json"
+    native = json.loads(provenance.read_text())
+    assert native["head"] == HEAD and native["native_build"] == "REUSED_BYTE_IDENTICAL_ALL_NATIVE_INPUTS_UNCHANGED"
+    assert len(native["native_input_digests"]) == 114 and native["cuda_initialized"] is False
+    assert sha(Path(native["binding"]["path"])) == native["binding"]["sha256"]
+    source = ROOT / "a3sfdlatestac89"
+    assert all(sha(source / item["path"]) == item["sha256"] for item in native["native_input_digests"])
+    files = list(closed.rglob("*"))
+    files += [
+        provenance,
+        Path(__file__),
+        ROOT / "tools/prepare_reuse_a3_latest_ac89_20261002_r1.py",
+        ROOT / "tools/run_a3_latest_ac89_regression_queued_20261002_r1.py",
+    ]
+    background = ROOT / "results/a3-latest-ac89-cpu-prep-background-20261002-r1"
+    files += [background / "driver.log", background / "launch.json"]
+    # The queued launch is a fixed launch packet; no mutable running log is copied.
+    files += [ROOT / "results/a3-latest-ac89-regression-background-20261002-r1/launch.json"]
+    for rel in [
+        "python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+        "python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+        "test/AGENTS.md",
+        "test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py",
+        "test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+        "test/python/gemm/cutedsl/test_swiglu_amax_per_call.py",
+        "test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py",
+    ]:
+        files.append(source / rel)
+    files = sorted(set(x for x in files if x.is_file()))
+    assert all(not x.is_symlink() and x.suffix not in [".pt", ".so", ".safetensors", ".bundle"] for x in files)
+    records = [{"path": str(x.relative_to(ROOT)), "sha256": sha(x), "bytes": x.stat().st_size} for x in files]
+    manifest = ROOT / "results/a3-latest-ac89-cpu-evidence-20261002-manifest.json"
+    assert not manifest.exists()
+    manifest.write_text(
+        json.dumps(
+            {
+                "head": HEAD,
+                "native_build": native["native_build"],
+                "CPU_prepare_run": run,
+                "GPU_tests": "NOT_RUN_AT_CHECKPOINT",
+                "source_files_not_GPU_qualification": True,
+                "excluded": ["cache", "engines", "models", "pt", "native_binaries", "git_bundles"],
+                "files": records,
+            },
+            indent=2,
+        )
+        + "\n"
+    )
+    archive = ROOT / "results/a3-latest-ac89-cpu-evidence-20261002.tar.gz"
+    assert not archive.exists()
+    with tarfile.open(archive, "w:gz") as tar:
+        for x in files + [manifest]:
+            tar.add(x, arcname=str(x.relative_to(ROOT)), recursive=False)
+    result = {
+        "archive": str(archive),
+        "sha256": sha(archive),
+        "bytes": archive.stat().st_size,
+        "payload_files": len(records),
+        "manifest": str(manifest.relative_to(ROOT)),
+        "manifest_sha256": sha(manifest),
+    }
+    print(json.dumps(result), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

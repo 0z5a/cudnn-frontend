@@ -1,0 +1,117 @@
+{
+  "head": "ff6adf01e51f22de504470eb493e94bbf112f7fa",
+  "native_build": "REUSED_BYTE_IDENTICAL_ALL_NATIVE_INPUTS_UNCHANGED",
+  "CPU_prepare_run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestb1fe/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_reuse_a3_latest_ac89_20261002_r1.py"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-02T03:52:22.069608+00:00",
+    "deadline_seconds": 1800.0,
+    "status": "EXITED",
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 51.41655410399835
+  },
+  "GPU_tests": "NOT_RUN_AT_CHECKPOINT",
+  "source_files_not_GPU_qualification": true,
+  "excluded": [
+    "cache",
+    "engines",
+    "models",
+    "pt",
+    "native_binaries",
+    "git_bundles"
+  ],
+  "files": [
+    {
+      "path": "a3sfdlatestac89/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+      "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef",
+      "bytes": 52640
+    },
+    {
+      "path": "a3sfdlatestac89/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+      "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d",
+      "bytes": 131027
+    },
+    {
+      "path": "a3sfdlatestac89/test/AGENTS.md",
+      "sha256": "222f014f01cdb1270508fba5c8503634ad09768e890a96ea88f5941dace20889",
+      "bytes": 52116
+    },
+    {
+      "path": "a3sfdlatestac89/test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py",
+      "sha256": "152e36f7e8d659af8865787af2b30b8eec1b3c120265e4abe6ca5c492e880b2c",
+      "bytes": 44588
+    },
+    {
+      "path": "a3sfdlatestac89/test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+      "sha256": "38f60c55058056ccc222ec0699d664e91d6526f2bdd8fce5832c0a89ff2f4a34",
+      "bytes": 9189
+    },
+    {
+      "path": "a3sfdlatestac89/test/python/gemm/cutedsl/test_swiglu_amax_per_call.py",
+      "sha256": "d3017b0723ce039fb89e6db5770bdab80e56613e0f6e8cb8873f3b19cda4a465",
+      "bytes": 2164
+    },
+    {
+      "path": "a3sfdlatestac89/test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py",
+      "sha256": "5c9587dea4ffbf8d33e3b7e25197e9c8a5463763a4390b8f113fb3e68e649af7",
+      "bytes": 3535
+    },
+    {
+      "path": "results/a3-latest-ac89-cpu-prep-background-20261002-r1/driver.log",
+      "sha256": "6d82d739b92f10d74653f50bca4d4584cdc1dd24c41f55c3d20b02255b37744e",
+      "bytes": 519
+    },
+    {
+      "path": "results/a3-latest-ac89-cpu-prep-background-20261002-r1/launch.json",
+      "sha256": "6ed3e998ecda04a2861315c21a92c97470fa3e3567e638565c45d86650f04a69",
+      "bytes": 953
+    },
+    {
+      "path": "results/a3-latest-ac89-native-provenance-20261002.json",
+      "sha256": "58d2803bcf265499d557893ea9b8cdb937f533b81a61f4b455d9f225304e5912",
+      "bytes": 19746
+    },
+    {
+      "path": "results/a3-latest-ac89-regression-background-20261002-r1/launch.json",
+      "sha256": "8cae5ec1152933eff0aa2bdbd7fb75cc7b8678db7dd36401d988123a25db2bb9",
+      "bytes": 1054
+    },
+    {
+      "path": "results/prepare-reuse-a3-latest-ac89-20261002-r1/run.json",
+      "sha256": "6d82d739b92f10d74653f50bca4d4584cdc1dd24c41f55c3d20b02255b37744e",
+      "bytes": 519
+    },
+    {
+      "path": "results/prepare-reuse-a3-latest-ac89-20261002-r1/stderr.log",
+      "sha256": "2c579c2eb783363196496bec1b3c474f6b523b7d3ede66165162c593f0e42612",
+      "bytes": 523
+    },
+    {
+      "path": "results/prepare-reuse-a3-latest-ac89-20261002-r1/stdout.log",
+      "sha256": "324e8a9ad507ad16f794f2b3e75d338a270deb12e940b2625a5160fe6cc35da6",
+      "bytes": 706
+    },
+    {
+      "path": "tools/pack_a3_latest_ac89_cpu_evidence_20261002_r1.py",
+      "sha256": "62aede84a39d70ba936ed6023c7f256c2be8831450d590ff49bcd19077476710",
+      "bytes": 3882
+    },
+    {
+      "path": "tools/prepare_reuse_a3_latest_ac89_20261002_r1.py",
+      "sha256": "2dd5e4741d65e03824184860b912a7d8326462a1561acb6ef72a342598bccb6c",
+      "bytes": 5712
+    },
+    {
+      "path": "tools/run_a3_latest_ac89_regression_queued_20261002_r1.py",
+      "sha256": "0b56d18d2fabcef7c00b1000123a193532841dde4dab60cb0cd24ce94ce9d25a",
+      "bytes": 7850
+    }
+  ]
+}
