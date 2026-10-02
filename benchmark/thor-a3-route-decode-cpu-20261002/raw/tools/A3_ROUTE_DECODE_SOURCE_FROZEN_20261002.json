@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-02T05:02:03.424137+00:00",
+  "sources": {
+    "a3_guarded_rounding_native_20261002_r9_route_decode.cpp": "1fe8890cc64cdaae0f1d58ea12494446173fa8efd48c44d52e124c34aeb66868",
+    "a3_guarded_rounding_native_20261002_r9_route_decode.cu": "10ba822eceef85dbb1716ac83c77311b285d8499e8eaa9f72427419c13491315",
+    "a3_guarded_rounding_native_20261002_r9_route_decode.py": "96055f5cb47a388b36adae3b3d04eec796d5b4c20b974732e819aa3b34151480",
+    "build_a3_guarded_rounding_cpu_20261002_r9_route_decode.py": "8f280533ce856132e90e2f95d6b637d5449114d41f0eb8680bee7b838bfb7fee"
+  },
+  "parent_cuda_sha256": "f02ca51bd028a800e4c851e2f318a30905e878782502476acb4419e23ce7c7b8",
+  "preserved_source_tokens": true,
+  "cpp_byte_equal": true,
+  "python_ast_equal_except_module_name": true,
+  "GPU_validation": "NOT_RUN",
+  "performance_claim": false,
+  "not_in_existing_live_pipelines": true
+}

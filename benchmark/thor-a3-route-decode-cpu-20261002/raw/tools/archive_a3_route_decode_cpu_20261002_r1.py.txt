@@ -1,0 +1,100 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Archive only closed CPU evidence, source, and logs; exclude binary/data caches."""
+
+import datetime
+import hashlib
+import json
+import shutil
+import tarfile
+from pathlib import Path
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def main():
+    names = [
+        "a3-guarded-rounding-build-cpu-20261002-r9-route-decode",
+        "a3-route-decode-cpu-audit-20261002-r1",
+        "a3-route-decode-binary-cpu-inspect-20261002-r1",
+    ]
+    terminals = {}
+    for name in names:
+        path = ROOT / "results" / (name + "-launch") / "run.json"
+        run = json.loads(path.read_text())
+        assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+        terminals[name] = {"path": str(path), "sha256": sha(path), "elapsed_seconds": run["elapsed_seconds"]}
+    frozen = json.loads((ROOT / "tools/A3_ROUTE_DECODE_SOURCE_FROZEN_20261002.json").read_text())
+    assert all(sha(ROOT / "tools" / name) == digest for name, digest in frozen["sources"].items())
+    audit = json.loads((ROOT / "results" / names[1] / "result.json").read_text())
+    assert audit["case_count"] == 70 and audit["encoded_word_values_verified"] == 13811712
+    assert not audit["cuda_initialized"] and audit["new_GPU_launches"] == 0
+    inspect = json.loads((ROOT / "results" / names[2] / "result.json").read_text())
+    assert inspect["sm110_present"] and inspect["new_GPU_launches"] == 0
+    assert sha(ROOT / "tools/audit_a3_route_decode_cpu_20261002_r1.py") == audit["auditor_sha256"]
+    assert sha(ROOT / "tools/inspect_a3_route_decode_binary_cpu_20261002_r1.py") == inspect["harness_sha256"]
+    export = ROOT / "results/a3-route-decode-cpu-export-20261002-r1"
+    archive = ROOT / "results/a3-route-decode-cpu-evidence-20261002.tar.gz"
+    assert not export.exists() and not archive.exists()
+    export.mkdir()
+    files = ["tools/" + name for name in frozen["sources"]]
+    files += [
+        "tools/A3_ROUTE_DECODE_SOURCE_FROZEN_20261002.json",
+        "tools/audit_a3_route_decode_cpu_20261002_r1.py",
+        "tools/inspect_a3_route_decode_binary_cpu_20261002_r1.py",
+        "tools/archive_a3_route_decode_cpu_20261002_r1.py",
+    ]
+    for name in names:
+        files += ["results/" + name + "/result.json"]
+        files += ["results/" + name + "-launch/" + suffix for suffix in ("run.json", "stdout.log", "stderr.log")]
+    files += [
+        "results/" + names[0] + "/frozen_inputs.json",
+        "results/" + names[0] + "/extension/build.ninja",
+        "results/" + names[1] + "/host_compile.stdout.log",
+        "results/" + names[1] + "/host_compile.stderr.log",
+        "results/" + names[1] + "/literal_route_cpu.cpp",
+        "results/" + names[2] + "/elf.stdout.log",
+        "results/" + names[2] + "/elf.stderr.log",
+        "results/" + names[2] + "/sass.stdout.log",
+        "results/" + names[2] + "/sass.stderr.log",
+        "results/a3-route-decode-build-background-20261002-r1/driver.log",
+        "results/a3-route-decode-audit-background-20261002-r1/driver.log",
+    ]
+    assert len(files) == len(set(files)) == 31
+    manifest = []
+    for relative in files:
+        source = ROOT / relative
+        assert source.is_file() and not source.is_symlink()
+        assert not relative.endswith((".pt", ".so", ".o", ".bin", ".safetensors"))
+        dest = export / relative
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, dest)
+        assert sha(dest) == sha(source) and dest.stat().st_size == source.stat().st_size
+        manifest.append({"path": relative, "sha256": sha(source), "bytes": source.stat().st_size})
+    meta = {
+        "utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "scope": "closed routed-A CPU compile/address audit/binary inspection only",
+        "files": manifest,
+        "terminals": terminals,
+        "excluded": ["models", "engines", "cache", "outputs.pt", "JIT/native/host binaries", "GPU pending directories"],
+        "GPU_validation": "NOT_RUN",
+        "performance_claim": False,
+    }
+    (export / "MANIFEST.json").write_text(json.dumps(meta, indent=2) + "\n")
+    with tarfile.open(archive, "w:gz") as tar:
+        for file in sorted(export.rglob("*")):
+            if file.is_file():
+                tar.add(file, arcname=str(file.relative_to(export)), recursive=False)
+    assert all(sha(ROOT / relative) == entry["sha256"] for relative, entry in zip(files, manifest))
+    print(
+        json.dumps({"archive": str(archive), "sha256": sha(archive), "bytes": archive.stat().st_size, "payload_files": len(files), "terminals": terminals}),
+        flush=True,
+    )
+
+
+if __name__ == "__main__":
+    main()

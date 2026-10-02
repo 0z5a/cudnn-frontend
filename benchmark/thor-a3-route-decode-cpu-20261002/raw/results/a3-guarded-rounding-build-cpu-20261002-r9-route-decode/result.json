@@ -1,0 +1,21 @@
+{
+  "stage": "NATIVE_SM110_COMPILE_ONLY_COMPLETE_NOT_GPU_TEST",
+  "cuda_initialized": false,
+  "native_calls": 0,
+  "gpu_hidden": true,
+  "torch": "2.13.0+cu130",
+  "torch_git": "cf30153c4c131c8164ee7798e5022d810682e2cb",
+  "cuda_arch": "11.0",
+  "max_jobs": 2,
+  "sources": {
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r9_route_decode.cpp": "1fe8890cc64cdaae0f1d58ea12494446173fa8efd48c44d52e124c34aeb66868",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r9_route_decode.cu": "10ba822eceef85dbb1716ac83c77311b285d8499e8eaa9f72427419c13491315",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r9_route_decode.py": "96055f5cb47a388b36adae3b3d04eec796d5b4c20b974732e819aa3b34151480"
+  },
+  "binary": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode/extension/a3_guarded_rounding_20261002_r9_route_decode.so",
+    "sha256": "a1efe51dd955c01bc8401adbab8058e4b8f0ad07214a36202bd33d3435306c7f"
+  },
+  "harness_sha256": "8f280533ce856132e90e2f95d6b637d5449114d41f0eb8680bee7b838bfb7fee",
+  "limits": "Native build only; no CUDA initialization/launch, model result or performance acceptance. Conservative repair remains an expensive precision control until whole-model quality and faster guard/recompute work are verified."
+}

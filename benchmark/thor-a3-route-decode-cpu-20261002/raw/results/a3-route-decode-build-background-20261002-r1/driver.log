@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestac89/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/build_a3_guarded_rounding_cpu_20261002_r9_route_decode.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-02T05:02:07.879998+00:00",
+  "deadline_seconds": 900.0,
+  "status": "EXITED",
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": ""
+  },
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 83.96531867099839
+}

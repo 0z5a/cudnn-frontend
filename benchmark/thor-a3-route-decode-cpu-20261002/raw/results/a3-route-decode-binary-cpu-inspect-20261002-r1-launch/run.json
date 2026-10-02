@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "python3",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/inspect_a3_route_decode_binary_cpu_20261002_r1.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-route-decode-binary-cpu-inspect-20261002-r1"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-02T05:08:04.419209+00:00",
+  "deadline_seconds": 300.0,
+  "status": "EXITED",
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": ""
+  },
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 2.1680965880004806
+}

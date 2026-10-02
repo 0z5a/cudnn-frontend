@@ -1,0 +1,93 @@
+
+#include <algorithm>
+#include <cfenv>
+#include <cmath>
+#include <cstdint>
+#include <cstring>
+#include <iostream>
+#include <stdexcept>
+#include <vector>
+using std::max;
+#define __device__
+#define __global__
+struct Dim { int x; } blockIdx, blockDim, threadIdx;
+uint64_t calls = 0;
+float __fadd_rn(float a, float b) { volatile float result = a + b; return result; }
+uint16_t bfword(float value) {
+    uint32_t bits; std::memcpy(&bits, &value, sizeof(bits));
+    if ((bits & 0x7fffffffU) > 0x7f800000U) throw std::runtime_error("NaN outside corpus");
+    return uint16_t((bits + 0x7fffU + ((bits >> 16) & 1U)) >> 16);
+}
+
+__device__ int64_t
+sfindex(int row, int scale_column, int rows, int batch) {
+    // Physical F8_128x4: [batch,row/128,K/128,row%32,(row%128)/32,Kscale%4].
+    return (((((int64_t(batch) * (rows / 128) + row / 128) * 32 + scale_column / 4) * 32 + row % 32) * 4 +
+             (row % 128) / 32) *
+                4 +
+            scale_column % 4);
+}
+__device__ float
+decode_scaled(uint8_t code, uint8_t scale) {
+    int encoded  = (code >> 3) & 15;
+    int mantissa = (code & 7) + (encoded ? 8 : 0);
+    // Apply sign after floating conversion so encoded negative zero survives.
+    float value = float(mantissa);
+    if (code & 128) value = -value;
+    return ldexpf(value, max(encoded, 1) - 10 + int(scale) - 127);
+}
+__device__ uint16_t
+source_reconstructed_word(const uint8_t *codes, const uint8_t *scales, int row, int k, int rows, int batch, bool operand_a) {
+    int block = k / 32, lane = k % 32, low_component = operand_a ? 2 : 1;
+    int64_t base = (int64_t(batch) * rows + row) * 4096 + block * 128;
+    float high   = decode_scaled(codes[base + lane], scales[sfindex(row, block * 4, rows, batch)]);
+    float low    = decode_scaled(codes[base + low_component * 32 + lane],
+                              scales[sfindex(row, block * 4 + low_component, rows, batch)]);
+    return bfword(__fadd_rn(high, low));
+}
+uint16_t reconstructed_word(const uint8_t *codes, const uint8_t *scales, int row, int k, int rows, int batch, bool operand_a) {
+    if (row < 0 || row >= rows || k < 0 || k >= 1024 || batch != 0 || !operand_a) throw std::runtime_error("Unsafe or non-A route");
+    ++calls;
+    return source_reconstructed_word(codes, scales, row, k, rows, batch, operand_a);
+}
+
+__global__ void
+predecode_route_kernel(const uint8_t *codes,
+                       const uint8_t *scales,
+                       const int64_t *destinations,
+                       uint16_t *words,
+                       int rows,
+                       int live) {
+    int64_t pos = int64_t(blockIdx.x) * blockDim.x + threadIdx.x;
+    if (pos >= int64_t(live) * 1024) return;
+    int route = int(pos / 1024), k = int(pos % 1024);
+    int64_t destination = destinations[route];
+    // Invalid routes retain the original rounding kernel's NaN/flag2 path.
+    words[pos] = destination >= 0 && destination < rows
+                     ? reconstructed_word(codes, scales, int(destination), k, rows, 0, true)
+                     : uint16_t(0);
+}
+template<class T> void read(std::vector<T>& v) {
+    std::cin.read(reinterpret_cast<char*>(v.data()), v.size() * sizeof(T));
+    if (!std::cin) throw std::runtime_error("Incomplete input");
+}
+int main() {
+    if (std::fegetround() != FE_TONEAREST) return 3;
+    int32_t rows, live;
+    std::cin.read(reinterpret_cast<char*>(&rows), sizeof(rows));
+    std::cin.read(reinterpret_cast<char*>(&live), sizeof(live));
+    if (!std::cin || rows < 0 || live < 0 || rows % 128 != 0) return 4;
+    std::vector<uint8_t> codes(int64_t(rows) * 4096), scales(int64_t(rows) * 128);
+    std::vector<int64_t> destinations(live);
+    read(codes); read(scales); read(destinations);
+    std::vector<uint16_t> words(int64_t(live) * 1024, 0xdeadU);
+    // Literal host helper control: no CUDA launch when rows or live is zero.
+    if (rows && live) {
+        blockDim.x = 256;
+        for (blockIdx.x = 0; blockIdx.x < (int64_t(live) * 1024 + 255) / 256; ++blockIdx.x)
+            for (threadIdx.x = 0; threadIdx.x < blockDim.x; ++threadIdx.x)
+                predecode_route_kernel(codes.data(), scales.data(), destinations.data(), words.data(), rows, live);
+    }
+    std::cout.write(reinterpret_cast<const char*>(&calls), sizeof(calls));
+    std::cout.write(reinterpret_cast<const char*>(words.data()), words.size() * sizeof(uint16_t));
+}

@@ -1,0 +1,188 @@
+{
+  "utc": "2026-10-02T05:14:43.785991+00:00",
+  "scope": "closed routed-A CPU compile/address audit/binary inspection only",
+  "files": [
+    {
+      "path": "tools/a3_guarded_rounding_native_20261002_r9_route_decode.cpp",
+      "sha256": "1fe8890cc64cdaae0f1d58ea12494446173fa8efd48c44d52e124c34aeb66868",
+      "bytes": 1328
+    },
+    {
+      "path": "tools/a3_guarded_rounding_native_20261002_r9_route_decode.cu",
+      "sha256": "10ba822eceef85dbb1716ac83c77311b285d8499e8eaa9f72427419c13491315",
+      "bytes": 20335
+    },
+    {
+      "path": "tools/a3_guarded_rounding_native_20261002_r9_route_decode.py",
+      "sha256": "96055f5cb47a388b36adae3b3d04eec796d5b4c20b974732e819aa3b34151480",
+      "bytes": 7258
+    },
+    {
+      "path": "tools/build_a3_guarded_rounding_cpu_20261002_r9_route_decode.py",
+      "sha256": "8f280533ce856132e90e2f95d6b637d5449114d41f0eb8680bee7b838bfb7fee",
+      "bytes": 2442
+    },
+    {
+      "path": "tools/A3_ROUTE_DECODE_SOURCE_FROZEN_20261002.json",
+      "sha256": "1db52a5a545c82606fd23a561c246157fc266314b9870858cd9589d6e2a6b5d5",
+      "bytes": 894
+    },
+    {
+      "path": "tools/audit_a3_route_decode_cpu_20261002_r1.py",
+      "sha256": "06591a3e407dd8bc09928d7eb8ac0f1ecb346374b8e86c52361eea9959823157",
+      "bytes": 17178
+    },
+    {
+      "path": "tools/inspect_a3_route_decode_binary_cpu_20261002_r1.py",
+      "sha256": "28d8ee7b2c65de03f8bcc0bc4399cef262c1edc5a4ddb2750f67c8678893414a",
+      "bytes": 3460
+    },
+    {
+      "path": "tools/archive_a3_route_decode_cpu_20261002_r1.py",
+      "sha256": "d632992e58c09426408b28d3aa5850329ac508447b515682596aaf1ddc3699a7",
+      "bytes": 4882
+    },
+    {
+      "path": "results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode/result.json",
+      "sha256": "1767d1d49b0c1feafaa8727a9449cb5623b1e269fb1f6512db7f573672232964",
+      "bytes": 1455
+    },
+    {
+      "path": "results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode-launch/run.json",
+      "sha256": "55f1dd932c8224c6509b6458895d69ba31b27dab889f26591c8a0dd2722f4561",
+      "bytes": 666
+    },
+    {
+      "path": "results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode-launch/stdout.log",
+      "sha256": "2a4f57e61855d8c44cd3409b21bc318c2940e8d03a726848a107ef64ffdfe957",
+      "bytes": 3496
+    },
+    {
+      "path": "results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode-launch/stderr.log",
+      "sha256": "568f7e3309ad0d7d3766854471d3b85601a8319b4e51b98d9656aebae306511d",
+      "bytes": 197
+    },
+    {
+      "path": "results/a3-route-decode-cpu-audit-20261002-r1/result.json",
+      "sha256": "d53122e2f72ad5b33eacd6b09225e31ed36832bda91aa0cec17ff892ebc845a0",
+      "bytes": 48358
+    },
+    {
+      "path": "results/a3-route-decode-cpu-audit-20261002-r1-launch/run.json",
+      "sha256": "55a4292c552c1a46a254ff85bd4820e9c3ef90794c327efee3b9e6c73403c500",
+      "bytes": 633
+    },
+    {
+      "path": "results/a3-route-decode-cpu-audit-20261002-r1-launch/stdout.log",
+      "sha256": "adb4839512ff7756ed633b1f186aa48176cb104f882c5b29a3cdd022a59173b8",
+      "bytes": 8118
+    },
+    {
+      "path": "results/a3-route-decode-cpu-audit-20261002-r1-launch/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "results/a3-route-decode-binary-cpu-inspect-20261002-r1/result.json",
+      "sha256": "95dde03f5014c99512679d113f0a709e1bdd50a6dc890f06db53f791d715ffbc",
+      "bytes": 2456
+    },
+    {
+      "path": "results/a3-route-decode-binary-cpu-inspect-20261002-r1-launch/run.json",
+      "sha256": "cba8dde1eb76cc77418e02307276cc4caed446718e25618231c169deb5e55fc5",
+      "bytes": 575
+    },
+    {
+      "path": "results/a3-route-decode-binary-cpu-inspect-20261002-r1-launch/stdout.log",
+      "sha256": "575e0941b79793952c2417d0786424852e7041fb9218220bd65b6d30da62a20c",
+      "bytes": 2324
+    },
+    {
+      "path": "results/a3-route-decode-binary-cpu-inspect-20261002-r1-launch/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode/frozen_inputs.json",
+      "sha256": "cdd69b5b6ee0fb8d4f96619ddb03eb2344338598d8215369ccd1253f50603d17",
+      "bytes": 559
+    },
+    {
+      "path": "results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode/extension/build.ninja",
+      "sha256": "a99afeb5246bef0dc3f9da2afc1a59af1e315222ebd02d63e95244a62bdbee22",
+      "bytes": 2493
+    },
+    {
+      "path": "results/a3-route-decode-cpu-audit-20261002-r1/host_compile.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "results/a3-route-decode-cpu-audit-20261002-r1/host_compile.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "results/a3-route-decode-cpu-audit-20261002-r1/literal_route_cpu.cpp",
+      "sha256": "acc1b23b342c86c23f96f66dcd6eb733510bf3062776781cd27a17848e53f4db",
+      "bytes": 4360
+    },
+    {
+      "path": "results/a3-route-decode-binary-cpu-inspect-20261002-r1/elf.stdout.log",
+      "sha256": "1b0362b56ffa5b69cd69ce01757674cad699faf4ac0212a262c759aadc2207ec",
+      "bytes": 75
+    },
+    {
+      "path": "results/a3-route-decode-binary-cpu-inspect-20261002-r1/elf.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "results/a3-route-decode-binary-cpu-inspect-20261002-r1/sass.stdout.log",
+      "sha256": "abeeb96f065f692ecbfda55ddc3e32ddb11495b699cd3b135facffbaa5a52773",
+      "bytes": 706134
+    },
+    {
+      "path": "results/a3-route-decode-binary-cpu-inspect-20261002-r1/sass.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "results/a3-route-decode-build-background-20261002-r1/driver.log",
+      "sha256": "55f1dd932c8224c6509b6458895d69ba31b27dab889f26591c8a0dd2722f4561",
+      "bytes": 666
+    },
+    {
+      "path": "results/a3-route-decode-audit-background-20261002-r1/driver.log",
+      "sha256": "55a4292c552c1a46a254ff85bd4820e9c3ef90794c327efee3b9e6c73403c500",
+      "bytes": 633
+    }
+  ],
+  "terminals": {
+    "a3-guarded-rounding-build-cpu-20261002-r9-route-decode": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode-launch/run.json",
+      "sha256": "55f1dd932c8224c6509b6458895d69ba31b27dab889f26591c8a0dd2722f4561",
+      "elapsed_seconds": 83.96531867099839
+    },
+    "a3-route-decode-cpu-audit-20261002-r1": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-route-decode-cpu-audit-20261002-r1-launch/run.json",
+      "sha256": "55a4292c552c1a46a254ff85bd4820e9c3ef90794c327efee3b9e6c73403c500",
+      "elapsed_seconds": 194.8490081830023
+    },
+    "a3-route-decode-binary-cpu-inspect-20261002-r1": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-route-decode-binary-cpu-inspect-20261002-r1-launch/run.json",
+      "sha256": "cba8dde1eb76cc77418e02307276cc4caed446718e25618231c169deb5e55fc5",
+      "elapsed_seconds": 2.1680965880004806
+    }
+  },
+  "excluded": [
+    "models",
+    "engines",
+    "cache",
+    "outputs.pt",
+    "JIT/native/host binaries",
+    "GPU pending directories"
+  ],
+  "GPU_validation": "NOT_RUN",
+  "performance_claim": false
+}

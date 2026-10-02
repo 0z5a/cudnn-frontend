@@ -1,0 +1,216 @@
+{
+  "files": [
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/tools/a3_guarded_rounding_native_20261002_r9_route_decode.cpp",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/tools/a3_guarded_rounding_native_20261002_r9_route_decode.cpp.txt",
+      "sha256": "1fe8890cc64cdaae0f1d58ea12494446173fa8efd48c44d52e124c34aeb66868",
+      "bytes": 1328
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/tools/a3_guarded_rounding_native_20261002_r9_route_decode.cu",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/tools/a3_guarded_rounding_native_20261002_r9_route_decode.cu.txt",
+      "sha256": "10ba822eceef85dbb1716ac83c77311b285d8499e8eaa9f72427419c13491315",
+      "bytes": 20335
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/tools/a3_guarded_rounding_native_20261002_r9_route_decode.py",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/tools/a3_guarded_rounding_native_20261002_r9_route_decode.py.txt",
+      "sha256": "96055f5cb47a388b36adae3b3d04eec796d5b4c20b974732e819aa3b34151480",
+      "bytes": 7258
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/tools/build_a3_guarded_rounding_cpu_20261002_r9_route_decode.py",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/tools/build_a3_guarded_rounding_cpu_20261002_r9_route_decode.py.txt",
+      "sha256": "8f280533ce856132e90e2f95d6b637d5449114d41f0eb8680bee7b838bfb7fee",
+      "bytes": 2442
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/tools/A3_ROUTE_DECODE_SOURCE_FROZEN_20261002.json",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/tools/A3_ROUTE_DECODE_SOURCE_FROZEN_20261002.json",
+      "sha256": "1db52a5a545c82606fd23a561c246157fc266314b9870858cd9589d6e2a6b5d5",
+      "bytes": 894
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/tools/audit_a3_route_decode_cpu_20261002_r1.py",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/tools/audit_a3_route_decode_cpu_20261002_r1.py.txt",
+      "sha256": "06591a3e407dd8bc09928d7eb8ac0f1ecb346374b8e86c52361eea9959823157",
+      "bytes": 17178
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/tools/inspect_a3_route_decode_binary_cpu_20261002_r1.py",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/tools/inspect_a3_route_decode_binary_cpu_20261002_r1.py.txt",
+      "sha256": "28d8ee7b2c65de03f8bcc0bc4399cef262c1edc5a4ddb2750f67c8678893414a",
+      "bytes": 3460
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/tools/archive_a3_route_decode_cpu_20261002_r1.py",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/tools/archive_a3_route_decode_cpu_20261002_r1.py.txt",
+      "sha256": "d632992e58c09426408b28d3aa5850329ac508447b515682596aaf1ddc3699a7",
+      "bytes": 4882
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode/result.json",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode/result.json",
+      "sha256": "1767d1d49b0c1feafaa8727a9449cb5623b1e269fb1f6512db7f573672232964",
+      "bytes": 1455
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode-launch/run.json",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode-launch/run.json",
+      "sha256": "55f1dd932c8224c6509b6458895d69ba31b27dab889f26591c8a0dd2722f4561",
+      "bytes": 666
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode-launch/stdout.log",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode-launch/stdout.log",
+      "sha256": "2a4f57e61855d8c44cd3409b21bc318c2940e8d03a726848a107ef64ffdfe957",
+      "bytes": 3496
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode-launch/stderr.log",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode-launch/stderr.log",
+      "sha256": "568f7e3309ad0d7d3766854471d3b85601a8319b4e51b98d9656aebae306511d",
+      "bytes": 197
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-route-decode-cpu-audit-20261002-r1/result.json",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-route-decode-cpu-audit-20261002-r1/result.json",
+      "sha256": "d53122e2f72ad5b33eacd6b09225e31ed36832bda91aa0cec17ff892ebc845a0",
+      "bytes": 48358
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-route-decode-cpu-audit-20261002-r1-launch/run.json",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-route-decode-cpu-audit-20261002-r1-launch/run.json",
+      "sha256": "55a4292c552c1a46a254ff85bd4820e9c3ef90794c327efee3b9e6c73403c500",
+      "bytes": 633
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-route-decode-cpu-audit-20261002-r1-launch/stdout.log",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-route-decode-cpu-audit-20261002-r1-launch/stdout.log",
+      "sha256": "adb4839512ff7756ed633b1f186aa48176cb104f882c5b29a3cdd022a59173b8",
+      "bytes": 8118
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-route-decode-cpu-audit-20261002-r1-launch/stderr.log",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-route-decode-cpu-audit-20261002-r1-launch/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-route-decode-binary-cpu-inspect-20261002-r1/result.json",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-route-decode-binary-cpu-inspect-20261002-r1/result.json",
+      "sha256": "95dde03f5014c99512679d113f0a709e1bdd50a6dc890f06db53f791d715ffbc",
+      "bytes": 2456
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-route-decode-binary-cpu-inspect-20261002-r1-launch/run.json",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-route-decode-binary-cpu-inspect-20261002-r1-launch/run.json",
+      "sha256": "cba8dde1eb76cc77418e02307276cc4caed446718e25618231c169deb5e55fc5",
+      "bytes": 575
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-route-decode-binary-cpu-inspect-20261002-r1-launch/stdout.log",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-route-decode-binary-cpu-inspect-20261002-r1-launch/stdout.log",
+      "sha256": "575e0941b79793952c2417d0786424852e7041fb9218220bd65b6d30da62a20c",
+      "bytes": 2324
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-route-decode-binary-cpu-inspect-20261002-r1-launch/stderr.log",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-route-decode-binary-cpu-inspect-20261002-r1-launch/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode/frozen_inputs.json",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode/frozen_inputs.json",
+      "sha256": "cdd69b5b6ee0fb8d4f96619ddb03eb2344338598d8215369ccd1253f50603d17",
+      "bytes": 559
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode/extension/build.ninja",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode/extension/build.ninja",
+      "sha256": "a99afeb5246bef0dc3f9da2afc1a59af1e315222ebd02d63e95244a62bdbee22",
+      "bytes": 2493
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-route-decode-cpu-audit-20261002-r1/host_compile.stdout.log",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-route-decode-cpu-audit-20261002-r1/host_compile.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-route-decode-cpu-audit-20261002-r1/host_compile.stderr.log",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-route-decode-cpu-audit-20261002-r1/host_compile.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-route-decode-cpu-audit-20261002-r1/literal_route_cpu.cpp",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-route-decode-cpu-audit-20261002-r1/literal_route_cpu.cpp.txt",
+      "sha256": "acc1b23b342c86c23f96f66dcd6eb733510bf3062776781cd27a17848e53f4db",
+      "bytes": 4360
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-route-decode-binary-cpu-inspect-20261002-r1/elf.stdout.log",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-route-decode-binary-cpu-inspect-20261002-r1/elf.stdout.log",
+      "sha256": "1b0362b56ffa5b69cd69ce01757674cad699faf4ac0212a262c759aadc2207ec",
+      "bytes": 75
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-route-decode-binary-cpu-inspect-20261002-r1/elf.stderr.log",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-route-decode-binary-cpu-inspect-20261002-r1/elf.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-route-decode-binary-cpu-inspect-20261002-r1/sass.stdout.log",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-route-decode-binary-cpu-inspect-20261002-r1/sass.stdout.log",
+      "sha256": "abeeb96f065f692ecbfda55ddc3e32ddb11495b699cd3b135facffbaa5a52773",
+      "bytes": 706134
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-route-decode-binary-cpu-inspect-20261002-r1/sass.stderr.log",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-route-decode-binary-cpu-inspect-20261002-r1/sass.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-route-decode-build-background-20261002-r1/driver.log",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-route-decode-build-background-20261002-r1/driver.log",
+      "sha256": "55f1dd932c8224c6509b6458895d69ba31b27dab889f26591c8a0dd2722f4561",
+      "bytes": 666
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/results/a3-route-decode-audit-background-20261002-r1/driver.log",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/results/a3-route-decode-audit-background-20261002-r1/driver.log",
+      "sha256": "55a4292c552c1a46a254ff85bd4820e9c3ef90794c327efee3b9e6c73403c500",
+      "bytes": 633
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-decode-cpu-evidence-20261002/MANIFEST.json",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/raw/MANIFEST.json",
+      "sha256": "24e6b00eb641f3626e0810d65cb74de8af57d63521f98e9d01b1c29590bcd5b5",
+      "bytes": 7569
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_ROUTE_DECODE_CPU_MAC_TRANSPORT_20261002.json",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/proof/A3_ROUTE_DECODE_CPU_MAC_TRANSPORT_20261002.json",
+      "sha256": "bd45e375d8b76d863b4c59553302b95edf75932e4573d3228b9a8a4e36d7332f",
+      "bytes": 1936
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_CACHED7_FULL_MODEL_REPAIR_CENSUS_20261002.json",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/proof/A3_CACHED7_FULL_MODEL_REPAIR_CENSUS_20261002.json",
+      "sha256": "6d7734d58d447ae6486877f2e494209ebf8151eed92dac773ad4ac91fba5fa32",
+      "bytes": 2377
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-weight-plan-forward-evidence-20261002/results/a3-weight-plan-20261002-r1/candidate/model/result.json",
+      "path": "benchmark/thor-a3-route-decode-cpu-20261002/proof/qualified_cached7_full_model_result.json",
+      "sha256": "ddaa5cdd9b83f6e2e6fd35a0eeeb344c304cf55957e133b5ed3e904601e3d94a",
+      "bytes": 22838
+    }
+  ],
+  "payload_mappings": 35,
+  "executed_source_snapshots_preserved_as_txt": true
+}

@@ -1,0 +1,77 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Read compiled SM110 code without initializing CUDA or executing a kernel."""
+
+import argparse
+import hashlib
+import json
+import os
+import re
+import subprocess
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    build = ROOT / "results/a3-guarded-rounding-build-cpu-20261002-r9-route-decode"
+    terminal_path = build.with_name(build.name + "-launch") / "run.json"
+    terminal = json.loads(terminal_path.read_text())
+    assert terminal["status"] == "EXITED" and terminal["returncode"] == 0 and terminal["signal"] is None
+    result_path = build / "result.json"
+    build_result = json.loads(result_path.read_text())
+    binary = Path(build_result["binary"]["path"])
+    assert not build_result["cuda_initialized"] and build_result["native_calls"] == 0
+    before = sha(binary)
+    assert before == build_result["binary"]["sha256"]
+    for name, digest in build_result["sources"].items():
+        assert sha(name) == digest
+    tool = "/usr/local/cuda-13.2/bin/cuobjdump"
+    logs, returns = {}, {}
+    for label, option in (("sass", "--dump-sass"), ("elf", "--list-elf")):
+        run = subprocess.run([tool, option, str(binary)], capture_output=True, text=True, timeout=120)
+        (out / (label + ".stdout.log")).write_text(run.stdout)
+        (out / (label + ".stderr.log")).write_text(run.stderr)
+        logs[label] = run.stdout
+        returns[label] = run.returncode
+        assert run.returncode == 0, run.stderr
+    functions = re.findall(r"Function\s*:\s*(\S+)", logs["sass"])
+    expected = ["predecode_route_kernel", "predecode_kernel", "rounding_kernel", "activation_kernel", "postfixed_bounds_kernel"]
+    assert all(any(name in function for function in functions) for name in expected)
+    assert "sm_110" in logs["sass"] and "sm_110" in logs["elf"]
+    assert sha(binary) == before
+    result = {
+        "stage": "ROUTED_A_SM110_BINARY_READ_ONLY_INSPECTION_COMPLETE",
+        "harness_sha256": sha(__file__),
+        "source_build_terminal_sha256": sha(terminal_path),
+        "source_build_result_sha256": sha(result_path),
+        "binary": {"path": str(binary), "sha256": before},
+        "cuobjdump_returncodes": returns,
+        "expected_kernel_symbols_present": expected,
+        "function_symbols": functions,
+        "sm110_present": True,
+        "logs_sha256": {str(path.name): sha(path) for path in sorted(out.glob("*.log"))},
+        "CUDA_VISIBLE_DEVICES": os.environ["CUDA_VISIBLE_DEVICES"],
+        "torch_imported": False,
+        "new_GPU_launches": 0,
+        "native_calls": 0,
+        "GPU_validation": "NOT_RUN",
+        "performance_claim": False,
+        "limits": "Read-only compiled-code inspection confirms the new routed predecode and original kernel symbols in SM110 code. No GPU execution, numerical/stream/model/generation validation or measured speedup.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result), flush=True)
+
+
+if __name__ == "__main__":
+    main()

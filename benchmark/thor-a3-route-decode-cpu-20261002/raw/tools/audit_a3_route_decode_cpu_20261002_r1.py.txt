@@ -1,0 +1,331 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""CPU execution of literal routed-address code against qualified encoded/GPU words.
+
+This does not execute CUDA, prove GPU stream behavior, or measure performance.
+"""
+
+import argparse
+import ast
+import hashlib
+import importlib.util
+import json
+import os
+import re
+import struct
+import subprocess
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+import torch as t
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+TOOLS = ROOT / "tools"
+PREFIX = "a3_guarded_rounding_native_20261002_r9_route_decode"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def same(a, b):
+    return a.shape == b.shape and a.dtype == b.dtype and t.equal(a.contiguous().reshape(-1).view(t.uint8), b.contiguous().reshape(-1).view(t.uint8))
+
+
+def raw(a):
+    return a.contiguous().numpy().tobytes()
+
+
+def function(source, name):
+    match = re.search(r"\n(?:__device__|__global__)?\s*(?:at::Tensor|int64_t|uint16_t|float|void)\s+\b" + name + r"\([^{};]*\)\s*\{", source)
+    assert match, name
+    cursor, depth = match.end(), 1
+    while depth:
+        depth += (source[cursor] == "{") - (source[cursor] == "}")
+        cursor += 1
+    return source[match.start() : cursor], (match.start(), cursor)
+
+
+def tokens(source):
+    return re.sub(r"\s+", "", re.sub(r"//[^\n]*|/\*.*?\*/", "", source, flags=re.S))
+
+
+def terminal(folder):
+    run = json.loads(folder.with_name(folder.name + "-launch").joinpath("run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    return run
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(2)
+    assert not t.cuda.is_initialized()
+    frozen = json.loads((TOOLS / "A3_ROUTE_DECODE_SOURCE_FROZEN_20261002.json").read_text())
+    before = {name: sha(TOOLS / name) for name in frozen["sources"]}
+    assert before == frozen["sources"]
+    source = (TOOLS / (PREFIX + ".cu")).read_text()
+    parent = (TOOLS / "a3_guarded_rounding_native_20261002_r7.cu").read_text()
+    assert (
+        sha(TOOLS / "a3_guarded_rounding_native_20261002_r7.cu")
+        == frozen["parent_cuda_sha256"]
+        == "f02ca51bd028a800e4c851e2f318a30905e878782502476acb4419e23ce7c7b8"
+    )
+    normalized = source
+    for name in ("predecode_route_kernel", "reconstruct_route_words_cuda"):
+        _, (start, end) = function(normalized, name)
+        normalized = normalized[:start] + normalized[end:]
+    normalized = normalized.replace("a_words[int64_t(r) * 1024 + begin + lane]", "a_words[int64_t(source_row) * 1024 + begin + lane]")
+    normalized = normalized.replace("reconstruct_route_words_cuda(a, sfa, destinations)", "reconstruct_words_cuda(a, sfa, true)")
+    assert tokens(normalized) == tokens(parent)
+    assert (TOOLS / (PREFIX + ".cpp")).read_bytes() == (TOOLS / "a3_guarded_rounding_native_20261002_r7.cpp").read_bytes()
+    child_py = (TOOLS / (PREFIX + ".py")).read_text().replace("a3_guarded_rounding_20261002_r9_route_decode", "a3_guarded_rounding_20261002_r7")
+    assert ast.dump(ast.parse(child_py), include_attributes=False) == ast.dump(
+        ast.parse((TOOLS / "a3_guarded_rounding_native_20261002_r7.py").read_text()), include_attributes=False
+    )
+    entry, _ = function(source, "guarded_rounding_cuda")
+    helper, _ = function(source, "reconstruct_route_words_cuda")
+    rounding, _ = function(source, "rounding_kernel")
+    assert entry.index("CUDAGuard") < entry.index("getCurrentCUDAStream") < entry.index("if (!live) return") < entry.index("reconstruct_route_words_cuda")
+    assert "if (!rows || !live) return words" in helper and helper.index("if (!rows || !live)") < helper.index("predecode_route_kernel<<<")
+    assert rounding.index("if (!status)") < rounding.index("if (keep)") < rounding.index("a_words[int64_t(r)")
+    assert "native_c[int64_t(source_row) * n + col]" in rounding
+
+    literal_functions = {name: function(source, name)[0] for name in ("sfindex", "decode_scaled", "reconstructed_word", "predecode_route_kernel")}
+    for name in ("sfindex", "decode_scaled", "reconstructed_word"):
+        assert tokens(literal_functions[name]) == tokens(function(parent, name)[0])
+    cpu = r"""
+#include <algorithm>
+#include <cfenv>
+#include <cmath>
+#include <cstdint>
+#include <cstring>
+#include <iostream>
+#include <stdexcept>
+#include <vector>
+using std::max;
+#define __device__
+#define __global__
+struct Dim { int x; } blockIdx, blockDim, threadIdx;
+uint64_t calls = 0;
+float __fadd_rn(float a, float b) { volatile float result = a + b; return result; }
+uint16_t bfword(float value) {
+    uint32_t bits; std::memcpy(&bits, &value, sizeof(bits));
+    if ((bits & 0x7fffffffU) > 0x7f800000U) throw std::runtime_error("NaN outside corpus");
+    return uint16_t((bits + 0x7fffU + ((bits >> 16) & 1U)) >> 16);
+}
+"""
+    cpu += literal_functions["sfindex"] + literal_functions["decode_scaled"]
+    cpu += literal_functions["reconstructed_word"].replace("reconstructed_word(", "source_reconstructed_word(", 1)
+    cpu += r"""
+uint16_t reconstructed_word(const uint8_t *codes, const uint8_t *scales, int row, int k, int rows, int batch, bool operand_a) {
+    if (row < 0 || row >= rows || k < 0 || k >= 1024 || batch != 0 || !operand_a) throw std::runtime_error("Unsafe or non-A route");
+    ++calls;
+    return source_reconstructed_word(codes, scales, row, k, rows, batch, operand_a);
+}
+"""
+    cpu += literal_functions["predecode_route_kernel"]
+    cpu += r"""
+template<class T> void read(std::vector<T>& v) {
+    std::cin.read(reinterpret_cast<char*>(v.data()), v.size() * sizeof(T));
+    if (!std::cin) throw std::runtime_error("Incomplete input");
+}
+int main() {
+    if (std::fegetround() != FE_TONEAREST) return 3;
+    int32_t rows, live;
+    std::cin.read(reinterpret_cast<char*>(&rows), sizeof(rows));
+    std::cin.read(reinterpret_cast<char*>(&live), sizeof(live));
+    if (!std::cin || rows < 0 || live < 0 || rows % 128 != 0) return 4;
+    std::vector<uint8_t> codes(int64_t(rows) * 4096), scales(int64_t(rows) * 128);
+    std::vector<int64_t> destinations(live);
+    read(codes); read(scales); read(destinations);
+    std::vector<uint16_t> words(int64_t(live) * 1024, 0xdeadU);
+    // Literal host helper control: no CUDA launch when rows or live is zero.
+    if (rows && live) {
+        blockDim.x = 256;
+        for (blockIdx.x = 0; blockIdx.x < (int64_t(live) * 1024 + 255) / 256; ++blockIdx.x)
+            for (threadIdx.x = 0; threadIdx.x < blockDim.x; ++threadIdx.x)
+                predecode_route_kernel(codes.data(), scales.data(), destinations.data(), words.data(), rows, live);
+    }
+    std::cout.write(reinterpret_cast<const char*>(&calls), sizeof(calls));
+    std::cout.write(reinterpret_cast<const char*>(words.data()), words.size() * sizeof(uint16_t));
+}
+"""
+    cpp, exe = out / "literal_route_cpu.cpp", out / "literal_route_cpu"
+    cpp.write_text(cpu)
+    command = ["c++", "-std=c++17", "-O2", "-fno-fast-math", "-ffp-contract=off", str(cpp), "-o", str(exe)]
+    compile_result = subprocess.run(command, capture_output=True, text=True, timeout=120)
+    (out / "host_compile.stdout.log").write_text(compile_result.stdout)
+    (out / "host_compile.stderr.log").write_text(compile_result.stderr)
+    assert compile_result.returncode == 0, compile_result.stderr
+
+    prior = ROOT / "results/a3-weight-plan-20261002-r1"
+    prior_run = terminal(prior)
+    pair = json.loads((prior / "candidate/pair.json").read_text())
+    boundary = json.loads((prior / "candidate/boundaries/result.json").read_text())
+    assert boundary["source_head"] == "a24a7401bb7d26d42d88d98b316f634ef487301c" and len(boundary["rows"]) == 5
+    captured_path, words_path = prior / "candidate/boundaries/outputs.pt", prior / "candidate/pair_outputs.pt"
+    assert sha(captured_path) == boundary["outputs_sha256"] and sha(words_path) == pair["outputs_sha256"]
+    captured = t.load(captured_path, map_location="cpu", weights_only=True)
+    saved_words = t.load(words_path, map_location="cpu", weights_only=True)
+    original_audit = ROOT / "results/a3-weight-plan-boundary-cpu-audit-20261002-r1"
+    terminal(original_audit)
+    original_meta = json.loads((original_audit / "result.json").read_text())
+    unpack_path = TOOLS / "audit_a3_weight_plan_boundary_cpu_20261002_r1.py"
+    assert sha(unpack_path) == original_meta["harness_sha256"] and not original_meta["cuda_initialized"]
+    spec = importlib.util.spec_from_file_location("independent_qualified_unpack", unpack_path)
+    independent = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(independent)
+    cases, verified_words, reconstructed_calls = [], 0, 0
+
+    def test(name, codes, physical, words, destinations, provenance):
+        nonlocal verified_words, reconstructed_calls
+        rows, live = codes.shape[0], destinations.numel()
+        data = struct.pack("<ii", rows, live) + raw(codes) + raw(physical.view(t.uint8).reshape(-1)) + raw(destinations)
+        run = subprocess.run([str(exe)], input=data, capture_output=True, timeout=120)
+        assert run.returncode == 0, run.stderr.decode()
+        assert len(run.stdout) == 8 + live * 1024 * 2
+        calls = struct.unpack("<Q", run.stdout[:8])[0]
+        result = t.frombuffer(bytearray(run.stdout[8:]), dtype=t.int16).reshape(live, 1024) if live else t.empty((0, 1024), dtype=t.int16)
+        valid = (destinations >= 0) & (destinations < rows)
+        assert calls == int(valid.sum()) * 1024
+        if rows:
+            expected = t.zeros_like(result)
+            expected[valid] = words.index_select(0, destinations[valid])
+            assert same(result, expected), name
+            verified_words += result.numel()
+        else:
+            assert not calls and not valid.any()
+            # Uninitialized M0 scratch is never read by the unchanged rejection path.
+            assert (result == -8531).all()
+        reconstructed_calls += calls
+        record = {
+            "name": name,
+            "rows": rows,
+            "live": live,
+            "valid_routes": int(valid.sum()),
+            "invalid_routes": int((~valid).sum()),
+            "literal_cpu_reconstructed_word_calls": calls,
+            "word_count": result.numel(),
+            "output_sha256": hashlib.sha256(raw(result)).hexdigest(),
+            "destinations": destinations.tolist() if live <= 32 else {"sha256": hashlib.sha256(raw(destinations)).hexdigest(), "count": live},
+            "CPU_address_and_encoded_data_equal": bool(rows),
+            "provenance": provenance,
+        }
+        cases.append(record)
+        print(json.dumps({k: record[k] for k in ("name", "rows", "live", "valid_routes", "invalid_routes")}), flush=True)
+
+    def routes(rows, seed):
+        edges = t.tensor(sorted({x for x in [0, 1, 31, 32, 63, 64, 95, 96, 126, 127, 128, 129, 255, 256, rows - 2, rows - 1] if 0 <= x < rows}), dtype=t.int64)
+        duplicate = t.cat((edges.flip(0), edges[:3], edges[-3:]))
+        return [
+            ("all_rows", t.arange(rows, dtype=t.int64)),
+            ("tile_edges", edges),
+            ("duplicates_unsorted", duplicate),
+            ("changed_destinations", (duplicate + 1) % rows),
+            ("random_permutation", t.randperm(rows, generator=t.Generator().manual_seed(seed))),
+            ("mixed_invalid", t.cat((edges[:4], t.tensor([-1, rows, rows + 1, -(1 << 63), (1 << 63) - 1], dtype=t.int64)))),
+            ("empty_live", t.empty(0, dtype=t.int64)),
+        ]
+
+    provenance = []
+    for index, case in enumerate(boundary["rows"]):
+        name = case["name"]
+        value = captured[name]
+        decoded = independent.unpack(value["a_codes"], value["sfa"], value["sa"], "A").to(t.bfloat16).view(t.int16)
+        qualified = saved_words[f"decode/{name}/A"]
+        assert same(decoded, qualified)
+        origin = {
+            "qualified_case": name,
+            "GPU_word_sha256": hashlib.sha256(raw(qualified)).hexdigest(),
+            "codes_sha256": hashlib.sha256(raw(value["a_codes"])).hexdigest(),
+            "physical_scales_sha256": hashlib.sha256(raw(value["sfa"].view(t.uint8))).hexdigest(),
+        }
+        provenance.append(origin)
+        test(name + "/actual_routes", value["a_codes"], value["sfa"], qualified, value["destinations"], "saved qualified A24 GPU decoded words")
+        for label, dest in routes(value["a_codes"].shape[0], 20261002100 + index):
+            test(name + "/" + label, value["a_codes"], value["sfa"], qualified, dest, "saved qualified A24 GPU decoded words")
+
+    for rows in (128, 256, 384, 2048):
+        generator = t.Generator().manual_seed(20261002000 + rows)
+        codes = t.randint(0, 256, (rows, 4096), generator=generator, dtype=t.uint8)
+        codes[(codes & 127) == 127] -= 1
+        # Both selected components have -0: checks sign-preserving float addition.
+        codes.reshape(rows, 32, 4, 32)[:, 0, 0, 0] = 128
+        codes.reshape(rows, 32, 4, 32)[:, 0, 2, 0] = 128
+        domain = t.tensor([0, 1, 100, 120, 127, 134, 180, 220], dtype=t.uint8)
+        logical_codes = domain[(t.arange(rows)[:, None] * 7 + t.arange(128)[None, :] * 3) % domain.numel()]
+        # Independent layout permutation, rather than the candidate linear equation.
+        physical = logical_codes.reshape(rows // 128, 4, 32, 32, 4).permute(0, 3, 2, 1, 4).contiguous().flatten()
+        logical = t.ldexp(t.ones(logical_codes.shape, dtype=t.float32), logical_codes.int() - 127)
+        words = independent.unpack(codes, physical, logical, "A").to(t.bfloat16).view(t.int16)
+        assert (words[:, 0] == -32768).all()
+        for label, dest in routes(rows, rows + 20261002):
+            test(f"synthetic_M{rows}/" + label, codes, physical, words, dest, "independent CPU E4M3/UE8M0 layout; GPU arithmetic NOT_RUN")
+    test(
+        "empty_M0/invalid_live",
+        t.empty((0, 4096), dtype=t.uint8),
+        t.empty(0, dtype=t.uint8),
+        t.empty((0, 1024), dtype=t.int16),
+        t.tensor([-1, 0, (1 << 63) - 1], dtype=t.int64),
+        "unchanged source rejection/control path only",
+    )
+    test(
+        "empty_M0/empty_live",
+        t.empty((0, 4096), dtype=t.uint8),
+        t.empty(0, dtype=t.uint8),
+        t.empty((0, 1024), dtype=t.int16),
+        t.empty(0, dtype=t.int64),
+        "unchanged source rejection/control path only",
+    )
+    assert len(cases) == 70
+    assert {name: sha(TOOLS / name) for name in before} == before and not t.cuda.is_initialized()
+    result = {
+        "stage": "ROUTED_A_LITERAL_HOST_ADDRESS_AND_ENCODED_DATA_CPU_AUDIT_COMPLETE",
+        "sources": before,
+        "auditor_sha256": sha(__file__),
+        "parent_cuda_sha256": frozen["parent_cuda_sha256"],
+        "preserved_original_tokens_except_two_helpers_and_two_A_changes": True,
+        "cpp_byte_equal": True,
+        "python_ast_equal_except_name": True,
+        "qualified_prior": {
+            "path": str(prior),
+            "terminal_status": prior_run["status"],
+            "returncode": prior_run["returncode"],
+            "boundary_pt_sha256": boundary["outputs_sha256"],
+            "GPU_word_pt_sha256": pair["outputs_sha256"],
+            "unpack_auditor_sha256": sha(unpack_path),
+        },
+        "literal_host_compile": {"command": command, "returncode": compile_result.returncode, "source_sha256": sha(cpp), "binary_sha256": sha(exe)},
+        "literal_function_sha256": {name: hashlib.sha256(value.encode()).hexdigest() for name, value in literal_functions.items()},
+        "original_case_provenance": provenance,
+        "cases": cases,
+        "case_count": len(cases),
+        "encoded_word_values_verified": verified_words,
+        "literal_CPU_reconstruction_calls": reconstructed_calls,
+        "invalid_destinations_never_decoded": True,
+        "cuda_initialized": False,
+        "CUDA_VISIBLE_DEVICES": os.environ["CUDA_VISIBLE_DEVICES"],
+        "new_GPU_launches": 0,
+        "new_native_calls": 0,
+        "GPU_stream_reuse_native_boundaries_full_model_generation_performance": "NOT_RUN",
+        "performance_claim": False,
+        "limits": "Literal CUDA routing/address/decode bodies executed only through a CPU host shim with independent Torch CPU and saved previously qualified GPU encoded-word comparators. CPU float/BF16 rounding shim is not CUDA validation. No GPU stream/cache ownership/allocator/mutation race proof, new full-model/generation success, measured speedup, or public promotion. Original rounding checks/C lookup/integer target/B decoder/activation/support and Python stream/AMAX semantics are source-preserved; their new GPU executions remain pending.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(
+        json.dumps(
+            {
+                k: result[k]
+                for k in ("stage", "case_count", "encoded_word_values_verified", "literal_CPU_reconstruction_calls", "cuda_initialized", "new_GPU_launches")
+            }
+        ),
+        flush=True,
+    )
+
+
+if __name__ == "__main__":
+    main()

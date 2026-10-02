@@ -1,0 +1,54 @@
+{
+  "utc": "2026-10-02T05:11:24.799111+00:00",
+  "source_result_sha256": "ddaa5cdd9b83f6e2e6fd35a0eeeb344c304cf55957e133b5ed3e904601e3d94a",
+  "source_head": "a24a7401bb7d26d42d88d98b316f634ef487301c",
+  "source_native_binary": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guarded-rounding-build-cpu-20261002-r7/extension/a3_guarded_rounding_20261002_r7.so",
+    "sha256": "3bff997f8557f2318d6fca25555e93d14ca93c8dec55356d25d518a33ab8672e"
+  },
+  "qualified_original_all24_gates": true,
+  "cases": [
+    {
+      "case": 0,
+      "input_tokens": 73,
+      "layers": 24,
+      "certified_count": 380,
+      "integer_repair_count": 14352004,
+      "invalid_count": 0,
+      "total": 14352384,
+      "integer_repair_fraction": 0.9999735235623574,
+      "certified_fraction": 2.6476437642694062e-05,
+      "max_layer_certified_fraction": 0.000518380779109589,
+      "source_reported_ambiguous_fraction": 0.9999735355377197
+    },
+    {
+      "case": 1,
+      "input_tokens": 70,
+      "layers": 24,
+      "certified_count": 335,
+      "integer_repair_count": 13762225,
+      "invalid_count": 0,
+      "total": 13762560,
+      "integer_repair_fraction": 0.9999756585984003,
+      "certified_fraction": 2.4341401599702383e-05,
+      "max_layer_certified_fraction": 0.00046212332589285713,
+      "source_reported_ambiguous_fraction": 0.9999756813049316
+    },
+    {
+      "case": 2,
+      "input_tokens": 256,
+      "layers": 24,
+      "certified_count": 844,
+      "integer_repair_count": 50330804,
+      "invalid_count": 0,
+      "total": 50331648,
+      "integer_repair_fraction": 0.9999832312266032,
+      "certified_fraction": 1.6768773396809895e-05,
+      "max_layer_certified_fraction": 0.0003104209899902344,
+      "source_reported_ambiguous_fraction": 0.9999832510948181
+    }
+  ],
+  "all_statistical_inputs_original_and_no_new_GPU": true,
+  "new_GPU_launches": 0,
+  "limits": "Census of saved actual cached7 full-model flags, not profiling attribution or measured optimization. The routed-A change preserves certification and all repair arithmetic. These saved flags show that nearly all outputs in these three complete forwards take integer repair; removing certification/statistics is only a future separate hypothesis and has not been implemented or admitted. No generalization to all decoder inputs or public/default precision success."
+}
