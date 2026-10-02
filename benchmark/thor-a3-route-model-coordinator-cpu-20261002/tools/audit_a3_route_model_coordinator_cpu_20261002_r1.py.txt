@@ -1,0 +1,106 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""CPU-only qualification gate regression against actual success/failure logs."""
+
+import argparse
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import sys
+import tempfile
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    assert os.environ["CUDA_VISIBLE_DEVICES"] == "" and "torch" not in sys.modules
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    source = Path(__file__).with_name("a3_route_decode_full_model_coordinator_prepared_20261002_r1.py")
+    spec = importlib.util.spec_from_file_location("a3_routed_model_coordinator_gate_only", source)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    records = []
+    for name, expected_code in (
+        ("a3-serial-iteration-20261002-r4", -15),
+        ("a3-latestb1fe-iteration-20261002-r3", 75),
+        ("a3-route-model-preparation-cpu-audit-20261002-r1", 1),
+        ("a3-route-model-preparation-cpu-audit-20261002-r2", 0),
+    ):
+        path = ROOT / "results" / (name + "-launch") / "run.json"
+        actual = json.loads(path.read_text())
+        assert actual["status"] == "EXITED" and actual["returncode"] == expected_code
+        try:
+            observed = module.closed(name)
+        except RuntimeError as error:
+            assert not isinstance(error, module.NotReady) and expected_code != 0
+            outcome = "REJECTED_ACTUAL_NONZERO_TERMINAL"
+        else:
+            assert expected_code == 0 and observed == actual
+            outcome = "ACCEPTED_ACTUAL_CLOSED_CPU_SUCCESS_NOT_GPU_QUALIFICATION"
+        records.append({"name": name, "actual_run": actual, "outcome": outcome, "path": str(path), "sha256": sha(path)})
+    incomplete = []
+    original_root = module.ROOT
+    with tempfile.TemporaryDirectory(prefix="a3-gate-metadata-only-") as folder:
+        try:
+            module.ROOT = Path(folder)
+            for name, content in (("absent", None), ("partial", "{"), ("missing-final-fields", '{"status":"EXITED","returncode":0}')):
+                if content is not None:
+                    path = module.ROOT / "results" / (name + "-launch") / "run.json"
+                    path.parent.mkdir(parents=True)
+                    path.write_text(content)
+                try:
+                    module.closed(name)
+                except module.NotReady:
+                    incomplete.append({"case": name, "outcome": "DEFERRED_NOT_TERMINAL_NO_RESTART"})
+                else:
+                    raise AssertionError("Incomplete metadata was incorrectly certified")
+        finally:
+            module.ROOT = original_root
+    try:
+        module.certify()
+    except module.NotReady as error:
+        real_gate = {"stage": "WAITING_REAL_R5_QUALIFICATION", "reason": str(error)}
+        handles = {}
+        for pid in (860061, 860123):
+            process = Path("/proc", str(pid))
+            if process.exists():
+                command = (process / "cmdline").read_text().replace(chr(0), " ")
+                assert "a3_serial_iteration_resume_20261002_r5.py" in command
+                handles[str(pid)] = {"command": command, "live": True}
+        assert handles, "Missing terminal alone is not a verified wait; inspect original real handle"
+        real_gate["verified_live_handles"] = handles
+    except RuntimeError as error:
+        real_gate = {"stage": "REAL_R5_QUALIFICATION_FAILED_NO_GPU_ADMISSION", "reason": str(error)}
+    else:
+        real_gate = {"stage": "REAL_R5_QUALIFICATION_READY_GPU_NOT_RUN"}
+    assert "torch" not in sys.modules
+    result = {
+        "stage": "COORDINATOR_DEPENDENCY_GATES_CPU_REGRESSION_COMPLETE_GPU_NOT_RUN",
+        "actual_terminal_cases": records,
+        "incomplete_metadata_cases": incomplete,
+        "current_real_dependency_gate": real_gate,
+        "files": {str(path): sha(path) for path in [Path(__file__), source, *[Path(row["path"]) for row in records]]},
+        "torch_imported": False,
+        "new_native_calls": 0,
+        "shared_GPU_lock_taken": False,
+        "GPU_phases_started": 0,
+        "queued": False,
+        "accepted_optimization": False,
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({key: result[key] for key in ("stage", "current_real_dependency_gate", "GPU_phases_started", "queued")}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

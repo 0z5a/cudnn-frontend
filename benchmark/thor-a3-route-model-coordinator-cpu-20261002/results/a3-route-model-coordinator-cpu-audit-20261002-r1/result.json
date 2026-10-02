@@ -1,0 +1,147 @@
+{
+  "stage": "COORDINATOR_DEPENDENCY_GATES_CPU_REGRESSION_COMPLETE_GPU_NOT_RUN",
+  "actual_terminal_cases": [
+    {
+      "name": "a3-serial-iteration-20261002-r4",
+      "actual_run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_serial_iteration_resume_20261002_r4.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r4",
+          "--lock-wait-seconds",
+          "43200"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+        "started_utc": "2026-10-02T06:51:26.511467+00:00",
+        "deadline_seconds": 63000.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": -15,
+        "signal": 15,
+        "elapsed_seconds": 4668.349893011997
+      },
+      "outcome": "REJECTED_ACTUAL_NONZERO_TERMINAL",
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r4-launch/run.json",
+      "sha256": "b45aab5b55de078cbda4c01b2c39795ccbbf0850a86ce705be6d358d1e5615b2"
+    },
+    {
+      "name": "a3-latestb1fe-iteration-20261002-r3",
+      "actual_run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latestb1fe_iteration_resume_20261002_r3.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latestb1fe-iteration-20261002-r3",
+          "--lock-wait-seconds",
+          "7200"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+        "started_utc": "2026-10-02T04:28:21.169258+00:00",
+        "deadline_seconds": 18000.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 75,
+        "signal": null,
+        "elapsed_seconds": 7200.466909435003
+      },
+      "outcome": "REJECTED_ACTUAL_NONZERO_TERMINAL",
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latestb1fe-iteration-20261002-r3-launch/run.json",
+      "sha256": "01f24294e6b9700ea9327b6434aa0c6ec31c4b68e7b94e8594edf01ad5441cda"
+    },
+    {
+      "name": "a3-route-model-preparation-cpu-audit-20261002-r1",
+      "actual_run": {
+        "argv": [
+          "python3",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_route_model_preparation_cpu_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-route-model-preparation-cpu-audit-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+        "started_utc": "2026-10-02T08:37:35.435037+00:00",
+        "deadline_seconds": 120.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 1,
+        "signal": null,
+        "elapsed_seconds": 0.6155275399942184
+      },
+      "outcome": "REJECTED_ACTUAL_NONZERO_TERMINAL",
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-route-model-preparation-cpu-audit-20261002-r1-launch/run.json",
+      "sha256": "19284daa78406f4da88af34076eeacade970b2a3aa0a54f18aba286d568d7f48"
+    },
+    {
+      "name": "a3-route-model-preparation-cpu-audit-20261002-r2",
+      "actual_run": {
+        "argv": [
+          "python3",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_route_model_preparation_cpu_20261002_r2.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-route-model-preparation-cpu-audit-20261002-r2"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+        "started_utc": "2026-10-02T08:40:12.338956+00:00",
+        "deadline_seconds": 120.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 0.36459409799135756
+      },
+      "outcome": "ACCEPTED_ACTUAL_CLOSED_CPU_SUCCESS_NOT_GPU_QUALIFICATION",
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-route-model-preparation-cpu-audit-20261002-r2-launch/run.json",
+      "sha256": "fcc833e370a5b97258d151b4a249ebf5b1a60a9e839a08edc2ac9fa7a99a9f71"
+    }
+  ],
+  "incomplete_metadata_cases": [
+    {
+      "case": "absent",
+      "outcome": "DEFERRED_NOT_TERMINAL_NO_RESTART"
+    },
+    {
+      "case": "partial",
+      "outcome": "DEFERRED_NOT_TERMINAL_NO_RESTART"
+    },
+    {
+      "case": "missing-final-fields",
+      "outcome": "DEFERRED_NOT_TERMINAL_NO_RESTART"
+    }
+  ],
+  "current_real_dependency_gate": {
+    "stage": "WAITING_REAL_R5_QUALIFICATION",
+    "reason": "Real terminal absent: a3-serial-iteration-20261002-r5",
+    "verified_live_handles": {
+      "860061": {
+        "command": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python /home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py --out /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r5-launch --cwd /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928 --timeout 63000 -- /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_serial_iteration_resume_20261002_r5.py --out /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r5 --lock-wait-seconds 43200 ",
+        "live": true
+      },
+      "860123": {
+        "command": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_serial_iteration_resume_20261002_r5.py --out /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r5 --lock-wait-seconds 43200 ",
+        "live": true
+      }
+    }
+  },
+  "files": {
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_route_model_coordinator_cpu_20261002_r1.py": "0fee730d3acdd1433601dda37525a9c3de5d45631f2b8e849cbf7a30c58295bc",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_route_decode_full_model_coordinator_prepared_20261002_r1.py": "38ca8d94b87112454231d4afab7b3d49702701ef71418703e480b5db70ff8335",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r4-launch/run.json": "b45aab5b55de078cbda4c01b2c39795ccbbf0850a86ce705be6d358d1e5615b2",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latestb1fe-iteration-20261002-r3-launch/run.json": "01f24294e6b9700ea9327b6434aa0c6ec31c4b68e7b94e8594edf01ad5441cda",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-route-model-preparation-cpu-audit-20261002-r1-launch/run.json": "19284daa78406f4da88af34076eeacade970b2a3aa0a54f18aba286d568d7f48",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-route-model-preparation-cpu-audit-20261002-r2-launch/run.json": "fcc833e370a5b97258d151b4a249ebf5b1a60a9e839a08edc2ac9fa7a99a9f71"
+  },
+  "torch_imported": false,
+  "new_native_calls": 0,
+  "shared_GPU_lock_taken": false,
+  "GPU_phases_started": 0,
+  "queued": false,
+  "accepted_optimization": false
+}

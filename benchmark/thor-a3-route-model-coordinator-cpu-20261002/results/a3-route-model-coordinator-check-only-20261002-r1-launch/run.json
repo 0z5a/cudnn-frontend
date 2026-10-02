@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "python3",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_route_decode_full_model_coordinator_prepared_20261002_r1.py",
+    "--check-only"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-02T09:00:28.742883+00:00",
+  "deadline_seconds": 120.0,
+  "status": "EXITED",
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": ""
+  },
+  "returncode": 75,
+  "signal": null,
+  "elapsed_seconds": 0.16401899499760475
+}

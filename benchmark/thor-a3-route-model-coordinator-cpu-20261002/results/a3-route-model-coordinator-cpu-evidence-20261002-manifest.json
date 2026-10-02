@@ -1,0 +1,42 @@
+{
+  "captured_utc": "2026-10-02T09:02:42.898884+00:00",
+  "scope": "Prepared unqueued model coordinator and CPU gate tests; actual CLI75 defers real live R5 and actual CPUaudit0 verifies terminal gates; no GPU phases",
+  "files": {
+    "tools/a3_route_decode_full_model_coordinator_prepared_20261002_r1.py": {
+      "size": 11849,
+      "sha256": "38ca8d94b87112454231d4afab7b3d49702701ef71418703e480b5db70ff8335"
+    },
+    "tools/audit_a3_route_model_coordinator_cpu_20261002_r1.py": {
+      "size": 4750,
+      "sha256": "0fee730d3acdd1433601dda37525a9c3de5d45631f2b8e849cbf7a30c58295bc"
+    },
+    "results/a3-route-model-coordinator-cpu-audit-20261002-r1/result.json": {
+      "size": 7467,
+      "sha256": "0c2dd65c4d94dde90fe0b8d999de6a7aac12112fac676cc1afa26cf66d20e965"
+    },
+    "results/a3-route-model-coordinator-check-only-20261002-r1-launch/run.json": {
+      "size": 484,
+      "sha256": "6ffb8d82b75bbb0e6797d7722fe0eada2d9c6e306ab2dcd95c5b84d8ccde0b45"
+    },
+    "results/a3-route-model-coordinator-check-only-20261002-r1-launch/stderr.log": {
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "results/a3-route-model-coordinator-check-only-20261002-r1-launch/stdout.log": {
+      "size": 166,
+      "sha256": "db53da5b9440987c033c65bc13343504e96603de5b93321cb804f003cc1fcc5c"
+    },
+    "results/a3-route-model-coordinator-cpu-audit-20261002-r1-launch/run.json": {
+      "size": 578,
+      "sha256": "2c7eff8f8682db515d6b280a17fc3f4507e32e8e7b6e290f4f21d008c25a810b"
+    },
+    "results/a3-route-model-coordinator-cpu-audit-20261002-r1-launch/stderr.log": {
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "results/a3-route-model-coordinator-cpu-audit-20261002-r1-launch/stdout.log": {
+      "size": 1332,
+      "sha256": "322b9898f700ccafec9c13aa5b25bbdd890af079f690f92e65ff976842384b7c"
+    }
+  }
+}

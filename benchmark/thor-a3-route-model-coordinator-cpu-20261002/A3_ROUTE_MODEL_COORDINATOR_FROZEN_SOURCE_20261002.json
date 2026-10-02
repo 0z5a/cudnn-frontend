@@ -1,0 +1,7 @@
+{
+  "scope": "Prepared coordinator and CPU gate audit frozen; model GPU NOTRUN; not queued",
+  "files": {
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_route_model_coordinator_cpu_20261002_r1.py": "0fee730d3acdd1433601dda37525a9c3de5d45631f2b8e849cbf7a30c58295bc",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_route_decode_full_model_coordinator_prepared_20261002_r1.py": "38ca8d94b87112454231d4afab7b3d49702701ef71418703e480b5db70ff8335"
+  }
+}
