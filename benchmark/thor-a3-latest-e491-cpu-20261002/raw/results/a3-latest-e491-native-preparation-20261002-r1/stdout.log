@@ -1,0 +1,29 @@
+The bundle contains this ref:
+9d40c88545f68a4f50e042e8804bc9a845a130b9 refs/heads/codex/a3-sfd-latest-e491-20261002
+The bundle requires these 2 refs:
+aab01504ad3ad97170d19087ce23bef48d95dfa0 
+5f27ff4f023e23c1d36261e4a2300cc1e4a9a2c6 
+The bundle uses this hash algorithm: sha1
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python",
+    "-m",
+    "pip",
+    "install",
+    "--no-deps",
+    "--no-build-isolation",
+    "-e",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste491"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste491",
+  "started_utc": "2026-10-02T09:25:24.366269+00:00",
+  "deadline_seconds": 3600.0,
+  "status": "EXITED",
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": ""
+  },
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 285.80208883799787
+}
+{"head": "9d40c88545f68a4f50e042e8804bc9a845a130b9", "base": "e491aa89c9bdb4983b954a3457823fe9d2d3c4a3", "fresh_build_rc": 0, "binding": {"path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste491/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so", "sha256": "39d210e92389b6641cf6231ebe0d2b3a09dac7d8f2949b0874363f67f891959f"}, "GPU_tests": "NOT_RUN"}

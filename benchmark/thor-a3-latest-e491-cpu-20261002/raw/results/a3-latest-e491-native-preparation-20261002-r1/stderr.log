@@ -1,0 +1,6 @@
+Cloning into '/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste491'...
+/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3-latest-e491-20261002-r1.bundle is okay
+From /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3-latest-e491-20261002-r1.bundle
+ * branch            codex/a3-sfd-latest-e491-20261002 -> FETCH_HEAD
+Previous HEAD position was aab0150 Merge commit '5f27ff4f023e23c1d36261e4a2300cc1e4a9a2c6' into codex/a3-sfd-latest-5f27-20261002
+HEAD is now at 9d40c88 Merge commit 'e491aa89c9bdb4983b954a3457823fe9d2d3c4a3' into codex/a3-sfd-latest-e491-20261002

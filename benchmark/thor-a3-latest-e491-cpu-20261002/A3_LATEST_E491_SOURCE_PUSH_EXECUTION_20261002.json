@@ -1,0 +1,8 @@
+{
+  "rc": 0,
+  "stdout": "",
+  "stderr": "To https://github.com/0z5a/cudnn-frontend.git\n   aab01504..9d40c885  HEAD -> codex/a3-sm110-correctness\n",
+  "head": "9d40c88545f68a4f50e042e8804bc9a845a130b9",
+  "fresh_native_build_rc": 0,
+  "gpu_tests": "NOT_RUN"
+}

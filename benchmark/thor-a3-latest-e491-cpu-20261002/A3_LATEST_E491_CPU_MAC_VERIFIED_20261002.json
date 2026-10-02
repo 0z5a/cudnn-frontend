@@ -1,0 +1,31 @@
+{
+  "archive_sha256": "2e53b998483850c335b24f240acee805cc21fb4568c1a87496378d6d07100057",
+  "payload_files": 22,
+  "all_sizes_and_SHA256_verified": true,
+  "actual_CPU_audit_run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_latest_e491_protocol_preparation_cpu_20261002_r1.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-e491-protocol-preparation-cpu-audit-20261002-r1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-02T09:33:30.343742+00:00",
+    "deadline_seconds": 120.0,
+    "status": "EXITED",
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 9.731389563006815
+  },
+  "native_binding": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlateste491/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+    "sha256": "39d210e92389b6641cf6231ebe0d2b3a09dac7d8f2949b0874363f67f891959f"
+  },
+  "head": "9d40c88545f68a4f50e042e8804bc9a845a130b9",
+  "GPU_tests": "NOT_RUN",
+  "all_A3_complete": false,
+  "Mac_sync_first_attempt": "local Python tarfile filter unsupported before any extraction; explicit regular-file-only extraction subsequently verified"
+}

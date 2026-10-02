@@ -1,0 +1,132 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""CPU-only real fresh-native provenance and latest protocol admission audit."""
+
+import argparse
+import ast
+import copy
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import sys
+import tempfile
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", required=True)
+    args = ap.parse_args()
+    assert os.environ["CUDA_VISIBLE_DEVICES"] == "" and "torch" not in sys.modules
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    tools = ROOT / "tools"
+    path = tools / "a3_route_decode_full_model_coordinator_e491_prepared_20261002_r1.py"
+    spec = importlib.util.spec_from_file_location("a3_e491_cpu_coordinator", path)
+    c = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(c)
+    native = c.validate_native()
+    raw_path = ROOT / "results/a3-latest-e491-native-provenance-20261002.json"
+    raw_sha = sha(raw_path)
+    rejected = []
+    with tempfile.TemporaryDirectory(prefix="a3-e491-cpu-provenance-") as temporary:
+        c.ROOT = Path(temporary)
+        (c.ROOT / "results").mkdir()
+        target = c.ROOT / "results/a3-latest-e491-native-provenance-20261002.json"
+        mutations = [
+            ("wrong_head", ("head",), "aab01504ad3ad97170d19087ce23bef48d95dfa0"),
+            ("nonzero_real_build", ("build_run", "returncode"), 1),
+            ("unfinished_build", ("build_run", "status"), "RUNNING"),
+            ("signaled_build", ("build_run", "signal"), 15),
+            ("old_binding_hash", ("binding", "sha256"), "53e032059642472bf9a48cf847b4dfe87412ea3f33f6e80e9f09f016b3d534cc"),
+            ("cuda_initialized", ("cuda_initialized",), True),
+        ]
+        for name, keys, value in mutations:
+            bad = copy.deepcopy(native)
+            selected = bad
+            for key in keys[:-1]:
+                selected = selected[key]
+            selected[keys[-1]] = value
+            target.write_text(json.dumps(bad))
+            try:
+                c.validate_native()
+            except AssertionError:
+                rejected.append(name)
+            else:
+                raise AssertionError("Invalid real-provenance copy accepted: " + name)
+    c.ROOT = ROOT
+    assert sha(raw_path) == raw_sha
+    try:
+        c.certify()
+    except c.NotReady as error:
+        deferred = str(error)
+    else:
+        raise AssertionError("R5 not actually qualified but preparation accepted")
+    prepared = json.loads((ROOT / "results/a3-route-model-preparation-cpu-audit-20261002-r2/result.json").read_text())
+    assert all(sha(path) == digest for path, digest in prepared["files"].items())
+    old = ast.parse((tools / "run_a3_latest_5f27_regression_admitted_20261002_r1.py").read_text())
+    new = ast.parse((tools / "run_a3_latest_e491_regression_admitted_20261002_r1.py").read_text())
+
+    def selection(tree):
+        return [
+            ast.dump(n, include_attributes=False)
+            for n in ast.walk(tree)
+            if isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "tests" for t in n.targets)
+        ]
+
+    assert selection(old) == selection(new) and len(selection(new)) == 1
+    coordinator = ast.parse(path.read_text())
+    sequence = [
+        n.args[0].value
+        for n in ast.walk(coordinator)
+        if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "logged" and n.args and isinstance(n.args[0], ast.Constant)
+    ]
+    assert sequence[0] == "a3-latest-e491-regression-20261002-r1"
+    assert sequence[1] == "a3-route-decode-wrapper-full-lateste491-20261002-r1"
+    assert sequence[-2] == "a3-route-decode-generation-lateste491-20261002-r1"
+    names = [
+        "run_a3_latest_e491_regression_admitted_20261002_r1.py",
+        "a3_route_decode_model_gpu_admitted_e491_prepared_20261002_r1.py",
+        "a3_route_decode_full_model_coordinator_e491_prepared_20261002_r1.py",
+        "audit_a3_route_decode_wrapper_pair_cpu_e491_prepared_20261002_r1.py",
+        "audit_a3_route_decode_full_model_cpu_e491_prepared_20261002_r1.py",
+        "audit_a3_route_decode_generation_pair_cpu_e491_prepared_20261002_r1.py",
+        Path(__file__).name,
+    ]
+    files = {str(tools / name): sha(tools / name) for name in names}
+    result = {
+        "stage": "FRESH_NATIVE_REAL_PROVENANCE_CPU_VERIFIED_LATEST_GPU_PROTOCOL_NOT_QUEUED",
+        "head": c.HEAD,
+        "native_build_actual": native["build_run"],
+        "binding": native["binding"],
+        "native_input_count": 114,
+        "rejected_provenance_copies": rejected,
+        "real_provenance_unchanged": True,
+        "existing_model_math_sources_byte_unchanged": True,
+        "native_test_selection_AST_unchanged": True,
+        "r5_actual_admission_deferred": deferred,
+        "planned_logged_order": sequence,
+        "files": files,
+        "torch_imported": False,
+        "new_native_calls": 0,
+        "gpu_phase_count": 0,
+        "queued": False,
+        "latest_gpu_31": "NOT_RUN",
+        "full_Granite_e2e": "NOT_RUN_NEW_HEAD",
+        "all_A3_complete": False,
+    }
+    assert "torch" not in sys.modules
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

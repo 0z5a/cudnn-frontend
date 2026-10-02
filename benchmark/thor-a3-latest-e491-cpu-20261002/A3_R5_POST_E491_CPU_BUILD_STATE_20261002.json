@@ -1,0 +1,25 @@
+{
+  "observed_utc": "2026-10-02T09:35:08.179235+00:00",
+  "R5_frozen_input_count": 48,
+  "R5_frozen_input_hashes_unchanged": true,
+  "R5_records": {
+    "admission": null,
+    "completed_runs": null,
+    "result": null,
+    "terminal": null
+  },
+  "own_processes": {
+    "860061": {
+      "live": true,
+      "has_Torch_or_CUDA_maps": false,
+      "children": "    PID COMMAND\n 860123 /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_serial_iteration_resume_20261002_r5.py --out /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r5 --lock-wait-seconds 43200\n"
+    },
+    "860123": {
+      "live": true,
+      "has_Torch_or_CUDA_maps": false,
+      "children": "    PID COMMAND\n"
+    }
+  },
+  "inherited_other_task_flock_still_held": true,
+  "service_final": "inactive"
+}

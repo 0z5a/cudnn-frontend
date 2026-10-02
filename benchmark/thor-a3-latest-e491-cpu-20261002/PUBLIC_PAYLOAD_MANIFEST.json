@@ -1,0 +1,159 @@
+{
+  "files": [
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/RESULT.md",
+      "size": 4658,
+      "sha256": "70441781964d2fee5b2a171efb2c546ec6199270138eac5f402493c5f4e8678c"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/A3_LATEST_E491_SOURCE_MERGE_VERIFIED_20261002.json",
+      "size": 1294,
+      "sha256": "9cc758bace484758a6d85007073e166ceb483e7adcfb07e61bf3ff823cde7f7b"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/A3_LATEST_E491_SOURCE_AND_BUNDLE_20261002.json",
+      "size": 1404,
+      "sha256": "9d792f264958824cf709f5cbcc98b5c3ebb4dea50731d65d7dd41499f8292fdc"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/A3_E491_UPSTREAM_PREPUSH_RECHECK_20261002.json",
+      "size": 9822,
+      "sha256": "1ee996e669b1f8626d79f22bb1699a16fa38fa895a2d73c6c70e88af7efc8fc9"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/A3_LATEST_E491_SOURCE_PUSH_EXECUTION_20261002.json",
+      "size": 262,
+      "sha256": "609953c8c34ed8222adadff48b9ccc9f8b8471e68261173f5806692bbdb0f062"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/A3_LATEST_E491_PRECOMMIT_EXECUTION_20261002.json",
+      "size": 378,
+      "sha256": "4befbb03d31afc0fa2f554c727e31735cc185936270cd8a85b352c2bfc26a15a"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/A3_LATEST_E491_CPU_MAC_VERIFIED_20261002.json",
+      "size": 1403,
+      "sha256": "498124eaa27ac36e19e686fd15c381e730b15a42ae352bcfa86d0eafe425de0e"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/REMOTE_PAYLOAD_MANIFEST.json",
+      "size": 4647,
+      "sha256": "461d3d8561a88d863537159d92b4552da3f394df34784246c195a9426e9cb704"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/A3_R5_POST_E491_CPU_BUILD_STATE_20261002.json",
+      "size": 907,
+      "sha256": "19f279172aca6d12e5ae163d424c59832c894ea3dc1d2a7bd20f8e601f2466e0"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/tools/audit_a3_latest_e491_protocol_preparation_cpu_20261002_r1.py.txt",
+      "size": 5536,
+      "sha256": "c1a0fdc544f089a144b92369c9c842b60ba9717c2e12db2d333d5664ac709f8b"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/tools/a3_route_decode_full_model_coordinator_e491_prepared_20261002_r1.py.txt",
+      "size": 13593,
+      "sha256": "702c18361c7fa3264434a6a9d18596ff1961f2720ba1c4a29e4f3a7dbaf7017d"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/tools/audit_a3_route_decode_generation_pair_cpu_e491_prepared_20261002_r1.py.txt",
+      "size": 14694,
+      "sha256": "f14cf9dde327277ba2dcaddc5973f0a345ad1f762fb2b52c9cc0bafafbe712ca"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/tools/a3_route_decode_model_gpu_admitted_e491_prepared_20261002_r1.py.txt",
+      "size": 6701,
+      "sha256": "ec1c0a9009581fb44b6222852259e5260952f9b690b179c5749a1b60d1b0b85d"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/tools/audit_a3_route_decode_wrapper_pair_cpu_e491_prepared_20261002_r1.py.txt",
+      "size": 8352,
+      "sha256": "f8e9599fb76b62b6a704730da2980fe494847bea375de629d92bef9363ed6548"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/tools/audit_a3_route_decode_full_model_cpu_e491_prepared_20261002_r1.py.txt",
+      "size": 7773,
+      "sha256": "f8efb76a610d16dbfed70b8ab4c9a109938bb949f53287adfc9ef2d33dcae45e"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/tools/prepare_build_a3_latest_e491_20261002_r1.py.txt",
+      "size": 6982,
+      "sha256": "291b7898294912c31b9633079d2b099f84424455fd04becdfbfc053d210e2114"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/tools/run_a3_latest_e491_regression_admitted_20261002_r1.py.txt",
+      "size": 6667,
+      "sha256": "18b71d4d4aa4cf0a1653b86a7b77deeee0479df17b8915040c5e61d69f1e3d04"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/results/a3-latest-e491-prebuild-20261002.json",
+      "size": 18248,
+      "sha256": "fb87815b5e024890e581562f525a383de835b537022bafc43f92b5cdd5900913"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/results/a3-latest-e491-native-provenance-20261002.json",
+      "size": 19741,
+      "sha256": "880bdcf46d563294350c5be7f9fdc17f7c7cbd2bef52d2a963df220aa6cde5e7"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/results/a3-latest-e491-protocol-preparation-cpu-audit-20261002-r1/result.json",
+      "size": 3456,
+      "sha256": "8a1b3586b02adecef3f9d4adc448f0fb260dafd0dcde60e2e7b9351df4eb9177"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/results/a3-latest-e491-protocol-preparation-cpu-audit-20261002-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/results/a3-latest-e491-protocol-preparation-cpu-audit-20261002-r1-launch/stdout.log",
+      "size": 3210,
+      "sha256": "c98918186dbe15a858c41c707e72c82b19c27384556833fa9cde512dda0b3c2f"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/results/a3-latest-e491-protocol-preparation-cpu-audit-20261002-r1-launch/run.json",
+      "size": 672,
+      "sha256": "4b276130649572933bbeb6589bdd5c19eed1e77789d83ff028c83145281d3778"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/results/a3-latest-e491-preparation-background-20261002-r1/driver.log",
+      "size": 443,
+      "sha256": "8747700adaeecf957d662d6ad112a32ea196109439537123a7b504d82906bb71"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/results/a3-latest-e491-preparation-background-20261002-r1/launch.json",
+      "size": 794,
+      "sha256": "a21f451b9c933d7fe740190aa5a5eb834c48fc37f439a5bc767d15f3a27f1a64"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/results/build-a3-latest-e491-20261002-r1/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/results/build-a3-latest-e491-20261002-r1/stdout.log",
+      "size": 1600,
+      "sha256": "126844fa2864f539a1d9723913dfbd7f293036e8d717a05bac72cffe928ffdcd"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/results/build-a3-latest-e491-20261002-r1/run.json",
+      "size": 593,
+      "sha256": "3fca2c6b6fdfba648dab5805a5e26f4dcb7795706c7cbb2ba24c069145bc9d9a"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/results/a3-latest-e491-native-preparation-20261002-r1/stderr.log",
+      "size": 597,
+      "sha256": "c7482a9a99fb1c62050f6088a1ea69c7986894514a4ea468dff2d16bf5e229eb"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/results/a3-latest-e491-native-preparation-20261002-r1/stdout.log",
+      "size": 1251,
+      "sha256": "026d344d776f7c71a25f027f01c5defcc19b6130eec5ad7fad67cde5e16ab088"
+    },
+    {
+      "path": "benchmark/thor-a3-latest-e491-cpu-20261002/raw/results/a3-latest-e491-native-preparation-20261002-r1/run.json",
+      "size": 443,
+      "sha256": "8747700adaeecf957d662d6ad112a32ea196109439537123a7b504d82906bb71"
+    }
+  ]
+}

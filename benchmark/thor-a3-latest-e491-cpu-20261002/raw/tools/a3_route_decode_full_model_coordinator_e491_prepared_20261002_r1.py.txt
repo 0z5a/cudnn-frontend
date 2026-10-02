@@ -1,0 +1,262 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""After real R5 qualification, serialize frozen routed-A full Granite checks.
+
+This source is prepared, not queued. Check-only never imports Torch or takes
+the GPU lock. Actual model quality and paired latency require real captures.
+"""
+
+import argparse
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "9d40c88545f68a4f50e042e8804bc9a845a130b9"
+PREDECESSOR_HEAD = "aab01504ad3ad97170d19087ce23bef48d95dfa0"
+LOGGER = Path("/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py")
+
+
+class NotReady(RuntimeError):
+    pass
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def closed(name):
+    path = ROOT / "results" / (name + "-launch") / "run.json"
+    if not path.is_file():
+        raise NotReady(f"Real terminal absent: {name}")
+    try:
+        record = json.loads(path.read_text())
+    except (OSError, json.JSONDecodeError) as error:
+        raise NotReady(f"Terminal observation incomplete: {name}") from error
+    if not isinstance(record, dict) or not {"status", "returncode", "signal"}.issubset(record):
+        raise NotReady(f"Terminal record lacks final fields: {name}")
+    if record["status"] != "EXITED" or record["returncode"] != 0 or record["signal"] is not None:
+        raise RuntimeError(f"Actual predecessor failed; no native9 model phase allowed: {name}: {record}")
+    return record
+
+
+def validate_native():
+    assert "torch" not in sys.modules
+    native = json.loads((ROOT / "results/a3-latest-e491-native-provenance-20261002.json").read_text())
+    assert native["native_build"] == "FRESH_RC0"
+    assert native["build_run"]["status"] == "EXITED" and native["build_run"]["returncode"] == 0 and native["build_run"]["signal"] is None
+    assert native["changed_native_inputs"] == ["include/cudnn_frontend/plans.h"]
+    assert not native["cuda_initialized"] and native["import_validation"]["cuda_visible_devices"] == ""
+    assert native["head"] == HEAD and len(native["native_input_digests"]) == 114
+    assert all(sha(Path(native["source"]) / item["path"]) == item["sha256"] for item in native["native_input_digests"])
+    assert sha(native["binding"]["path"]) == native["binding"]["sha256"]
+    assert subprocess.check_output(["git", "-C", native["source"], "rev-parse", "HEAD"], text=True).strip() == HEAD
+    assert not subprocess.check_output(["git", "-C", native["source"], "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+    return native
+
+
+def certify():
+    assert "torch" not in sys.modules
+    predecessor = closed("a3-serial-iteration-20261002-r5")
+    for pid in (860061, 860123):
+        command = Path("/proc", str(pid), "cmdline")
+        if command.exists() and "a3_serial_iteration_resume_20261002_r5.py" in command.read_text():
+            raise NotReady("R5 terminal is written but its own process is still finishing")
+    r5 = ROOT / "results/a3-serial-iteration-20261002-r5"
+    frozen_r5 = json.loads((r5 / "frozen_inputs.json").read_text())["files"]
+    assert all(sha(path) == digest for path, digest in frozen_r5.items())
+    detail = json.loads((r5 / "result.json").read_text())
+    assert detail["current_public_head"] == PREDECESSOR_HEAD and detail["current_public_head_native_31"] == "COMPLETE"
+    assert detail["route_decode_GPU_boundary_and_reuse"] == "COMPLETE_CPU_AUDITED"
+    native_run = closed("a3-latest-5f27-regression-20261002-r1")
+    native_result = json.loads((ROOT / "results/a3-latest-5f27-regression-20261002-r1/result.json").read_text())
+    assert (
+        native_result["head"] == PREDECESSOR_HEAD
+        and native_result["passed"] == 31
+        and native_result["skipped"] == 0
+        and native_result["actual_native_calls"] == 61
+    )
+    audit_runs = {}
+    for kind in ("boundary", "reuse"):
+        name = f"a3-route-decode-{kind}-cpu-audit-20261002-r1"
+        audit_runs[kind] = closed(name)
+        data = json.loads((ROOT / "results" / name / "result.json").read_text())
+        assert not data["cuda_initialized"] and data["new_native_calls"] == 0
+        if kind == "reuse":
+            assert data["case_count"] == 46
+    prepared = ROOT / "results/a3-route-model-preparation-cpu-audit-20261002-r2"
+    preparation_run = closed(prepared.name)
+    proof = json.loads((prepared / "result.json").read_text())
+    assert not proof["torch_imported"] and proof["new_native_calls"] == 0
+    assert proof["native_forward_parent_AST_unchanged"] and proof["request_math_KV_AST_unchanged_except_count"]
+    assert proof["total_requests_planned"] == 54 and proof["generation_tensors_planned"] == 167
+    assert all(sha(path) == digest for path, digest in proof["files"].items())
+    native = validate_native()
+    return {
+        "r5_actual_terminal": predecessor,
+        "current_native_actual_terminal": native_run,
+        "route_audit_actual_terminals": audit_runs,
+        "preparation_actual_terminal": preparation_run,
+        "native": native,
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out")
+    parser.add_argument("--check-only", action="store_true")
+    parser.add_argument("--lock-wait-seconds", type=float, default=43200)
+    args = parser.parse_args()
+    assert "torch" not in sys.modules and os.environ["CUDA_VISIBLE_DEVICES"] == ""
+    try:
+        dependency = certify()
+    except NotReady as error:
+        print(json.dumps({"stage": "NOT_RUN_WAITING_REAL_R5_QUALIFICATION", "reason": str(error), "torch_imported": False, "new_native_calls": 0}), flush=True)
+        return 75
+    if args.check_only:
+        print(json.dumps({"stage": "REAL_PREDECESSORS_VERIFIED_GPU_NOT_RUN", "head": HEAD, "torch_imported": False, "new_native_calls": 0}), flush=True)
+        return 0
+    assert args.out and 0 < args.lock_wait_seconds <= 43200
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    tools = Path(__file__).parent
+    prepared = ROOT / "results/a3-route-model-preparation-cpu-audit-20261002-r2/result.json"
+    frozen = json.loads(prepared.read_text())["files"]
+    versions = [
+        "run_a3_latest_e491_regression_admitted_20261002_r1.py",
+        "a3_route_decode_model_gpu_admitted_e491_prepared_20261002_r1.py",
+        "audit_a3_route_decode_wrapper_pair_cpu_e491_prepared_20261002_r1.py",
+        "audit_a3_route_decode_full_model_cpu_e491_prepared_20261002_r1.py",
+        "audit_a3_route_decode_generation_pair_cpu_e491_prepared_20261002_r1.py",
+    ]
+    frozen.update({str(tools / name): sha(tools / name) for name in versions})
+    frozen.update({str(Path(__file__)): sha(__file__), str(prepared): sha(prepared), str(LOGGER): sha(LOGGER)})
+    (out / "frozen_inputs.json").write_text(json.dumps({"head": HEAD, "files": frozen, "predecessors": dependency}, indent=2) + "\n")
+    runs = []
+    python = ROOT / "venvs/a3sfdlateste491/bin/python"
+
+    def logged(name, script, gpu=False, timeout=600, extra=()):
+        result = ROOT / "results" / name
+        launch = result.with_name(name + "-launch")
+        assert not result.exists() and not launch.exists()
+        env = os.environ.copy()
+        env.update(CUDA_VISIBLE_DEVICES="0" if gpu else "", CUDA_MODULE_LOADING="EAGER", PYTHONPATH=dependency["native"]["source"] + "/python")
+        argv = [str(python), str(tools / script), "--out", str(result), *map(str, extra)]
+        rc = subprocess.run([str(python), str(LOGGER), "--out", str(launch), "--cwd", str(ROOT), "--timeout", str(timeout), "--", *argv], env=env).returncode
+        actual = json.loads((launch / "run.json").read_text())
+        runs.append({"name": name, "actual_run": actual})
+        (out / "completed_runs.json").write_text(json.dumps(runs, indent=2) + "\n")
+        assert actual["status"] == "EXITED" and actual["returncode"] == rc == 0 and actual["signal"] is None, f"Real phase failed: {name}; raw logs retained"
+        return result
+
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        begin = time.monotonic()
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - begin > args.lock_wait_seconds:
+                    (out / "result.json").write_text(json.dumps({"stage": "NOT_RUN_SHARED_LOCK_BUSY", "torch_imported": False, "new_native_calls": 0}) + "\n")
+                    return 75
+                time.sleep(1)
+        certify()
+        assert "torch" not in sys.modules and all(sha(path) == digest for path, digest in frozen.items())
+        os.environ.update(A3_ITERATION_LOCK_HOLDER=str(os.getpid()), A3_ITERATION_LOCK_FD=str(lock.fileno()))
+        (out / "admission.json").write_text(
+            json.dumps(
+                {
+                    "stage": "SHARED_LOCK_ADMITTED_REAL_PREDECESSORS_VERIFIED",
+                    "holder": os.getpid(),
+                    "fd": lock.fileno(),
+                    "wait_seconds": time.monotonic() - begin,
+                    "torch_imported": False,
+                }
+            )
+            + "\n"
+        )
+        latest = logged(
+            "a3-latest-e491-regression-20261002-r1",
+            "run_a3_latest_e491_regression_admitted_20261002_r1.py",
+            gpu=True,
+            timeout=1400,
+        )
+        qualification = json.loads((latest / "result.json").read_text())
+        assert qualification["head"] == HEAD and qualification["passed"] == 31 and qualification["skipped"] == 0 and qualification["actual_native_calls"] == 61
+        wrapper = logged(
+            "a3-route-decode-wrapper-full-lateste491-20261002-r1",
+            "a3_route_decode_model_gpu_admitted_e491_prepared_20261002_r1.py",
+            gpu=True,
+            timeout=1400,
+            extra=("--phase", "wrapper_full"),
+        )
+        logged("a3-route-decode-wrapper-pair-e491-cpu-audit-20261002-r1", "audit_a3_route_decode_wrapper_pair_cpu_e491_prepared_20261002_r1.py")
+        full_audit = logged(
+            "a3-route-decode-full-model-e491-cpu-audit-20261002-r1",
+            "audit_a3_route_decode_full_model_cpu_e491_prepared_20261002_r1.py",
+            extra=("--input", wrapper),
+        )
+        quality = json.loads((full_audit / "result.json").read_text())
+        assert (
+            quality["quality_all_three_cases_both_gates"]
+            and quality["tensor_count"] == 12
+            and not quality["cuda_initialized"]
+            and quality["new_native_calls"] == 0
+        )
+        pair = json.loads((wrapper / "candidate/pair.json").read_text())
+        gain = all(
+            next(row for row in pair["comparisons"] if row["case"] == name)["cached_shuffle_over_routed_A_ratio"] > 1.02
+            for name in ("saved_first_expert", "granite_decode_e32_n1024_top8")
+        )
+        model_gain = False
+        model_comparisons = []
+        if gain:
+            logged(
+                "a3-route-decode-generation-lateste491-20261002-r1",
+                "a3_route_decode_model_gpu_admitted_e491_prepared_20261002_r1.py",
+                gpu=True,
+                timeout=4200,
+                extra=("--phase", "generation"),
+            )
+            audit = logged(
+                "a3-route-decode-generation-pair-e491-cpu-audit-20261002-r1", "audit_a3_route_decode_generation_pair_cpu_e491_prepared_20261002_r1.py"
+            )
+            data = json.loads((audit / "result.json").read_text())
+            assert data["quality_both_arms_all_five_numeric_gates_pass"] and data["quality_requests"] == 10 and data["tensor_count"] == 167
+            assert not data["application_all_five_answers_pass"] and not data["cuda_initialized"] and data["new_native_calls"] == 0
+            model_comparisons = data["comparisons"]
+            assert [row["case"] for row in model_comparisons] == ["prefix256", "prefix1024"]
+            model_gain = all(row["cached_shuffle_over_routed_A_request_ratio"] > 1.02 for row in model_comparisons)
+        assert all(sha(path) == digest for path, digest in frozen.items())
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        result = {
+            "stage": "ROUTED_A_FULL_MODEL_ITERATION_ACTUALLY_TERMINAL",
+            "head": HEAD,
+            "predecessor_and_boundary_capture_head": PREDECESSOR_HEAD,
+            "current_head_native_31": "COMPLETE",
+            "wrapper_required_gains_pass": gain,
+            "full32_generation_independent_CPU_audit": "COMPLETE" if gain else "NOT_RUN_WRAPPER_GAIN_REJECTED",
+            "private_paired_model_gain_both_prefixes": model_gain,
+            "wrapper_comparisons": pair["comparisons"],
+            "model_comparisons": model_comparisons,
+            "runs": runs,
+            "files": frozen,
+            "accepted_production_feature": False,
+            "original_default_K1024_quality": "HISTORICAL_FAILED_NOT_REPAIRED",
+            "original83_application_answer": "FALSE_UNCHANGED",
+            "all_A3_complete": False,
+            "service_final": "inactive",
+        }
+        (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps(result), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

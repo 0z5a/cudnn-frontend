@@ -1,0 +1,21 @@
+{
+  "launched_utc": "2026-10-02T09:24:53.986093+00:00",
+  "logger_pid": 904292,
+  "argv": [
+    "python3",
+    "/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-e491-native-preparation-20261002-r1",
+    "--cwd",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "--timeout",
+    "4200",
+    "--",
+    "python3",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_build_a3_latest_e491_20261002_r1.py"
+  ],
+  "source_sha256": "291b7898294912c31b9633079d2b099f84424455fd04becdfbfc053d210e2114",
+  "bundle_sha256": "495086211e55ccd6dbabf5c5496811954de9b24e04111ade03aaa3357fe29c44",
+  "GPU": "NOT_RUN_CPU_ONLY",
+  "CUDA_VISIBLE_DEVICES": ""
+}
