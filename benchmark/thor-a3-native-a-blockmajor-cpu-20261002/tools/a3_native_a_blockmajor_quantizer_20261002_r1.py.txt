@@ -1,0 +1,39 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Private native-A packing candidate, with original compact behavior outside K1024.
+
+Write the existing K32 component order directly with stack/reshape instead of
+component-major concatenation followed by two gathers and an index allocation.
+Quantization, residual dequantization and physical SFA packing stay unchanged.
+No original B/reference function, public support check or native kernel changes.
+GPU stream/reuse/model checks and frozen paired timings remain prerequisites.
+"""
+
+
+def prepare_native_a(q, compact_factory):
+    m, t, quantize, K_BLOCK = q.m, q.t, q.quantize, q.K_BLOCK
+    assert m.quantize_mxfp8 is quantize and K_BLOCK == 32
+    compact = compact_factory(q)
+
+    def expanded_quantize_native_a_blockmajor(value, operand):
+        if operand != "A":
+            raise ValueError("Private native quantizer supports A only; B and reference use the original function")
+        if value.shape[-1] != 1024:
+            return compact(value, operand)
+        high, _, scale_high = quantize(value)
+        low, _, scale_low = quantize(value.float() - m.dequantize(high, scale_high))
+        q_parts, s_parts = (
+            ((high, high, low, low), (scale_high, scale_high, scale_low, scale_low))
+            if operand == "A"
+            else ((high, low, high, low), (scale_high, scale_low, scale_high, scale_low))
+        )
+        q = t.stack([x.view(t.uint8).reshape(*x.shape[:-1], 32, 32) for x in q_parts], dim=-2).flatten(-3).view(t.float8_e4m3fn)
+        scale = t.stack(s_parts, dim=-1).flatten(-2)
+        rows, cols = q.shape[-2:]
+        assert cols == 4096
+        codes = (t.log2(scale).int() + 127).to(t.uint8)
+        raw = codes.reshape(-1, rows // 128, 4, 32, cols // 128, 4)
+        packed = raw.permute(0, 1, 4, 3, 2, 5).contiguous().view(t.float8_e8m0fnu)
+        return (q, packed, scale)
+
+    return expanded_quantize_native_a_blockmajor

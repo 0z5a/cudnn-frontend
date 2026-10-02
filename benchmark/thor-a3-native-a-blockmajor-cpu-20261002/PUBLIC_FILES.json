@@ -1,0 +1,91 @@
+{
+  "files": [
+    {
+      "path": "results/a3-native-a-blockmajor-cpu-audit-20261002-r1/result.json",
+      "original_path": "results/a3-native-a-blockmajor-cpu-audit-20261002-r1/result.json",
+      "bytes": 66687,
+      "sha256": "2b31383c87c4d6fc11c4a4b08bd9f667381590067669c2d22863a248fbf63fc6"
+    },
+    {
+      "path": "results/a3-native-a-blockmajor-cpu-audit-20261002-r1-launch/run.json",
+      "original_path": "results/a3-native-a-blockmajor-cpu-audit-20261002-r1-launch/run.json",
+      "bytes": 646,
+      "sha256": "586bac3e09c6581f4235e528039ac24693799fa12b34d68dd71dd91a68e36bfc"
+    },
+    {
+      "path": "results/a3-native-a-blockmajor-cpu-audit-20261002-r1-launch/stderr.log",
+      "original_path": "results/a3-native-a-blockmajor-cpu-audit-20261002-r1-launch/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-native-a-blockmajor-cpu-audit-20261002-r1-launch/stdout.log",
+      "original_path": "results/a3-native-a-blockmajor-cpu-audit-20261002-r1-launch/stdout.log",
+      "bytes": 5013,
+      "sha256": "58deb73a01b849e577ff4a6110599771cc0c3a3d9fda33a21adbca34acaceb60"
+    },
+    {
+      "path": "tools/a3_model_e2e_mergefix_20261001.py.txt",
+      "original_path": "tools/a3_model_e2e_mergefix_20261001.py",
+      "bytes": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "path": "tools/a3_mxfp8_bf16_staged_full_model_worker_20261001.py.txt",
+      "original_path": "tools/a3_mxfp8_bf16_staged_full_model_worker_20261001.py",
+      "bytes": 12860,
+      "sha256": "62304d6cc59fc2b604a19efe1c60c075e0737c6898de191404e4bbb6baf057d1"
+    },
+    {
+      "path": "tools/a3_native_a_blockmajor_quantizer_20261002_r1.py.txt",
+      "original_path": "tools/a3_native_a_blockmajor_quantizer_20261002_r1.py",
+      "bytes": 2015,
+      "sha256": "af7ecf392680c4fd4b9644119e2b3f65b416eddac9de2000d2a3d6004023d77e"
+    },
+    {
+      "path": "tools/a3_native_a_quantizer_compact_20261002_r1.py.txt",
+      "original_path": "tools/a3_native_a_quantizer_compact_20261002_r1.py",
+      "bytes": 2069,
+      "sha256": "625843454b5d996ea676dadd200baf6efe4864521a963af38efb0ec528f8b5ec"
+    },
+    {
+      "path": "tools/audit_a3_native_a_blockmajor_cpu_20261002_r1.py.txt",
+      "original_path": "tools/audit_a3_native_a_blockmajor_cpu_20261002_r1.py",
+      "bytes": 12322,
+      "sha256": "1571873722144e1bfe7e0d8d5d2027e0d885cea1757a2120f9aec35113e32d6f"
+    },
+    {
+      "path": "tools/pack_a3_native_a_blockmajor_cpu_evidence_20261002_r1.py.txt",
+      "original_path": "tools/pack_a3_native_a_blockmajor_cpu_evidence_20261002_r1.py",
+      "bytes": 2730,
+      "sha256": "de0afa2db7b8fc9a0e4e85d588d74a21efa5bae5ced2e93c28834871ffdf6632"
+    },
+    {
+      "path": "MANIFEST.json",
+      "original_path": "MANIFEST.json",
+      "bytes": 2788,
+      "sha256": "b897b1cf4b577871209a30ea5c6267a4d19373814ac418a6a4d4755c0d7c3dfa"
+    },
+    {
+      "path": "verification/A3_NATIVE_A_BLOCKMAJOR_CPU_SOURCE_20261002.json",
+      "original_path": "verification/A3_NATIVE_A_BLOCKMAJOR_CPU_SOURCE_20261002.json",
+      "bytes": 328,
+      "sha256": "03f3572e6dd006f363b4ef23e75881ee9664cf0a65ae37649a1400495dd7773d"
+    },
+    {
+      "path": "verification/A3_NATIVE_A_BLOCKMAJOR_CPU_RUN_20261002.json",
+      "original_path": "verification/A3_NATIVE_A_BLOCKMAJOR_CPU_RUN_20261002.json",
+      "bytes": 1083,
+      "sha256": "20c7142d9c80d91371e25110c85f98ff60f9901253164497d31abfc74d8901ee"
+    },
+    {
+      "path": "verification/A3_NATIVE_A_BLOCKMAJOR_CPU_MAC_TRANSPORT_20261002.json",
+      "original_path": "verification/A3_NATIVE_A_BLOCKMAJOR_CPU_MAC_TRANSPORT_20261002.json",
+      "bytes": 1289,
+      "sha256": "7a0633eab8958cfa3a446406e1afa98a6772e3c17830e4e4155da92544f2a1f6"
+    }
+  ],
+  "original_payloads": 10,
+  "GPU_validation": "NOT_RUN",
+  "performance_claim": false
+}

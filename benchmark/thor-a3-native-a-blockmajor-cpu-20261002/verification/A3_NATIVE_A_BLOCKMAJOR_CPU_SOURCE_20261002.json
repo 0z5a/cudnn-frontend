@@ -1,0 +1,8 @@
+{
+  "files": {
+    "a3_native_a_blockmajor_quantizer_20261002_r1.py": "af7ecf392680c4fd4b9644119e2b3f65b416eddac9de2000d2a3d6004023d77e",
+    "audit_a3_native_a_blockmajor_cpu_20261002_r1.py": "1571873722144e1bfe7e0d8d5d2027e0d885cea1757a2120f9aec35113e32d6f"
+  },
+  "status": "FROZEN_CPU_ONLY",
+  "GPU_validation": "NOT_RUN"
+}

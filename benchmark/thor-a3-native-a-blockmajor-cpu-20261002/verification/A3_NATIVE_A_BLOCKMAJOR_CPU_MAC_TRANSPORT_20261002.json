@@ -1,0 +1,30 @@
+{
+  "pack_returncode": 0,
+  "transfer_returncode": 0,
+  "archive_sha256": "8729c87e108434be656813b8c91b492451c1a3c2bc5699f033edb9f2208d963a",
+  "payload_files_verified": 10,
+  "manifest_sha256": "b897b1cf4b577871209a30ea5c6267a4d19373814ac418a6a4d4755c0d7c3dfa",
+  "archive": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-native-a-blockmajor-cpu-evidence-20261002.tar.gz",
+  "extraction": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-native-a-blockmajor-cpu-evidence-20261002",
+  "safe_regular_members": true,
+  "CPU_run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestac89/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_native_a_blockmajor_cpu_20261002_r1.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-native-a-blockmajor-cpu-audit-20261002-r1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-02T04:11:16.421934+00:00",
+    "deadline_seconds": 600.0,
+    "status": "EXITED",
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 32.38330850299826
+  },
+  "GPU_validation": "NOT_RUN",
+  "performance_claim": false
+}

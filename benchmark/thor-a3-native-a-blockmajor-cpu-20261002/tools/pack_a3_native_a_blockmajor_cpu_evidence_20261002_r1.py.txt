@@ -1,0 +1,60 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Closed private packing CPU evidence; exclude all GPU/model/cache artifacts."""
+
+import hashlib
+import json
+from pathlib import Path
+import tarfile
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    out = ROOT / "results/a3-native-a-blockmajor-cpu-audit-20261002-r1"
+    launch = out.with_name(out.name + "-launch")
+    run = json.loads((launch / "run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    proof = json.loads((out / "result.json").read_text())
+    assert proof["paired_cases"] == 48 and proof["paired_tensor_buffers"] == 144 and proof["outside_paired_buffers"] == 9
+    assert proof["exhaustive_encoded_order_slots"] == 4096 and proof["exhaustive_scale_order_slots"] == 128
+    assert not proof["cuda_initialized"] and proof["new_GPU_calls"] == proof["new_native_calls"] == 0
+    files = [x for directory in (out, launch) for x in directory.rglob("*") if x.is_file()]
+    files += [Path(path) for path, digest in proof["files"].items() if sha(Path(path)) == digest]
+    assert len(proof["files"]) == 5 and all(sha(Path(path)) == digest for path, digest in proof["files"].items())
+    files.append(Path(__file__))
+    files = sorted(set(files))
+    assert all(not x.is_symlink() and x.suffix not in [".pt", ".so", ".safetensors", ".bundle"] for x in files)
+    records = [{"path": str(x.relative_to(ROOT)), "sha256": sha(x), "bytes": x.stat().st_size} for x in files]
+    manifest = ROOT / "results/a3-native-a-blockmajor-cpu-evidence-20261002-manifest.json"
+    assert not manifest.exists()
+    manifest.write_text(
+        json.dumps({"stage": proof["stage"], "run": run, "GPU_validation": "NOT_RUN", "performance_claim": False, "files": records}, indent=2) + "\n"
+    )
+    archive = ROOT / "results/a3-native-a-blockmajor-cpu-evidence-20261002.tar.gz"
+    assert not archive.exists()
+    with tarfile.open(archive, "w:gz") as tar:
+        for file in files + [manifest]:
+            tar.add(file, arcname=str(file.relative_to(ROOT)), recursive=False)
+    print(
+        json.dumps(
+            {
+                "archive": str(archive),
+                "sha256": sha(archive),
+                "bytes": archive.stat().st_size,
+                "payload_files": len(files),
+                "manifest": str(manifest.relative_to(ROOT)),
+                "manifest_sha256": sha(manifest),
+            }
+        ),
+        flush=True,
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

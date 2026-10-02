@@ -1,0 +1,10 @@
+{
+  "scp_returncode": 0,
+  "remote_returncode": 0,
+  "stdout": "{\n  \"argv\": [\n    \"/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestac89/bin/python\",\n    \"/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_native_a_blockmajor_cpu_20261002_r1.py\",\n    \"--out\",\n    \"/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-native-a-blockmajor-cpu-audit-20261002-r1\"\n  ],\n  \"cwd\": \"/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928\",\n  \"started_utc\": \"2026-10-02T04:11:16.421934+00:00\",\n  \"deadline_seconds\": 600.0,\n  \"status\": \"EXITED\",\n  \"selected_env\": {\n    \"CUDA_VISIBLE_DEVICES\": \"\"\n  },\n  \"returncode\": 0,\n  \"signal\": null,\n  \"elapsed_seconds\": 32.38330850299826\n}\n{\"logger_returncode\": 0}\n",
+  "stderr": "",
+  "source_sha256": {
+    "a3_native_a_blockmajor_quantizer_20261002_r1.py": "af7ecf392680c4fd4b9644119e2b3f65b416eddac9de2000d2a3d6004023d77e",
+    "audit_a3_native_a_blockmajor_cpu_20261002_r1.py": "1571873722144e1bfe7e0d8d5d2027e0d885cea1757a2120f9aec35113e32d6f"
+  }
+}
