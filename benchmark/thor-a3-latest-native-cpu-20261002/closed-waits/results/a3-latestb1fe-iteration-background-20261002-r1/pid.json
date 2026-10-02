@@ -1,0 +1,20 @@
+{
+  "logger_pid": 589832,
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+    "/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latestb1fe-iteration-20261002-r1-launch",
+    "--cwd",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "--timeout",
+    "18000",
+    "--",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latestb1fe_iteration_coordinator_20261002_r1.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latestb1fe-iteration-20261002-r1"
+  ],
+  "depends_on": "a3-weight-plan-generation-20261002-r3 actual terminal0 + independent CPU audit",
+  "source_package_sha256": "eb2316674786010d5e325e214ec3a839fb5c166765717f46adaef35c3b551bbf"
+}

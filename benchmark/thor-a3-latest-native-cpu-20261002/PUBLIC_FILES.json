@@ -1,0 +1,421 @@
+{
+  "files": [
+    {
+      "path": "closed-waits/MANIFEST.json",
+      "archive": "a3-closed-lock-waits-evidence-20261002",
+      "original_archive_path": "MANIFEST.json",
+      "size": 6061,
+      "sha256": "d692e8b0ccd42fd88f1e1bdfc7b8e9e5c1646df3b1a7806facb3645e0d42871e",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "closed-waits/results/a3-latestb1fe-iteration-20261002-r1-launch/run.json",
+      "archive": "a3-closed-lock-waits-evidence-20261002",
+      "original_archive_path": "results/a3-latestb1fe-iteration-20261002-r1-launch/run.json",
+      "size": 644,
+      "sha256": "b355be5114eeb2e9726dbb8425912af334fa9a0beb3fe9f3a470f0bde662d1f4",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "closed-waits/results/a3-latestb1fe-iteration-20261002-r1-launch/stderr.log",
+      "archive": "a3-closed-lock-waits-evidence-20261002",
+      "original_archive_path": "results/a3-latestb1fe-iteration-20261002-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "closed-waits/results/a3-latestb1fe-iteration-20261002-r1-launch/stdout.log",
+      "archive": "a3-closed-lock-waits-evidence-20261002",
+      "original_archive_path": "results/a3-latestb1fe-iteration-20261002-r1-launch/stdout.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "closed-waits/results/a3-latestb1fe-iteration-20261002-r1/frozen_inputs.json",
+      "archive": "a3-closed-lock-waits-evidence-20261002",
+      "original_archive_path": "results/a3-latestb1fe-iteration-20261002-r1/frozen_inputs.json",
+      "size": 4203,
+      "sha256": "6c896a817ece2e0a87f6639ebebbec9c7e191e29ebcbc7e2c0b40ef0aa5f4ac4",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "closed-waits/results/a3-latestb1fe-iteration-20261002-r1/result.json",
+      "archive": "a3-closed-lock-waits-evidence-20261002",
+      "original_archive_path": "results/a3-latestb1fe-iteration-20261002-r1/result.json",
+      "size": 724,
+      "sha256": "74e0d6bac8a1cb9e32c8e0a69a0c9fe291b174ee11c88f32cb4d7eef39568028",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "closed-waits/results/a3-latestb1fe-iteration-background-20261002-r1/driver.log",
+      "archive": "a3-closed-lock-waits-evidence-20261002",
+      "original_archive_path": "results/a3-latestb1fe-iteration-background-20261002-r1/driver.log",
+      "size": 644,
+      "sha256": "b355be5114eeb2e9726dbb8425912af334fa9a0beb3fe9f3a470f0bde662d1f4",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "closed-waits/results/a3-latestb1fe-iteration-background-20261002-r1/pid.json",
+      "archive": "a3-closed-lock-waits-evidence-20261002",
+      "original_archive_path": "results/a3-latestb1fe-iteration-background-20261002-r1/pid.json",
+      "size": 972,
+      "sha256": "1086148ebbdf8f38345b26608e4a32632129d41a1fed9d004ce50b0d2bc26279",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "closed-waits/results/a3-weight-plan-generation-20261002-r3-launch/run.json",
+      "archive": "a3-closed-lock-waits-evidence-20261002",
+      "original_archive_path": "results/a3-weight-plan-generation-20261002-r3-launch/run.json",
+      "size": 698,
+      "sha256": "fed920cb1824f96da031aeb70530c6e073cb2befff1ada1ef467158ec73a7ff1",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "closed-waits/results/a3-weight-plan-generation-20261002-r3-launch/stderr.log",
+      "archive": "a3-closed-lock-waits-evidence-20261002",
+      "original_archive_path": "results/a3-weight-plan-generation-20261002-r3-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "closed-waits/results/a3-weight-plan-generation-20261002-r3-launch/stdout.log",
+      "archive": "a3-closed-lock-waits-evidence-20261002",
+      "original_archive_path": "results/a3-weight-plan-generation-20261002-r3-launch/stdout.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "closed-waits/results/a3-weight-plan-generation-20261002-r3/admission.json",
+      "archive": "a3-closed-lock-waits-evidence-20261002",
+      "original_archive_path": "results/a3-weight-plan-generation-20261002-r3/admission.json",
+      "size": 63,
+      "sha256": "46313790cea5ab14e35bd1c0a1b2854a693c31b917c8280d38296bf367e39db0",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "closed-waits/results/a3-weight-plan-generation-20261002-r3/frozen_inputs.json",
+      "archive": "a3-closed-lock-waits-evidence-20261002",
+      "original_archive_path": "results/a3-weight-plan-generation-20261002-r3/frozen_inputs.json",
+      "size": 172777,
+      "sha256": "f3e6f141a3b9437040bd5aa7c54de227babbd33fd912fc42a51d4343524e9a24",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "closed-waits/results/a3-weight-plan-generation-background-20261002-r3/driver.log",
+      "archive": "a3-closed-lock-waits-evidence-20261002",
+      "original_archive_path": "results/a3-weight-plan-generation-background-20261002-r3/driver.log",
+      "size": 698,
+      "sha256": "fed920cb1824f96da031aeb70530c6e073cb2befff1ada1ef467158ec73a7ff1",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "closed-waits/results/a3-weight-plan-generation-background-20261002-r3/pid.json",
+      "archive": "a3-closed-lock-waits-evidence-20261002",
+      "original_archive_path": "results/a3-weight-plan-generation-background-20261002-r3/pid.json",
+      "size": 886,
+      "sha256": "85c66d29f8d6a807dd7dc34d3af4b19f3297328c2d1344720b414225950aacd3",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "closed-waits/tools/a3_latestb1fe_iteration_coordinator_20261002_r1.py.txt",
+      "archive": "a3-closed-lock-waits-evidence-20261002",
+      "original_archive_path": "tools/a3_latestb1fe_iteration_coordinator_20261002_r1.py",
+      "size": 9470,
+      "sha256": "491e37b04fcde1a4ccc5a86efd3fc1786c42703e04409bc0270d2b7ac45d57c4",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "closed-waits/tools/a3_weight_plan_generation_queued_20261002_r2.py.txt",
+      "archive": "a3-closed-lock-waits-evidence-20261002",
+      "original_archive_path": "tools/a3_weight_plan_generation_queued_20261002_r2.py",
+      "size": 8123,
+      "sha256": "9f9659c267ccd1e2a3d28b75568df4fc4ee0541dffd46cc8def5160c559988f6",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "latest-build/MANIFEST.json",
+      "archive": "a3-latest-b1fe-build-evidence-20261002",
+      "original_archive_path": "MANIFEST.json",
+      "size": 5365,
+      "sha256": "2576ef3ab34a9f392111fb4103cc2d4f2de78ded38f08b6393174a488526aa73",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "latest-build/a3sfdlatestb1fe/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py.txt",
+      "archive": "a3-latest-b1fe-build-evidence-20261002",
+      "original_archive_path": "a3sfdlatestb1fe/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+      "size": 52640,
+      "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "latest-build/a3sfdlatestb1fe/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py.txt",
+      "archive": "a3-latest-b1fe-build-evidence-20261002",
+      "original_archive_path": "a3sfdlatestb1fe/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+      "size": 131027,
+      "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "latest-build/a3sfdlatestb1fe/python/pygraph/sdpa_thd_binding.cpp.txt",
+      "archive": "a3-latest-b1fe-build-evidence-20261002",
+      "original_archive_path": "a3sfdlatestb1fe/python/pygraph/sdpa_thd_binding.cpp",
+      "size": 29152,
+      "sha256": "443468c439ba7eca9dbf953b081d6547eb414f858c04fe1cb499899600358b5a",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "latest-build/a3sfdlatestb1fe/test/AGENTS.md",
+      "archive": "a3-latest-b1fe-build-evidence-20261002",
+      "original_archive_path": "a3sfdlatestb1fe/test/AGENTS.md",
+      "size": 50763,
+      "sha256": "9645b88e8217e18e2468af4ba8aa63ce97e1c0135f10f5ea1d15d9d3e970b9c2",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "latest-build/a3sfdlatestb1fe/test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py.txt",
+      "archive": "a3-latest-b1fe-build-evidence-20261002",
+      "original_archive_path": "a3sfdlatestb1fe/test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+      "size": 9189,
+      "sha256": "38f60c55058056ccc222ec0699d664e91d6526f2bdd8fce5832c0a89ff2f4a34",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "latest-build/a3sfdlatestb1fe/test/python/gemm/cutedsl/test_swiglu_amax_per_call.py.txt",
+      "archive": "a3-latest-b1fe-build-evidence-20261002",
+      "original_archive_path": "a3sfdlatestb1fe/test/python/gemm/cutedsl/test_swiglu_amax_per_call.py",
+      "size": 2164,
+      "sha256": "d3017b0723ce039fb89e6db5770bdab80e56613e0f6e8cb8873f3b19cda4a465",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "latest-build/a3sfdlatestb1fe/test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py.txt",
+      "archive": "a3-latest-b1fe-build-evidence-20261002",
+      "original_archive_path": "a3sfdlatestb1fe/test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py",
+      "size": 3535,
+      "sha256": "5c9587dea4ffbf8d33e3b7e25197e9c8a5463763a4390b8f113fb3e68e649af7",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "latest-build/results/a3-latest-b1fe-native-provenance-20261002.json",
+      "archive": "a3-latest-b1fe-build-evidence-20261002",
+      "original_archive_path": "results/a3-latest-b1fe-native-provenance-20261002.json",
+      "size": 19685,
+      "sha256": "b1a05300315b5016a0e6c4bbf37f2a80aa0dbea59aef1846b486b0e31d94383b",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "latest-build/results/a3-latest-b1fe-prebuild-20261002.json",
+      "archive": "a3-latest-b1fe-build-evidence-20261002",
+      "original_archive_path": "results/a3-latest-b1fe-prebuild-20261002.json",
+      "size": 18253,
+      "sha256": "68bb932e539b5f66167d30a79e8e6576e424bec7fca39283ac22a0d5bc1f4914",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "latest-build/results/build-a3-latest-b1fe-20261002-r1/run.json",
+      "archive": "a3-latest-b1fe-build-evidence-20261002",
+      "original_archive_path": "results/build-a3-latest-b1fe-20261002-r1/run.json",
+      "size": 592,
+      "sha256": "725656ebda8831d33b09088cc951bf24db20c3b3ae25f815c28f654070575cbc",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "latest-build/results/build-a3-latest-b1fe-20261002-r1/stderr.log",
+      "archive": "a3-latest-b1fe-build-evidence-20261002",
+      "original_archive_path": "results/build-a3-latest-b1fe-20261002-r1/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "latest-build/results/build-a3-latest-b1fe-20261002-r1/stdout.log",
+      "archive": "a3-latest-b1fe-build-evidence-20261002",
+      "original_archive_path": "results/build-a3-latest-b1fe-20261002-r1/stdout.log",
+      "size": 1519,
+      "sha256": "e8dfc44efcb3162714fa04c502f5123fa0977d62a2ac7238c118ca77fde1db0e",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "latest-build/results/prepare-build-a3-latest-b1fe-20261002-r1-launch/run.json",
+      "archive": "a3-latest-b1fe-build-evidence-20261002",
+      "original_archive_path": "results/prepare-build-a3-latest-b1fe-20261002-r1-launch/run.json",
+      "size": 519,
+      "sha256": "5329c6117b41b184518deb373b871fe7551f0aa4d21ca669d2ed7728610db1aa",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "latest-build/results/prepare-build-a3-latest-b1fe-20261002-r1-launch/stderr.log",
+      "archive": "a3-latest-b1fe-build-evidence-20261002",
+      "original_archive_path": "results/prepare-build-a3-latest-b1fe-20261002-r1-launch/stderr.log",
+      "size": 523,
+      "sha256": "1e056b34376dffc36a85af02115ab151e2bde8c1505545a3f83781b9d032c676",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "latest-build/results/prepare-build-a3-latest-b1fe-20261002-r1-launch/stdout.log",
+      "archive": "a3-latest-b1fe-build-evidence-20261002",
+      "original_archive_path": "results/prepare-build-a3-latest-b1fe-20261002-r1-launch/stdout.log",
+      "size": 1250,
+      "sha256": "08467bddf34ba7ff8e296ee2c58355d478b693fcebdeffbc4ffa0c22df590ee3",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "latest-build/tools/prepare_build_a3_latest_b1fe_20261002_r1.py.txt",
+      "archive": "a3-latest-b1fe-build-evidence-20261002",
+      "original_archive_path": "tools/prepare_build_a3_latest_b1fe_20261002_r1.py",
+      "size": 6761,
+      "sha256": "7b28a1a56cbf14067af6a2669487f9f073a6a7ed6f3cbc999ae143cdf7ad4632",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "compact-cpu/MANIFEST.json",
+      "archive": "a3-native-a-compact-cpu-evidence-20261002",
+      "original_archive_path": "MANIFEST.json",
+      "size": 2452,
+      "sha256": "db0d96c456113e60750102a03c567d5cc671ad96e15a23d45437aed2adae2187",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "compact-cpu/results/a3-native-a-compact-cpu-audit-20261002-r1-launch/run.json",
+      "archive": "a3-native-a-compact-cpu-evidence-20261002",
+      "original_archive_path": "results/a3-native-a-compact-cpu-audit-20261002-r1-launch/run.json",
+      "size": 651,
+      "sha256": "b9669db678105c348df0e7fcb7884db7dd348eb315f912fd9ba0e9ca53244579",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "compact-cpu/results/a3-native-a-compact-cpu-audit-20261002-r1-launch/stderr.log",
+      "archive": "a3-native-a-compact-cpu-evidence-20261002",
+      "original_archive_path": "results/a3-native-a-compact-cpu-audit-20261002-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "compact-cpu/results/a3-native-a-compact-cpu-audit-20261002-r1-launch/stdout.log",
+      "archive": "a3-native-a-compact-cpu-evidence-20261002",
+      "original_archive_path": "results/a3-native-a-compact-cpu-audit-20261002-r1-launch/stdout.log",
+      "size": 1546,
+      "sha256": "d5226783028b7ecdcb603a13e9435803becfdc1264f96ae8e2972a3d66a9be2d",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "compact-cpu/results/a3-native-a-compact-cpu-audit-20261002-r1/result.json",
+      "archive": "a3-native-a-compact-cpu-evidence-20261002",
+      "original_archive_path": "results/a3-native-a-compact-cpu-audit-20261002-r1/result.json",
+      "size": 61586,
+      "sha256": "01ccd99e51eee1cffa2540ca044539f403595a8e032d6c53c3b25549ac4f2e41",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "compact-cpu/tools/a3_model_e2e_mergefix_20261001.py.txt",
+      "archive": "a3-native-a-compact-cpu-evidence-20261002",
+      "original_archive_path": "tools/a3_model_e2e_mergefix_20261001.py",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "compact-cpu/tools/a3_mxfp8_bf16_staged_full_model_worker_20261001.py.txt",
+      "archive": "a3-native-a-compact-cpu-evidence-20261002",
+      "original_archive_path": "tools/a3_mxfp8_bf16_staged_full_model_worker_20261001.py",
+      "size": 12860,
+      "sha256": "62304d6cc59fc2b604a19efe1c60c075e0737c6898de191404e4bbb6baf057d1",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "compact-cpu/tools/a3_native_a_quantizer_compact_20261002_r1.py.txt",
+      "archive": "a3-native-a-compact-cpu-evidence-20261002",
+      "original_archive_path": "tools/a3_native_a_quantizer_compact_20261002_r1.py",
+      "size": 2069,
+      "sha256": "625843454b5d996ea676dadd200baf6efe4864521a963af38efb0ec528f8b5ec",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "compact-cpu/tools/audit_a3_native_a_quantizer_compact_cpu_20261002_r1.py.txt",
+      "archive": "a3-native-a-compact-cpu-evidence-20261002",
+      "original_archive_path": "tools/audit_a3_native_a_quantizer_compact_cpu_20261002_r1.py",
+      "size": 8251,
+      "sha256": "44046e6602174a5006fa6ed8c7bc8aaa4d4aa416ff591ebb363b9669fccdb8e3",
+      "scope": "terminal CPU/closed wait raw evidence"
+    },
+    {
+      "path": "verification/A3_LATEST_B1FE_PREPUSH_LOCAL_CHECKS_20261002.json",
+      "original_mac_path": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_LATEST_B1FE_PREPUSH_LOCAL_CHECKS_20261002.json",
+      "size": 991,
+      "sha256": "15081c9cb57d12e043bda101b2d7dbf072a260cc4b388fe6ff6434d275f094bb",
+      "scope": "CPU/public source verification or prepared GPU kit only"
+    },
+    {
+      "path": "verification/A3_LATEST_B1FE_PR_VERIFIED_20261002.json",
+      "original_mac_path": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_LATEST_B1FE_PR_VERIFIED_20261002.json",
+      "size": 421,
+      "sha256": "c15983b2bb1db1e09c76524a2d33d03313761dd20b128947ca245d9cdd40b3c0",
+      "scope": "CPU/public source verification or prepared GPU kit only"
+    },
+    {
+      "path": "verification/A3_LATEST_B1FE_BUILD_MAC_TRANSPORT_20261002.json",
+      "original_mac_path": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_LATEST_B1FE_BUILD_MAC_TRANSPORT_20261002.json",
+      "size": 474,
+      "sha256": "4daeadb00f3ee944754c6f78075af6d177798453bcd3e7ac3949a39adff5e1cc",
+      "scope": "CPU/public source verification or prepared GPU kit only"
+    },
+    {
+      "path": "verification/A3_CLOSED_LOCK_WAITS_MAC_TRANSPORT_20261002.json",
+      "original_mac_path": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_CLOSED_LOCK_WAITS_MAC_TRANSPORT_20261002.json",
+      "size": 448,
+      "sha256": "33495382d9f1a6db6f03b93fa92ef95f79a1d49860f732e2d8ff8ade2d21a34b",
+      "scope": "CPU/public source verification or prepared GPU kit only"
+    },
+    {
+      "path": "verification/A3_NATIVE_A_COMPACT_CPU_MAC_TRANSPORT_20261002.json",
+      "original_mac_path": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_NATIVE_A_COMPACT_CPU_MAC_TRANSPORT_20261002.json",
+      "size": 970,
+      "sha256": "45e38cc09737902693acaf733fce1cb0c0ef1c1fa7f107810a2d61936231a883",
+      "scope": "CPU/public source verification or prepared GPU kit only"
+    },
+    {
+      "path": "verification/a3-native-a-compact-full-pipeline-source-20261002-r1.json",
+      "original_mac_path": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-native-a-compact-full-pipeline-source-20261002-r1.json",
+      "size": 856,
+      "sha256": "80433e0ae2c7acbd9c12f5035a8fc4465c4a40d42a36a28f61db2f12685bceb4",
+      "scope": "CPU/public source verification or prepared GPU kit only"
+    },
+    {
+      "path": "pending-source/a3_native_a_compact_full_model_generation_pair_20261002_r1.py.txt",
+      "original_mac_path": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3_native_a_compact_full_model_generation_pair_20261002_r1.py",
+      "size": 23510,
+      "sha256": "91cf6b4eacbacf285877a7a45a370ed6f146e7ae8c23ca89e4ad8aaf6d69b6d5",
+      "scope": "frozen queued experiment; GPU/audit bodies NOT_RUN"
+    },
+    {
+      "path": "pending-source/audit_a3_native_a_compact_full_model_generation_pair_cpu_20261002_r1.py.txt",
+      "original_mac_path": "/Users/0z5a/Documents/infra/thor-validation-20260930/audit_a3_native_a_compact_full_model_generation_pair_cpu_20261002_r1.py",
+      "size": 19999,
+      "sha256": "8f06e19f0e2b0af6b05eafff5842d637016ab6fb127bf4651514149cc1a3ce72",
+      "scope": "frozen queued experiment; GPU/audit bodies NOT_RUN"
+    },
+    {
+      "path": "pending-source/a3_native_a_compact_gpu_admitted_20261002_r1.py.txt",
+      "original_mac_path": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3_native_a_compact_gpu_admitted_20261002_r1.py",
+      "size": 4361,
+      "sha256": "10cdea0f78a2d76045d860dd4155df777043369dd2c30fb6d1b5fbc57a72770b",
+      "scope": "frozen queued experiment; GPU/audit bodies NOT_RUN"
+    },
+    {
+      "path": "pending-source/a3_native_a_compact_pipeline_queued_20261002_r1.py.txt",
+      "original_mac_path": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3_native_a_compact_pipeline_queued_20261002_r1.py",
+      "size": 8141,
+      "sha256": "61bcfcd7d9e5d5eb24938cf1640f5574c8e86a3b417deb66e4b662b51528fc70",
+      "scope": "frozen queued experiment; GPU/audit bodies NOT_RUN"
+    }
+  ],
+  "terminal_archive_original_payloads": 40,
+  "terminal_archive_manifests": 3,
+  "GPU_and_model_test_scope": "NOT_RUN_NEW_B57_OR_COMPACT_A"
+}

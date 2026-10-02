@@ -1,0 +1,11 @@
+{
+  "files": {
+    "a3_native_a_compact_full_model_generation_pair_20261002_r1.py": "91cf6b4eacbacf285877a7a45a370ed6f146e7ae8c23ca89e4ad8aaf6d69b6d5",
+    "audit_a3_native_a_compact_full_model_generation_pair_cpu_20261002_r1.py": "8f06e19f0e2b0af6b05eafff5842d637016ab6fb127bf4651514149cc1a3ce72",
+    "a3_native_a_compact_gpu_admitted_20261002_r1.py": "10cdea0f78a2d76045d860dd4155df777043369dd2c30fb6d1b5fbc57a72770b",
+    "a3_native_a_compact_pipeline_queued_20261002_r1.py": "61bcfcd7d9e5d5eb24938cf1640f5574c8e86a3b417deb66e4b662b51528fc70"
+  },
+  "package_sha256": "d3ccdff6be6bb6ea665773da35344a22448103e330d450a2854c695cbe62337b",
+  "scope": "separate private native-A closure only; no global original B/reference quantizer assignment; actual GPU NOT_RUN",
+  "requires": "existing current latest31 and cache7 full32 CPU-qualified; shared flock"
+}

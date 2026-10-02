@@ -1,0 +1,16 @@
+{
+  "archive_sha256": "150a54d6adf0864583cf9183a70a1604f8525bda9aec67264ba9839ee92eb880",
+  "original_payloads_byte_verified": 16,
+  "actual_runs": {
+    "a3-weight-plan-generation-20261002-r3": {
+      "returncode": 75,
+      "torch_imported": false
+    },
+    "a3-latestb1fe-iteration-20261002-r1": {
+      "returncode": 75,
+      "torch_imported": false
+    }
+  },
+  "excluded": "PT/models/cache/engines/native binaries",
+  "new_GPU_calls": 0
+}

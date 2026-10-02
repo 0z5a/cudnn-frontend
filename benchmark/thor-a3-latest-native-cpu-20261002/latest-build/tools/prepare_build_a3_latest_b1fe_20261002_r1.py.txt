@@ -1,0 +1,141 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Independent latest-upstream checkout and fresh CPU-only native build."""
+
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "b57c65f1a1b60c2405e1e04c6b5ec6c6b2903bb5"
+BASE = "b1fe8a0f9e7701cea8d6f7f0ad8c11d043e024fc"
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    old, source = ROOT / "a3sfdlatest29a0", ROOT / "a3sfdlatestb1fe"
+    bundle = ROOT / "tools/a3-latest-b1fe-20261002.bundle"
+    assert sha(bundle) == "27d265ba9420625d84ee6b048e61d120fc7a7cc4e43e7936353d10b01e6c4db3"
+    assert not source.exists()
+    subprocess.run(["git", "clone", "--shared", "--no-checkout", str(old), str(source)], check=True)
+    subprocess.run(["git", "-C", str(source), "bundle", "verify", str(bundle)], check=True)
+    subprocess.run(["git", "-C", str(source), "fetch", str(bundle), "codex/a3-sfd-latest-b1fe-20261002"], check=True)
+    subprocess.run(["git", "-C", str(source), "checkout", "--detach", HEAD], check=True)
+    assert subprocess.check_output(["git", "-C", str(source), "merge-base", "HEAD", BASE], text=True).strip() == BASE
+    files = subprocess.check_output(["git", "-C", str(source), "ls-files"], text=True).splitlines()
+    native = [
+        p
+        for p in files
+        if p.startswith(("include/", "cmake/"))
+        or p in ("CMakeLists.txt", "setup.py", "pyproject.toml")
+        or (p.startswith("python/") and Path(p).suffix in (".h", ".hpp", ".cpp", ".cc", ".cu", ".c"))
+    ]
+    changed = [p for p in native if not (old / p).exists() or (old / p).read_bytes() != (source / p).read_bytes()]
+    assert set(changed) == {"python/pygraph/sdpa_thd_binding.cpp"}
+    envdir = ROOT / "venvs/a3sfdlatestb1fe"
+    assert not envdir.exists()
+    subprocess.run(["python3", "-m", "venv", str(envdir)], check=True)
+    oldsite = ROOT / "venvs/a3sfdlatest29a0/lib/python3.12/site-packages"
+    site = envdir / "lib/python3.12/site-packages"
+    for p in oldsite.iterdir():
+        destination = site / p.name
+        if destination.exists() or p.name == "__pycache__":
+            continue
+        if p.name.startswith("__editable__"):
+            assert p.is_file()
+            destination.write_text(p.read_text().replace(str(old), str(source)))
+        elif p.name.startswith("nvidia_cudnn_frontend"):
+            if p.is_dir():
+                shutil.copytree(p, destination, symlinks=True)
+            else:
+                shutil.copyfile(p, destination)
+        elif p.suffix == ".pth":
+            destination.write_bytes(p.read_bytes())
+        else:
+            destination.symlink_to(p, target_is_directory=p.is_dir())
+    shared = Path("/home/jwipc/projects/host-gateway/.vllm")
+    env = os.environ.copy()
+    env.update(
+        PATH=str(shared / "bin") + ":" + env["PATH"],
+        CUDAToolkit_ROOT="/usr/local/cuda-13.2",
+        CUDA_PATH="/usr/local/cuda-13.2",
+        CUDNN_PATH=str(shared / "lib/python3.12/site-packages/nvidia/cudnn"),
+        FETCHCONTENT_SOURCE_DIR_DLPACK="/home/jwipc/experiments/sm110-execution-20260928/sources/dlpack",
+        CMAKE_BUILD_PARALLEL_LEVEL="2",
+        CMAKE_PREFIX_PATH=str(site / "pybind11/share/cmake/pybind11"),
+    )
+    python = envdir / "bin/python"
+    result = ROOT / "results/build-a3-latest-b1fe-20261002-r1"
+    record = {
+        "head": HEAD,
+        "base": BASE,
+        "source": str(source),
+        "changed_native_inputs": changed,
+        "native_input_digests": [{"path": p, "sha256": sha(source / p)} for p in native],
+        "harness_sha256": sha(Path(__file__)),
+        "bundle_sha256": sha(bundle),
+        "GPU_tests": "NOT_RUN",
+        "service_enablement_changed": False,
+    }
+    (ROOT / "results/a3-latest-b1fe-prebuild-20261002.json").write_text(json.dumps(record, indent=2) + "\n")
+    logger = Path("/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py")
+    rc = subprocess.run(
+        [
+            str(python),
+            str(logger),
+            "--out",
+            str(result),
+            "--cwd",
+            str(source),
+            "--timeout",
+            "3600",
+            "--",
+            str(python),
+            "-m",
+            "pip",
+            "install",
+            "--no-deps",
+            "--no-build-isolation",
+            "-e",
+            str(source),
+        ],
+        env=env,
+    ).returncode
+    if rc:
+        return rc
+    run = json.loads((result / "run.json").read_text())
+    assert run["returncode"] == 0 and run["status"] == "EXITED"
+    bindings = list((source / "python").rglob("_compiled_module*.so"))
+    assert len(bindings) == 1
+    validation_code = "import os,json,torch,cudnn; from cudnn import _compiled_module as b; assert os.environ['CUDA_VISIBLE_DEVICES']=='' and not torch.cuda.is_initialized(); print(json.dumps({'torch':torch.__version__,'torch_git':torch.version.git_version,'cudnn_path':cudnn.__file__,'binding_path':b.__file__,'cuda_initialized':torch.cuda.is_initialized(),'cuda_visible_devices':os.environ['CUDA_VISIBLE_DEVICES']}))"
+    validation = json.loads(subprocess.check_output([str(python), "-c", validation_code], env=env, cwd=source, text=True))
+    assert Path(validation["cudnn_path"]).resolve().is_relative_to(source / "python")
+    assert Path(validation["binding_path"]).resolve() == bindings[0].resolve()
+    assert not validation["cuda_initialized"] and validation["cuda_visible_devices"] == ""
+    assert all(sha(source / item["path"]) == item["sha256"] for item in record["native_input_digests"])
+    assert subprocess.check_output(["git", "-C", str(old), "rev-parse", "HEAD"], text=True).strip() == "a24a7401bb7d26d42d88d98b316f634ef487301c"
+    assert not subprocess.check_output(["git", "-C", str(old), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    record.update(
+        native_build="FRESH_RC0",
+        build_run=run,
+        binding={"path": str(bindings[0]), "sha256": sha(bindings[0])},
+        import_validation=validation,
+        new_native_calls=0,
+        old_source_unchanged=True,
+    )
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    (ROOT / "results/a3-latest-b1fe-native-provenance-20261002.json").write_text(json.dumps(record, indent=2) + "\n")
+    print(json.dumps({"head": HEAD, "base": BASE, "fresh_build_rc": 0, "binding": record["binding"], "GPU_tests": "NOT_RUN"}), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

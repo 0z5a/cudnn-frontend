@@ -1,0 +1,12 @@
+{
+  "head": "b57c65f1a1b60c2405e1e04c6b5ec6c6b2903bb5",
+  "draft": true,
+  "body_sha256": "ff598e028aaf027549ed014badbedffdb2db8054c219c256dc8753e42e150d3c",
+  "source_push_rc": 0,
+  "fresh_native_build_rc": 0,
+  "last_GPU_tested_head": "a24a7401bb7d26d42d88d98b316f634ef487301c",
+  "new_GPU_tests": "NOT_RUN",
+  "prepush_format_and_license_rc": 0,
+  "all7_PR_diff_paths_identical_to_A24": true,
+  "A3_complete": false
+}

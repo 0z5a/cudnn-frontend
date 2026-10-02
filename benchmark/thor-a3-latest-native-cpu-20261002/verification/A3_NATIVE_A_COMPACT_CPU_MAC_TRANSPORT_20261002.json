@@ -1,0 +1,27 @@
+{
+  "archive_sha256": "bffbb3eee37f4480949d2e2f9be2b7d012e950a70015681fb91fa0ef7bc155e4",
+  "original_payloads_byte_verified": 8,
+  "actual_run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestb1fe/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_native_a_quantizer_compact_cpu_20261002_r1.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-native-a-compact-cpu-audit-20261002-r1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-02T02:32:35.298790+00:00",
+    "deadline_seconds": 180.0,
+    "status": "EXITED",
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 22.701639708000585
+  },
+  "paired_cases": 48,
+  "paired_buffers": 144,
+  "CUDA_initialized": false,
+  "GPU_validation": "NOT_RUN",
+  "performance_claim": false
+}

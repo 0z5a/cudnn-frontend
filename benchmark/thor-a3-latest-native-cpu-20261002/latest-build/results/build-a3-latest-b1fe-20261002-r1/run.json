@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestb1fe/bin/python",
+    "-m",
+    "pip",
+    "install",
+    "--no-deps",
+    "--no-build-isolation",
+    "-e",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestb1fe"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestb1fe",
+  "started_utc": "2026-10-02T02:21:40.006731+00:00",
+  "deadline_seconds": 3600.0,
+  "status": "EXITED",
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": ""
+  },
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 288.4336155819983
+}

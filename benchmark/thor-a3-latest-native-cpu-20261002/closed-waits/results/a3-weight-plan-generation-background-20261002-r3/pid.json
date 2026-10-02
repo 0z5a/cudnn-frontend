@@ -1,0 +1,21 @@
+{
+  "logger_pid": 568415,
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+    "/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-weight-plan-generation-20261002-r3-launch",
+    "--cwd",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest29a0",
+    "--timeout",
+    "5400",
+    "--",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_weight_plan_generation_queued_20261002_r2.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-weight-plan-generation-20261002-r3",
+    "--lock-wait-seconds",
+    "3600"
+  ],
+  "prior_r2": "EXITED75_LOCK_BUSY_NO_TORCH_NO_GPU"
+}

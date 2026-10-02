@@ -1,0 +1,166 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Frozen cached-weight-plan full32/E2E admission after actual GPU and CPU proofs."""
+
+import argparse
+import fcntl
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import sys
+import subprocess
+import time
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "a24a7401bb7d26d42d88d98b316f634ef487301c"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def terminal(folder):
+    run = json.loads(folder.with_name(folder.name + "-launch").joinpath("run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    return run
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--out", required=True)
+    p.add_argument("--lock-wait-seconds", type=float, default=3600.0)
+    args = p.parse_args()
+    assert 0 < args.lock_wait_seconds <= 7200
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    tools = Path(__file__).parent
+    candidate = ROOT / "results/a3-weight-plan-20261002-r1"
+    candidate_run = terminal(candidate)
+    model = json.loads((candidate / "candidate/model/result.json").read_text())
+    assert model["source_head"] == HEAD and model["all_three_cases_both_gates"]
+    assert model["native_main_calls"] == model["native_repair_calls"] == 72
+    assert model["native_postprocess_kernel_launches"] == 216
+    assert model["weight_plan_generations"] == [1] * 24
+    audits = {}
+    for kind, tensors in (("boundary", None), ("pair", 425), ("full_model", 12)):
+        folder = ROOT / f"results/a3-weight-plan-{kind}-cpu-audit-20261002-r1"
+        audits[kind] = {"run": terminal(folder), "result": json.loads((folder / "result.json").read_text())}
+        assert not audits[kind]["result"]["cuda_initialized"] and audits[kind]["result"]["new_native_calls"] == 0
+        if tensors is not None:
+            assert audits[kind]["result"]["tensor_count"] == tensors
+    assert audits["full_model"]["result"]["quality_all_three_cases_both_gates"]
+    native = json.loads((ROOT / "results/a3-latest-29a0-native-provenance-20261002.json").read_text())
+    pipeline = ROOT / "results/a3-latest29-postfixed-full-pipeline-20261002-r1"
+    terminal(pipeline)
+    qualification = json.loads((pipeline / "regression/result.json").read_text())
+    assert qualification["head"] == native["head"] == HEAD
+    assert qualification["passed"] == 31 and qualification["skipped"] == 0 and qualification["actual_native_calls"] == 61
+    assert qualification["binding"]["sha256"] == native["binding"]["sha256"]
+    paths = [
+        Path(__file__),
+        tools / "a3_weight_plan_full_generation_pair_20261002_r1.py",
+        tools / "a3_guarded_rounding_model_runtime_20261002_r4.py",
+        tools / "a3_guarded_rounding_request_runtime_20261002_r3.py",
+        tools / "a3_guarded_rounding_full_model_20261002_r8.py",
+        tools / "a3_guarded_rounding_native_20261002_r7.py",
+        tools / "a3_guarded_rounding_native_20261002_r4.py",
+        tools / "a3_mxfp8_bf16_staged_full_model_worker_20261001.py",
+        tools / "a3_all24_precision_probe_20261001.py",
+        tools / "a3_model_e2e_mergefix_20261001.py",
+        tools / "a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+        candidate / "result.json",
+        candidate / "candidate/result.json",
+        candidate / "candidate/model/result.json",
+        candidate / "candidate/boundaries/result.json",
+        pipeline / "regression/result.json",
+        ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001/input-token-ids.json",
+    ]
+    for kind in audits:
+        paths.append(ROOT / f"results/a3-weight-plan-{kind}-cpu-audit-20261002-r1/result.json")
+    builds = []
+    for version in (4, 7):
+        folder = ROOT / f"results/a3-guarded-rounding-build-cpu-20261002-r{version}"
+        terminal(folder)
+        build = json.loads((folder / "result.json").read_text())
+        assert sha(build["binary"]["path"]) == build["binary"]["sha256"]
+        assert all(sha(path) == digest for path, digest in build["sources"].items())
+        builds.append(build)
+        paths.extend(Path(path) for path in build["sources"])
+        paths.append(folder / "result.json")
+    frozen = {str(path): sha(path) for path in paths}
+    (out / "frozen_inputs.json").write_text(
+        json.dumps({"files": frozen, "native": native, "candidate_run": candidate_run, "audits": audits, "qualification": qualification}, indent=2) + "\n"
+    )
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        start = time.monotonic()
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - start > args.lock_wait_seconds:
+                    (out / "admission.json").write_text(json.dumps({"stage": "NOT_RUN_SHARED_LOCK_BUSY", "torch_imported": False}) + "\n")
+                    return 75
+                time.sleep(1)
+        assert "torch" not in sys.modules
+        assert all(sha(path) == digest for path, digest in frozen.items())
+        assert all(sha(Path(native["source"]) / item["path"]) == item["sha256"] for item in native["native_input_digests"])
+        assert sha(native["binding"]["path"]) == native["binding"]["sha256"]
+        (out / "admission.json").write_text(
+            json.dumps(
+                {
+                    "stage": "LOCK_ADMITTED",
+                    "pid": os.getpid(),
+                    "wait_seconds": time.monotonic() - start,
+                    "cuda_module_loading": os.environ.get("CUDA_MODULE_LOADING"),
+                }
+            )
+            + "\n"
+        )
+        args.expected_head, args.expected_source, args.expected_binding_sha = HEAD, native["source"], native["binding"]["sha256"]
+        q = load("a3_guard_boundary_quant", tools / "a3_mxfp8_bf16_staged_full_model_worker_20261001.py")
+        q.t.set_num_threads(4)
+        q.t.backends.cuda.matmul.allow_tf32 = False
+        q.t.backends.cudnn.allow_tf32 = False
+        q.t.set_float32_matmul_precision("highest")
+        assert q.t.cuda.get_device_capability() == (11, 0)
+        for imported in (q.m.cudnn, q.m.api, q.m._compiled_module):
+            assert Path(imported.__file__).resolve().is_relative_to(Path(native["source"]) / "python")
+        assert sha(q.m._compiled_module.__file__) == native["binding"]["sha256"]
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        load("a3_guard_boundary_cuda", tools / "a3_guarded_rounding_native_20261002_r7.py")
+        worker = load("a3_weight_plan_full_generation_pair", paths[1])
+        e2e = out / "e2e"
+        e2e.mkdir()
+        worker.execute(args, e2e, candidate / "candidate/boundaries")
+        assert all(sha(path) == digest for path, digest in frozen.items())
+        assert all(sha(build["binary"]["path"]) == build["binary"]["sha256"] for build in builds)
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        result = {
+            "stage": "LATEST_CACHED_WEIGHT_FULL32_E2E_TERMINAL",
+            "head": HEAD,
+            "base": native["base"],
+            "binding": native["binding"],
+            "e2e_result_sha256": sha(e2e / "result.json"),
+            "files": frozen,
+            "accepted_optimization": False,
+            "production_default_k1024_quality": "FAILED_UNCHANGED",
+            "service_final": "inactive",
+        }
+        (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps(result), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

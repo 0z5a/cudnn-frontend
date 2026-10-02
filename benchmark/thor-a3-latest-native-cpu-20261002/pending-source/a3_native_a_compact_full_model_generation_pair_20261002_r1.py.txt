@@ -1,0 +1,433 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Private cached7 whole-model pair: original versus compact native-A quantizer.
+
+All actual MXFP8/native integer arithmetic, B plans, support/stream/AMAX logic,
+original inputs/checkpoint/oracles/gates are unchanged. Only each native forward's
+q closure points to an A-only quantizer that drops a discarded final reconstruction.
+Original B and reference functions are never replaced. CPU-only proof alone is
+insufficient; direct GPU mutation/stream byte checks, full forwards, cached32
+quality and complete paired request timings are recorded here. No stock/default
+K1024 speedup or accepted production feature is claimed.
+"""
+
+import importlib.util
+import json
+from pathlib import Path
+import statistics
+import sys
+import hashlib
+from types import FunctionType, MethodType, SimpleNamespace
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def execute(args, out, boundary):
+    tools = Path(__file__).parent
+    folder = out / "runtime"
+    folder.mkdir()
+    factory = load("a3_predecode_request_factory", tools / "a3_guarded_rounding_request_runtime_20261002_r3.py")
+    setup = factory.prepare(args, folder, boundary)
+    r, request = setup["r"], setup["request"]
+    m, t, h = r.m, r.t, r.h
+    assert h.WEIGHT_PREPARE_CALLS == h.WEIGHT_PREPARE_KERNEL_LAUNCHES == 24
+    assert [a.b_plan.generations for a in r.adapters] == [1] * 24
+    prior_dir = m.ROOT / "results/a3-guard-pinned-generation-20261002-r1/e2e"
+    prior = json.loads((prior_dir / "result.json").read_text())
+    assert m.sha_file(prior_dir / "outputs.pt") == prior["outputs_sha256"] == "d52a9368a7ec96718a0419e50b53e27470ecd5f556fdf82af754f74952c49ded"
+    oracle = t.load(prior_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    original_expanded = r.q.expanded_quantize
+    original_quantize = m.quantize_mxfp8
+    compact_helper = load("a3_compact_native_A_quantizer", tools / "a3_native_a_quantizer_compact_20261002_r1.py")
+    compact = compact_helper.prepare_native_a(r.q)
+
+    def compact_expanded(value, operand):
+        a, sfa, scale = compact(value, operand)
+        return a, sfa, scale, None
+
+    proxy = SimpleNamespace(expanded_quantize=compact_expanded, quantize=original_quantize)
+
+    def cell(value):
+        return (lambda: value).__closure__[0]
+
+    original_forwards, compact_forwards, closure_rows = [], [], []
+    for adapter in r.adapters:
+        fn = adapter.forward.__func__
+        names = fn.__code__.co_freevars
+        assert names.count("q") == 1
+        index = names.index("q")
+        assert fn.__closure__[index].cell_contents is r.q
+        closure = list(fn.__closure__)
+        closure[index] = cell(proxy)
+        new = FunctionType(fn.__code__, fn.__globals__, fn.__name__, fn.__defaults__, tuple(closure))
+        assert new.__code__ is fn.__code__ and new.__globals__ is fn.__globals__
+        assert all(
+            old.cell_contents is changed.cell_contents for i, (old, changed) in enumerate(zip(fn.__closure__, new.__closure__, strict=True)) if i != index
+        )
+        original_forwards.append(adapter.forward)
+        compact_forwards.append(MethodType(new, adapter))
+        closure_rows.append(
+            {
+                "freevars": list(names),
+                "changed_cell": "q",
+                "code_bytecode_sha256": hashlib.sha256(fn.__code__.co_code).hexdigest(),
+                "same_code_and_globals": True,
+                "all_other_cells_same_object": True,
+            }
+        )
+    forward_arms = {"original_quantizer": original_forwards, "compact_quantizer": compact_forwards}
+    old_build = r.build
+    modules = {"original_quantizer": r.module, "compact_quantizer": r.module}
+    workers = {"cached7_only": h}
+    forward_workers = {"original_quantizer": h, "compact_quantizer": h}
+    r.repair_workers = (h,)
+    quant_boundary = gpu_quantization_boundary(r, compact, out)
+    paths = [
+        Path(__file__),
+        Path(factory.__file__),
+        tools / "a3_guarded_rounding_model_runtime_20261002_r4.py",
+        Path(h.__file__),
+        Path(compact_helper.__file__),
+        *setup["paths"],
+        prior_dir / "result.json",
+    ]
+    frozen = {str(path): m.sha_file(path) for path in paths}
+    saved, quality, observations = {}, [], []
+
+    def measure_counts():
+        return (m.NATIVE_CALLS, sum(w.POSTPROCESS_CALLS for w in workers.values()), sum(w.POSTPROCESS_KERNEL_LAUNCHES for w in workers.values()))
+
+    def equal(a, b):
+        return t.equal(a.contiguous().flatten().view(t.uint8), b.contiguous().flatten().view(t.uint8))
+
+    def run(ids, implementation):
+        for i, adapter in enumerate(r.adapters):
+            adapter.forward = forward_arms[implementation][i]
+            adapter.repair_module = modules[implementation]
+            adapter.repair_worker = forward_workers[implementation]
+        assert r.q.expanded_quantize is original_expanded and m.quantize_mxfp8 is original_quantize
+        value = request(ids, "native")
+        assert r.q.expanded_quantize is original_expanded and m.quantize_mxfp8 is original_quantize
+        value["implementation"] = implementation
+        return value
+
+    def select_forward(implementation):
+        for adapter, forward in zip(r.adapters, forward_arms[implementation], strict=True):
+            adapter.forward = forward
+
+    forward_probe = full_forward_probe(r, out, select_forward, measure_counts)
+    bm, br, bk = measure_counts()
+
+    def flush():
+        t.save(saved, out / "partial_outputs.pt")
+        (out / "partial.json").write_text(json.dumps({"quality": quality, "observations": observations}, indent=2) + "\n")
+
+    with t.inference_mode():
+        for name, ids in setup["cases"]:
+            value = run(ids, "compact_quantizer")
+            saved[name + "/input_ids"] = ids
+            for key in ("ids", "logits", "flags"):
+                saved[name + "/" + key] = value[key]
+            assert equal(ids, oracle[name + "/input_ids"])
+            same = equal(value["ids"], oracle[name + "/reference/ids"])
+            oe, be = m.difference(value["logits"], oracle[name + "/reference/logits"]), m.difference(value["logits"], oracle[name + "/stock_teacher/logits"])
+            application = next(row for row in prior["quality"] if row["case"] == name)
+            decoded = setup["text"](value["ids"])
+            row = {
+                "case": name,
+                "input_tokens": ids.shape[-1],
+                "new_tokens": 32,
+                "implementation": "compact_quantizer",
+                "native_oracle": oe,
+                "native_original_bf16_same_context": be,
+                "same_context_for_numeric_gates": same,
+                "oracle_gate_pass": same and oe["relative_l2"] <= 0.01,
+                "bf16_gate_pass": same and be["relative_l2"] <= 0.05,
+                "oracle_logits_byte_equal": equal(value["logits"], oracle[name + "/reference/logits"]),
+                "oracle_ids_byte_equal": same,
+                "original_stock_greedy_ids_byte_equal": equal(value["ids"], oracle[name + "/stock/ids"]),
+                "text": decoded,
+                "prior_original_stock_text": application["texts"]["stock"],
+                "application_answer_pass": bool(decoded) and (application["expected"] is None or application["expected"] in decoded.lower()),
+                "application_answer_unchanged_from_prior": decoded == application["texts"]["native"],
+                "flag_totals": value["flags"].sum((0, 1)).tolist(),
+                "native_main_calls": value["native_main_calls"],
+                "native_repair_calls": value["native_repair_calls"],
+                "native_postprocess_kernel_launches": value["native_postprocess_kernel_launches"],
+                "cache_type": value["cache_type"],
+                "cache_final_tokens": value["cache_final_tokens"],
+                "cache_object_reused": value["cache_object_reused"],
+                "timing": value["timing"],
+            }
+            quality.append(row)
+            flush()
+            print(json.dumps({"stage": "COMPACT_NATIVE_A_FULL32_QUALITY", **row}), flush=True)
+        numeric = all(row["oracle_gate_pass"] and row["bf16_gate_pass"] and row["application_answer_unchanged_from_prior"] for row in quality)
+        # Qualify unchanged numerical/behavior semantics, not the known baseline
+        # refusal. All application flags remain separately reported as actually run.
+        if numeric:
+            for name, ids in setup["cases"][3:]:
+                for stage, order in (
+                    ("warmup", ("original_quantizer", "compact_quantizer")),
+                    ("timed", ("original_quantizer", "compact_quantizer", "compact_quantizer", "original_quantizer")),
+                ):
+                    for position, implementation in enumerate(order):
+                        value = run(ids, implementation)
+                        assert equal(value["ids"], oracle[name + "/reference/ids"]) and equal(value["logits"], oracle[name + "/reference/logits"])
+                        key = f"{name}/{stage}/{position}"
+                        for field in ("ids", "logits", "flags"):
+                            saved[key + "/" + field] = value[field]
+                        observations.append(
+                            {
+                                "case": name,
+                                "input_tokens": ids.shape[-1],
+                                "new_tokens": 32,
+                                "stage": stage,
+                                "position": position,
+                                "implementation": implementation,
+                                **value["timing"],
+                                "native_main_calls": value["native_main_calls"],
+                                "native_repair_calls": value["native_repair_calls"],
+                                "native_postprocess_kernel_launches": value["native_postprocess_kernel_launches"],
+                                "cache_final_tokens": value["cache_final_tokens"],
+                                "cache_object_reused": value["cache_object_reused"],
+                                "oracle_logits_ids_byte_equal": True,
+                                "binary_sha256": (old_build if implementation == "original_quantizer" else r.build)["binary"]["sha256"],
+                            }
+                        )
+                        flush()
+                        print(json.dumps({"stage": "FULL_MODEL_PAIR_OBSERVATION", **observations[-1]}), flush=True)
+        m.attach(r.adapters, "stock")
+    comparisons = []
+    if numeric:
+        for name, ids in setup["cases"][3:]:
+            arms = {
+                implementation: [row for row in observations if row["stage"] == "timed" and row["case"] == name and row["implementation"] == implementation]
+                for implementation in ("original_quantizer", "compact_quantizer")
+            }
+            assert all(len(rows) == 2 for rows in arms.values())
+            medians = {
+                implementation: {key: statistics.median(row[key] for row in rows) for key in ("prefill_ms", "decode_ms", "request_ms")}
+                for implementation, rows in arms.items()
+            }
+            comparisons.append(
+                {
+                    "case": name,
+                    "median_ms": medians,
+                    "original_over_compact_request_ratio": medians["original_quantizer"]["request_ms"] / medians["compact_quantizer"]["request_ms"],
+                }
+            )
+    assert {str(path): m.sha_file(path) for path in paths} == frozen
+    for build in (old_build, r.build):
+        assert m.sha_file(build["binary"]["path"]) == build["binary"]["sha256"] and all(m.sha_file(path) == digest for path, digest in build["sources"].items())
+    t.save(saved, out / "outputs.pt")
+    assert h.WEIGHT_PREPARE_CALLS == h.WEIGHT_PREPARE_KERNEL_LAUNCHES == 24
+    assert [a.b_plan.generations for a in r.adapters] == [1] * 24
+    result = {
+        "stage": "COMPACT_NATIVE_A_FULL32_KV_AND_WHOLE_MODEL_PAIR_COMPLETE" if numeric else "COMPACT_NATIVE_A_FULL32_NUMERIC_OR_BEHAVIOR_FAILED_PAIR_NOT_RUN",
+        "scope": __doc__,
+        "head": args.expected_head,
+        "source": args.expected_source,
+        "quality_all_five_numeric_gates_pass": numeric,
+        "application_all_five_answers_pass": all(row["application_answer_pass"] for row in quality),
+        "quality": quality,
+        "observations": observations,
+        "comparisons": comparisons,
+        "native_main_calls": measure_counts()[0] - bm,
+        "native_repair_calls": measure_counts()[1] - br,
+        "native_postprocess_kernel_launches": measure_counts()[2] - bk,
+        "model_parameters": 1334628352,
+        "layers": 24,
+        "experts": 32,
+        "topk": 8,
+        "hidden": 1024,
+        "intermediate": 512,
+        "gemm_k": 4096,
+        "weight_plan_generations": [a.b_plan.generations for a in r.adapters],
+        "weight_preparation_excluded_from_warmed_request_latency": True,
+        "prepared_weight_native_kernel_launches": h.WEIGHT_PREPARE_KERNEL_LAUNCHES,
+        "files": frozen,
+        "outputs_sha256": m.sha_file(out / "outputs.pt"),
+        "prior_frozen_generation_outputs_sha256": prior["outputs_sha256"],
+        "old_native_build": old_build,
+        "native_a_quantization_boundary": quant_boundary,
+        "full_forward_probe": forward_probe,
+        "native_only_closure_override": {
+            "rows": closure_rows,
+            "original_B_and_reference_function_object_unchanged": r.q.expanded_quantize is original_expanded,
+            "original_m_quantize_object_unchanged": m.quantize_mxfp8 is original_quantize,
+            "only_changed_cell": "q",
+            "discarded_effective_now_none": True,
+        },
+        "new_native_build": r.build,
+        "diagnostic_flag_reductions_included_in_both_arms": True,
+        "paired_reference": "private_cached7_original_A_quantizer_same_native_arithmetic",
+        "original_forward_baseline_replaced": False,
+        "oracle_replaced": False,
+        "production_feature_accepted": False,
+        "service_final": "inactive",
+        "imports": {
+            name: {"path": imported.__file__, "sha256": m.sha_file(imported.__file__)}
+            for name, imported in (("cudnn", m.cudnn), ("api", m.api), ("binding", m._compiled_module))
+        },
+        "limits": "All5 actual full32 greedy/KV cases preserve original numerical gates and responses; known original-stock passcode83 refusal stays failed. Four timed ABBA observations at each256/1024 (two per private arm) after one warmup per arm. Whole-model latency comparison of original/compact A quantization over the same cached7 private rounding control only, not original BF16/productionK1024 gain or accepted production feature.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(
+        json.dumps({key: result[key] for key in ("stage", "quality_all_five_numeric_gates_pass", "application_all_five_answers_pass", "comparisons")}),
+        flush=True,
+    )
+
+
+def gpu_quantization_boundary(r, compact, out):
+    m, t, q = r.m, r.t, r.q
+    old_object, quantize_object = q.expanded_quantize, m.quantize_mxfp8
+    bm, br, bk = m.NATIVE_CALLS, r.h.POSTPROCESS_CALLS, r.h.POSTPROCESS_KERNEL_LAUNCHES
+    tiny, maximum = t.finfo(t.bfloat16).tiny, t.finfo(t.bfloat16).max
+    patterns = t.tensor([0.0, -0.0, tiny / 128, -tiny / 128, tiny, -tiny, maximum, -maximum, 448.0, -448.0, 1.0, -1.0], device="cuda")
+    generator = t.Generator(device="cuda").manual_seed(20261002)
+    streams = [t.cuda.Stream(), t.cuda.Stream()]
+    saved, rows = {}, []
+    for shape in ((256, 1024), (512, 1024)):
+        for dtype in (t.bfloat16, t.float32):
+            for kind in ("zero_signed", "finite_extremes", "changed_noncontiguous"):
+                if kind == "zero_signed":
+                    value = t.zeros(shape, dtype=dtype, device="cuda")
+                    value.reshape(-1)[1::2] = -0.0
+                elif kind == "finite_extremes":
+                    value = patterns.repeat((shape[0] * shape[1] + patterns.numel() - 1) // patterns.numel())[: shape[0] * shape[1]].reshape(shape).to(dtype)
+                else:
+                    base = t.randn((shape[0], shape[1] * 2), generator=generator, device="cuda").to(dtype)
+                    value = base[:, ::2]
+                    assert not value.is_contiguous()
+                for generation in (1, 2):
+                    ambient = t.cuda.current_stream()
+                    ready = t.cuda.Event()
+                    ready.record(ambient)
+                    stream = streams[generation - 1]
+                    stream.wait_event(ready)
+                    with t.cuda.stream(stream):
+                        if generation == 2:
+                            value.copy_(-value)
+                        original = q.expanded_quantize(value, "A")
+                        actual = compact(value, "A")
+                        completed = t.cuda.Event()
+                        completed.record(stream)
+                    assert t.cuda.current_stream() == ambient
+                    ambient.wait_event(completed)
+                    t.cuda.synchronize()
+                    index = len(rows)
+                    key = f"case{index}"
+                    saved[key + "/input"] = value.detach().cpu()
+                    outputs = []
+                    for name, a, b in zip(("a", "sfa", "scale"), actual, original[:3], strict=True):
+                        assert a.shape == b.shape and a.dtype == b.dtype and a.data_ptr() != b.data_ptr()
+                        aa, bb = a.detach().cpu(), b.detach().cpu()
+                        assert t.equal(aa.contiguous().view(t.uint8), bb.contiguous().view(t.uint8))
+                        saved[key + "/original/" + name], saved[key + "/compact/" + name] = bb, aa
+                        outputs.append({"name": name, "shape": list(a.shape), "dtype": str(a.dtype)})
+                    rows.append(
+                        {
+                            "key": key,
+                            "shape": list(shape),
+                            "dtype": str(dtype),
+                            "kind": kind,
+                            "generation": generation,
+                            "explicit_stream_index": generation - 1,
+                            "ambient_stream_restored": True,
+                            "output_bytes_equal": True,
+                            "output_buffers_distinct": True,
+                            "outputs": outputs,
+                        }
+                    )
+                    assert q.expanded_quantize is old_object and m.quantize_mxfp8 is quantize_object
+    errors = []
+    for shape in ((127, 1024), (256, 1000), (0, 1024)):
+        types = []
+        for fn in (old_object, compact):
+            try:
+                fn(t.zeros(shape, dtype=t.bfloat16, device="cuda"), "A")
+            except (AssertionError, RuntimeError, IndexError) as error:
+                types.append(type(error).__name__)
+            else:
+                types.append("SUCCEEDED")
+        assert types[0] == types[1] and types[0] != "SUCCEEDED"
+        errors.append({"shape": list(shape), "errors": types})
+    assert (m.NATIVE_CALLS, r.h.POSTPROCESS_CALLS, r.h.POSTPROCESS_KERNEL_LAUNCHES) == (bm, br, bk)
+    t.save(saved, out / "quantization_outputs.pt")
+    result = {
+        "stage": "GPU_QUANTIZATION_MUTATION_TWO_STREAM_BYTES_COMPLETE",
+        "rows": rows,
+        "cases": len(rows),
+        "tensor_count": len(saved),
+        "outputs_sha256": m.sha_file(out / "quantization_outputs.pt"),
+        "invalid_geometry": errors,
+        "native_GEMM_calls": 0,
+        "original_global_function_objects_unchanged": True,
+        "scope": "Native A quantization only; production kernel support/stream/AMAX guards unchanged and latest31 separately required",
+    }
+    (out / "quantization_boundary.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "cases": result["cases"], "tensor_count": result["tensor_count"]}), flush=True)
+    return result
+
+
+def full_forward_probe(r, out, select_forward, measure_counts):
+    m, t = r.m, r.t
+    baseline_dir = m.ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    oracle_dir = m.ROOT / "results/a3-mxfp8-bf16-staged-full-model-20261001-r1"
+    assert m.sha_file(baseline_dir / "outputs.pt") == "a997dac0bbd8b137ecbf7ddbefc5f356c2633d75a9d3cde1d035335cb028440f"
+    assert m.sha_file(oracle_dir / "outputs.pt") == "96dcdce434fd9efce3bc3045097725eb1024cdfeb68a68cadbddc78306b3babe"
+    baseline = t.load(baseline_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    oracle = t.load(oracle_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    saved, rows = {}, []
+    bm, br, bk = measure_counts()
+    with t.inference_mode():
+        for i, ids in enumerate((r.prompts[0], r.prompts[1], r.workloads["256"])):
+            stock = baseline[f"forward_{i}_stock"]
+            fixed = oracle[f"k32_mxfp8_dot_bf16_stage/{i}/reference"]
+            saved[f"case{i}/original_bf16"], saved[f"case{i}/fixed_oracle"] = stock, fixed
+            for arm in ("original_quantizer", "compact_quantizer"):
+                select_forward(arm)
+                m.attach(r.adapters, "native")
+                before = measure_counts()
+                value = r.model(input_ids=ids.cuda(), use_cache=False).logits.detach().cpu()
+                counts = tuple(end - begin for end, begin in zip(measure_counts(), before, strict=True))
+                assert counts == (24, 24, 72)
+                oe, be = m.difference(value, fixed), m.difference(value, stock)
+                assert t.equal(value.contiguous().view(t.uint8), fixed.contiguous().view(t.uint8))
+                assert oe["relative_l2"] <= 0.01 and be["relative_l2"] <= 0.05
+                saved[f"case{i}/" + arm] = value
+                rows.append(
+                    {
+                        "case": i,
+                        "input_tokens": ids.shape[-1],
+                        "implementation": arm,
+                        "native_oracle": oe,
+                        "native_original_bf16": be,
+                        "oracle_bytes_equal": True,
+                        "counts": list(counts),
+                    }
+                )
+    totals = tuple(end - begin for end, begin in zip(measure_counts(), (bm, br, bk), strict=True))
+    assert totals == (144, 144, 432) and len(saved) == 12
+    t.save(saved, out / "forward_outputs.pt")
+    result = {
+        "stage": "COMPACT_NATIVE_A_ALL3_ORIGINAL_AND_NEW_FULL_FORWARDS_COMPLETE",
+        "rows": rows,
+        "counts": list(totals),
+        "tensor_count": 12,
+        "outputs_sha256": m.sha_file(out / "forward_outputs.pt"),
+        "original_gates": {"fixed_oracle": 0.01, "original_BF16": 0.05},
+        "baseline_sha256": m.sha_file(baseline_dir / "outputs.pt"),
+        "oracle_sha256": m.sha_file(oracle_dir / "outputs.pt"),
+        "baseline_and_oracle_replaced": False,
+    }
+    (out / "full_forward_probe.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "counts": result["counts"]}), flush=True)
+    return result

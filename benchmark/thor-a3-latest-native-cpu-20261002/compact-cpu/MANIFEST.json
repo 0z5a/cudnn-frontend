@@ -1,0 +1,66 @@
+{
+  "scope": "CPU-only actual pure Torch encoded-A/SFA/logical-scale byte/source proof; GPU/model/performance NOT_RUN",
+  "run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestb1fe/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_native_a_quantizer_compact_cpu_20261002_r1.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-native-a-compact-cpu-audit-20261002-r1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-02T02:32:35.298790+00:00",
+    "deadline_seconds": 180.0,
+    "status": "EXITED",
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 22.701639708000585
+  },
+  "paired_cases": 48,
+  "paired_tensor_buffers": 144,
+  "cuda_initialized": false,
+  "files": [
+    {
+      "path": "results/a3-native-a-compact-cpu-audit-20261002-r1/result.json",
+      "size": 61586,
+      "sha256": "01ccd99e51eee1cffa2540ca044539f403595a8e032d6c53c3b25549ac4f2e41"
+    },
+    {
+      "path": "results/a3-native-a-compact-cpu-audit-20261002-r1-launch/run.json",
+      "size": 651,
+      "sha256": "b9669db678105c348df0e7fcb7884db7dd348eb315f912fd9ba0e9ca53244579"
+    },
+    {
+      "path": "results/a3-native-a-compact-cpu-audit-20261002-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-native-a-compact-cpu-audit-20261002-r1-launch/stdout.log",
+      "size": 1546,
+      "sha256": "d5226783028b7ecdcb603a13e9435803becfdc1264f96ae8e2972a3d66a9be2d"
+    },
+    {
+      "path": "tools/a3_model_e2e_mergefix_20261001.py",
+      "size": 24684,
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea"
+    },
+    {
+      "path": "tools/a3_mxfp8_bf16_staged_full_model_worker_20261001.py",
+      "size": 12860,
+      "sha256": "62304d6cc59fc2b604a19efe1c60c075e0737c6898de191404e4bbb6baf057d1"
+    },
+    {
+      "path": "tools/a3_native_a_quantizer_compact_20261002_r1.py",
+      "size": 2069,
+      "sha256": "625843454b5d996ea676dadd200baf6efe4864521a963af38efb0ec528f8b5ec"
+    },
+    {
+      "path": "tools/audit_a3_native_a_quantizer_compact_cpu_20261002_r1.py",
+      "size": 8251,
+      "sha256": "44046e6602174a5006fa6ed8c7bc8aaa4d4aa416ff591ebb363b9669fccdb8e3"
+    }
+  ]
+}

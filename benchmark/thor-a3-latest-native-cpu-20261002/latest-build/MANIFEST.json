@@ -1,0 +1,142 @@
+{
+  "observed_utc": "2026-10-02T02:38:04.774229+00:00",
+  "scope": "CPU-only fresh native compile/import; no GPU qualification or inference claimed",
+  "runs": [
+    {
+      "folder": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/build-a3-latest-b1fe-20261002-r1",
+      "actual_run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestb1fe/bin/python",
+          "-m",
+          "pip",
+          "install",
+          "--no-deps",
+          "--no-build-isolation",
+          "-e",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestb1fe"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestb1fe",
+        "started_utc": "2026-10-02T02:21:40.006731+00:00",
+        "deadline_seconds": 3600.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 288.4336155819983
+      }
+    },
+    {
+      "folder": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/prepare-build-a3-latest-b1fe-20261002-r1-launch",
+      "actual_run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_build_a3_latest_b1fe_20261002_r1.py"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+        "started_utc": "2026-10-02T02:21:18.032989+00:00",
+        "deadline_seconds": 3600.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 336.6254796450012
+      }
+    }
+  ],
+  "head": "b57c65f1a1b60c2405e1e04c6b5ec6c6b2903bb5",
+  "base": "b1fe8a0f9e7701cea8d6f7f0ad8c11d043e024fc",
+  "binding_sha256": "53e032059642472bf9a48cf847b4dfe87412ea3f33f6e80e9f09f016b3d534cc",
+  "native_inputs": 114,
+  "changed_native_inputs": [
+    "python/pygraph/sdpa_thd_binding.cpp"
+  ],
+  "cuda_initialized": false,
+  "GPU_tests": "NOT_RUN",
+  "prior_packaging_attempt": "failed selecting api.py by basename; no archive created, source/build untouched",
+  "files": [
+    {
+      "path": "a3sfdlatestb1fe/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+      "size": 52640,
+      "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef"
+    },
+    {
+      "path": "a3sfdlatestb1fe/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+      "size": 131027,
+      "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+    },
+    {
+      "path": "a3sfdlatestb1fe/python/pygraph/sdpa_thd_binding.cpp",
+      "size": 29152,
+      "sha256": "443468c439ba7eca9dbf953b081d6547eb414f858c04fe1cb499899600358b5a"
+    },
+    {
+      "path": "a3sfdlatestb1fe/test/AGENTS.md",
+      "size": 50763,
+      "sha256": "9645b88e8217e18e2468af4ba8aa63ce97e1c0135f10f5ea1d15d9d3e970b9c2"
+    },
+    {
+      "path": "a3sfdlatestb1fe/test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+      "size": 9189,
+      "sha256": "38f60c55058056ccc222ec0699d664e91d6526f2bdd8fce5832c0a89ff2f4a34"
+    },
+    {
+      "path": "a3sfdlatestb1fe/test/python/gemm/cutedsl/test_swiglu_amax_per_call.py",
+      "size": 2164,
+      "sha256": "d3017b0723ce039fb89e6db5770bdab80e56613e0f6e8cb8873f3b19cda4a465"
+    },
+    {
+      "path": "a3sfdlatestb1fe/test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py",
+      "size": 3535,
+      "sha256": "5c9587dea4ffbf8d33e3b7e25197e9c8a5463763a4390b8f113fb3e68e649af7"
+    },
+    {
+      "path": "results/a3-latest-b1fe-native-provenance-20261002.json",
+      "size": 19685,
+      "sha256": "b1a05300315b5016a0e6c4bbf37f2a80aa0dbea59aef1846b486b0e31d94383b"
+    },
+    {
+      "path": "results/a3-latest-b1fe-prebuild-20261002.json",
+      "size": 18253,
+      "sha256": "68bb932e539b5f66167d30a79e8e6576e424bec7fca39283ac22a0d5bc1f4914"
+    },
+    {
+      "path": "results/build-a3-latest-b1fe-20261002-r1/run.json",
+      "size": 592,
+      "sha256": "725656ebda8831d33b09088cc951bf24db20c3b3ae25f815c28f654070575cbc"
+    },
+    {
+      "path": "results/build-a3-latest-b1fe-20261002-r1/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/build-a3-latest-b1fe-20261002-r1/stdout.log",
+      "size": 1519,
+      "sha256": "e8dfc44efcb3162714fa04c502f5123fa0977d62a2ac7238c118ca77fde1db0e"
+    },
+    {
+      "path": "results/prepare-build-a3-latest-b1fe-20261002-r1-launch/run.json",
+      "size": 519,
+      "sha256": "5329c6117b41b184518deb373b871fe7551f0aa4d21ca669d2ed7728610db1aa"
+    },
+    {
+      "path": "results/prepare-build-a3-latest-b1fe-20261002-r1-launch/stderr.log",
+      "size": 523,
+      "sha256": "1e056b34376dffc36a85af02115ab151e2bde8c1505545a3f83781b9d032c676"
+    },
+    {
+      "path": "results/prepare-build-a3-latest-b1fe-20261002-r1-launch/stdout.log",
+      "size": 1250,
+      "sha256": "08467bddf34ba7ff8e296ee2c58355d478b693fcebdeffbc4ffa0c22df590ee3"
+    },
+    {
+      "path": "tools/prepare_build_a3_latest_b1fe_20261002_r1.py",
+      "size": 6761,
+      "sha256": "7b28a1a56cbf14067af6a2669487f9f073a6a7ed6f3cbc999ae143cdf7ad4632"
+    }
+  ]
+}

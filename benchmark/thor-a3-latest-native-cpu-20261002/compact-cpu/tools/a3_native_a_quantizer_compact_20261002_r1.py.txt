@@ -1,0 +1,39 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Private native-A quantizer removes only a discarded final dequantization.
+
+Original residual quantization, packing, permutation and scales stay unchanged.
+Original B preparation and reference quantization retain effective operands.
+This factory never replaces q.expanded_quantize or m.quantize_mxfp8 globally.
+CPU/GPU validation and actual paired E2E measurements are separate prerequisites.
+"""
+
+
+def prepare_native_a(q):
+    m, t, quantize, K_BLOCK = q.m, q.t, q.quantize, q.K_BLOCK
+    assert m.quantize_mxfp8 is quantize and K_BLOCK == 32
+
+    def expanded_quantize_native_a(value, operand):
+        if operand != "A":
+            raise ValueError("Private native quantizer supports A only; B and reference use the original function")
+        high, _, scale_high = quantize(value)
+        low, _, scale_low = quantize(value.float() - m.dequantize(high, scale_high))
+        q_parts, s_parts = (
+            ((high, high, low, low), (scale_high, scale_high, scale_low, scale_low))
+            if operand == "A"
+            else ((high, low, high, low), (scale_high, scale_low, scale_high, scale_low))
+        )
+        q = t.cat([x.view(t.uint8) for x in q_parts], dim=-1).view(t.float8_e4m3fn)
+        scale = t.cat(s_parts, dim=-1)
+        permutation = t.arange(4096, device=q.device).reshape(4, 32, 32).permute(1, 0, 2).reshape(-1) if K_BLOCK else t.arange(4096, device=q.device)
+        sf_permutation = permutation.reshape(-1, 32)[:, 0] // 32
+        q = q.view(t.uint8).index_select(-1, permutation).view(t.float8_e4m3fn)
+        scale = scale.index_select(-1, sf_permutation)
+        rows, cols = q.shape[-2:]
+        assert cols == 4096
+        codes = (t.log2(scale).int() + 127).to(t.uint8)
+        raw = codes.reshape(-1, rows // 128, 4, 32, cols // 128, 4)
+        packed = raw.permute(0, 1, 4, 3, 2, 5).contiguous().view(t.float8_e8m0fnu)
+        return (q, packed, scale)
+
+    return expanded_quantize_native_a
