@@ -1,0 +1,252 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Latest-source full32 KV parity and cached-shuffle/routed-A whole-model pairs.
+
+Both arms own independent encoded-only weight plans with byte-equal operands.
+Only route-A word storage/addressing differ; signed64 accumulator,
+postfixed guard, actual MXFP8 main, stream/AMAX and original gates are retained.
+All5 original input IDs stay unchanged; stock's passcode83 refusal is preserved
+as an application failure. This does not measure production K1024 speedup.
+"""
+
+import importlib.util
+import json
+from pathlib import Path
+import statistics
+import sys
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def execute(args, out, boundary):
+    tools = Path(__file__).parent
+    folder = out / "runtime"
+    folder.mkdir()
+    factory = load("a3_predecode_request_factory", tools / "a3_route_decode_request_runtime_prepared_20261002_r1.py")
+    setup = factory.prepare(args, folder, boundary)
+    r, request = setup["r"], setup["request"]
+    m, t, h = r.m, r.t, r.h
+    assert h.WEIGHT_PREPARE_CALLS == h.WEIGHT_PREPARE_KERNEL_LAUNCHES == 24
+    assert [a.b_plan.generations for a in r.adapters] == [1] * 24
+    prior_dir = m.ROOT / "results/a3-guard-pinned-generation-20261002-r1/e2e"
+    prior = json.loads((prior_dir / "result.json").read_text())
+    assert m.sha_file(prior_dir / "outputs.pt") == prior["outputs_sha256"] == "d52a9368a7ec96718a0419e50b53e27470ecd5f556fdf82af754f74952c49ded"
+    oracle = t.load(prior_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    old_build = json.loads((m.ROOT / "results/a3-guarded-rounding-build-cpu-20261002-r7/result.json").read_text())
+    oldh = load("a3_full_pair_postfixed_native_loader", tools / "a3_guarded_rounding_native_20261002_r7.py")
+    old_module = oldh.load_native(old_build["binary"]["path"], old_build["binary"]["sha256"])
+    modules = {"cached_shuffle": old_module, "routed_A": r.module}
+
+    new_plans = [a.b_plan for a in r.adapters]
+    with t.inference_mode():
+        old_plans = [oldh.prepare_b_plan(old_module, a.b, a.sfb) for a in r.adapters]
+    assert oldh.WEIGHT_PREPARE_CALLS == oldh.WEIGHT_PREPARE_KERNEL_LAUNCHES == 24
+    for old_plan, new_plan in zip(old_plans, new_plans, strict=True):
+        for field in ("b", "sfb", "words"):
+            old_tensor, new_tensor = getattr(old_plan, field), getattr(new_plan, field)
+            assert old_tensor is not new_tensor
+            assert t.equal(old_tensor.cpu().contiguous().flatten().view(t.uint8), new_tensor.cpu().contiguous().flatten().view(t.uint8))
+    plans = {"cached_shuffle": old_plans, "routed_A": new_plans}
+    workers = {"cached_shuffle": oldh, "routed_A": h}
+    r.repair_workers = (h, oldh)
+    paths = [
+        Path(__file__),
+        Path(factory.__file__),
+        tools / "a3_route_decode_model_runtime_prepared_20261002_r1.py",
+        Path(oldh.__file__),
+        *setup["paths"],
+        prior_dir / "result.json",
+    ]
+    frozen = {str(path): m.sha_file(path) for path in paths}
+    saved, quality, observations = {}, [], []
+
+    def measure_counts():
+        return (m.NATIVE_CALLS, sum(w.POSTPROCESS_CALLS for w in workers.values()), sum(w.POSTPROCESS_KERNEL_LAUNCHES for w in workers.values()))
+
+    bm, br, bk = measure_counts()
+
+    def equal(a, b):
+        return t.equal(a.contiguous().flatten().view(t.uint8), b.contiguous().flatten().view(t.uint8))
+
+    def run(ids, implementation):
+        for adapter, plan in zip(r.adapters, plans[implementation], strict=True):
+            adapter.repair_module = modules[implementation]
+            adapter.repair_worker = workers[implementation]
+            adapter.b_plan = plan
+            adapter.b, adapter.sfb = plan.b, plan.sfb
+        value = request(ids, "native")
+        value["implementation"] = implementation
+        return value
+
+    def flush():
+        t.save(saved, out / "partial_outputs.pt")
+        (out / "partial.json").write_text(json.dumps({"quality": quality, "observations": observations}, indent=2) + "\n")
+
+    with t.inference_mode():
+        for name, ids in setup["cases"]:
+            saved[name + "/input_ids"] = ids
+            for implementation in ("cached_shuffle", "routed_A"):
+                value = run(ids, implementation)
+                for key in ("ids", "logits", "flags"):
+                    saved[name + "/" + implementation + "/" + key] = value[key]
+                assert equal(ids, oracle[name + "/input_ids"])
+                same = equal(value["ids"], oracle[name + "/reference/ids"])
+                oe, be = m.difference(value["logits"], oracle[name + "/reference/logits"]), m.difference(
+                    value["logits"], oracle[name + "/stock_teacher/logits"]
+                )
+                application = next(row for row in prior["quality"] if row["case"] == name)
+                decoded = setup["text"](value["ids"])
+                row = {
+                    "case": name,
+                    "input_tokens": ids.shape[-1],
+                    "new_tokens": 32,
+                    "implementation": implementation,
+                    "native_oracle": oe,
+                    "native_original_bf16_same_context": be,
+                    "same_context_for_numeric_gates": same,
+                    "oracle_gate_pass": same and oe["relative_l2"] <= 0.01,
+                    "bf16_gate_pass": same and be["relative_l2"] <= 0.05,
+                    "oracle_logits_byte_equal": equal(value["logits"], oracle[name + "/reference/logits"]),
+                    "oracle_ids_byte_equal": same,
+                    "original_stock_greedy_ids_byte_equal": equal(value["ids"], oracle[name + "/stock/ids"]),
+                    "text": decoded,
+                    "prior_original_stock_text": application["texts"]["stock"],
+                    "application_answer_pass": bool(decoded) and (application["expected"] is None or application["expected"] in decoded.lower()),
+                    "application_answer_unchanged_from_prior": decoded == application["texts"]["native"],
+                    "flag_totals": value["flags"].sum((0, 1)).tolist(),
+                    "native_main_calls": value["native_main_calls"],
+                    "native_repair_calls": value["native_repair_calls"],
+                    "native_postprocess_kernel_launches": value["native_postprocess_kernel_launches"],
+                    "cache_type": value["cache_type"],
+                    "cache_final_tokens": value["cache_final_tokens"],
+                    "cache_object_reused": value["cache_object_reused"],
+                    "timing": value["timing"],
+                }
+                quality.append(row)
+                flush()
+                print(json.dumps({"stage": "ROUTED_A_FULL32_QUALITY", **row}), flush=True)
+        numeric = all(row["oracle_gate_pass"] and row["bf16_gate_pass"] and row["application_answer_unchanged_from_prior"] for row in quality)
+        # Qualify unchanged numerical/behavior semantics, not the known baseline
+        # refusal. All application flags remain separately reported as actually run.
+        if numeric:
+            for name, ids in setup["cases"][3:]:
+                stages = [("warmup", -1, ("cached_shuffle", "routed_A"))]
+                for repeat in range(5):
+                    order = (
+                        ("cached_shuffle", "routed_A", "routed_A", "cached_shuffle")
+                        if repeat % 2 == 0
+                        else ("routed_A", "cached_shuffle", "cached_shuffle", "routed_A")
+                    )
+                    stages.append(("timed", repeat, order))
+                for stage, repeat, order in stages:
+                    for position, implementation in enumerate(order):
+                        value = run(ids, implementation)
+                        assert equal(value["ids"], oracle[name + "/reference/ids"]) and equal(value["logits"], oracle[name + "/reference/logits"])
+                        key = f"{name}/{stage}/{repeat}/{position}"
+                        for field in ("ids", "logits", "flags"):
+                            saved[key + "/" + field] = value[field]
+                        observations.append(
+                            {
+                                "case": name,
+                                "input_tokens": ids.shape[-1],
+                                "new_tokens": 32,
+                                "stage": stage,
+                                "position": position,
+                                "repeat": repeat,
+                                "implementation": implementation,
+                                **value["timing"],
+                                "native_main_calls": value["native_main_calls"],
+                                "native_repair_calls": value["native_repair_calls"],
+                                "native_postprocess_kernel_launches": value["native_postprocess_kernel_launches"],
+                                "cache_final_tokens": value["cache_final_tokens"],
+                                "cache_object_reused": value["cache_object_reused"],
+                                "oracle_logits_ids_byte_equal": True,
+                                "binary_sha256": (old_build if implementation == "cached_shuffle" else r.build)["binary"]["sha256"],
+                            }
+                        )
+                        flush()
+                        print(json.dumps({"stage": "FULL_MODEL_PAIR_OBSERVATION", **observations[-1]}), flush=True)
+        m.attach(r.adapters, "stock")
+    comparisons = []
+    if numeric:
+        for name, ids in setup["cases"][3:]:
+            arms = {
+                implementation: [row for row in observations if row["stage"] == "timed" and row["case"] == name and row["implementation"] == implementation]
+                for implementation in ("cached_shuffle", "routed_A")
+            }
+            assert all(len(rows) == 10 for rows in arms.values())
+            medians = {
+                implementation: {key: statistics.median(row[key] for row in rows) for key in ("prefill_ms", "decode_ms", "request_ms")}
+                for implementation, rows in arms.items()
+            }
+            comparisons.append(
+                {
+                    "case": name,
+                    "median_ms": medians,
+                    "cached_shuffle_over_routed_A_request_ratio": medians["cached_shuffle"]["request_ms"] / medians["routed_A"]["request_ms"],
+                }
+            )
+    assert {str(path): m.sha_file(path) for path in paths} == frozen
+    for build in (old_build, r.build):
+        assert m.sha_file(build["binary"]["path"]) == build["binary"]["sha256"] and all(m.sha_file(path) == digest for path, digest in build["sources"].items())
+    t.save(saved, out / "outputs.pt")
+    assert h.WEIGHT_PREPARE_CALLS == h.WEIGHT_PREPARE_KERNEL_LAUNCHES == 24
+    assert oldh.WEIGHT_PREPARE_CALLS == oldh.WEIGHT_PREPARE_KERNEL_LAUNCHES == 24
+    assert [p.generations for p in old_plans] == [p.generations for p in new_plans] == [1] * 24
+    result = {
+        "stage": "ROUTED_A_FULL32_KV_AND_WHOLE_MODEL_PAIR_COMPLETE" if numeric else "ROUTED_A_FULL32_NUMERIC_OR_BEHAVIOR_FAILED_PAIR_NOT_RUN",
+        "scope": __doc__,
+        "head": args.expected_head,
+        "source": args.expected_source,
+        "quality_all_five_numeric_gates_pass": numeric,
+        "quality_both_arms_all_five_numeric_gates_pass": numeric,
+        "quality_requests": len(quality),
+        "paired_ABBA_repeats_each_case": 5,
+        "application_all_five_answers_pass": all(row["application_answer_pass"] for row in quality),
+        "quality": quality,
+        "observations": observations,
+        "comparisons": comparisons,
+        "native_main_calls": measure_counts()[0] - bm,
+        "native_repair_calls": measure_counts()[1] - br,
+        "native_postprocess_kernel_launches": measure_counts()[2] - bk,
+        "model_parameters": 1334628352,
+        "layers": 24,
+        "experts": 32,
+        "topk": 8,
+        "hidden": 1024,
+        "intermediate": 512,
+        "gemm_k": 4096,
+        "weight_plan_generations": [p.generations for p in new_plans],
+        "old_weight_plan_generations": [p.generations for p in old_plans],
+        "separate_old_new_plan_encoded_inputs_and_words_byte_equal": True,
+        "weight_preparation_excluded_from_warmed_request_latency": True,
+        "prepared_weight_native_kernel_launches": h.WEIGHT_PREPARE_KERNEL_LAUNCHES + oldh.WEIGHT_PREPARE_KERNEL_LAUNCHES,
+        "prepared_weight_native_kernel_launches_each_arm": 24,
+        "files": frozen,
+        "outputs_sha256": m.sha_file(out / "outputs.pt"),
+        "prior_frozen_generation_outputs_sha256": prior["outputs_sha256"],
+        "old_native_build": old_build,
+        "new_native_build": r.build,
+        "diagnostic_flag_reductions_included_in_both_arms": True,
+        "paired_reference": "private_cached_shuffle_routed_A_control_same_numerical_recipe",
+        "original_forward_baseline_replaced": False,
+        "oracle_replaced": False,
+        "production_feature_accepted": False,
+        "service_final": "inactive",
+        "imports": {
+            name: {"path": imported.__file__, "sha256": m.sha_file(imported.__file__)}
+            for name, imported in (("cudnn", m.cudnn), ("api", m.api), ("binding", m._compiled_module))
+        },
+        "limits": "All10 actual full32 greedy/KV arm/case requests preserve original numerical gates and responses; known original-stock passcode83 refusal stays failed. Both arms run all5 full32 quality cases. Five alternating ABBA/BAAB repeats at each256/1024 (ten timed observations per private arm) after one warmup per arm. Whole-model latency comparison of private rounding controls only, not original BF16/productionK1024 gain or accepted production feature.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(
+        json.dumps({key: result[key] for key in ("stage", "quality_all_five_numeric_gates_pass", "application_all_five_answers_pass", "comparisons")}),
+        flush=True,
+    )

@@ -1,0 +1,1 @@
+{"stage": "ROUTED_A_FULL_MODEL_PROTOCOL_CPU_PREPARATION_COMPLETE_GPU_NOT_RUN", "total_requests_planned": 54, "generation_tensors_planned": 167, "invalid_protocol_cases_rejected": 7, "torch_imported": false, "new_native_calls": 0}

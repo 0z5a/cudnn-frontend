@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_route_model_preparation_cpu_20261002_r1.py", line 211, in <module>
+    main()
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_route_model_preparation_cpu_20261002_r1.py", line 94, in main
+    assert [row["application_answer_pass"] for row in quality] == [True, True, False, True, True]
+            ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'application_answer_pass'

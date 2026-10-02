@@ -1,0 +1,146 @@
+{
+  "prior_commit": "178d1e45b624454c47a5880dddb940598af3849a",
+  "scope": "CPU source/protocol preparation only, actual success/failure logs retained; GPU NOTRUN/notqueued",
+  "files": {
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/results/a3-guard-pinned-generation-20261002-r1/e2e/result.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/results/a3-guard-pinned-generation-20261002-r1/e2e/result.json",
+      "size": 11632,
+      "sha256": "d6587245eaa0df101824d4ef0d7c9eba264c9844b43b2d1994cafd205b8ffb22"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/results/a3-model-repair-a3sfdlatest4-n256-20261001/input-token-ids.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/results/a3-model-repair-a3sfdlatest4-n256-20261001/input-token-ids.json",
+      "size": 21027,
+      "sha256": "0983f2e3e173eb5d6dd1fdb286b1bd96b513bff54b1f1a2724cc76bdc82122dc"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/results/a3-route-model-cpu-preparation-evidence-20261002-manifest.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/results/a3-route-model-cpu-preparation-evidence-20261002-manifest.json",
+      "size": 4510,
+      "sha256": "a72fe3a7226c9d5a0f3c195635449c6eb69c2c0a4185c183ee65067a642d892b"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/results/a3-route-model-preparation-cpu-audit-20261002-r1-launch/run.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/results/a3-route-model-preparation-cpu-audit-20261002-r1-launch/run.json",
+      "size": 579,
+      "sha256": "19284daa78406f4da88af34076eeacade970b2a3aa0a54f18aba286d568d7f48"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/results/a3-route-model-preparation-cpu-audit-20261002-r1-launch/stderr.log": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/results/a3-route-model-preparation-cpu-audit-20261002-r1-launch/stderr.log",
+      "size": 500,
+      "sha256": "f191175912d3f8967049a1387b9ff9bc67697a0efa3c146f3cc20b41c9522517"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/results/a3-route-model-preparation-cpu-audit-20261002-r1-launch/stdout.log": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/results/a3-route-model-preparation-cpu-audit-20261002-r1-launch/stdout.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/results/a3-route-model-preparation-cpu-audit-20261002-r2/result.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/results/a3-route-model-preparation-cpu-audit-20261002-r2/result.json",
+      "size": 3623,
+      "sha256": "2e1c83c40557c99438c002fdbb00f2c1f8b071c49dbf94b1689df5a98546e9a5"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/results/a3-route-model-preparation-cpu-audit-20261002-r2-launch/run.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/results/a3-route-model-preparation-cpu-audit-20261002-r2-launch/run.json",
+      "size": 580,
+      "sha256": "fcc833e370a5b97258d151b4a249ebf5b1a60a9e839a08edc2ac9fa7a99a9f71"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/results/a3-route-model-preparation-cpu-audit-20261002-r2-launch/stderr.log": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/results/a3-route-model-preparation-cpu-audit-20261002-r2-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/results/a3-route-model-preparation-cpu-audit-20261002-r2-launch/stdout.log": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/results/a3-route-model-preparation-cpu-audit-20261002-r2-launch/stdout.log",
+      "size": 230,
+      "sha256": "024c3c24c9b5f21f5d5142a77192f3b7bdf174874421a0d940637154461fa3ca"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/tools/a3_guarded_rounding_full_model_20261002_r8.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/tools/a3_guarded_rounding_full_model_20261002_r8.py",
+      "size": 13713,
+      "sha256": "500b214d56328ce51462f9c024ac0fa7bfbf493282a56a76d1d38c0c556379ff"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/tools/a3_guarded_rounding_model_runtime_20261002_r4.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/tools/a3_guarded_rounding_model_runtime_20261002_r4.py",
+      "size": 7469,
+      "sha256": "458634a0ec31dde149df96c90d9e0f23cbd155e823e184ff9fee6fbb68989c2a"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/tools/a3_guarded_rounding_request_runtime_20261002_r3.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/tools/a3_guarded_rounding_request_runtime_20261002_r3.py",
+      "size": 6755,
+      "sha256": "08f952dcd813ef7624a5743eec506740a55f47bb62d2afb0724d776b9a8a49ca"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/tools/a3_route_decode_full_model_prepared_20261002_r1.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/tools/a3_route_decode_full_model_prepared_20261002_r1.py",
+      "size": 13726,
+      "sha256": "d8b961d6714bd48d96f690dfc052c281a04d6fb218cf678870f34ada40572fb7"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/tools/a3_route_decode_generation_pair_prepared_20261002_r1.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/tools/a3_route_decode_generation_pair_prepared_20261002_r1.py",
+      "size": 14282,
+      "sha256": "7d7b1681823a620c6d40e8d22c703ee6e85f3881af7f0747d5324a409604c95f"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/tools/a3_route_decode_model_gpu_admitted_prepared_20261002_r1.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/tools/a3_route_decode_model_gpu_admitted_prepared_20261002_r1.py",
+      "size": 6246,
+      "sha256": "27d6e6e8f61bc875a0ad180219ed022a71b4d58226dd4d698b104fb58308a892"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/tools/a3_route_decode_model_runtime_prepared_20261002_r1.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/tools/a3_route_decode_model_runtime_prepared_20261002_r1.py",
+      "size": 7482,
+      "sha256": "ccd78e6ee2d31e37240635e6dd98b7e997168e4ea2be356a4eba0885098b5309"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/tools/a3_route_decode_request_runtime_prepared_20261002_r1.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/tools/a3_route_decode_request_runtime_prepared_20261002_r1.py",
+      "size": 6703,
+      "sha256": "9e33c9ef9abb57d5dc11d1d13ad9fb9736b50df61d33843a76ae462f65ed311d"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/tools/a3_route_decode_wrapper_pair_full_model_prepared_20261002_r1.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/tools/a3_route_decode_wrapper_pair_full_model_prepared_20261002_r1.py",
+      "size": 7531,
+      "sha256": "87f595a512733d6bcff4a788084b5eaeba2c56117f9f5f420d361500764d846b"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/tools/audit_a3_route_decode_full_model_cpu_prepared_20261002_r1.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/tools/audit_a3_route_decode_full_model_cpu_prepared_20261002_r1.py",
+      "size": 7773,
+      "sha256": "4551178bfa3eddc2ae08797a76cea765448b970e7bbd8a99becb7d1a5f1369dd"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/tools/audit_a3_route_decode_generation_pair_cpu_prepared_20261002_r1.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/tools/audit_a3_route_decode_generation_pair_cpu_prepared_20261002_r1.py",
+      "size": 14694,
+      "sha256": "d53f53e24d12ca4e2ef432f4a04b8f1f5c3caee0aad0512ca850df5aa058d7ed"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/tools/audit_a3_route_decode_wrapper_pair_cpu_prepared_20261002_r1.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/tools/audit_a3_route_decode_wrapper_pair_cpu_prepared_20261002_r1.py",
+      "size": 8303,
+      "sha256": "aec21a794fefa3d10bbea81708121f20518fe12631f60be8f8923b4908f03cda"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/tools/audit_a3_route_model_preparation_cpu_20261002_r1.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/tools/audit_a3_route_model_preparation_cpu_20261002_r1.py",
+      "size": 9275,
+      "sha256": "5d93a629232ecd0d1fb73d2ccc82205432557c9f358f9225b9ff51f0fc10106e"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/tools/audit_a3_route_model_preparation_cpu_20261002_r2.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-route-model-cpu-preparation-evidence-20261002/tools/audit_a3_route_model_preparation_cpu_20261002_r2.py",
+      "size": 9403,
+      "sha256": "1c38fc97cf083e78371dfcdc7646d3f5400767132c6dffccd29e0a48ba53773b"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/RESULT.md": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_ROUTE_MODEL_CPU_PREPARATION_RESULT_20261002.md",
+      "size": 5067,
+      "sha256": "48e900057b4908a67cb23cf6ee2bab62b4085484ab886ce1d320d6652cc263b0"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/A3_ROUTE_MODEL_CPU_PREPARATION_ACTUAL_20261002.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_ROUTE_MODEL_CPU_PREPARATION_ACTUAL_20261002.json",
+      "size": 5776,
+      "sha256": "d1792805295b35f632c8388cd70c38fb210d9ca345ed9c58adbf99c767edec05"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/A3_ROUTE_MODEL_PREPARED_FROZEN_SOURCE_20261002.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_ROUTE_MODEL_PREPARED_FROZEN_SOURCE_20261002.json",
+      "size": 2635,
+      "sha256": "0b84d1b4def568037e1c5e61f87c19b133a80ea61284a84b1b5ca3b0b10ecba7"
+    },
+    "benchmark/thor-a3-route-model-cpu-preparation-20261002/A3_ROUTE_MODEL_CPU_PREPARATION_MAC_VERIFIED_20261002.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_ROUTE_MODEL_CPU_PREPARATION_MAC_VERIFIED_20261002.json",
+      "size": 6812,
+      "sha256": "226f87af96105ab454ef54223cc997cdf7f2b0364f4f993b58e53bf47c57e7eb"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "scope": "CPU source/protocol preparation actual0, NOTGPU/NOTQUEUED",
+  "files": {
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_route_model_preparation_cpu_20261002_r2.py": "1c38fc97cf083e78371dfcdc7646d3f5400767132c6dffccd29e0a48ba53773b",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_route_decode_model_runtime_prepared_20261002_r1.py": "ccd78e6ee2d31e37240635e6dd98b7e997168e4ea2be356a4eba0885098b5309",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_route_decode_full_model_prepared_20261002_r1.py": "d8b961d6714bd48d96f690dfc052c281a04d6fb218cf678870f34ada40572fb7",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_route_decode_request_runtime_prepared_20261002_r1.py": "9e33c9ef9abb57d5dc11d1d13ad9fb9736b50df61d33843a76ae462f65ed311d",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_route_decode_generation_pair_prepared_20261002_r1.py": "7d7b1681823a620c6d40e8d22c703ee6e85f3881af7f0747d5324a409604c95f",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_route_decode_wrapper_pair_full_model_prepared_20261002_r1.py": "87f595a512733d6bcff4a788084b5eaeba2c56117f9f5f420d361500764d846b",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_route_decode_model_gpu_admitted_prepared_20261002_r1.py": "27d6e6e8f61bc875a0ad180219ed022a71b4d58226dd4d698b104fb58308a892",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_route_decode_wrapper_pair_cpu_prepared_20261002_r1.py": "aec21a794fefa3d10bbea81708121f20518fe12631f60be8f8923b4908f03cda",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_route_decode_full_model_cpu_prepared_20261002_r1.py": "4551178bfa3eddc2ae08797a76cea765448b970e7bbd8a99becb7d1a5f1369dd",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_route_decode_generation_pair_cpu_prepared_20261002_r1.py": "d53f53e24d12ca4e2ef432f4a04b8f1f5c3caee0aad0512ca850df5aa058d7ed",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_model_runtime_20261002_r4.py": "458634a0ec31dde149df96c90d9e0f23cbd155e823e184ff9fee6fbb68989c2a",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_full_model_20261002_r8.py": "500b214d56328ce51462f9c024ac0fa7bfbf493282a56a76d1d38c0c556379ff",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_request_runtime_20261002_r3.py": "08f952dcd813ef7624a5743eec506740a55f47bb62d2afb0724d776b9a8a49ca"
+  },
+  "producer_cpu_proof_sha256": "dd944a0d5405a0c4cf755231b4db33fad4786fbc3e12b2f3552c08c3ed907d3d"
+}

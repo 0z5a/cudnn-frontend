@@ -1,0 +1,211 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Check native9 full-model source math and paired-request protocol without Torch."""
+
+import argparse
+import ast
+import copy
+import hashlib
+import json
+import os
+from pathlib import Path
+import sys
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def function(tree, name):
+    nodes = [node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef) and node.name == name]
+    assert len(nodes) == 1
+    return copy.deepcopy(nodes[0])
+
+
+def dump(node):
+    return ast.dump(node, include_attributes=False)
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    assert os.environ["CUDA_VISIBLE_DEVICES"] == "" and "torch" not in sys.modules
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    tools = Path(__file__).parent
+    names = [
+        Path(__file__).name,
+        "a3_route_decode_model_runtime_prepared_20261002_r1.py",
+        "a3_route_decode_full_model_prepared_20261002_r1.py",
+        "a3_route_decode_request_runtime_prepared_20261002_r1.py",
+        "a3_route_decode_generation_pair_prepared_20261002_r1.py",
+        "a3_route_decode_wrapper_pair_full_model_prepared_20261002_r1.py",
+        "a3_route_decode_model_gpu_admitted_prepared_20261002_r1.py",
+        "audit_a3_route_decode_wrapper_pair_cpu_prepared_20261002_r1.py",
+        "audit_a3_route_decode_full_model_cpu_prepared_20261002_r1.py",
+        "audit_a3_route_decode_generation_pair_cpu_prepared_20261002_r1.py",
+        "a3_guarded_rounding_model_runtime_20261002_r4.py",
+        "a3_guarded_rounding_full_model_20261002_r8.py",
+        "a3_guarded_rounding_request_runtime_20261002_r3.py",
+    ]
+    paths = [tools / name for name in names]
+    trees = {}
+    for path in paths:
+        compile(path.read_text(), str(path), "exec")
+        trees[path.name] = ast.parse(path.read_text())
+    runtime = function(trees[names[1]], "forward")
+    full = function(trees[names[2]], "forward")
+    assert dump(runtime) == dump(function(trees[names[10]], "forward"))
+    assert dump(full) == dump(function(trees[names[11]], "forward"))
+    normalized = copy.deepcopy(runtime)
+    for node in ast.walk(normalized):
+        if (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and isinstance(node.func.value, ast.Attribute)
+            and node.func.value.attr == "repair_worker"
+        ):
+            node.func.value = ast.Name(id="h", ctx=ast.Load())
+            assert isinstance(node.args[0], ast.Attribute) and node.args[0].attr == "repair_module"
+            node.args[0] = ast.Name(id="module", ctx=ast.Load())
+    assert dump(normalized) == dump(full)
+    request = function(trees[names[3]], "request")
+    old_request = function(trees[names[12]], "request")
+    old_count = next(
+        node
+        for node in ast.walk(old_request)
+        if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == "expected_kernels" for target in node.targets)
+    )
+    new_count = next(
+        node
+        for node in ast.walk(request)
+        if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == "expected_kernels" for target in node.targets)
+    )
+    assert ast.literal_eval(new_count.value) == 2304
+    new_count.value = copy.deepcopy(old_count.value)
+    assert dump(request) == dump(old_request)
+    prior = ROOT / "results/a3-guard-pinned-generation-20261002-r1/e2e/result.json"
+    quality = json.loads(prior.read_text())["quality"]
+    case_spec = [("math73", 73), ("sky70", 70), ("passcode83", 83), ("prefix256", 256), ("prefix1024", 1024)]
+    assert [(row["case"], row["input_tokens"]) for row in quality] == case_spec
+    assert [row["application_answer_pass"] for row in quality] == [True, True, False, True, True]
+    gen = trees[names[4]]
+    quality_loops = [
+        node
+        for node in ast.walk(gen)
+        if isinstance(node, ast.For) and isinstance(node.target, ast.Name) and node.target.id == "implementation" and isinstance(node.iter, ast.Tuple)
+    ]
+    assert len(quality_loops) == 1 and ast.literal_eval(quality_loops[0].iter) == ("cached_shuffle", "routed_A")
+    stage_assign = next(
+        node
+        for node in ast.walk(gen)
+        if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == "stages" for target in node.targets)
+    )
+    repeat_loop = next(node for node in ast.walk(gen) if isinstance(node, ast.For) and isinstance(node.target, ast.Name) and node.target.id == "repeat")
+    scope = {}
+    exec(
+        compile(
+            ast.fix_missing_locations(ast.Module(body=[copy.deepcopy(stage_assign), copy.deepcopy(repeat_loop)], type_ignores=[])),
+            "isolated_pair_order",
+            "exec",
+        ),
+        {"range": range},
+        scope,
+    )
+    observations = []
+    keys = {name + "/input_ids" for name, _ in case_spec}
+    for name, _ in case_spec:
+        keys.update(f"{name}/{arm}/{field}" for arm in ("cached_shuffle", "routed_A") for field in ("ids", "logits", "flags"))
+    for name, tokens in case_spec[3:]:
+        for stage, repeat, order in scope["stages"]:
+            for position, arm in enumerate(order):
+                observations.append(
+                    {"case": name, "stage": stage, "repeat": repeat, "position": position, "implementation": arm, "input_tokens": tokens, "new_tokens": 32}
+                )
+                keys.update(f"{name}/{stage}/{repeat}/{position}/{field}" for field in ("ids", "logits", "flags"))
+    assert len(observations) == 44 and len(keys) == 167
+    audit = trees[names[9]]
+    observation_loop = next(
+        node
+        for node in ast.walk(audit)
+        if isinstance(node, ast.For) and isinstance(node.iter, ast.Call) and isinstance(node.iter.func, ast.Name) and node.iter.func.id == "enumerate"
+    )
+    prefix = []
+    for node in observation_loop.body:
+        if isinstance(node, ast.Expr) and isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Name) and node.value.func.id == "check_outputs":
+            break
+        prefix.append(copy.deepcopy(node))
+    checker = compile(ast.fix_missing_locations(ast.Module(body=prefix, type_ignores=[])), "isolated_auditor_order", "exec")
+    for i, row in enumerate(observations):
+        exec(checker, {"__builtins__": {}}, {"i": i, "row": row})
+    rejected = 0
+    for field, wrong in (
+        ("case", "math73"),
+        ("repeat", 99),
+        ("position", 99),
+        ("implementation", "invalid"),
+        ("input_tokens", 1023),
+        ("new_tokens", 31),
+        ("stage", "invalid"),
+    ):
+        row = {**observations[-1], field: wrong}
+        try:
+            exec(checker, {"__builtins__": {}}, {"i": 43, "row": row})
+        except AssertionError:
+            rejected += 1
+        else:
+            raise AssertionError(f"Auditor failed to reject protocol mutation: {field}")
+    assert rejected == 7
+    for name, _ in case_spec[3:]:
+        for arm in ("cached_shuffle", "routed_A"):
+            assert sum(row["case"] == name and row["implementation"] == arm and row["stage"] == "timed" for row in observations) == 10
+    original_ids = ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001/input-token-ids.json"
+    assert sha(original_ids) == "0983f2e3e173eb5d6dd1fdb286b1bd96b513bff54b1f1a2724cc76bdc82122dc"
+    assert 'closed("a3-serial-iteration-20261002-r5")' in (tools / names[6]).read_text()
+    assert "torch" not in sys.modules
+    result = {
+        "stage": "ROUTED_A_FULL_MODEL_PROTOCOL_CPU_PREPARATION_COMPLETE_GPU_NOT_RUN",
+        "native_forward_parent_AST_unchanged": True,
+        "normalized_runtime_forward_matches_full_model_AST": True,
+        "request_math_KV_AST_unchanged_except_count": True,
+        "quality_requests_planned": 10,
+        "measurement_requests_planned": 44,
+        "total_requests_planned": 54,
+        "generation_tensors_planned": 167,
+        "measurement_order_cases_checked": 44,
+        "invalid_protocol_cases_rejected": rejected,
+        "main_and_repair_calls_planned": 54 * 24 * 32,
+        "postprocess_kernel_launches_planned": 54 * 24 * 32 * 3,
+        "original83_application_failure_retained": True,
+        "files": {str(path): sha(path) for path in [*paths, prior, original_ids]},
+        "torch_imported": False,
+        "new_native_calls": 0,
+        "GPU_tests": "NOT_RUN",
+        "paired_performance": "NOT_RUN",
+        "queued": False,
+        "accepted_optimization": False,
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(
+        json.dumps(
+            {
+                key: result[key]
+                for key in (
+                    "stage",
+                    "total_requests_planned",
+                    "generation_tensors_planned",
+                    "invalid_protocol_cases_rejected",
+                    "torch_imported",
+                    "new_native_calls",
+                )
+            }
+        ),
+        flush=True,
+    )
+
+
+if __name__ == "__main__":
+    main()

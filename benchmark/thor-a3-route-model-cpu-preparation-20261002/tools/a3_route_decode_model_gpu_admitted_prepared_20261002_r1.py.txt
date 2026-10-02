@@ -1,0 +1,129 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Prepared separate-process native9 wrapper/full-forward and full32 phases.
+
+R5 and all its CPU audits must actually succeed before either phase runs.
+The parent lock must exist before any Torch/producer import. Not queued yet.
+"""
+
+import argparse
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "aab01504ad3ad97170d19087ce23bef48d95dfa0"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def closed(name):
+    path = ROOT / "results" / (name + "-launch") / "run.json"
+    record = json.loads(path.read_text())
+    assert record["status"] == "EXITED" and record["returncode"] == 0 and record["signal"] is None
+    return record
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--phase", choices=("wrapper_full", "generation"), required=True)
+    args = parser.parse_args()
+    assert "torch" not in sys.modules and os.environ["CUDA_VISIBLE_DEVICES"] == "0" and os.environ["CUDA_MODULE_LOADING"] == "EAGER"
+    holder, fd = (int(os.environ[name]) for name in ("A3_ITERATION_LOCK_HOLDER", "A3_ITERATION_LOCK_FD"))
+    assert Path(f"/proc/{holder}/fd/{fd}").stat().st_ino == Path("/tmp/codex-thor-perf.lock").stat().st_ino
+    fdinfo = Path(f"/proc/{holder}/fdinfo/{fd}").read_text()
+    assert "FLOCK ADVISORY WRITE" in " ".join(fdinfo.split())
+    predecessor = closed("a3-serial-iteration-20261002-r5")
+    qualification = json.loads((ROOT / "results/a3-latest-5f27-regression-20261002-r1/result.json").read_text())
+    assert qualification["head"] == HEAD and qualification["passed"] == 31 and qualification["skipped"] == 0 and qualification["actual_native_calls"] == 61
+    audit_runs = {name: closed(name) for name in ["a3-route-decode-boundary-cpu-audit-20261002-r1", "a3-route-decode-reuse-cpu-audit-20261002-r1"]}
+    route_audit = json.loads((ROOT / "results/a3-route-decode-reuse-cpu-audit-20261002-r1/result.json").read_text())
+    assert route_audit["case_count"] == 46 and not route_audit["cuda_initialized"] and route_audit["new_native_calls"] == 0
+    native = json.loads((ROOT / "results/a3-latest-5f27-native-provenance-20261002.json").read_text())
+    assert native["head"] == HEAD and sha(native["binding"]["path"]) == native["binding"]["sha256"]
+    assert all(sha(Path(native["source"]) / item["path"]) == item["sha256"] for item in native["native_input_digests"])
+    source = Path(native["source"])
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == HEAD
+    assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+    tools = Path(__file__).parent
+    names = [
+        Path(__file__).name,
+        "a3_route_decode_wrapper_pair_full_model_prepared_20261002_r1.py",
+        "a3_route_decode_full_model_prepared_20261002_r1.py",
+        "a3_route_decode_model_runtime_prepared_20261002_r1.py",
+        "a3_route_decode_request_runtime_prepared_20261002_r1.py",
+        "a3_route_decode_generation_pair_prepared_20261002_r1.py",
+    ]
+    frozen = {str(tools / name): sha(tools / name) for name in names}
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    (out / "admission.json").write_text(
+        json.dumps(
+            {
+                "parent_flock_holder": holder,
+                "parent_flock_fd": fd,
+                "fdinfo_sha256": hashlib.sha256(fdinfo.encode()).hexdigest(),
+                "torch_imported": False,
+                "predecessor_actual_terminal": predecessor,
+                "route_audit_actual_terminals": audit_runs,
+                "head": HEAD,
+                "phase": args.phase,
+                "files": frozen,
+            },
+            indent=2,
+        )
+        + "\n"
+    )
+    args.expected_head, args.expected_source, args.expected_binding_sha = HEAD, str(source), native["binding"]["sha256"]
+    q = load("a3_guard_boundary_quant", tools / "a3_mxfp8_bf16_staged_full_model_worker_20261001.py")
+    load("a3_guard_boundary_cuda", tools / "a3_guarded_rounding_native_20261002_r9_route_decode.py")
+    q.t.set_num_threads(4)
+    q.t.backends.cuda.matmul.allow_tf32 = q.t.backends.cudnn.allow_tf32 = False
+    q.t.set_float32_matmul_precision("highest")
+    assert q.t.cuda.get_device_capability() == (11, 0)
+    for module in (q.m.cudnn, q.m.api, q.m._compiled_module):
+        assert Path(module.__file__).resolve().is_relative_to(source / "python")
+    assert sha(q.m._compiled_module.__file__) == args.expected_binding_sha
+    boundary = ROOT / "results/a3-route-decode-latest5f27-gpu-20261002-r1/boundaries"
+    filename = (
+        "a3_route_decode_wrapper_pair_full_model_prepared_20261002_r1.py"
+        if args.phase == "wrapper_full"
+        else "a3_route_decode_generation_pair_prepared_20261002_r1.py"
+    )
+    child = out / ("candidate" if args.phase == "wrapper_full" else "e2e")
+    child.mkdir()
+    load("a3_routed_A_full_scope_phase", tools / filename).execute(args, child, boundary)
+    assert all(sha(path) == digest for path, digest in frozen.items())
+    assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+    result = {
+        "stage": "ROUTED_A_FULL_SCOPE_PHASE_TERMINAL_REQUIRES_CPU_AUDIT",
+        "head": HEAD,
+        "phase": args.phase,
+        "binding": native["binding"],
+        "files": frozen,
+        "child_result_sha256": sha(child / "result.json"),
+        "accepted_optimization": False,
+        "service_final": "inactive",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
