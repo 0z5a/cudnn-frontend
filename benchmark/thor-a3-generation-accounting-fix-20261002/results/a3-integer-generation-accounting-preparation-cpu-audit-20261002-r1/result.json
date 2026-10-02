@@ -1,0 +1,91 @@
+{
+  "stage": "GENERATION_ACCOUNTING_ASSERTION_CORRECTED_CPU_REGRESSION_COMPLETE",
+  "only_changed_assertion_ast": true,
+  "old_cached7_correct_count_false_rejection_reproduced": true,
+  "both_arms_expected_postprocess_kernels": 2304,
+  "regression_cases": [
+    {
+      "arm": "cached_shuffle",
+      "kernels": 2304,
+      "accepted": true
+    },
+    {
+      "arm": "cached_shuffle",
+      "changed": {
+        "main": 767
+      },
+      "accepted": false
+    },
+    {
+      "arm": "cached_shuffle",
+      "changed": {
+        "repair": 767
+      },
+      "accepted": false
+    },
+    {
+      "arm": "cached_shuffle",
+      "changed": {
+        "kernels": 1536
+      },
+      "accepted": false
+    },
+    {
+      "arm": "cached_shuffle",
+      "changed": {
+        "kernels": 2303
+      },
+      "accepted": false
+    },
+    {
+      "arm": "integer_redux",
+      "kernels": 2304,
+      "accepted": true
+    },
+    {
+      "arm": "integer_redux",
+      "changed": {
+        "main": 767
+      },
+      "accepted": false
+    },
+    {
+      "arm": "integer_redux",
+      "changed": {
+        "repair": 767
+      },
+      "accepted": false
+    },
+    {
+      "arm": "integer_redux",
+      "changed": {
+        "kernels": 1536
+      },
+      "accepted": false
+    },
+    {
+      "arm": "integer_redux",
+      "changed": {
+        "kernels": 2303
+      },
+      "accepted": false
+    }
+  ],
+  "qualified_cached7_actual_main_calls": 72,
+  "qualified_cached7_actual_postprocess_kernel_launches": 216,
+  "files": {
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_integer_generation_accounting_preparation_cpu_20261002_r1.py": "6ad85e1124733c8b6c80b7de7c54877aa6d7ce41033ee389fef9eaf380f9e334",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_integer_reduce_generation_pair_cpu_20261002_r1.py": "8e3c3f5298de076b18086cfea8865421f8407f4aeac4e7d12c7686e220432d50",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_integer_reduce_generation_pair_cpu_20261002_r2.py": "7b1051ed90d307b09261bf4b4bb0fbe4a0294e3ba1bd3b356e252c3db3177c09",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_request_runtime_20261002_r4.py": "40ae1e92a706f8a5856ac7199d196355b5c5be45a8242f7d255f72f24426866d",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r7.py": "551818f57b08e8a0c6b0a60cc51844c38055bbffbc18888dd15a5be61d6d2fd3",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r8.py": "88d8ef70a550c58d40e14cb589096be275e30bcfca3f2840c6b0fdd8498b6ad0",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-weight-plan-20261002-r1-launch/run.json": "732441459cc5ac919e700336a69cae37928d05538060ee7d20b0cb407cd767b8",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-weight-plan-20261002-r1/candidate/model/result.json": "ddaa5cdd9b83f6e2e6fd35a0eeeb344c304cf55957e133b5ed3e904601e3d94a"
+  },
+  "torch_imported": false,
+  "new_native_calls": 0,
+  "integer8_generation_GPU_tests": "NOT_RUN",
+  "paired_performance": "NOT_RUN",
+  "accepted_optimization": false
+}

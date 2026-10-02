@@ -1,0 +1,125 @@
+"""CPU regression for the frozen generation audit's cached7 launch-count defect."""
+
+import argparse
+import ast
+import copy
+import hashlib
+import json
+import os
+from pathlib import Path
+import sys
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def assertion(tree):
+    nodes = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Assert) and "expected_arm" in ast.unparse(node.test) and "native_postprocess_kernel_launches" in ast.unparse(node.test)
+    ]
+    assert len(nodes) == 1
+    return nodes[0]
+
+
+def accept(test, arm, main=768, repair=768, kernels=2304):
+    expression = ast.Expression(body=test)
+    row = {"native_main_calls": main, "native_repair_calls": repair, "native_postprocess_kernel_launches": kernels}
+    return eval(
+        compile(ast.fix_missing_locations(expression), "isolated_launch_count_assertion", "eval"), {"__builtins__": {}}, {"row": row, "expected_arm": arm}
+    )
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    assert os.environ["CUDA_VISIBLE_DEVICES"] == "" and "torch" not in sys.modules
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    tools = Path(__file__).parent
+    old_path = tools / "audit_a3_integer_reduce_generation_pair_cpu_20261002_r1.py"
+    new_path = tools / "audit_a3_integer_reduce_generation_pair_cpu_20261002_r2.py"
+    old_tree, new_tree = [ast.parse(path.read_text()) for path in (old_path, new_path)]
+    old_assertion = assertion(old_tree)
+    new_assertions = [
+        node
+        for node in ast.walk(new_tree)
+        if isinstance(node, ast.Assert) and "row['native_main_calls']" in ast.unparse(node.test) and "2304" in ast.unparse(node.test)
+    ]
+    assert len(new_assertions) == 2  # Quality assertion and corrected paired-observation assertion.
+    normalized = copy.deepcopy(old_tree)
+    assertion(normalized).test = copy.deepcopy(new_assertions[-1].test)
+    assert ast.dump(normalized, include_attributes=False) == ast.dump(new_tree, include_attributes=False)
+    tests = []
+    for arm in ("cached_shuffle", "integer_redux"):
+        assert accept(new_assertions[-1].test, arm)
+        tests.append({"arm": arm, "kernels": 2304, "accepted": True})
+        for changed in ({"main": 767}, {"repair": 767}, {"kernels": 1536}, {"kernels": 2303}):
+            assert not accept(new_assertions[-1].test, arm, **changed)
+            tests.append({"arm": arm, "changed": changed, "accepted": False})
+    assert not accept(old_assertion.test, "cached_shuffle") and accept(old_assertion.test, "integer_redux")
+    helpers = [tools / f"a3_guarded_rounding_native_20261002_r{version}.py" for version in (7, 8)]
+    for path in helpers:
+        tree = ast.parse(path.read_text())
+        node = next(
+            node
+            for node in ast.walk(tree)
+            if isinstance(node, ast.AugAssign) and isinstance(node.target, ast.Name) and node.target.id == "POSTPROCESS_KERNEL_LAUNCHES"
+        )
+        assert ast.dump(node.value, include_attributes=False) == ast.dump(
+            ast.parse("(3 if a.shape[0] else 2) if live else 0", mode="eval").body, include_attributes=False
+        )
+    qualified = ROOT / "results/a3-weight-plan-20261002-r1"
+    qualified_run_path = qualified.with_name(qualified.name + "-launch") / "run.json"
+    qualified_run = json.loads(qualified_run_path.read_text())
+    assert qualified_run["status"] == "EXITED" and qualified_run["returncode"] == 0 and qualified_run["signal"] is None
+    qualified_result_path = qualified / "candidate/model/result.json"
+    observed = json.loads(qualified_result_path.read_text())
+    assert observed["native_main_calls"] == observed["native_repair_calls"] == 72 and observed["native_postprocess_kernel_launches"] == 216
+    assert 24 * 32 * (observed["native_postprocess_kernel_launches"] // observed["native_repair_calls"]) == 2304
+    runtime = tools / "a3_guarded_rounding_request_runtime_20261002_r4.py"
+    runtime_tree = ast.parse(runtime.read_text())
+    expected = next(
+        node.value
+        for node in ast.walk(runtime_tree)
+        if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == "expected_kernels" for target in node.targets)
+    )
+    assert ast.dump(expected, include_attributes=False) == ast.dump(
+        ast.parse('2304 if r.adapters[0].repair_worker.NAME.endswith(("_r7", "_r8")) else 1536', mode="eval").body, include_attributes=False
+    )
+    assert "torch" not in sys.modules
+    paths = [Path(__file__), old_path, new_path, runtime, *helpers, qualified_run_path, qualified_result_path]
+    result = {
+        "stage": "GENERATION_ACCOUNTING_ASSERTION_CORRECTED_CPU_REGRESSION_COMPLETE",
+        "only_changed_assertion_ast": True,
+        "old_cached7_correct_count_false_rejection_reproduced": True,
+        "both_arms_expected_postprocess_kernels": 2304,
+        "regression_cases": tests,
+        "qualified_cached7_actual_main_calls": 72,
+        "qualified_cached7_actual_postprocess_kernel_launches": 216,
+        "files": {str(path): sha(path) for path in paths},
+        "torch_imported": False,
+        "new_native_calls": 0,
+        "integer8_generation_GPU_tests": "NOT_RUN",
+        "paired_performance": "NOT_RUN",
+        "accepted_optimization": False,
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(
+        json.dumps(
+            {
+                key: result[key]
+                for key in ("stage", "only_changed_assertion_ast", "both_arms_expected_postprocess_kernels", "torch_imported", "new_native_calls")
+            }
+        ),
+        flush=True,
+    )
+
+
+if __name__ == "__main__":
+    main()

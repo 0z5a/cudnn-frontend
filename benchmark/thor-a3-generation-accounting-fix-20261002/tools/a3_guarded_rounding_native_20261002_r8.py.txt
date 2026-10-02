@@ -1,0 +1,164 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Private integer warp-reduction candidate retaining the encoded-weight plan.
+
+The postfixed guard and integer target arithmetic are unchanged. This new
+candidate decodes A per call and retains plan-owned encoded-B integer words
+across repaired C outputs, replacing exact 16-lane shuffle reductions with signed32 CUDA integer warp reductions after a derived range bound. It is untested until the new validation completes.
+No original BF16 tensors/logits or independent oracle output enter execution.
+"""
+
+import hashlib
+import importlib.util
+from pathlib import Path
+
+import torch as t
+
+NAME = "a3_guarded_rounding_20261002_r8"
+POSTPROCESS_CALLS = 0
+POSTPROCESS_KERNEL_LAUNCHES = 0
+WEIGHT_PREPARE_CALLS = 0
+WEIGHT_PREPARE_KERNEL_LAUNCHES = 0
+
+
+def sha(path):
+    h = hashlib.sha256()
+    with Path(path).open("rb") as f:
+        for chunk in iter(lambda: f.read(4194304), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def load_native(path, expected_sha):
+    path = Path(path).resolve()
+    assert sha(path) == expected_sha
+    spec = importlib.util.spec_from_file_location(NAME, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def norm_upper(value):
+    v = value.double()
+    return v.square().sum(-1).sqrt() * (1.0 + 8 * value.shape[-1] * 2.0**-53)
+
+
+def recipe_stats(codes, logical_scale, operand, rows=None):
+    """Summaries from encoded recipe operands alone, no source BF16 input.
+
+    logical_scale has original-K32-block-major, HH/HL/LH/LL ordering. Its values
+    are the already generated power-of-two quantization metadata, not an oracle.
+    """
+    assert operand in ("A", "B") and codes.dtype == t.float8_e4m3fn and codes.shape[-1] == 4096
+    assert logical_scale.shape == (*codes.shape[:-1], 128) and logical_scale.dtype == t.float32
+    if rows is not None:
+        assert operand == "A" and codes.ndim == 2
+        codes = codes.index_select(0, rows)
+        logical_scale = logical_scale.index_select(0, rows)
+    leading = codes.shape[:-1]
+    effective = (codes.float().reshape(*leading, 32, 4, 32) * logical_scale.reshape(*leading, 32, 4, 1)).reshape(*leading, 4096)
+    blocks = effective.reshape(*leading, 32, 4, 32)
+    high = blocks[..., 0, :].reshape(*leading, 1024)
+    low = blocks[..., 2 if operand == "A" else 1, :].reshape(*leading, 1024)
+    target = (high + low).to(t.bfloat16).float()
+    # The difference uses exact double high+low, even if FP32 addition loses bits.
+    delta = high.double() + low.double() - target.double()
+    reference_raw = ((target.view(t.int32) >> 23) & 255).clamp(min=1) - 127
+    reference_raw = t.where(target == 0, -10000, reference_raw).amax(-1)
+    scale_exponent = ((logical_scale.view(t.int32) >> 23) & 255) - 127
+    encoded_raw = ((codes.view(t.uint8).int() >> 3) & 15).clamp(min=1) - 7
+    native_raw = encoded_raw + scale_exponent.repeat_interleave(32, -1)
+    native_raw = t.where(codes.float() == 0, -10000, native_raw).amax(-1)
+    return t.stack((norm_upper(target), norm_upper(effective), norm_upper(delta), reference_raw.double(), native_raw.double()), -1).contiguous()
+
+
+class EncodedWeightPlan:
+    """Own normal, version-tracked encoded buffers and derived integer words.
+
+    The plan accepts no original BF16 operand. Caller must use plan.b/sfb and
+    provide updated summaries/ready input ordering after changing those buffers.
+    Normal Tensor mutations invalidate words; .data/raw-pointer mutation is
+    outside this private plan contract. The ready event covers clone/decode.
+    """
+
+    def __init__(self, module, b, sfb, stream):
+        with t.inference_mode(False), t.cuda.stream(stream):
+            self.b, self.sfb = b.clone(), sfb.clone()
+        self.module_name = module.__name__
+        self.generations = 0
+        self.refresh(module, stream)
+
+    @staticmethod
+    def identity(tensor):
+        # Plan-owned tensors are created outside inference mode. Their versions
+        # remain tracked even when model inference calls this helper.
+        return (
+            id(tensor),
+            tensor.data_ptr(),
+            tensor._version,
+            tuple(tensor.shape),
+            tuple(tensor.stride()),
+            tensor.storage_offset(),
+            tensor.dtype,
+            tensor.device,
+        )
+
+    def refresh(self, module, stream):
+        global WEIGHT_PREPARE_CALLS, WEIGHT_PREPARE_KERNEL_LAUNCHES
+        assert module.__name__ == self.module_name
+        with t.inference_mode(False), t.cuda.stream(stream):
+            self.words = module.decode(self.b, self.sfb, False)
+            self.ready = t.cuda.Event()
+            self.ready.record(stream)
+        self.signature = (self.identity(self.b), self.identity(self.sfb), self.identity(self.words))
+        self.generations += 1
+        WEIGHT_PREPARE_CALLS += 1
+        WEIGHT_PREPARE_KERNEL_LAUNCHES += 1
+
+    def ensure(self, module, b, sfb, stream):
+        assert b is self.b and sfb is self.sfb, "Use the plan-owned encoded operands"
+        assert module.__name__ == self.module_name, "Plan belongs to another native module"
+        signature = (self.identity(b), self.identity(sfb), self.identity(self.words))
+        if signature != self.signature:
+            self.refresh(module, stream)
+        stream.wait_event(self.ready)
+        for tensor in (self.b, self.sfb, self.words):
+            tensor.record_stream(stream)
+        return self.words
+
+
+def prepare_b_plan(module, b, sfb, stream=None):
+    if stream is None:
+        stream = t.cuda.current_stream(b.device)
+    assert stream.device == b.device
+    return EncodedWeightPlan(module, b, sfb, stream)
+
+
+def run(module, a, b, sfa, sfb, native_c, destinations, experts, xstats, wstats, stream=None, b_plan=None):
+    global POSTPROCESS_CALLS, POSTPROCESS_KERNEL_LAUNCHES
+    assert a.is_cuda and a.ndim == 2 and a.shape[1] == 4096 and a.shape[0] % 128 == 0
+    assert b.is_cuda and b.ndim == 3 and b.shape[-1] == 4096 and b.shape[1] % 128 == 0
+    if stream is None:
+        stream = t.cuda.current_stream(a.device)
+    assert stream.device == a.device
+    with t.cuda.stream(stream):
+        live, n = destinations.numel(), b.shape[1]
+        c = t.empty((live, n), dtype=t.float32, device=a.device)
+        flags = t.empty((live, n), dtype=t.uint8, device=a.device)
+        activation = t.empty((live, n // 2), dtype=t.bfloat16, device=a.device)
+        amax = t.full((b.shape[0],), -t.inf, dtype=t.float32, device=a.device)
+        if live:
+            if b_plan is None:
+                # No implicit reuse of caller-owned inference tensors.
+                b_plan = prepare_b_plan(module, b, sfb, stream)
+                words = b_plan.ensure(module, b_plan.b, b_plan.sfb, stream)
+            else:
+                words = b_plan.ensure(module, b, sfb, stream)
+        else:
+            words = t.empty((0,), dtype=t.int16, device=a.device)
+        module.run(
+            a, b, sfa, sfb, native_c.squeeze(-1) if native_c.ndim == 3 else native_c, destinations, experts, xstats, wstats, c, flags, activation, amax, words
+        )
+    POSTPROCESS_CALLS += 1
+    POSTPROCESS_KERNEL_LAUNCHES += (3 if a.shape[0] else 2) if live else 0
+    return {"c": c, "flags": flags, "d": activation, "amax": amax}

@@ -1,0 +1,146 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Pinned-ID full Granite greedy/KV correctness, then frozen paired timing.
+
+Actual MXFP8 main plus encoded-input integer repair, all24 layers. The native
+expert forward matches qualified g9 except explicit native module/wrapper handles.
+Request math/cache steps remain unchanged; accounting sums the real wrappers. Diagnostic flag
+reductions remain included in this control's measured cost. No BF16 gate/up
+TC/Torch fallback, source/reference substitution or hardware state change.
+New stock generation is a fresh paired reference, never a replacement for the
+original frozen full-forward baseline. Stock teacher forcing uses the exact
+oracle continuation so the original 5% gate compares identical contexts.
+"""
+
+import ast
+import importlib.util
+import json
+from pathlib import Path
+import statistics
+import subprocess
+import sys
+import time
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def prepare(args, out, boundary):
+    runtime_path = Path(__file__).with_name("a3_guarded_rounding_model_runtime_20261002_r5.py")
+    qualified_path = runtime_path.with_name("a3_guarded_rounding_full_model_20261002_r9.py")
+
+    def forward_ast(path, normalize=False):
+        tree = ast.parse(path.read_text())
+        node = next(x for x in ast.walk(tree) if isinstance(x, ast.FunctionDef) and x.name == "forward")
+        if normalize:
+            for call in ast.walk(node):
+                if (
+                    isinstance(call, ast.Call)
+                    and isinstance(call.func, ast.Attribute)
+                    and isinstance(call.func.value, ast.Attribute)
+                    and call.func.value.attr == "repair_worker"
+                ):
+                    call.func.value = ast.Name(id="h", ctx=ast.Load())
+                    assert isinstance(call.args[0], ast.Attribute) and call.args[0].attr == "repair_module"
+                    call.args[0] = ast.Name(id="module", ctx=ast.Load())
+        return ast.dump(node, include_attributes=False)
+
+    assert forward_ast(runtime_path, True) == forward_ast(qualified_path)
+
+    g = load("a3_guard_pinned_generation_runtime", runtime_path)
+    r = g.prepare(args, out, boundary)
+    m, t, h = r.m, r.t, r.h
+    tokenizer = m.AutoTokenizer.from_pretrained(m.MODEL, local_files_only=True, trust_remote_code=False)
+    paths = [Path(__file__), runtime_path, qualified_path, Path(r.q.__file__), Path(r.q.PROBE), Path(r.q.p.BASE), r.q.prototype_path, Path(h.__file__)]
+    frozen = {str(path): m.sha_file(path) for path in paths}
+    (out / "frozen_inputs.json").write_text(
+        json.dumps(
+            {
+                "files": frozen,
+                "native_forward_literal_byte_identical_to_qualified_g9": False,
+                "native_forward_math_except_explicit_module_and_wrapper_handles_ast_identical": True,
+            },
+            indent=2,
+        )
+        + "\n"
+    )
+    saved, quality, timed, warmups = {}, [], [], []
+    cases = [
+        ("math73", r.prompts[0]),
+        ("sky70", r.prompts[1]),
+        ("passcode83", r.prompts[2]),
+        ("prefix256", r.workloads["256"]),
+        ("prefix1024", r.workloads["1024"]),
+    ]
+    start_main, start_repair, start_kernels = m.NATIVE_CALLS, h.POSTPROCESS_CALLS, h.POSTPROCESS_KERNEL_LAUNCHES
+
+    def equal(a, b):
+        return t.equal(a.contiguous().flatten().view(t.uint8), b.contiguous().flatten().view(t.uint8))
+
+    def text(ids):
+        tokens = ids[0].tolist()
+        if tokenizer.eos_token_id in tokens:
+            tokens = tokens[: tokens.index(tokenizer.eos_token_id)]
+        return tokenizer.decode(tokens, skip_special_tokens=True).strip()
+
+    def measure_counts():
+        return (
+            m.NATIVE_CALLS,
+            sum(worker.POSTPROCESS_CALLS for worker in r.repair_workers),
+            sum(worker.POSTPROCESS_KERNEL_LAUNCHES for worker in r.repair_workers),
+        )
+
+    def request(ids, mode, forced=None):
+        m.attach(r.adapters, mode)
+        for adapter in r.adapters:
+            adapter.flag_counts.clear()
+        bm, br, bk = measure_counts()
+        ids = ids.cuda()
+        forced = forced.cuda() if forced is not None else None
+        t.cuda.synchronize()
+        begin = time.perf_counter_ns()
+        result = r.model(input_ids=ids, use_cache=True, logits_to_keep=1)
+        t.cuda.synchronize()
+        prefill_done = time.perf_counter_ns()
+        next_id = result.logits[:, -1].argmax(-1, keepdim=True)
+        generated, logits = [next_id], [result.logits[:, -1].detach()]
+        cache = result.past_key_values
+        cache_type = type(cache).__name__
+        for step in range(31):
+            feed = next_id if forced is None else forced[:, step : step + 1]
+            previous_cache = cache
+            result = r.model(input_ids=feed, past_key_values=cache, use_cache=True, logits_to_keep=1)
+            next_id = result.logits[:, -1].argmax(-1, keepdim=True)
+            generated.append(next_id)
+            logits.append(result.logits[:, -1].detach())
+            cache = result.past_key_values
+            assert cache is previous_cache, "KV cache was replaced instead of reused"
+        t.cuda.synchronize()
+        end = time.perf_counter_ns()
+        assert cache.get_seq_length() == ids.shape[-1] + 31
+        counts = tuple(end - begin for end, begin in zip(measure_counts(), (bm, br, bk), strict=True))
+        expected_kernels = 2304 if r.adapters[0].repair_worker.NAME.endswith(("_r7", "_r8")) else 1536
+        assert counts == ((768, 768, expected_kernels) if mode == "native" else (0, 0, 0))
+        flags = t.stack([t.stack(adapter.flag_counts) for adapter in r.adapters]).cpu() if mode == "native" else None
+        if flags is not None:
+            assert flags.shape == (24, 32, 3) and int(flags[:, :, 2].sum()) == 0
+        return {
+            "ids": t.cat(generated, dim=-1).cpu(),
+            "logits": t.stack(logits, dim=1).cpu(),
+            "flags": flags,
+            "timing": {"prefill_ms": (prefill_done - begin) / 1e6, "decode_ms": (end - prefill_done) / 1e6, "request_ms": (end - begin) / 1e6},
+            "native_main_calls": counts[0],
+            "native_repair_calls": counts[1],
+            "native_postprocess_kernel_launches": counts[2],
+            "cache_type": cache_type,
+            "cache_final_tokens": cache.get_seq_length(),
+            "cache_object_reused": True,
+            "forwards": 32,
+        }
+
+    return {"r": r, "request": request, "text": text, "paths": paths, "frozen": frozen, "cases": cases}

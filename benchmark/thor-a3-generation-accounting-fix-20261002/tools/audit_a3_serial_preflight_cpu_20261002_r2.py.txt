@@ -1,0 +1,87 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Verify frozen dependencies and installed provenance before queuing, CPU only."""
+
+import argparse
+import ast
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    assert os.environ["CUDA_VISIBLE_DEVICES"] == "" and "torch" not in sys.modules
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    tools = Path(__file__).parent
+    coordinator = tools / "a3_serial_iteration_resume_20261002_r5.py"
+    tree = ast.parse(coordinator.read_text())
+    assignment = next(
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == "names" for target in node.targets)
+    )
+    assert isinstance(assignment.value, ast.List)
+    names = [coordinator.name] + [ast.literal_eval(node) for node in assignment.value.elts[1:]]
+    assert len(names) == len(set(names))
+    paths = [tools / name for name in names]
+    assert all(path.is_file() for path in paths)
+    for path in paths:
+        if path.suffix == ".py":
+            compile(path.read_text(), str(path), "exec")
+    provenance = ROOT / "results/a3-latest-5f27-native-provenance-20261002.json"
+    native = json.loads(provenance.read_text())
+    source = Path(native["source"])
+    assert native["head"] == "aab01504ad3ad97170d19087ce23bef48d95dfa0"
+    assert native["native_build"] == "REUSED_BYTE_IDENTICAL_ALL_NATIVE_INPUTS_UNCHANGED"
+    assert len(native["native_input_digests"]) == 114
+    assert all(sha(source / item["path"]) == item["sha256"] for item in native["native_input_digests"])
+    assert sha(Path(native["binding"]["path"])) == native["binding"]["sha256"]
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == native["head"]
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
+    bundle = tools / "a3-latest-b1fe-20261002.bundle"
+    assert sha(bundle) == "27d265ba9420625d84ee6b048e61d120fc7a7cc4e43e7936353d10b01e6c4db3"
+    prepared = ROOT / "results/a3-route-probe-preparation-cpu-audit-20261002-r1"
+    run = json.loads(prepared.with_name(prepared.name + "-launch").joinpath("run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    route_proof = json.loads((prepared / "result.json").read_text())
+    assert not route_proof["torch_imported"] and route_proof["new_native_calls"] == 0
+    assert all(sha(Path(path)) == digest for path, digest in route_proof["files"].items())
+    assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+    assert "torch" not in sys.modules
+    result = {
+        "stage": "SERIAL_QUEUE_CPU_PROVENANCE_PREFLIGHT_COMPLETE_GPU_NOT_RUN",
+        "current_head": native["head"],
+        "native_inputs_SHA256_verified": 114,
+        "binding": native["binding"],
+        "source_dependencies": len(paths),
+        "files": {str(path): sha(path) for path in [Path(__file__), *paths, provenance, prepared / "result.json"]},
+        "torch_imported": False,
+        "new_native_calls": 0,
+        "GPU_tests": "NOT_RUN",
+        "paired_performance": "NOT_RUN",
+        "accepted_optimization": False,
+        "service_final": "inactive",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(
+        json.dumps({key: result[key] for key in ["stage", "native_inputs_SHA256_verified", "source_dependencies", "torch_imported", "new_native_calls"]}),
+        flush=True,
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

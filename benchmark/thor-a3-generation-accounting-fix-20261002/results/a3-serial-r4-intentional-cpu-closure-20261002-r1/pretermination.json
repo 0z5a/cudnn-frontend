@@ -1,0 +1,38 @@
+{
+  "reason": "Correct cached-shuffle native7 generation audit accounting from1536 to2304; frozen R4 inputs remain intact",
+  "worker": 807144,
+  "logger": 807143,
+  "frozen_input_hashes_verified": 47,
+  "before_stop": {
+    "command": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_serial_iteration_resume_20261002_r4.py --out /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r4 --lock-wait-seconds 43200 ",
+    "status": "Name:\tpython\nUmask:\t0002\nState:\tS (sleeping)\nTgid:\t807144\nNgid:\t0\nPid:\t807144\nPPid:\t807143\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t64\nGroups:\t27 29 44 100 108 122 979 983 984 993 1000 2002 \nKthread:\t0\nVmPeak:\t   39608 kB\nVmSize:\t   33160 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   22476 kB\nVmRSS:\t   13720 kB\nRssAnon:\t    8236 kB\nRssFile:\t    5484 kB\nRssShmem:\t       0 kB\nVmData:\t    9316 kB\nVmStk:\t     132 kB\nVmExe:\t    6200 kB\nVmLib:\t    7112 kB\nVmPTE:\t      88 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nuntag_mask:\t0xffffffffffffff\nThreads:\t1\nSigQ:\t0/501107\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tunknown\nCpus_allowed:\t3fff\nCpus_allowed_list:\t0-13\nMems_allowed:\t0001\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t4908\nnonvoluntary_ctxt_switches:\t59\n",
+    "gpu_library_maps": [],
+    "children": "",
+    "shared_lock_fds": {
+      "3": "pos:\t0\nflags:\t02402001\nmnt_id:\t29\nino:\t1048611\n"
+    },
+    "shared_locks": [
+      "26: FLOCK  ADVISORY  WRITE 545711 103:01:1048611 0 EOF",
+      "26: -> FLOCK  ADVISORY  WRITE 555938 103:01:1048611 0 EOF"
+    ],
+    "admission_exists": false,
+    "completed_runs_exists": false,
+    "terminal_exists": false
+  },
+  "stopped_snapshot": {
+    "command": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_serial_iteration_resume_20261002_r4.py --out /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r4 --lock-wait-seconds 43200 ",
+    "status": "Name:\tpython\nUmask:\t0002\nState:\tT (stopped)\nTgid:\t807144\nNgid:\t0\nPid:\t807144\nPPid:\t807143\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t64\nGroups:\t27 29 44 100 108 122 979 983 984 993 1000 2002 \nKthread:\t0\nVmPeak:\t   39608 kB\nVmSize:\t   33160 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   22476 kB\nVmRSS:\t   13720 kB\nRssAnon:\t    8236 kB\nRssFile:\t    5484 kB\nRssShmem:\t       0 kB\nVmData:\t    9316 kB\nVmStk:\t     132 kB\nVmExe:\t    6200 kB\nVmLib:\t    7112 kB\nVmPTE:\t      88 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nuntag_mask:\t0xffffffffffffff\nThreads:\t1\nSigQ:\t0/501107\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tunknown\nCpus_allowed:\t3fff\nCpus_allowed_list:\t0-13\nMems_allowed:\t0001\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t4910\nnonvoluntary_ctxt_switches:\t59\n",
+    "gpu_library_maps": [],
+    "children": "",
+    "shared_lock_fds": {
+      "3": "pos:\t0\nflags:\t02402001\nmnt_id:\t29\nino:\t1048611\n"
+    },
+    "shared_locks": [
+      "26: FLOCK  ADVISORY  WRITE 545711 103:01:1048611 0 EOF",
+      "26: -> FLOCK  ADVISORY  WRITE 555938 103:01:1048611 0 EOF"
+    ],
+    "admission_exists": false,
+    "completed_runs_exists": false,
+    "terminal_exists": false
+  }
+}

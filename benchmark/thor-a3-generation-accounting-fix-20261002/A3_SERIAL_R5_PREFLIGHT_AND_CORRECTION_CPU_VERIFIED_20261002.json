@@ -1,0 +1,211 @@
+{
+  "files": {
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_integer_reduce_generation_pair_cpu_20261002_r2.py": "7b1051ed90d307b09261bf4b4bb0fbe4a0294e3ba1bd3b356e252c3db3177c09",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_integer_generation_accounting_preparation_cpu_20261002_r1.py": "6ad85e1124733c8b6c80b7de7c54877aa6d7ce41033ee389fef9eaf380f9e334",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_serial_iteration_resume_20261002_r5.py": "6abc1cec75bc68bba71694c786de380adc200b97e03604e71b1314565a0a5298",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_serial_preflight_cpu_20261002_r2.py": "433c34d9208744dde33ffd3d142e3559f92cb25ec4b513b2a5eb70b57445c1b7"
+  },
+  "checks": {
+    "a3-integer-generation-accounting-preparation-cpu-audit-20261002-r1": {
+      "run": {
+        "argv": [
+          "python3",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_integer_generation_accounting_preparation_cpu_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-integer-generation-accounting-preparation-cpu-audit-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+        "started_utc": "2026-10-02T08:13:09.638254+00:00",
+        "deadline_seconds": 30.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 0.3652930149983149
+      },
+      "proof": {
+        "stage": "GENERATION_ACCOUNTING_ASSERTION_CORRECTED_CPU_REGRESSION_COMPLETE",
+        "only_changed_assertion_ast": true,
+        "old_cached7_correct_count_false_rejection_reproduced": true,
+        "both_arms_expected_postprocess_kernels": 2304,
+        "regression_cases": [
+          {
+            "arm": "cached_shuffle",
+            "kernels": 2304,
+            "accepted": true
+          },
+          {
+            "arm": "cached_shuffle",
+            "changed": {
+              "main": 767
+            },
+            "accepted": false
+          },
+          {
+            "arm": "cached_shuffle",
+            "changed": {
+              "repair": 767
+            },
+            "accepted": false
+          },
+          {
+            "arm": "cached_shuffle",
+            "changed": {
+              "kernels": 1536
+            },
+            "accepted": false
+          },
+          {
+            "arm": "cached_shuffle",
+            "changed": {
+              "kernels": 2303
+            },
+            "accepted": false
+          },
+          {
+            "arm": "integer_redux",
+            "kernels": 2304,
+            "accepted": true
+          },
+          {
+            "arm": "integer_redux",
+            "changed": {
+              "main": 767
+            },
+            "accepted": false
+          },
+          {
+            "arm": "integer_redux",
+            "changed": {
+              "repair": 767
+            },
+            "accepted": false
+          },
+          {
+            "arm": "integer_redux",
+            "changed": {
+              "kernels": 1536
+            },
+            "accepted": false
+          },
+          {
+            "arm": "integer_redux",
+            "changed": {
+              "kernels": 2303
+            },
+            "accepted": false
+          }
+        ],
+        "qualified_cached7_actual_main_calls": 72,
+        "qualified_cached7_actual_postprocess_kernel_launches": 216,
+        "files": {
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_integer_generation_accounting_preparation_cpu_20261002_r1.py": "6ad85e1124733c8b6c80b7de7c54877aa6d7ce41033ee389fef9eaf380f9e334",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_integer_reduce_generation_pair_cpu_20261002_r1.py": "8e3c3f5298de076b18086cfea8865421f8407f4aeac4e7d12c7686e220432d50",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_integer_reduce_generation_pair_cpu_20261002_r2.py": "7b1051ed90d307b09261bf4b4bb0fbe4a0294e3ba1bd3b356e252c3db3177c09",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_request_runtime_20261002_r4.py": "40ae1e92a706f8a5856ac7199d196355b5c5be45a8242f7d255f72f24426866d",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r7.py": "551818f57b08e8a0c6b0a60cc51844c38055bbffbc18888dd15a5be61d6d2fd3",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r8.py": "88d8ef70a550c58d40e14cb589096be275e30bcfca3f2840c6b0fdd8498b6ad0",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-weight-plan-20261002-r1-launch/run.json": "732441459cc5ac919e700336a69cae37928d05538060ee7d20b0cb407cd767b8",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-weight-plan-20261002-r1/candidate/model/result.json": "ddaa5cdd9b83f6e2e6fd35a0eeeb344c304cf55957e133b5ed3e904601e3d94a"
+        },
+        "torch_imported": false,
+        "new_native_calls": 0,
+        "integer8_generation_GPU_tests": "NOT_RUN",
+        "paired_performance": "NOT_RUN",
+        "accepted_optimization": false
+      }
+    },
+    "a3-serial-preflight-cpu-audit-20261002-r2": {
+      "run": {
+        "argv": [
+          "python3",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_serial_preflight_cpu_20261002_r2.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-preflight-cpu-audit-20261002-r2"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+        "started_utc": "2026-10-02T08:13:49.023791+00:00",
+        "deadline_seconds": 120.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 6.324467121012276
+      },
+      "proof": {
+        "stage": "SERIAL_QUEUE_CPU_PROVENANCE_PREFLIGHT_COMPLETE_GPU_NOT_RUN",
+        "current_head": "aab01504ad3ad97170d19087ce23bef48d95dfa0",
+        "native_inputs_SHA256_verified": 114,
+        "binding": {
+          "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest5f27/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+          "sha256": "53e032059642472bf9a48cf847b4dfe87412ea3f33f6e80e9f09f016b3d534cc"
+        },
+        "source_dependencies": 47,
+        "files": {
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_serial_preflight_cpu_20261002_r2.py": "433c34d9208744dde33ffd3d142e3559f92cb25ec4b513b2a5eb70b57445c1b7",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_serial_iteration_resume_20261002_r5.py": "6abc1cec75bc68bba71694c786de380adc200b97e03604e71b1314565a0a5298",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_integer_generation_accounting_preparation_cpu_20261002_r1.py": "6ad85e1124733c8b6c80b7de7c54877aa6d7ce41033ee389fef9eaf380f9e334",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/run_a3_latest_5f27_regression_admitted_20261002_r1.py": "ee5eb18a5e29ad0bac8d48ed930f3a2507dc5974046a5ffada6f71d641d45746",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_route_decode_gpu_admitted_20261002_r1.py": "bd97579e9d8f516ace47770e883618158f4e41c8a13888292a3c9abfa4b6d8f7",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_route_boundary_prepared_20261002_r1.py": "75c3244fbb982ed33d5cb00f11e0e8d6b4d6990ffd21453816477ba489c0f44a",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_route_decode_reuse_probe_prepared_20261002_r1.py": "a2c2dd01088653c937f5794d58f63f30dfee8d0898fc7fd225bf9edca4e0c75d",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_route_probe_preparation_cpu_20261002_r1.py": "4bbe3ecde455ec1c5697a001f67d05f942309b10f240bb3460d0cf6d8bcdff4f",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_route_decode_boundary_cpu_20261002_r1.py": "7d4d0129e7c2ab8fddf111a244a274689d498e1f39025d8c0869ee666303e4f0",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_route_decode_reuse_cpu_20261002_r1.py": "6bc1930b2da9fe14db41b1d32c1540135cfc57a65392e024309cbbe9a23fceff",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r9_route_decode.py": "96055f5cb47a388b36adae3b3d04eec796d5b4c20b974732e819aa3b34151480",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r9_route_decode.cpp": "1fe8890cc64cdaae0f1d58ea12494446173fa8efd48c44d52e124c34aeb66868",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r9_route_decode.cu": "10ba822eceef85dbb1716ac83c77311b285d8499e8eaa9f72427419c13491315",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_native_a_compact_pipeline_admitted_20261002_r2.py": "c7c7e810c4bd5410a0e5ce18c037bcad71cc69da009462b2399602c42f3f03bc",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_native_a_compact_gpu_admitted_20261002_r1.py": "10cdea0f78a2d76045d860dd4155df777043369dd2c30fb6d1b5fbc57a72770b",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_native_a_quantizer_compact_20261002_r1.py": "625843454b5d996ea676dadd200baf6efe4864521a963af38efb0ec528f8b5ec",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_native_a_compact_full_model_generation_pair_20261002_r1.py": "91cf6b4eacbacf285877a7a45a370ed6f146e7ae8c23ca89e4ad8aaf6d69b6d5",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_native_a_compact_full_model_generation_pair_cpu_20261002_r1.py": "8f06e19f0e2b0af6b05eafff5842d637016ab6fb127bf4651514149cc1a3ce72",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_native_a_quantizer_compact_cpu_20261002_r1.py": "44046e6602174a5006fa6ed8c7bc8aaa4d4aa416ff591ebb363b9669fccdb8e3",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_guard_pinned_model_cpu_20261002_r1.py": "45ff1240bd070e03fe29003e74b6dc98a66697772e69b29805ac23129e64d83f",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latestb1fe_iteration_coordinator_20261002_r2.py": "9f2ce1fe58fd1493967acd13c42ec63ac440dc37efb009dd5130218816dd709b",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latestb1fe_gpu_phase_admitted_20261002_r1.py": "d6f5a62425349f4f8807a928c5f7d14a842642dcce90915032276179166131cf",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_build_a3_latest_b1fe_20261002_r1.py": "7b28a1a56cbf14067af6a2669487f9f073a6a7ed6f3cbc999ae143cdf7ad4632",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/run_a3_latest_b1fe_regression_queued_20261002_r1.py": "98a95d18b15166e9fef6ec6bdc47e561c51a4e4e21de7e7246b04fad3e9eaf41",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_integer_reduce_boundary_pair_model_20261002_r1.py": "886b71464497a08062ae8f86f051eb528d13ff57a20ab44db2d011cb641ce4d5",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_boundary_queued_20261002_r9.py": "7371c91955acda7ada3b65f12297f35c78f65c39b31ff9c35288187a360eb707",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_full_model_20261002_r9.py": "3c1ba00dd9594ab2609b57b6223d9c7209e196d1397bc25e7131356ca2ce9165",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r8.py": "88d8ef70a550c58d40e14cb589096be275e30bcfca3f2840c6b0fdd8498b6ad0",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r7.py": "551818f57b08e8a0c6b0a60cc51844c38055bbffbc18888dd15a5be61d6d2fd3",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_model_runtime_20261002_r5.py": "d159add5789e66f6889627398a3f54c4a6ad84ff92efb4c2ab8741fa3a56f928",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_request_runtime_20261002_r4.py": "40ae1e92a706f8a5856ac7199d196355b5c5be45a8242f7d255f72f24426866d",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_integer_reduce_full_generation_pair_20261002_r1.py": "f74418813e6284c7814b9be3990a8b7ec7076b7f1a920b603069480140268049",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_integer_reduce_boundary_cpu_20261002_r1.py": "3e17842eedb3e9eaaf2bef996939a509b30662343a5e63de769c2db66a0ddc88",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_integer_reduce_pair_cpu_20261002_r1.py": "8edaf2f80044849a14f2aa14132a946c856361f4779d5fb7d70824f201f1ea8e",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_integer_reduce_full_model_cpu_20261002_r1.py": "f7dc1cd86146c92c4149a048e08a8473c3605f362903df81b3a4a817ec013e9d",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_integer_reduce_generation_pair_cpu_20261002_r2.py": "7b1051ed90d307b09261bf4b4bb0fbe4a0294e3ba1bd3b356e252c3db3177c09",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_weight_plan_generation_pair_cpu_20261002_r3.py": "633da805862ceb4c534a0e575aabf050c955dd6599d99fcf8a5b843243e8741a",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_weight_plan_generation_admitted_20261002_r1.py": "bee326454c6e7247fcedb3f5c3769cee400cbb88e0622298db4fe967f35d7ea0",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_weight_plan_full_generation_pair_20261002_r1.py": "dc35191edbdbe6bab8b4ccb97c3f618968c1d39943a6ea4799793ef8df253918",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_model_runtime_20261002_r4.py": "458634a0ec31dde149df96c90d9e0f23cbd155e823e184ff9fee6fbb68989c2a",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_request_runtime_20261002_r3.py": "08f952dcd813ef7624a5743eec506740a55f47bb62d2afb0724d776b9a8a49ca",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_full_model_20261002_r8.py": "500b214d56328ce51462f9c024ac0fa7bfbf493282a56a76d1d38c0c556379ff",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r4.py": "7de4a50b53f3b3dd56b220bca242cf0537e459ba74a4ddbdcab94d0d9a865728",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_mxfp8_bf16_staged_full_model_worker_20261001.py": "62304d6cc59fc2b604a19efe1c60c075e0737c6898de191404e4bbb6baf057d1",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_all24_precision_probe_20261001.py": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_model_e2e_mergefix_20261001.py": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/diagnose_a3_fixed_window_cpu_20261001.py": "91533128b0e22ec3d65b5778c61aed4a9c4bf0d2d0cd4fccfa9d2d0579d84c97",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-5f27-native-provenance-20261002.json": "84d14415fcd6739564ea8f7127e8fc83fe0fc4b36ed9e80b4018bd50b164daf8",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-route-probe-preparation-cpu-audit-20261002-r1/result.json": "6856a0ecb756db9379b1d364d881e357461824c98fb3667841e00c671bd26a90"
+        },
+        "torch_imported": false,
+        "new_native_calls": 0,
+        "GPU_tests": "NOT_RUN",
+        "paired_performance": "NOT_RUN",
+        "accepted_optimization": false,
+        "service_final": "inactive"
+      }
+    }
+  },
+  "current_public_head": "aab01504ad3ad97170d19087ce23bef48d95dfa0",
+  "service": "inactive"
+}

@@ -1,0 +1,236 @@
+{
+  "prior_commit": "4e3b16151ac356ec66bc6448a9ef715c0760d564",
+  "scope": "Frozen snapshots and actual CPU outcomes only; GPU pending; raw Python bytes stored as .py.txt",
+  "files": {
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-generation-accounting-fix-evidence-20261002-manifest.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-generation-accounting-fix-evidence-20261002-manifest.json",
+      "size": 7431,
+      "sha256": "85e42ebc9989a7f65b95f2566087deb2e26db369e0fed7c196a46d90aaeb8ab9"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-integer-generation-accounting-preparation-cpu-audit-20261002-r1/result.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-integer-generation-accounting-preparation-cpu-audit-20261002-r1/result.json",
+      "size": 3159,
+      "sha256": "7fe6668e3edbbcc8d2ffc3e2b8803c932f297d8540e6dbe1f02a4a04fd732590"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-integer-generation-accounting-preparation-cpu-audit-20261002-r1-launch/run.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-integer-generation-accounting-preparation-cpu-audit-20261002-r1-launch/run.json",
+      "size": 614,
+      "sha256": "4a52aeac5e64546967496955346eb7044857c6e61d8651bf09c1acdfbccb1950"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-integer-generation-accounting-preparation-cpu-audit-20261002-r1-launch/stderr.log": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-integer-generation-accounting-preparation-cpu-audit-20261002-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-integer-generation-accounting-preparation-cpu-audit-20261002-r1-launch/stdout.log": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-integer-generation-accounting-preparation-cpu-audit-20261002-r1-launch/stdout.log",
+      "size": 211,
+      "sha256": "e3964d9fe18d8af03b442adf460d2be5777bc74bfaef87611537f419b4e9084e"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-iteration-20261002-r4/closed_predecessors.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-iteration-20261002-r4/closed_predecessors.json",
+      "size": 3246,
+      "sha256": "730a5f1615caab197ccf0699ec8362afaa51c24d9571de427c49539271356064"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-iteration-20261002-r4/frozen_inputs.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-iteration-20261002-r4/frozen_inputs.json",
+      "size": 8608,
+      "sha256": "7a6008c8477b353f9f4adc285771450259d5eb9a7b9a1bf63bc34218cd8a5d99"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-iteration-20261002-r4/predecessors.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-iteration-20261002-r4/predecessors.json",
+      "size": 2668,
+      "sha256": "a9410cb08f493c2fb6845f3f952e12866ea62a208df7bc09457190382d2f1552"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-iteration-20261002-r4/prior_build_and_terminal_parent.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-iteration-20261002-r4/prior_build_and_terminal_parent.json",
+      "size": 1863,
+      "sha256": "61127ca482add6a9639f276e1d40684b119572cce024b12bbb50475b672d20d3"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-iteration-20261002-r4-launch/run.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-iteration-20261002-r4-launch/run.json",
+      "size": 669,
+      "sha256": "b45aab5b55de078cbda4c01b2c39795ccbbf0850a86ce705be6d358d1e5615b2"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-iteration-20261002-r4-launch/stderr.log": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-iteration-20261002-r4-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-iteration-20261002-r4-launch/stdout.log": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-iteration-20261002-r4-launch/stdout.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-iteration-20261002-r5/closed_predecessors.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-iteration-20261002-r5/closed_predecessors.json",
+      "size": 3246,
+      "sha256": "730a5f1615caab197ccf0699ec8362afaa51c24d9571de427c49539271356064"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-iteration-20261002-r5/frozen_inputs.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-iteration-20261002-r5/frozen_inputs.json",
+      "size": 8810,
+      "sha256": "842fc5abd77c0abd9583e4839dab41ed313351142181f8205dce612d39a9e4e6"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-iteration-20261002-r5/predecessors.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-iteration-20261002-r5/predecessors.json",
+      "size": 2668,
+      "sha256": "a9410cb08f493c2fb6845f3f952e12866ea62a208df7bc09457190382d2f1552"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-iteration-20261002-r5/prior_build_and_terminal_parent.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-iteration-20261002-r5/prior_build_and_terminal_parent.json",
+      "size": 1863,
+      "sha256": "61127ca482add6a9639f276e1d40684b119572cce024b12bbb50475b672d20d3"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-iteration-20261002-r5/r4_intentional_cpu_closure_and_accounting_fix.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-iteration-20261002-r5/r4_intentional_cpu_closure_and_accounting_fix.json",
+      "size": 10028,
+      "sha256": "3e26c008cd40cd00e38cfd10a7d5c6aa90aae683bde3db0e4d61036ad99df2ab"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-iteration-background-20261002-r4/driver.log": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-iteration-background-20261002-r4/driver.log",
+      "size": 669,
+      "sha256": "b45aab5b55de078cbda4c01b2c39795ccbbf0850a86ce705be6d358d1e5615b2"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-iteration-background-20261002-r4/launch.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-iteration-background-20261002-r4/launch.json",
+      "size": 1312,
+      "sha256": "197daef85e0cf721b278b41a077571124a667b20663017b0a7b87a6caf7220e0"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-iteration-background-20261002-r5/driver.log": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-iteration-background-20261002-r5/driver.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-iteration-background-20261002-r5/launch.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-iteration-background-20261002-r5/launch.json",
+      "size": 1182,
+      "sha256": "02ba99bce08e59e2ae987d02b0b95006f3a48fce1745390df4310756cc247b22"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-preflight-cpu-audit-20261002-r2/result.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-preflight-cpu-audit-20261002-r2/result.json",
+      "size": 9774,
+      "sha256": "59d6d4af8cd79e6b6e84b3ab75c311825237e0c4e9e837193fea7349e92ce3df"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-preflight-cpu-audit-20261002-r2-launch/run.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-preflight-cpu-audit-20261002-r2-launch/run.json",
+      "size": 564,
+      "sha256": "ebe31390ab8996ab57a76bbc1e7dc8144fef51a06c277c7554a862fcc9200365"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-preflight-cpu-audit-20261002-r2-launch/stderr.log": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-preflight-cpu-audit-20261002-r2-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-preflight-cpu-audit-20261002-r2-launch/stdout.log": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-preflight-cpu-audit-20261002-r2-launch/stdout.log",
+      "size": 185,
+      "sha256": "f3bcd11009d4a149b79de6894dde49963766c4c3c8a7438da8071e0d4f25ce4d"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-r4-intentional-cpu-closure-20261002-r1/pretermination.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-r4-intentional-cpu-closure-20261002-r1/pretermination.json",
+      "size": 4293,
+      "sha256": "17ea1e33ad16ceb4496dcb6cd360098568857331a1902496a369446756d6a883"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-r4-intentional-cpu-closure-20261002-r1/result.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-r4-intentional-cpu-closure-20261002-r1/result.json",
+      "size": 5366,
+      "sha256": "e9aac2c7a1aee1011aef1c32bc51fb5cb7507fe7403626ddce0b692af9b1a2cf"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-r4-intentional-cpu-closure-20261002-r1-launch/run.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-r4-intentional-cpu-closure-20261002-r1-launch/run.json",
+      "size": 436,
+      "sha256": "571183135fa4e915d4fd767b7f5fa95703a1efd3fdf27dd18158838f94c4a3e7"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-r4-intentional-cpu-closure-20261002-r1-launch/stderr.log": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-r4-intentional-cpu-closure-20261002-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/results/a3-serial-r4-intentional-cpu-closure-20261002-r1-launch/stdout.log": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/results/a3-serial-r4-intentional-cpu-closure-20261002-r1-launch/stdout.log",
+      "size": 787,
+      "sha256": "85bee5a5a7ea9856e77ab2323bde809addcf6a090a9b724983d2efade4cfaa3a"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/tools/a3_guarded_rounding_native_20261002_r7.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/tools/a3_guarded_rounding_native_20261002_r7.py",
+      "size": 7245,
+      "sha256": "551818f57b08e8a0c6b0a60cc51844c38055bbffbc18888dd15a5be61d6d2fd3"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/tools/a3_guarded_rounding_native_20261002_r8.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/tools/a3_guarded_rounding_native_20261002_r8.py",
+      "size": 7368,
+      "sha256": "88d8ef70a550c58d40e14cb589096be275e30bcfca3f2840c6b0fdd8498b6ad0"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/tools/a3_guarded_rounding_request_runtime_20261002_r4.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/tools/a3_guarded_rounding_request_runtime_20261002_r4.py",
+      "size": 6764,
+      "sha256": "40ae1e92a706f8a5856ac7199d196355b5c5be45a8242f7d255f72f24426866d"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/tools/a3_serial_iteration_resume_20261002_r4.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/tools/a3_serial_iteration_resume_20261002_r4.py",
+      "size": 16974,
+      "sha256": "9303f04cae5032a50f5ba4d4d2c4698e472c0a807fe860f2867e2bc67d44797a"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/tools/a3_serial_iteration_resume_20261002_r5.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/tools/a3_serial_iteration_resume_20261002_r5.py",
+      "size": 19218,
+      "sha256": "6abc1cec75bc68bba71694c786de380adc200b97e03604e71b1314565a0a5298"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/tools/audit_a3_integer_generation_accounting_preparation_cpu_20261002_r1.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/tools/audit_a3_integer_generation_accounting_preparation_cpu_20261002_r1.py",
+      "size": 5798,
+      "sha256": "6ad85e1124733c8b6c80b7de7c54877aa6d7ce41033ee389fef9eaf380f9e334"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/tools/audit_a3_integer_reduce_generation_pair_cpu_20261002_r1.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/tools/audit_a3_integer_reduce_generation_pair_cpu_20261002_r1.py",
+      "size": 13282,
+      "sha256": "8e3c3f5298de076b18086cfea8865421f8407f4aeac4e7d12c7686e220432d50"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/tools/audit_a3_integer_reduce_generation_pair_cpu_20261002_r2.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/tools/audit_a3_integer_reduce_generation_pair_cpu_20261002_r2.py",
+      "size": 13212,
+      "sha256": "7b1051ed90d307b09261bf4b4bb0fbe4a0294e3ba1bd3b356e252c3db3177c09"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/tools/audit_a3_serial_preflight_cpu_20261002_r2.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/tools/audit_a3_serial_preflight_cpu_20261002_r2.py",
+      "size": 4089,
+      "sha256": "433c34d9208744dde33ffd3d142e3559f92cb25ec4b513b2a5eb70b57445c1b7"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/tools/close_a3_r4_cpu_waiter_20261002_r1.py.txt": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-generation-accounting-fix-evidence-20261002/tools/close_a3_r4_cpu_waiter_20261002_r1.py",
+      "size": 5713,
+      "sha256": "f12461061a0afb9bd631cd3106044d34afe92f081daa400058708f98341cf08d"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/RESULT.md": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_GENERATION_ACCOUNTING_FIX_RESULT_20261002.md",
+      "size": 5742,
+      "sha256": "705f78d3d3c2c627fe7fc13c71cf453c25dc4aa4c43b3a366b56d751be899d51"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/A3_GENERATION_ACCOUNTING_FIX_MAC_VERIFIED_20261002.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_GENERATION_ACCOUNTING_FIX_MAC_VERIFIED_20261002.json",
+      "size": 11619,
+      "sha256": "fb2cab3d0d3963406fa4afb50f69f605e8a7dd31981c5947dcffb5cf756549f1"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/A3_SERIAL_R5_PREFLIGHT_AND_CORRECTION_CPU_VERIFIED_20261002.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_SERIAL_R5_PREFLIGHT_AND_CORRECTION_CPU_VERIFIED_20261002.json",
+      "size": 16332,
+      "sha256": "389154685bad4dbdf0d4f9d62246445077cfe0bf2dba554503c9dfaa09a8fff4"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/A3_SERIAL_R4_INTENTIONAL_CPU_CLOSURE_20261002.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_SERIAL_R4_INTENTIONAL_CPU_CLOSURE_20261002.json",
+      "size": 5366,
+      "sha256": "e9aac2c7a1aee1011aef1c32bc51fb5cb7507fe7403626ddce0b692af9b1a2cf"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/A3_SERIAL_R5_PROCESS_VERIFIED_20261002.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_SERIAL_R5_PROCESS_VERIFIED_20261002.json",
+      "size": 11443,
+      "sha256": "b887f4839b541b96b60d39081e3868518c0c6759a7ea335e24197fb0016ea174"
+    },
+    "benchmark/thor-a3-generation-accounting-fix-20261002/A3_SERIAL_R5_LAUNCH_EXECUTION_20261002.json": {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_SERIAL_R5_LAUNCH_EXECUTION_20261002.json",
+      "size": 1331,
+      "sha256": "7a76dc9ae59dfd6b4dac26e2fe93617eb56728c4825fe96d8479c8e73ccb9440"
+    }
+  }
+}

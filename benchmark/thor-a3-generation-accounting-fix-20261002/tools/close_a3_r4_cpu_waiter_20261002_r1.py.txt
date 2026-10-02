@@ -1,0 +1,110 @@
+"""Close only the verified, stopped CPU-only R4 waiter; preserve logger evidence."""
+
+import hashlib
+import json
+import os
+from pathlib import Path
+import signal
+import subprocess
+import sys
+import time
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+OUT = ROOT / "results/a3-serial-r4-intentional-cpu-closure-20261002-r1"
+WORKER, LOGGER = 807144, 807143
+
+
+def snapshot():
+    process = Path("/proc") / str(WORKER)
+    cmd = (process / "cmdline").read_text().replace(chr(0), " ")
+    assert str(ROOT / "tools/a3_serial_iteration_resume_20261002_r4.py") in cmd
+    assert str(ROOT / "results/a3-serial-iteration-20261002-r4") in cmd
+    status = (process / "status").read_text()
+    assert f"PPid:\t{LOGGER}" in status
+    children = subprocess.run(["ps", "--ppid", str(WORKER), "-o", "pid=,args="], text=True, capture_output=True)
+    assert children.returncode in (0, 1)
+    maps = [line for line in (process / "maps").read_text().splitlines() if any(part in line.lower() for part in ("torch", "libcuda", "cudnn"))]
+    fds = {}
+    for fd in (process / "fd").iterdir():
+        if os.readlink(fd) == "/tmp/codex-thor-perf.lock":
+            fds[fd.name] = (process / "fdinfo" / fd.name).read_text()
+    folder = ROOT / "results/a3-serial-iteration-20261002-r4"
+    return {
+        "command": cmd,
+        "status": status,
+        "gpu_library_maps": maps,
+        "children": children.stdout,
+        "shared_lock_fds": fds,
+        "shared_locks": [line for line in Path("/proc/locks").read_text().splitlines() if "1048611" in line],
+        "admission_exists": (folder / "admission.json").exists(),
+        "completed_runs_exists": (folder / "completed_runs.json").exists(),
+        "terminal_exists": (folder.with_name(folder.name + "-launch") / "run.json").exists(),
+    }
+
+
+def safe(state):
+    return (
+        not state["gpu_library_maps"]
+        and not state["children"].strip()
+        and bool(state["shared_lock_fds"])
+        and all("lock:" not in value for value in state["shared_lock_fds"].values())
+        and not any(f"WRITE {WORKER} " in value for value in state["shared_locks"])
+        and not state["admission_exists"]
+        and not state["completed_runs_exists"]
+        and not state["terminal_exists"]
+    )
+
+
+def main():
+    assert os.environ["CUDA_VISIBLE_DEVICES"] == "" and "torch" not in sys.modules
+    OUT.mkdir(exist_ok=False)
+    proof = {"reason": "Correct cached-shuffle native7 generation audit accounting from1536 to2304; frozen R4 inputs remain intact", "worker": WORKER, "logger": LOGGER}
+    frozen_path = ROOT / "results/a3-serial-iteration-20261002-r4/frozen_inputs.json"
+    frozen = json.loads(frozen_path.read_text())["files"]
+    assert all(hashlib.sha256(Path(path).read_bytes()).hexdigest() == digest for path, digest in frozen.items())
+    proof["frozen_input_hashes_verified"] = len(frozen)
+    proof["before_stop"] = snapshot()
+    assert safe(proof["before_stop"])
+    logger_cmd = Path("/proc", str(LOGGER), "cmdline").read_text().replace(chr(0), " ")
+    assert "run_logged.py" in logger_cmd and "a3-serial-iteration-20261002-r4-launch" in logger_cmd
+    stopped = False
+    terminated = False
+    try:
+        os.kill(WORKER, signal.SIGSTOP)
+        stopped = True
+        deadline = time.monotonic() + 3
+        while "State:\tT" not in Path("/proc", str(WORKER), "status").read_text():
+            assert time.monotonic() < deadline
+            time.sleep(0.05)
+        proof["stopped_snapshot"] = snapshot()
+        assert safe(proof["stopped_snapshot"]), "Admission raced: worker will be resumed, never terminated"
+        (OUT / "pretermination.json").write_text(json.dumps(proof, indent=2) + "\n")
+        os.kill(WORKER, signal.SIGTERM)
+        terminated = True
+        os.kill(WORKER, signal.SIGCONT)
+        stopped = False
+        terminal = ROOT / "results/a3-serial-iteration-20261002-r4-launch/run.json"
+        deadline = time.monotonic() + 15
+        while not terminal.exists() or Path("/proc", str(WORKER)).exists() or Path("/proc", str(LOGGER)).exists():
+            assert time.monotonic() < deadline, "Await logger closure; no replacement is authorized by incomplete terminal evidence"
+            time.sleep(0.1)
+        actual = json.loads(terminal.read_text())
+        assert actual["status"] == "EXITED" and actual["returncode"] == -15 and actual["signal"] == 15
+        proof.update(actual_terminal=actual, actual_terminal_sha256=hashlib.sha256(terminal.read_bytes()).hexdigest(), both_handles_absent=True, torch_imported=False, new_native_calls=0)
+        folder = ROOT / "results/a3-serial-iteration-20261002-r4"
+        assert not (folder / "admission.json").exists() and not (folder / "completed_runs.json").exists()
+        assert all(hashlib.sha256(Path(path).read_bytes()).hexdigest() == digest for path, digest in frozen.items())
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], text=True, capture_output=True).stdout.strip() == "inactive"
+        proof.update(stage="OWN_CPU_ONLY_WAITING_R4_INTENTIONALLY_CLOSED_ACTUAL_SIGTERM", frozen_inputs_unchanged=True, gpu_work="NOT_RUN", service_final="inactive")
+        (OUT / "result.json").write_text(json.dumps(proof, indent=2) + "\n")
+        print(json.dumps({key: proof[key] for key in ("stage", "actual_terminal", "both_handles_absent", "gpu_work", "service_final")}), flush=True)
+    finally:
+        if stopped and Path("/proc", str(WORKER)).exists():
+            os.kill(WORKER, signal.SIGCONT)
+        if not terminated:
+            proof["termination"] = "NOT_PERFORMED_WORKER_RESUMED"
+            (OUT / "not_terminated.json").write_text(json.dumps(proof, indent=2) + "\n")
+
+
+if __name__ == "__main__":
+    main()

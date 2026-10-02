@@ -1,0 +1,87 @@
+{
+  "a3-latestb1fe-iteration-20261002-r3": {
+    "actual_terminal": {
+      "argv": [
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latestb1fe_iteration_resume_20261002_r3.py",
+        "--out",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latestb1fe-iteration-20261002-r3",
+        "--lock-wait-seconds",
+        "7200"
+      ],
+      "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+      "started_utc": "2026-10-02T04:28:21.169258+00:00",
+      "deadline_seconds": 18000.0,
+      "status": "EXITED",
+      "selected_env": {
+        "CUDA_VISIBLE_DEVICES": ""
+      },
+      "returncode": 75,
+      "signal": null,
+      "elapsed_seconds": 7200.466909435003
+    },
+    "scope": {
+      "stage": "NOT_RUN_NEXT_SHARED_LOCK_BUSY",
+      "cached_parent_audit_pass": false,
+      "latest_fresh_native_build_done": true,
+      "new_CPU_build": "NOT_RUN_PRIOR_BUILD_REUSED",
+      "torch_imported": false
+    },
+    "terminal_sha256": "01f24294e6b9700ea9327b6434aa0c6ec31c4b68e7b94e8594edf01ad5441cda"
+  },
+  "a3-latest-ac89-regression-20261002-r1": {
+    "actual_terminal": {
+      "argv": [
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestac89/bin/python",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/run_a3_latest_ac89_regression_queued_20261002_r1.py",
+        "--out",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-ac89-regression-20261002-r1",
+        "--lock-wait-seconds",
+        "7200",
+        "--core-terminal-wait-seconds",
+        "9000"
+      ],
+      "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+      "started_utc": "2026-10-02T03:55:07.538126+00:00",
+      "deadline_seconds": 18000.0,
+      "status": "EXITED",
+      "selected_env": {
+        "CUDA_VISIBLE_DEVICES": "0"
+      },
+      "returncode": 75,
+      "signal": null,
+      "elapsed_seconds": 9111.933101846007
+    },
+    "scope": {
+      "stage": "NOT_RUN_SHARED_LOCK_BUSY",
+      "torch_imported": false
+    },
+    "terminal_sha256": "175a29a2e388bea5de98f0cf8a6a26713418df1703895a141543da0e43582e17"
+  },
+  "a3-native-a-compact-pipeline-20261002-r1": {
+    "actual_terminal": {
+      "argv": [
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestb1fe/bin/python",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_native_a_compact_pipeline_queued_20261002_r1.py",
+        "--out",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-native-a-compact-pipeline-20261002-r1"
+      ],
+      "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+      "started_utc": "2026-10-02T03:00:12.836937+00:00",
+      "deadline_seconds": 21000.0,
+      "status": "EXITED",
+      "selected_env": {
+        "CUDA_VISIBLE_DEVICES": ""
+      },
+      "returncode": 75,
+      "signal": null,
+      "elapsed_seconds": 12001.501442581
+    },
+    "scope": {
+      "stage": "COMPACT_A_NOT_RUN_DEPENDENCY_WAIT_EXPIRED",
+      "seen": {},
+      "torch_imported": false
+    },
+    "terminal_sha256": "26f2e4c5d437b7d83a5c09458a2fc47f402abe9f9db3e4efa9bced57772acd13"
+  }
+}

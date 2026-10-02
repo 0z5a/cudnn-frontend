@@ -1,0 +1,302 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Resume three closed A3 waiters through one serial GPU admission.
+
+Reuse successful CPU builds and retain distinct current/A24/b57 head scopes.
+Frozen arithmetic, original model and numeric gates remain unchanged.
+No accepted optimization or completed A3 task is claimed by queue creation.
+"""
+
+import argparse
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "b57c65f1a1b60c2405e1e04c6b5ec6c6b2903bb5"
+LOGGER = "/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--out", required=True)
+    p.add_argument("--lock-wait-seconds", type=float, default=43200)
+    args = p.parse_args()
+    assert 0 < args.lock_wait_seconds <= 43200
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    tools = Path(__file__).parent
+    names = [
+        Path(__file__).name,
+        "run_a3_latest_5f27_regression_admitted_20261002_r1.py",
+        "a3_route_decode_gpu_admitted_20261002_r1.py",
+        "a3_guarded_rounding_route_boundary_prepared_20261002_r1.py",
+        "a3_route_decode_reuse_probe_prepared_20261002_r1.py",
+        "audit_a3_route_probe_preparation_cpu_20261002_r1.py",
+        "audit_a3_route_decode_boundary_cpu_20261002_r1.py",
+        "audit_a3_route_decode_reuse_cpu_20261002_r1.py",
+        "a3_guarded_rounding_native_20261002_r9_route_decode.py",
+        "a3_guarded_rounding_native_20261002_r9_route_decode.cpp",
+        "a3_guarded_rounding_native_20261002_r9_route_decode.cu",
+        "a3_native_a_compact_pipeline_admitted_20261002_r2.py",
+        "a3_native_a_compact_gpu_admitted_20261002_r1.py",
+        "a3_native_a_quantizer_compact_20261002_r1.py",
+        "a3_native_a_compact_full_model_generation_pair_20261002_r1.py",
+        "audit_a3_native_a_compact_full_model_generation_pair_cpu_20261002_r1.py",
+        "audit_a3_native_a_quantizer_compact_cpu_20261002_r1.py",
+        "audit_a3_guard_pinned_model_cpu_20261002_r1.py",
+        "a3_latestb1fe_iteration_coordinator_20261002_r2.py",
+        "a3_latestb1fe_gpu_phase_admitted_20261002_r1.py",
+        "prepare_build_a3_latest_b1fe_20261002_r1.py",
+        "run_a3_latest_b1fe_regression_queued_20261002_r1.py",
+        "a3_integer_reduce_boundary_pair_model_20261002_r1.py",
+        "a3_guarded_rounding_boundary_queued_20261002_r9.py",
+        "a3_guarded_rounding_full_model_20261002_r9.py",
+        "a3_guarded_rounding_native_20261002_r8.py",
+        "a3_guarded_rounding_native_20261002_r7.py",
+        "a3_guarded_rounding_model_runtime_20261002_r5.py",
+        "a3_guarded_rounding_request_runtime_20261002_r4.py",
+        "a3_integer_reduce_full_generation_pair_20261002_r1.py",
+        "audit_a3_integer_reduce_boundary_cpu_20261002_r1.py",
+        "audit_a3_integer_reduce_pair_cpu_20261002_r1.py",
+        "audit_a3_integer_reduce_full_model_cpu_20261002_r1.py",
+        "audit_a3_integer_reduce_generation_pair_cpu_20261002_r1.py",
+        "audit_a3_weight_plan_generation_pair_cpu_20261002_r3.py",
+        "a3_weight_plan_generation_admitted_20261002_r1.py",
+        "a3_weight_plan_full_generation_pair_20261002_r1.py",
+        "a3_guarded_rounding_model_runtime_20261002_r4.py",
+        "a3_guarded_rounding_request_runtime_20261002_r3.py",
+        "a3_guarded_rounding_full_model_20261002_r8.py",
+        "a3_guarded_rounding_native_20261002_r4.py",
+        "a3_mxfp8_bf16_staged_full_model_worker_20261001.py",
+        "a3_all24_precision_probe_20261001.py",
+        "a3_model_e2e_mergefix_20261001.py",
+        "a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+        "diagnose_a3_fixed_window_cpu_20261001.py",
+    ]
+    frozen = {str(tools / name): sha(tools / name) for name in names}
+    bundle = tools / "a3-latest-b1fe-20261002.bundle"
+    assert sha(bundle) == "27d265ba9420625d84ee6b048e61d120fc7a7cc4e43e7936353d10b01e6c4db3"
+    frozen[str(bundle)] = sha(bundle)
+    (out / "frozen_inputs.json").write_text(json.dumps({"head": HEAD, "files": frozen}, indent=2) + "\n")
+    predecessors = {}
+    for name in ("a3-weight-plan-generation-20261002-r3", "a3-latestb1fe-iteration-20261002-r1"):
+        folder = ROOT / "results" / name
+        run = json.loads(folder.with_name(name + "-launch").joinpath("run.json").read_text())
+        assert run["status"] == "EXITED" and run["returncode"] == 75 and run["signal"] is None
+        detail = json.loads((folder / ("admission.json" if "weight-plan" in name else "result.json")).read_text())
+        assert detail["torch_imported"] is False
+        assert not (folder / "e2e").exists() and not (folder / "completed_runs.json").exists()
+        predecessors[name] = {"actual_run": run, "terminal_scope": detail}
+    (out / "predecessors.json").write_text(json.dumps(predecessors, indent=2) + "\n")
+    old_python = ROOT / "venvs/a3sfdlatest29a0/bin/python"
+    runs = []
+
+    def logged(name, argv, python, gpu=False, timeout=1200, source_name="a3sfdlatestb1fe"):
+        result = ROOT / "results" / name
+        launch = result.with_name(name + "-launch")
+        assert not launch.exists() and not result.exists()
+        env = os.environ.copy()
+        env.update(CUDA_VISIBLE_DEVICES="0" if gpu else "", CUDA_MODULE_LOADING="EAGER", PYTHONPATH=str(ROOT / source_name / "python"))
+        rc = subprocess.run(
+            [str(python), LOGGER, "--out", str(launch), "--cwd", str(ROOT), "--timeout", str(timeout), "--", *map(str, argv)], env=env
+        ).returncode
+        run = json.loads((launch / "run.json").read_text())
+        assert run["status"] == "EXITED" and run["returncode"] == rc and run["signal"] is None
+        runs.append({"name": name, "run": run})
+        (out / "completed_runs.json").write_text(json.dumps(runs, indent=2) + "\n")
+        if rc:
+            raise RuntimeError(f"Actual phase {name} failed rc{rc}; see preserved launch logs")
+        return result
+
+    # Every superseded handle is genuinely closed; none is restarted or edited.
+    closed = {}
+    for name, pids, scope_path in [
+        ("a3-latestb1fe-iteration-20261002-r3", [712389, 712397], ROOT / "results/a3-latestb1fe-iteration-20261002-r3/result.json"),
+        ("a3-latest-ac89-regression-20261002-r1", [689175, 689193], ROOT / "results/a3-latest-ac89-regression-20261002-r1-admission/result.json"),
+        ("a3-native-a-compact-pipeline-20261002-r1", [653458, 653459], ROOT / "results/a3-native-a-compact-pipeline-20261002-r1/result.json"),
+    ]:
+        path = ROOT / "results" / (name + "-launch") / "run.json"
+        run = json.loads(path.read_text())
+        scope = json.loads(scope_path.read_text())
+        assert run["status"] == "EXITED" and run["returncode"] == 75 and run["signal"] is None
+        assert not scope["torch_imported"] and all(not Path("/proc", str(pid)).exists() for pid in pids)
+        closed[name] = {"actual_terminal": run, "scope": scope, "terminal_sha256": sha(path)}
+    (out / "closed_predecessors.json").write_text(json.dumps(closed, indent=2) + "\n")
+    assert "torch" not in sys.modules
+    parent = ROOT / "results/a3-latestb1fe-iteration-20261002-r2"
+    parent_run_path = parent.with_name(parent.name + "-launch") / "run.json"
+    parent_run = json.loads(parent_run_path.read_text())
+    parent_detail = json.loads((parent / "result.json").read_text())
+    assert parent_run["status"] == "EXITED" and parent_run["returncode"] == 75 and parent_run["signal"] is None
+    assert parent_detail["stage"] == "NOT_RUN_NEXT_SHARED_LOCK_BUSY" and parent_detail["torch_imported"] is False
+    assert not (parent / "admission.json").exists()
+    previous_frozen = json.loads((parent / "frozen_inputs.json").read_text())["files"]
+    assert all(sha(path) == digest for path, digest in previous_frozen.items())
+    assert subprocess.check_output(["git", "-C", str(ROOT / "a3sfdlatestb1fe"), "rev-parse", "HEAD"], text=True).strip() == HEAD
+    native = json.loads((ROOT / "results/a3-latest-b1fe-native-provenance-20261002.json").read_text())
+    assert native["head"] == HEAD and native["native_build"] == "FRESH_RC0"
+    build = native["build_run"]
+    assert build["status"] == "EXITED" and build["returncode"] == 0 and build["signal"] is None
+    assert all(sha(ROOT / "a3sfdlatestb1fe" / item["path"]) == item["sha256"] for item in native["native_input_digests"])
+    assert sha(native["binding"]["path"]) == native["binding"]["sha256"]
+    proof = {
+        "parent_run": parent_run,
+        "parent_run_sha256": sha(parent_run_path),
+        "parent_scope": parent_detail,
+        "prior_native_provenance_sha256": sha(ROOT / "results/a3-latest-b1fe-native-provenance-20261002.json"),
+        "prior_fresh_native_build": build,
+        "new_CPU_build": "NOT_RUN_REUSE_ALREADY_COMPLETED",
+        "torch_imported": False,
+    }
+    (out / "prior_build_and_terminal_parent.json").write_text(json.dumps(proof, indent=2) + "\n")
+    assert all(sha(path) == digest for path, digest in frozen.items())
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        begin = time.monotonic()
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - begin > args.lock_wait_seconds:
+                    (out / "result.json").write_text(
+                        json.dumps(
+                            {
+                                "stage": "NOT_RUN_NEXT_SHARED_LOCK_BUSY",
+                                "cached_parent_audit_pass": False,
+                                "latest_fresh_native_build_done": True,
+                                "new_CPU_build": "NOT_RUN_PRIOR_BUILD_REUSED",
+                                "torch_imported": False,
+                            }
+                        )
+                        + "\n"
+                    )
+                    return 75
+                time.sleep(1)
+        assert "torch" not in sys.modules and all(sha(path) == digest for path, digest in frozen.items())
+        os.environ.update(A3_ITERATION_LOCK_HOLDER=str(os.getpid()), A3_ITERATION_LOCK_FD=str(lock.fileno()))
+        (out / "admission.json").write_text(
+            json.dumps({"stage": "LOCK_ADMITTED", "pid": os.getpid(), "wait_seconds": time.monotonic() - begin, "torch_imported": False}) + "\n"
+        )
+        # Current public head first; preserve distinct A24/b57 source scopes below.
+        current_python = ROOT / "venvs/a3sfdlatest5f27/bin/python"
+        logged(
+            "a3-latest-5f27-regression-20261002-r1",
+            [current_python, tools / "run_a3_latest_5f27_regression_admitted_20261002_r1.py", "--out", ROOT / "results/a3-latest-5f27-regression-20261002-r1"],
+            current_python,
+            gpu=True,
+            timeout=1400,
+            source_name="a3sfdlatest5f27",
+        )
+        name = "a3-weight-plan-generation-20261002-r4"
+        logged(
+            name,
+            [old_python, tools / "a3_weight_plan_generation_admitted_20261002_r1.py", "--out", ROOT / "results" / name],
+            old_python,
+            gpu=True,
+            timeout=2400,
+            source_name="a3sfdlatest29a0",
+        )
+        name = "a3-weight-plan-generation-pair-cpu-audit-20261002-r4"
+        audited = logged(
+            name, [old_python, tools / "audit_a3_weight_plan_generation_pair_cpu_20261002_r3.py", "--out", ROOT / "results" / name], old_python, timeout=300
+        )
+        audit = json.loads((audited / "result.json").read_text())
+        assert not audit["cuda_initialized"] and audit["new_native_calls"] == 0 and audit["tensor_count"] == 56
+        python = ROOT / "venvs/a3sfdlatestb1fe/bin/python"
+        driver = tools / "a3_latestb1fe_gpu_phase_admitted_20261002_r1.py"
+        for phase, name in (("regression", "a3-latest-b1fe-regression-20261002-r1"), ("candidate", "a3-integer-reduction-latestb1fe-20261002-r1")):
+            logged(name, [python, driver, "--phase", phase, "--out", ROOT / "results" / name], python, gpu=True)
+        candidate = ROOT / "results/a3-integer-reduction-latestb1fe-20261002-r1"
+        for kind in ("boundary", "pair", "full_model"):
+            name = f"a3-integer-reduction-{kind}-cpu-audit-20261002-r1"
+            argv = [python, tools / f"audit_a3_integer_reduce_{kind}_cpu_20261002_r1.py", "--out", ROOT / "results" / name]
+            if kind == "full_model":
+                argv += ["--input", candidate]
+            folder = logged(name, argv, python, timeout=300)
+            proof = json.loads((folder / "result.json").read_text())
+            assert not proof["cuda_initialized"] and proof["new_native_calls"] == 0
+            if kind == "full_model":
+                assert proof["quality_all_three_cases_both_gates"]
+        pair = json.loads((candidate / "candidate/pair.json").read_text())
+        gain = all(
+            next(row for row in pair["comparisons"] if row["case"] == name)["cached_shuffle_over_integer_redux_ratio"] > 1.02
+            for name in ("saved_first_expert", "granite_decode_e32_n1024_top8")
+        )
+        if gain:
+            name = "a3-integer-reduction-generation-latestb1fe-20261002-r1"
+            logged(name, [python, driver, "--phase", "generation", "--out", ROOT / "results" / name], python, gpu=True, timeout=2400)
+            name = "a3-integer-reduction-generation-pair-cpu-audit-20261002-r1"
+            logged(name, [python, tools / "audit_a3_integer_reduce_generation_pair_cpu_20261002_r1.py", "--out", ROOT / "results" / name], python, timeout=300)
+        logged(
+            "a3-native-a-compact-pipeline-admitted-20261002-r2",
+            [
+                python,
+                tools / "a3_native_a_compact_pipeline_admitted_20261002_r2.py",
+                "--out",
+                ROOT / "results/a3-native-a-compact-pipeline-admitted-20261002-r2",
+            ],
+            python,
+            timeout=3500,
+        )
+        logged(
+            "a3-route-decode-latest5f27-gpu-20261002-r1",
+            [current_python, tools / "a3_route_decode_gpu_admitted_20261002_r1.py", "--out", ROOT / "results/a3-route-decode-latest5f27-gpu-20261002-r1"],
+            current_python,
+            gpu=True,
+            timeout=1200,
+            source_name="a3sfdlatest5f27",
+        )
+        for kind in ("boundary", "reuse"):
+            name = f"a3-route-decode-{kind}-cpu-audit-20261002-r1"
+            audited = logged(
+                name,
+                [current_python, tools / f"audit_a3_route_decode_{kind}_cpu_20261002_r1.py", "--out", ROOT / "results" / name],
+                current_python,
+                timeout=600,
+                source_name="a3sfdlatest5f27",
+            )
+            audit = json.loads((audited / "result.json").read_text())
+            assert not audit["cuda_initialized"] and audit["new_native_calls"] == 0
+        assert all(sha(path) == digest for path, digest in frozen.items())
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        result = {
+            "stage": "LATEST_B1FE_INTEGER_REDUX_ITERATION_TERMINAL" if gain else "LATEST_B1FE_INTEGER_REDUX_NO_MEANINGFUL_WRAPPER_GAIN_REJECTED",
+            "head": HEAD,
+            "prior_fresh_native_build": build,
+            "new_CPU_build": "NOT_RUN_PRIOR_BUILD_REUSED",
+            "resumed_parent_sha256": sha(parent_run_path),
+            "base": "b1fe8a0f9e7701cea8d6f7f0ad8c11d043e024fc",
+            "production_gpu_tests_passed": 31,
+            "current_public_head": "aab01504ad3ad97170d19087ce23bef48d95dfa0",
+            "current_public_head_native_31": "COMPLETE",
+            "compact_A_pipeline": "COMPLETE_CPU_AUDITED",
+            "route_decode_GPU_boundary_and_reuse": "COMPLETE_CPU_AUDITED",
+            "route_decode_full_model_generation_performance": "NOT_RUN",
+            "cached_parent_independent_cpu_audit_pass": True,
+            "integer_redux_candidate_independent_cpu_audits_pass": True,
+            "integer_redux_cached_generation_and_whole_model_pairs": "COMPLETE_CPU_AUDITED" if gain else "NOT_RUN_REJECTED_WRAPPER_GAIN",
+            "comparisons": pair["comparisons"],
+            "runs": runs,
+            "files": frozen,
+            "production_feature_accepted": False,
+            "original_default_k1024_quality": "HISTORICAL_FAILED_RECIPE_NO_CLAIM_FIXED",
+            "original_passcode83_application_answer": "FALSE_UNCHANGED",
+            "service_final": "inactive",
+        }
+        (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps(result), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
