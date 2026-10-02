@@ -1,0 +1,25 @@
+{
+  "logger_pid": 624103,
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+    "/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latestb1fe-iteration-20261002-r2-launch",
+    "--cwd",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "--timeout",
+    "18000",
+    "--",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latestb1fe_iteration_coordinator_20261002_r2.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latestb1fe-iteration-20261002-r2",
+    "--lock-wait-seconds",
+    "7200"
+  ],
+  "started_utc": "2026-10-02T02:21:17.584814+00:00",
+  "source_package_sha256": "66902acc8cc5b3d331f13063753df0743e7dfcdfd846092972b6682ebacd7375",
+  "initial_gpu_work": "NONE_CPU_NATIVE_BUILD_ONLY",
+  "shared_GPU_phases": "one verified parent flock before Torch imports",
+  "predecessors": "both actual exited75 no GPU"
+}

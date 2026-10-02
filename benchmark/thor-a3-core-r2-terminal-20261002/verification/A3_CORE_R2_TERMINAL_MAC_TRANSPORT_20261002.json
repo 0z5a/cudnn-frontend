@@ -1,0 +1,31 @@
+{
+  "pack_returncode": 0,
+  "transfer_returncode": 0,
+  "archive_sha256": "aab46daddff04a605d401bcd9a8395012ff2a75db5c590a2eac76ff0ca7c50bf",
+  "payload_files_verified": 12,
+  "manifest_sha256": "9954863d5464489624d041ace35289856a821cd73d9238fde93d86623ef325a1",
+  "archive": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-core-r2-terminal-evidence-20261002.tar.gz",
+  "extraction": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-core-r2-terminal-evidence-20261002",
+  "safe_regular_members": true,
+  "parent_run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latestb1fe_iteration_coordinator_20261002_r2.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latestb1fe-iteration-20261002-r2",
+      "--lock-wait-seconds",
+      "7200"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-02T02:21:17.679375+00:00",
+    "deadline_seconds": 18000.0,
+    "status": "EXITED",
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "returncode": 75,
+    "signal": null,
+    "elapsed_seconds": 7537.329531704003
+  },
+  "GPU_validation": "NOT_RUN"
+}

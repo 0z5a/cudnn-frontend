@@ -1,0 +1,71 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Preserve the actual closed r2 shared-lock timeout and frozen GPU continuation."""
+
+import hashlib
+import json
+from pathlib import Path
+import tarfile
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    out = ROOT / "results/a3-latestb1fe-iteration-20261002-r2"
+    launch = out.with_name(out.name + "-launch")
+    run = json.loads((launch / "run.json").read_text())
+    result = json.loads((out / "result.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 75 and run["signal"] is None
+    assert result["stage"] == "NOT_RUN_NEXT_SHARED_LOCK_BUSY" and result["torch_imported"] is False
+    assert result["latest_fresh_native_build_done"] and not (out / "admission.json").exists()
+    completed = json.loads((out / "completed_runs.json").read_text())
+    assert len(completed) == 1 and completed[0]["run"]["returncode"] == 0
+    files = [x for d in [out, launch] for x in d.rglob("*") if x.is_file()]
+    background = ROOT / "results/a3-latestb1fe-iteration-background-20261002-r2"
+    files += [x for x in background.rglob("*") if x.is_file()]
+    files += [Path(__file__), ROOT / "tools/a3_latestb1fe_iteration_coordinator_20261002_r2.py", ROOT / "tools/a3_latestb1fe_iteration_resume_20261002_r3.py"]
+    files = sorted(set(files))
+    assert all(not x.is_symlink() and x.suffix not in [".pt", ".so", ".safetensors", ".bundle"] for x in files)
+    manifest = ROOT / "results/a3-core-r2-terminal-evidence-20261002-manifest.json"
+    assert not manifest.exists()
+    manifest.write_text(
+        json.dumps(
+            {
+                "parent_run": run,
+                "CPU_build_run": completed,
+                "scope": result,
+                "GPU_tests": "NOT_RUN",
+                "resume_source_not_GPU_result": True,
+                "files": [{"path": str(x.relative_to(ROOT)), "sha256": sha(x), "bytes": x.stat().st_size} for x in files],
+            },
+            indent=2,
+        )
+        + "\n"
+    )
+    archive = ROOT / "results/a3-core-r2-terminal-evidence-20261002.tar.gz"
+    assert not archive.exists()
+    with tarfile.open(archive, "w:gz") as tar:
+        for x in files + [manifest]:
+            tar.add(x, arcname=str(x.relative_to(ROOT)), recursive=False)
+    print(
+        json.dumps(
+            {
+                "archive": str(archive),
+                "sha256": sha(archive),
+                "bytes": archive.stat().st_size,
+                "payload_files": len(files),
+                "manifest": str(manifest.relative_to(ROOT)),
+                "manifest_sha256": sha(manifest),
+            }
+        ),
+        flush=True,
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

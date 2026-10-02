@@ -1,0 +1,8 @@
+{
+  "source_sha256": "5d7ddfbc52f99cc7569f80519c13b171122480392057da87249218dac5f30260",
+  "old_coordinator_sha256": "9f2ce1fe58fd1493967acd13c42ec63ac440dc37efb009dd5130218816dd709b",
+  "GPU_phases_AST_identical": true,
+  "changes": "Requires actual r2 EXITED75/no admission; reuses successful prior CPU native build without rebuilding",
+  "launch_status": "NOT_LAUNCHED_REQUIRES_R2_TERMINAL75",
+  "GPU_work": "NOT_RUN"
+}

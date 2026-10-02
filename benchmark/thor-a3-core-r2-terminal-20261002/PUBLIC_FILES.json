@@ -1,0 +1,104 @@
+{
+  "files": [
+    {
+      "path": "results/a3-latestb1fe-iteration-20261002-r2/completed_runs.json",
+      "original_path": "results/a3-latestb1fe-iteration-20261002-r2/completed_runs.json",
+      "bytes": 658,
+      "sha256": "cb2315dde751bdf01831618b3e60c1b7d677802a39e4763ece35bc451e1f27cb"
+    },
+    {
+      "path": "results/a3-latestb1fe-iteration-20261002-r2/frozen_inputs.json",
+      "original_path": "results/a3-latestb1fe-iteration-20261002-r2/frozen_inputs.json",
+      "bytes": 5284,
+      "sha256": "8be8160b9971366bff903afa96a3b21d18786c4fa7335f22dd14a91266522813"
+    },
+    {
+      "path": "results/a3-latestb1fe-iteration-20261002-r2/predecessors.json",
+      "original_path": "results/a3-latestb1fe-iteration-20261002-r2/predecessors.json",
+      "bytes": 2668,
+      "sha256": "a9410cb08f493c2fb6845f3f952e12866ea62a208df7bc09457190382d2f1552"
+    },
+    {
+      "path": "results/a3-latestb1fe-iteration-20261002-r2/result.json",
+      "original_path": "results/a3-latestb1fe-iteration-20261002-r2/result.json",
+      "bytes": 143,
+      "sha256": "5ccd86d5e2cb89f425222c1d8fbb74f2f9a922f3848fdee288b8bee667361ab7"
+    },
+    {
+      "path": "results/a3-latestb1fe-iteration-20261002-r2-launch/run.json",
+      "original_path": "results/a3-latestb1fe-iteration-20261002-r2-launch/run.json",
+      "bytes": 682,
+      "sha256": "2c607f55b03e027fefbda5e3faf0f11b554837401955ce78bf8a80564e50c5b4"
+    },
+    {
+      "path": "results/a3-latestb1fe-iteration-20261002-r2-launch/stderr.log",
+      "original_path": "results/a3-latestb1fe-iteration-20261002-r2-launch/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-latestb1fe-iteration-20261002-r2-launch/stdout.log",
+      "original_path": "results/a3-latestb1fe-iteration-20261002-r2-launch/stdout.log",
+      "bytes": 519,
+      "sha256": "5329c6117b41b184518deb373b871fe7551f0aa4d21ca669d2ed7728610db1aa"
+    },
+    {
+      "path": "results/a3-latestb1fe-iteration-background-20261002-r2/driver.log",
+      "original_path": "results/a3-latestb1fe-iteration-background-20261002-r2/driver.log",
+      "bytes": 682,
+      "sha256": "2c607f55b03e027fefbda5e3faf0f11b554837401955ce78bf8a80564e50c5b4"
+    },
+    {
+      "path": "results/a3-latestb1fe-iteration-background-20261002-r2/pid.json",
+      "original_path": "results/a3-latestb1fe-iteration-background-20261002-r2/pid.json",
+      "bytes": 1140,
+      "sha256": "8d815c2e9ebe515377ab7aa1189689969db2bcb9f2cbe310113dc8d00f412508"
+    },
+    {
+      "path": "tools/a3_latestb1fe_iteration_coordinator_20261002_r2.py.txt",
+      "original_path": "tools/a3_latestb1fe_iteration_coordinator_20261002_r2.py",
+      "bytes": 10849,
+      "sha256": "9f2ce1fe58fd1493967acd13c42ec63ac440dc37efb009dd5130218816dd709b"
+    },
+    {
+      "path": "tools/a3_latestb1fe_iteration_resume_20261002_r3.py.txt",
+      "original_path": "tools/a3_latestb1fe_iteration_resume_20261002_r3.py",
+      "bytes": 12719,
+      "sha256": "5d7ddfbc52f99cc7569f80519c13b171122480392057da87249218dac5f30260"
+    },
+    {
+      "path": "tools/pack_a3_core_r2_terminal_evidence_20261002_r1.py.txt",
+      "original_path": "tools/pack_a3_core_r2_terminal_evidence_20261002_r1.py",
+      "bytes": 2915,
+      "sha256": "7b572b087cb0cff4f3b51ecd87772f7721759a4cf73c5ee63646df3ea78a7fa2"
+    },
+    {
+      "path": "MANIFEST.json",
+      "original_path": "MANIFEST.json",
+      "bytes": 4041,
+      "sha256": "9954863d5464489624d041ace35289856a821cd73d9238fde93d86623ef325a1"
+    },
+    {
+      "path": "verification/A3_CORE_R2_TERMINAL_MAC_TRANSPORT_20261002.json",
+      "original_path": "verification/A3_CORE_R2_TERMINAL_MAC_TRANSPORT_20261002.json",
+      "bytes": 1288,
+      "sha256": "2a7bab0a6408cde04975eca48c8ce11cd37ab97e882aa41a3824b1a7be9ac1f2"
+    },
+    {
+      "path": "verification/A3_LATEST_B1FE_RESUME_R3_SOURCE_20261002.json",
+      "original_path": "verification/A3_LATEST_B1FE_RESUME_R3_SOURCE_20261002.json",
+      "bytes": 423,
+      "sha256": "23c20268304cdad7570ceb4a1cd97d400432e7782e931ad288b945bced05195a"
+    },
+    {
+      "path": "verification/A3_LATEST_B1FE_RESUME_R3_LAUNCH_20261002.json",
+      "original_path": "verification/A3_LATEST_B1FE_RESUME_R3_LAUNCH_20261002.json",
+      "bytes": 1868,
+      "sha256": "1c03cbd2d03a8aa676aef776b26471f934bcd2df5d3826be843aa4cd4542c2bd"
+    }
+  ],
+  "original_payloads": 12,
+  "GPU_validation": "NOT_RUN_AT_CHECKPOINT",
+  "parent_returncode": 75,
+  "new_coordinator_launched_not_GPU_success": true
+}
