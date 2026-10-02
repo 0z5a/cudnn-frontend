@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_predecode_queued_20261002_r2.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-predecode-20261002-r2"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest29a0",
+  "started_utc": "2026-10-01T23:58:14.251496+00:00",
+  "deadline_seconds": 900.0,
+  "status": "EXITED",
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": "0"
+  },
+  "returncode": 1,
+  "signal": null,
+  "elapsed_seconds": 52.77291530700313
+}

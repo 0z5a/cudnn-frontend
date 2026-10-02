@@ -1,0 +1,92 @@
+{
+  "files": [
+    {
+      "path": "results/a3-guarded-rounding-build-cpu-20261002-r8/frozen_inputs.json",
+      "size": 520,
+      "sha256": "9bf361a4a29e13a2ff5ebea18f993260b0d805d91a0c47b6962bf452794b0ee3"
+    },
+    {
+      "path": "results/a3-guarded-rounding-build-cpu-20261002-r8/native-sm110-sass.log",
+      "size": 693193,
+      "sha256": "1292a3f6efc36392d54407321e59a44b0939e5382e2c8f3797c103ceddddcb82"
+    },
+    {
+      "path": "results/a3-guarded-rounding-build-cpu-20261002-r8/result.json",
+      "size": 1390,
+      "sha256": "984bc9bd56edc2f1147af6812b60072fd6f6e1f6cd29560e7395f301f7977556"
+    },
+    {
+      "path": "results/a3-guarded-rounding-build-cpu-20261002-r8-launch/run.json",
+      "size": 656,
+      "sha256": "efad6c6244b816f3791886837c53bbb1faf3a3ee465362a5e8d19ea39f1bfcff"
+    },
+    {
+      "path": "results/a3-guarded-rounding-build-cpu-20261002-r8-launch/stderr.log",
+      "size": 197,
+      "sha256": "f515d0bd18a30599d2e16f01682f588671b651fa844849df6e5949edc1b7ce1e"
+    },
+    {
+      "path": "results/a3-guarded-rounding-build-cpu-20261002-r8-launch/stdout.log",
+      "size": 3288,
+      "sha256": "0bd0e0e90d106a2ce2be25dc6972d1bb6db5d4a53d16a65983360cdb665325a9"
+    },
+    {
+      "path": "results/a3-integer-reduction-range-cpu-20261002-r1/result.json",
+      "size": 2384,
+      "sha256": "d057fa73b0716be8adc924caccc78cbe7c0ade0ec1d349ba5e4a62834cd5f5af"
+    },
+    {
+      "path": "results/a3-integer-reduction-range-cpu-20261002-r1-launch/run.json",
+      "size": 666,
+      "sha256": "8c471a78e86e298e15f8c977a4347ac2fd940aa898808bcc28a8f6df9c591ed6"
+    },
+    {
+      "path": "results/a3-integer-reduction-range-cpu-20261002-r1-launch/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-integer-reduction-range-cpu-20261002-r1-launch/stdout.log",
+      "size": 2384,
+      "sha256": "d057fa73b0716be8adc924caccc78cbe7c0ade0ec1d349ba5e4a62834cd5f5af"
+    },
+    {
+      "path": "tools/a3_guarded_rounding_native_20261002_r8.cpp",
+      "size": 1558,
+      "sha256": "b437808bbae146fe70ec7c49cdef6e4dc5427d3704336133e290e0bd5868cd71"
+    },
+    {
+      "path": "tools/a3_guarded_rounding_native_20261002_r8.cu",
+      "size": 20952,
+      "sha256": "0a6a7a8807eea6d36c1fc8db8c890e82726000c8b6620fb1db8a66d7bd1d4391"
+    },
+    {
+      "path": "tools/a3_guarded_rounding_native_20261002_r8.py",
+      "size": 7368,
+      "sha256": "88d8ef70a550c58d40e14cb589096be275e30bcfca3f2840c6b0fdd8498b6ad0"
+    },
+    {
+      "path": "tools/build_a3_guarded_rounding_cpu_20261002_r8.py",
+      "size": 2416,
+      "sha256": "26979406dd2d922122750a28fefe495286131ef926eeedec4535e33b7f11cf63"
+    },
+    {
+      "path": "tools/prove_a3_integer_reduction_range_cpu_20261002_r1.py",
+      "size": 4041,
+      "sha256": "eba7f06bd313b180ef2f99b9acc9149a316c2473070668cbe620b3f47ac2f341"
+    },
+    {
+      "path": "CPU_ONLY_SCOPE.json",
+      "size": 2169,
+      "sha256": "53daeab318f227878bc35f6e22a1e26d43ee9885d8bf4d446591039ffa65aa27"
+    }
+  ],
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    "PT",
+    "native/JIT binaries",
+    "Git bundles"
+  ]
+}

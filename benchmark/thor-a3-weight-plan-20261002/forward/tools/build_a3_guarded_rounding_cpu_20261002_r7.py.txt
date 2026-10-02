@@ -1,0 +1,65 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Explicit SM110 native compilation only; GPU remains hidden/uninitialized."""
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+os.environ["TORCH_CUDA_ARCH_LIST"] = "11.0"
+os.environ["MAX_JOBS"] = "2"
+os.environ["CUDA_HOME"] = "/usr/local/cuda-13.2"
+import torch as t
+from torch.utils.cpp_extension import load
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    build = out / "extension"
+    build.mkdir()
+    assert not t.cuda.is_initialized()
+    files = [Path(__file__).with_name("a3_guarded_rounding_native_20261002_r7" + s) for s in (".cpp", ".cu", ".py")]
+    before = {str(p): sha(p) for p in files}
+    (out / "frozen_inputs.json").write_text(json.dumps(before, indent=2) + "\n")
+    module = load(
+        name="a3_guarded_rounding_20261002_r7",
+        sources=[str(p) for p in files[:2]],
+        extra_cflags=["-O2"],
+        extra_cuda_cflags=["-O2", "--ftz=false", "--fmad=false"],
+        with_cuda=True,
+        build_directory=str(build),
+        verbose=True,
+    )
+    binary = Path(module.__file__).resolve()
+    assert {str(p): sha(p) for p in files} == before and not t.cuda.is_initialized()
+    result = {
+        "stage": "NATIVE_SM110_COMPILE_ONLY_COMPLETE_NOT_GPU_TEST",
+        "cuda_initialized": False,
+        "native_calls": 0,
+        "gpu_hidden": os.environ["CUDA_VISIBLE_DEVICES"] == "",
+        "torch": t.__version__,
+        "torch_git": t.version.git_version,
+        "cuda_arch": "11.0",
+        "max_jobs": 2,
+        "sources": before,
+        "binary": {"path": str(binary), "sha256": sha(binary)},
+        "harness_sha256": sha(__file__),
+        "limits": "Native build only; no CUDA initialization/launch, model result or performance acceptance. Conservative repair remains an expensive precision control until whole-model quality and faster guard/recompute work are verified.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result), flush=True)
+
+
+if __name__ == "__main__":
+    main()

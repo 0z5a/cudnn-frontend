@@ -1,0 +1,20 @@
+{
+  "verified": true,
+  "actual_scp_rc": 0,
+  "archive": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-integer-reduction-cpu-evidence-20261002.tar.gz",
+  "sha256": "39c0b97affd73666c7f81ada2976e0a81c3e3b75ff95dff61273f04ad4df024a",
+  "size": 62377,
+  "file_count": 17,
+  "manifest_entries": 16,
+  "all_member_bytes_sha_verified": true,
+  "native8_GPU_validation": "NOT_RUN",
+  "native8_performance_claim": false,
+  "excluded": [
+    "models",
+    "cache",
+    "engines",
+    "PT",
+    "native/JIT binaries",
+    "Git bundles"
+  ]
+}

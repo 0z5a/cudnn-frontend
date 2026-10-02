@@ -1,0 +1,1544 @@
+{
+  "paired": [
+    {
+      "case": "saved_first_expert",
+      "repeat": 0,
+      "position": 0,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 5.71289587020874,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 0,
+      "position": 1,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.432447910308838,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 0,
+      "position": 2,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.4277119636535645,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 0,
+      "position": 3,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 5.638495922088623,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 1,
+      "position": 0,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.436192035675049,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 1,
+      "position": 1,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 5.772960186004639,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 1,
+      "position": 2,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 5.696447849273682,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 1,
+      "position": 3,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.432159900665283,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 2,
+      "position": 0,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 5.753503799438477,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 2,
+      "position": 1,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.4513280391693115,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 2,
+      "position": 2,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.6935999393463135,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 2,
+      "position": 3,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 5.761439800262451,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 3,
+      "position": 0,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.4443519115448,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 3,
+      "position": 1,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 5.79475212097168,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 3,
+      "position": 2,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 5.8139519691467285,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 3,
+      "position": 3,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.485152006149292,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 4,
+      "position": 0,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 5.795263767242432,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 4,
+      "position": 1,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.485311985015869,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 4,
+      "position": 2,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.470720052719116,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "saved_first_expert",
+      "repeat": 4,
+      "position": 3,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 5.712287902832031,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        31,
+        36833,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 0,
+      "position": 0,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 5.534304141998291,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 0,
+      "position": 1,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.2929599285125732,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 0,
+      "position": 2,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.3029119968414307,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 0,
+      "position": 3,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 5.541632175445557,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 1,
+      "position": 0,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.395904064178467,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 1,
+      "position": 1,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 5.3982720375061035,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 1,
+      "position": 2,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 5.462240219116211,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 1,
+      "position": 3,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.2132480144500732,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 2,
+      "position": 0,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 5.135072231292725,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 2,
+      "position": 1,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.109600067138672,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 2,
+      "position": 2,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.052799940109253,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 2,
+      "position": 3,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 5.1148481369018555,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 3,
+      "position": 0,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 2.95251202583313,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 3,
+      "position": 1,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 4.827904224395752,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 3,
+      "position": 2,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 4.835423946380615,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 3,
+      "position": 3,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 2.8725759983062744,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 4,
+      "position": 0,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 4.757311820983887,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 4,
+      "position": 1,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 2.7901439666748047,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 4,
+      "position": 2,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 2.7387518882751465,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "repeat": 4,
+      "position": 3,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 4.520448207855225,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        21,
+        37867,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 0,
+      "position": 0,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.19808000326156616,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 0,
+      "position": 1,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 0.4567680060863495,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 0,
+      "position": 2,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 0.4413439929485321,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 0,
+      "position": 3,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.18547199666500092,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 1,
+      "position": 0,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 0.6096640229225159,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 1,
+      "position": 1,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.1584320068359375,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 1,
+      "position": 2,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.15641599893569946,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 1,
+      "position": 3,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 0.3994559943675995,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 2,
+      "position": 0,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.1629759967327118,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 2,
+      "position": 1,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 0.40825599431991577,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 2,
+      "position": 2,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 0.40934398770332336,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 2,
+      "position": 3,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.16147199273109436,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 3,
+      "position": 0,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 0.4086399972438812,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 3,
+      "position": 1,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.15756799280643463,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 3,
+      "position": 2,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.15612800419330597,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 3,
+      "position": 3,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 0.40540799498558044,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 4,
+      "position": 0,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.15775999426841736,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 4,
+      "position": 1,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 0.40588799118995667,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 4,
+      "position": 2,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 0.4052160084247589,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "repeat": 4,
+      "position": 3,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.1600320041179657,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        512,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 0,
+      "position": 0,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.6468799710273743,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 0,
+      "position": 1,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 1.0247039794921875,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 0,
+      "position": 2,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 1.0167039632797241,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 0,
+      "position": 3,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.6707519888877869,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 1,
+      "position": 0,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 1.013856053352356,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 1,
+      "position": 1,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.6700479984283447,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 1,
+      "position": 2,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.8960959911346436,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 1,
+      "position": 3,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 1.02019202709198,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 2,
+      "position": 0,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.6336640119552612,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 2,
+      "position": 1,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 0.9926720261573792,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 2,
+      "position": 2,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 0.9932159781455994,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 2,
+      "position": 3,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.6370239853858948,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 3,
+      "position": 0,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 1.0268160104751587,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 3,
+      "position": 1,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.6358720064163208,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 3,
+      "position": 2,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.6322559714317322,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 3,
+      "position": 3,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 1.0003199577331543,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 4,
+      "position": 0,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.6336960196495056,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 4,
+      "position": 1,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 0.9999359846115112,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 4,
+      "position": 2,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 1.0021439790725708,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "repeat": 4,
+      "position": 3,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 0.6332799792289734,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        4608,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 0,
+      "position": 0,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 1.162335991859436,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 0,
+      "position": 1,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.1533119678497314,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 0,
+      "position": 2,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.1593921184539795,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 0,
+      "position": 3,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 1.1632000207901,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 1,
+      "position": 0,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.16975998878479,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 1,
+      "position": 1,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 1.1936320066452026,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 1,
+      "position": 2,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 1.1613119840621948,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 1,
+      "position": 3,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.159775972366333,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 2,
+      "position": 0,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 1.3908159732818604,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 2,
+      "position": 1,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.170975923538208,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 2,
+      "position": 2,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.165663957595825,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 2,
+      "position": 3,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 1.2541760206222534,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 3,
+      "position": 0,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.1881918907165527,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 3,
+      "position": 1,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 1.1782399415969849,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 3,
+      "position": 2,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 1.1773760318756104,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 3,
+      "position": 3,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.39190411567688,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 4,
+      "position": 0,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 1.1756479740142822,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 4,
+      "position": 1,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.2022719383239746,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 4,
+      "position": 2,
+      "mode": "predecode",
+      "gpu_wrapper_ms": 3.1810240745544434,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "repeat": 4,
+      "position": 3,
+      "mode": "postfixed",
+      "gpu_wrapper_ms": 1.4060800075531006,
+      "c_fp32_flags_d_amax_byte_equal": true,
+      "flags": [
+        0,
+        8192,
+        0
+      ]
+    }
+  ],
+  "comparisons": [
+    {
+      "case": "saved_first_expert",
+      "median_ms": {
+        "postfixed": 5.757471799850464,
+        "predecode": 3.4478399753570557
+      },
+      "postfixed_over_predecode_ratio": 1.6698779064577163
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "median_ms": {
+        "postfixed": 5.12496018409729,
+        "predecode": 3.0812000036239624
+      },
+      "postfixed_over_predecode_ratio": 1.6633000707742285
+    },
+    {
+      "case": "ragged_e31_n128",
+      "median_ms": {
+        "postfixed": 0.1592320054769516,
+        "predecode": 0.4084479957818985
+      },
+      "postfixed_over_predecode_ratio": 0.3898464605564565
+    },
+    {
+      "case": "ragged_e33_n256",
+      "median_ms": {
+        "postfixed": 0.6364479959011078,
+        "predecode": 1.0080000162124634
+      },
+      "postfixed_over_predecode_ratio": 0.6313968111752084
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "median_ms": {
+        "postfixed": 1.1778079867362976,
+        "predecode": 3.170367956161499
+      },
+      "postfixed_over_predecode_ratio": 0.3715051385273022
+    }
+  ],
+  "decodes": [
+    {
+      "case": "saved_first_expert",
+      "operand": "A",
+      "words": 262144,
+      "encoded_effective_bf16_word_byte_equal": true
+    },
+    {
+      "case": "saved_first_expert",
+      "operand": "B",
+      "words": 1048576,
+      "encoded_effective_bf16_word_byte_equal": true
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "operand": "A",
+      "words": 262144,
+      "encoded_effective_bf16_word_byte_equal": true
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "operand": "B",
+      "words": 1048576,
+      "encoded_effective_bf16_word_byte_equal": true
+    },
+    {
+      "case": "ragged_e31_n128",
+      "operand": "A",
+      "words": 524288,
+      "encoded_effective_bf16_word_byte_equal": true
+    },
+    {
+      "case": "ragged_e31_n128",
+      "operand": "B",
+      "words": 4063232,
+      "encoded_effective_bf16_word_byte_equal": true
+    },
+    {
+      "case": "ragged_e33_n256",
+      "operand": "A",
+      "words": 524288,
+      "encoded_effective_bf16_word_byte_equal": true
+    },
+    {
+      "case": "ragged_e33_n256",
+      "operand": "B",
+      "words": 8650752,
+      "encoded_effective_bf16_word_byte_equal": true
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "operand": "A",
+      "words": 2097152,
+      "encoded_effective_bf16_word_byte_equal": true
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "operand": "B",
+      "words": 33554432,
+      "encoded_effective_bf16_word_byte_equal": true
+    }
+  ],
+  "decode_validation_native_launches": 20,
+  "negative_zero_controls": [
+    {
+      "case": "saved_first_expert",
+      "operand": "A",
+      "mismatch_count": 0,
+      "only_old_negative_zero_sign_loss": true
+    },
+    {
+      "case": "saved_first_expert",
+      "operand": "B",
+      "mismatch_count": 0,
+      "only_old_negative_zero_sign_loss": true
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "operand": "A",
+      "mismatch_count": 0,
+      "only_old_negative_zero_sign_loss": true
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "operand": "B",
+      "mismatch_count": 0,
+      "only_old_negative_zero_sign_loss": true
+    },
+    {
+      "case": "ragged_e31_n128",
+      "operand": "A",
+      "mismatch_count": 0,
+      "only_old_negative_zero_sign_loss": true
+    },
+    {
+      "case": "ragged_e31_n128",
+      "operand": "B",
+      "mismatch_count": 0,
+      "only_old_negative_zero_sign_loss": true
+    },
+    {
+      "case": "ragged_e33_n256",
+      "operand": "A",
+      "mismatch_count": 0,
+      "only_old_negative_zero_sign_loss": true
+    },
+    {
+      "case": "ragged_e33_n256",
+      "operand": "B",
+      "mismatch_count": 1,
+      "only_old_negative_zero_sign_loss": true
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "operand": "A",
+      "mismatch_count": 0,
+      "only_old_negative_zero_sign_loss": true
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "operand": "B",
+      "mismatch_count": 1,
+      "only_old_negative_zero_sign_loss": true
+    }
+  ],
+  "old_decode_build": {
+    "stage": "NATIVE_SM110_COMPILE_ONLY_COMPLETE_NOT_GPU_TEST",
+    "cuda_initialized": false,
+    "native_calls": 0,
+    "gpu_hidden": true,
+    "torch": "2.13.0+cu130",
+    "torch_git": "cf30153c4c131c8164ee7798e5022d810682e2cb",
+    "cuda_arch": "11.0",
+    "max_jobs": 2,
+    "sources": {
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r5.cpp": "4fca7ce29478e8e98c94fd9e5371bc6bd5c80d7f1247917483e47c470cdeb23e",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r5.cu": "23abd49590010ce01b5f4f4831a7ae712f1683b569c36c3ad8845e2a56561665",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r5.py": "21e0b8c3d8495f3d65f001b0c69d7c468b0d37b8aa52538e8f37c17e47bba702"
+    },
+    "binary": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guarded-rounding-build-cpu-20261002-r5/extension/a3_guarded_rounding_20261002_r5.so",
+      "sha256": "3eb51d7fd732fd659521a63d236025bfbc00491994e775d3f50a29c7c9e93aea"
+    },
+    "harness_sha256": "7fa78a1a6bebd4f72df8964afe8443b5f476a92d125b5af3e9eb23b595339436",
+    "limits": "Native build only; no CUDA initialization/launch, model result or performance acceptance. Conservative repair remains an expensive precision control until whole-model quality and faster guard/recompute work are verified."
+  },
+  "files": {
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_predecode_boundary_pair_model_20261002_r2.py": "6fd93bfa4987eeef271801efd99a226bb666d01c5671145cab7181365c7c0808",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_boundary_queued_20261002_r7.py": "bc1ac2e951ace7de38d074994a9a42bd3f24b78d792a22ca4d86b1a02e0b69e5",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r4.py": "7de4a50b53f3b3dd56b220bca242cf0537e459ba74a4ddbdcab94d0d9a865728",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r5.py": "21e0b8c3d8495f3d65f001b0c69d7c468b0d37b8aa52538e8f37c17e47bba702",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_full_model_20261002_r7.py": "20329831740ff51755779b3f1e34eb723c319c3a15dde452938d15ff85451838"
+  },
+  "outputs_sha256": "8b4087b06d736fa66bc1af22d1230c4b70f867b506d3d4f3c9bdeb28a809bc1f",
+  "old_build": {
+    "stage": "NATIVE_SM110_COMPILE_ONLY_COMPLETE_NOT_GPU_TEST",
+    "cuda_initialized": false,
+    "native_calls": 0,
+    "gpu_hidden": true,
+    "torch": "2.13.0+cu130",
+    "torch_git": "cf30153c4c131c8164ee7798e5022d810682e2cb",
+    "cuda_arch": "11.0",
+    "max_jobs": 2,
+    "sources": {
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r4.cpp": "c29b6b645a620466dc31dceea18acf5b9ffcd49b913994700ebc8e41f12cf81c",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r4.cu": "35cd2bf3207504f45c8325d68f6d453276d3c93076df52329c77a82414495d26",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r4.py": "7de4a50b53f3b3dd56b220bca242cf0537e459ba74a4ddbdcab94d0d9a865728"
+    },
+    "binary": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guarded-rounding-build-cpu-20261002-r4/extension/a3_guarded_rounding_20261002_r4.so",
+      "sha256": "e692d0783bf0339d62f736b7bb7a3d247dbdc0c23e4d7d8cba9d3e3f54315fd4"
+    },
+    "harness_sha256": "2dd86afbe8ecfeb607cbfe20c147af987bda799d601ff84e07d5b5ebe7b71e76",
+    "limits": "Native build only; no CUDA initialization/launch, model result or performance acceptance. Conservative repair remains an expensive precision control until whole-model quality and faster guard/recompute work are verified."
+  },
+  "new_build": {
+    "stage": "NATIVE_SM110_COMPILE_ONLY_COMPLETE_NOT_GPU_TEST",
+    "cuda_initialized": false,
+    "native_calls": 0,
+    "gpu_hidden": true,
+    "torch": "2.13.0+cu130",
+    "torch_git": "cf30153c4c131c8164ee7798e5022d810682e2cb",
+    "cuda_arch": "11.0",
+    "max_jobs": 2,
+    "sources": {
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r6.cpp": "4fca7ce29478e8e98c94fd9e5371bc6bd5c80d7f1247917483e47c470cdeb23e",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r6.cu": "0d1f949eaefd39bec3c70f7371b2eae091d84f7f26d97c648fffbec76f19651c",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r6.py": "35c3576e0d5f3c57e6f8de4a033d405f2242b193f862798945b7336541e89ebd"
+    },
+    "binary": {
+      "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guarded-rounding-build-cpu-20261002-r6/extension/a3_guarded_rounding_20261002_r6.so",
+      "sha256": "6f7a10e5cdc37d7ecb711cb7529a2f994cca97a909771aee54889d7d6ce40f9e"
+    },
+    "harness_sha256": "2e8f05c8c2189932522f833d99f24165b331ec40fac82f21ab6693a688bc07e8",
+    "limits": "Native build only; no CUDA initialization/launch, model result or performance acceptance. Conservative repair remains an expensive precision control until whole-model quality and faster guard/recompute work are verified."
+  },
+  "old_repair_calls": 55,
+  "old_postprocess_kernel_launches": 110
+}

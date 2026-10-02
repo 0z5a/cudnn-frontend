@@ -1,0 +1,54 @@
+{
+  "runs": [
+    {
+      "name": "a3-integer-reduction-range-cpu-20261002-r1",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prove_a3_integer_reduction_range_cpu_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-integer-reduction-range-cpu-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest29a0",
+        "started_utc": "2026-10-02T01:06:36.270110+00:00",
+        "deadline_seconds": 300.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 0.06426907800050685
+      }
+    },
+    {
+      "name": "a3-guarded-rounding-build-cpu-20261002-r8",
+      "run": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/build_a3_guarded_rounding_cpu_20261002_r8.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-guarded-rounding-build-cpu-20261002-r8"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest29a0",
+        "started_utc": "2026-10-02T01:06:36.380327+00:00",
+        "deadline_seconds": 300.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 0,
+        "signal": null,
+        "elapsed_seconds": 69.09775465600251
+      }
+    }
+  ],
+  "finite_bf16_words": 65280,
+  "group16_signed32_bound": 2147450880,
+  "signed64_accumulator_addition_retained": true,
+  "compiled_sass_integer_redux_sum_and_max": true,
+  "native_gpu_tests": "NOT_RUN",
+  "generation": "NOT_RUN",
+  "accepted_optimization": false,
+  "limits": "CPU range/compilation/instruction evidence only. No actual native8 arithmetic/stream/AMAX/full-model/generation or performance acceptance; actual GPU proofs still required."
+}

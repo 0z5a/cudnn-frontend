@@ -1,0 +1,42 @@
+// SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+// SPDX-License-Identifier: Apache-2.0
+
+#include <torch/extension.h>
+
+void
+guarded_rounding_cuda(const at::Tensor &,
+                      const at::Tensor &,
+                      const at::Tensor &,
+                      const at::Tensor &,
+                      const at::Tensor &,
+                      const at::Tensor &,
+                      const at::Tensor &,
+                      const at::Tensor &,
+                      const at::Tensor &,
+                      const at::Tensor &,
+                      const at::Tensor &,
+                      const at::Tensor &,
+                      const at::Tensor &,
+                      const at::Tensor &);
+
+void
+postfixed_bounds_cuda(const at::Tensor &, const at::Tensor &, const at::Tensor &, int, int);
+
+at::Tensor
+reconstruct_words_cuda(const at::Tensor &, const at::Tensor &, bool);
+
+at::Tensor
+integer_reduction_probe_cuda(const at::Tensor &, const at::Tensor &);
+
+PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
+    m.def("integer_reduction_probe",
+          &integer_reduction_probe_cuda,
+          "Private signed32/half-warp integer reduction validation");
+    m.def("decode", &reconstruct_words_cuda, "Private encoded-word predecode validation");
+    m.def("bounds", &postfixed_bounds_cuda, "Private validation of postfixed enclosure");
+    m.def("run",
+          &guarded_rounding_cuda,
+          "Private input-MXFP8 integer rounding repair and native BF16-stage "
+          "activation");
+}

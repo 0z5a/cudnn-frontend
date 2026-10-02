@@ -1,0 +1,90 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Integer range proof for the private 16-product warp-reduction candidate.
+
+No Torch/CUDA imports, model measurements or empirical error tolerances. The
+range argument applies to all finite BF16 raw words, including subnormals.
+CUDA signed32 integer reductions are documented at
+https://docs.nvidia.com/cuda/cuda-programming-guide/05-appendices/cpp-language-extensions.html#warp-reduce-functions
+The reduction provides no memory ordering; existing stream/events are retained.
+"""
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--out", required=True)
+    args = p.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    finite, maximum = 0, 0
+    for word in range(65536):
+        exponent = (word >> 7) & 255
+        if exponent == 255:
+            continue
+        mantissa = (word & 127) + (128 if exponent else 0)
+        if word & 32768:
+            mantissa = -mantissa
+        finite += 1
+        maximum = max(maximum, abs(mantissa))
+    assert finite == 65280 and maximum == 255
+    # product_raw=ra+rb, dominant=max(product_raw, accumulator_raw).
+    # quantum=dominant-25, product exponent=ra+rb-14.
+    # Thus product alignment shift=ra+rb+11-dominant<=11. Right shifts
+    # only reduce the magnitude. Zero products return0 before shifting.
+    maximum_product = maximum * maximum
+    exact_maximum_units = maximum_product << 11
+    conservative_maximum_units = 65535 << 11
+    assert exact_maximum_units <= conservative_maximum_units
+    group_abs_bound = 16 * conservative_maximum_units
+    assert group_abs_bound == 2147450880 < 2**31 - 1
+    # All subsets of16 terms obey this same absolute-sum bound. It protects
+    # signed32 intermediate additions as well as the final group sum.
+    # The aligned accumulator may add up to (2**24-1)<<2 to this group,
+    # so retaining signed64 for that addition is essential.
+    accumulator_bound = (2**24 - 1) << 2
+    combined_bound = group_abs_bound + accumulator_bound
+    assert combined_bound > 2**31 - 1 and combined_bound < 2**63 - 1
+    cases = [
+        [conservative_maximum_units] * 16,
+        [-conservative_maximum_units] * 16,
+        [conservative_maximum_units, -conservative_maximum_units] * 8,
+        [conservative_maximum_units] * 15 + [-conservative_maximum_units],
+        [-conservative_maximum_units] * 15 + [conservative_maximum_units],
+        [0] * 16,
+    ]
+    for values in cases:
+        assert all(abs(value) <= conservative_maximum_units for value in values)
+        assert -(2**31) <= sum(values) < 2**31
+        # Any signed addition grouping is safe because every subset has
+        # absolute magnitude <=the sum of magnitudes of the full group.
+        assert sum(abs(value) for value in values) <= group_abs_bound
+    result = {
+        "stage": "FINITE_BF16_INTEGER_REDUCTION_RANGE_PROVED_CPU_ONLY",
+        "finite_bf16_raw_words_enumerated": finite,
+        "maximum_mantissa_magnitude": maximum,
+        "exact_maximum_product": maximum_product,
+        "maximum_alignment_left_shift": 11,
+        "conservative_per_term_abs_bound": conservative_maximum_units,
+        "group16_and_all_subset_abs_bound": group_abs_bound,
+        "signed32_group_reduction_safe": True,
+        "accumulator_addition_must_remain_signed64": True,
+        "combined_group_and_accumulator_abs_bound": combined_bound,
+        "extreme_integer_diagnostic_values": cases,
+        "harness_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "torch_imported": False,
+        "cuda_initialized": False,
+        "native_calls": 0,
+        "candidate_native_build_or_gpu_test": "NOT_RUN",
+        "accepted_optimization": False,
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result, indent=2), flush=True)
+
+
+if __name__ == "__main__":
+    main()

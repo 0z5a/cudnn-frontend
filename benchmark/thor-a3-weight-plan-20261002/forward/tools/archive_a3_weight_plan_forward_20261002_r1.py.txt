@@ -1,0 +1,135 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Archive terminal per-call failures and cached-plan qualified scope without tensors/binaries."""
+
+import hashlib
+import json
+from pathlib import Path
+import shutil
+import tarfile
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+NAME = "a3-weight-plan-forward-evidence-20261002"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def main():
+    destination = ROOT / "results/a3-weight-plan-forward-archive-20261002-r1"
+    destination.mkdir(exist_ok=False)
+    tree = destination / NAME
+    tree.mkdir()
+    expected = {
+        "a3-guarded-rounding-build-cpu-20261002-r5": 0,
+        "a3-guarded-rounding-build-cpu-20261002-r6": 0,
+        "a3-guarded-rounding-build-cpu-20261002-r7": 0,
+        "a3-predecode-20261002-r1": 1,
+        "a3-predecode-20261002-r2": 1,
+        "a3-predecode-boundary-cpu-audit-20261002-r3": 0,
+        "a3-predecode-pair-cpu-audit-20261002-r3": 0,
+        "a3-weight-plan-20261002-r1": 0,
+        "a3-weight-plan-boundary-cpu-audit-20261002-r1": 0,
+        "a3-weight-plan-pair-cpu-audit-20261002-r1": 0,
+        "a3-weight-plan-full_model-cpu-audit-20261002-r1": 0,
+    }
+    wanted, runs = [], []
+    for name, expected_rc in expected.items():
+        folder = ROOT / "results" / name
+        launch = folder.with_name(name + "-launch")
+        run = json.loads((launch / "run.json").read_text())
+        assert run["status"] == "EXITED" and run["returncode"] == expected_rc and run["signal"] is None
+        runs.append({"name": name, "run": run})
+        wanted.extend(
+            p
+            for p in folder.rglob("*")
+            if p.is_file() and p.suffix in (".json", ".log", ".xml") and not any(v in p.parts for v in ("cache", "__pycache__", "extension"))
+        )
+        wanted.extend(p for p in launch.iterdir() if p.is_file() and p.suffix in (".json", ".log"))
+    wanted.append(ROOT / "results/a3-predecode-zero-sign-cpu-diagnosis-20261002-r1/result.json")
+    wanted.append(ROOT / "results/a3-latest-29a0-native-provenance-20261002.json")
+    baseline = ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    wanted.extend((baseline / "input-token-ids.json", baseline / "result.json"))
+    sources = [
+        "a3_guarded_rounding_native_20261002_r4.py",
+        "a3_mxfp8_bf16_staged_full_model_worker_20261001.py",
+        "a3_all24_precision_probe_20261001.py",
+        "a3_model_e2e_mergefix_20261001.py",
+        "a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+        "a3_predecode_boundary_pair_model_20261002_r1.py",
+        "a3_predecode_boundary_pair_model_20261002_r2.py",
+        "a3_predecode_queued_20261002_r1.py",
+        "a3_predecode_queued_20261002_r2.py",
+        "a3_weight_plan_boundary_pair_model_20261002_r1.py",
+        "a3_weight_plan_queued_20261002_r1.py",
+        "audit_a3_predecode_boundary_cpu_20261002_r3.py",
+        "audit_a3_predecode_pair_cpu_20261002_r3.py",
+        "audit_a3_weight_plan_boundary_cpu_20261002_r1.py",
+        "audit_a3_weight_plan_pair_cpu_20261002_r1.py",
+        "audit_a3_weight_plan_full_model_cpu_20261002_r1.py",
+        "diagnose_a3_fixed_window_cpu_20261001.py",
+        Path(__file__).name,
+    ]
+    for version in (5, 6, 7):
+        sources.extend(f"a3_guarded_rounding_native_20261002_r{version}{suffix}" for suffix in (".cpp", ".cu", ".py"))
+        sources.append(f"build_a3_guarded_rounding_cpu_20261002_r{version}.py")
+    for version in (6, 7, 8):
+        sources.extend((f"a3_guarded_rounding_boundary_queued_20261002_r{version}.py", f"a3_guarded_rounding_full_model_20261002_r{version}.py"))
+    wanted.extend(ROOT / "tools" / name for name in sources)
+    manifest = []
+    for path in sorted(set(wanted)):
+        assert path.is_file() and path.suffix in (".py", ".cpp", ".cu", ".json", ".log", ".xml")
+        relative = path.relative_to(ROOT)
+        target = tree / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(path, target)
+        assert sha(target) == sha(path)
+        manifest.append({"path": str(relative), "size": path.stat().st_size, "sha256": sha(path)})
+    status = tree / "TERMINAL_WEIGHT_PLAN_FORWARD_RUNS.json"
+    status.write_text(
+        json.dumps(
+            {
+                "runs": runs,
+                "head": "a24a7401bb7d26d42d88d98b316f634ef487301c",
+                "upstream": "29a06d9cdc8843e33c5e374846be3bb0560a0711",
+                "native_binding_reused_after_all_114_inputs_identical": True,
+                "per_call_parent_actual_rc": [1, 1],
+                "per_call_parent_r1_fail": "Decoded-word comparison before fullmodel; failing native word not persisted",
+                "per_call_parent_r2_fail": "Fullmodel stale expected48 versus96 postprocess count before three cases complete",
+                "cpu_signed_zero_diagnosis": "Unlogged CPU prediction; later native old/new decoded words independently verify exactly2 sign fixes",
+                "per_call_predecode_performance_rejected": True,
+                "cached_weight_plan_parent_actual_rc": 0,
+                "cached_weight_plan_complete_forward_numeric_cases_passed": 3,
+                "cached_weight_plan_boundaries_passed": 5,
+                "cached_weight_plan_pair_observations": 100,
+                "cached_weight_plan_pair_tensors_independently_audited": 425,
+                "cached_weight_plan_generation": "NOT_INCLUDED_SEPARATE_RUN_AND_ARCHIVE_REQUIRED",
+                "cached_weight_plan_whole_model_performance": "NOT_INCLUDED_SEPARATE_RUN_AND_ARCHIVE_REQUIRED",
+                "limits": "Archive preserves both failed parents exactly, independently verified completed boundary/pair scope and cached-plan qualified boundary/full-forward scope. Wrapper includes a smallE31 regression. No all5 cached generation or whole-model gain claim in this archive, no stock BF16/default K1024 production throughput or accepted feature/completion.",
+            },
+            indent=2,
+        )
+        + "\n"
+    )
+    manifest.append({"path": status.name, "size": status.stat().st_size, "sha256": sha(status)})
+    (tree / "MANIFEST.json").write_text(
+        json.dumps({"files": manifest, "excluded": ["cache", "models", "engines", "PT", "native/JIT binaries", "Git bundle"]}, indent=2) + "\n"
+    )
+    tar = destination / (NAME + ".tar.gz")
+    with tarfile.open(tar, "w:gz") as archive:
+        archive.add(tree, arcname=NAME)
+    result = {
+        "path": str(tar),
+        "sha256": sha(tar),
+        "size": tar.stat().st_size,
+        "manifest_entries": len(manifest),
+        "file_count": len(manifest) + 1,
+        "runs": len(runs),
+    }
+    (destination / "archive.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result), flush=True)
+
+
+if __name__ == "__main__":
+    main()

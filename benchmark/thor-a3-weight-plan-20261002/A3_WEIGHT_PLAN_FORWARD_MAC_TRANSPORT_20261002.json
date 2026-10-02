@@ -1,0 +1,23 @@
+{
+  "verified": true,
+  "archive": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-weight-plan-forward-evidence-20261002.tar.gz",
+  "sha256": "3f5fd102f1b5792c219faa0acc059e45cce4a62bd3a27120397686459ed5bd1c",
+  "size": 175663,
+  "manifest_entries": 110,
+  "file_count": 111,
+  "actual_scp_rc": 0,
+  "all_member_bytes_sha_verified": true,
+  "excluded": [
+    "cache",
+    "models",
+    "engines",
+    "PT",
+    "native/JIT binaries",
+    "Git bundles"
+  ],
+  "failed_parent_returncodes_preserved": [
+    1,
+    1
+  ],
+  "cache_boundary_pair_forward_parent_rc": 0
+}

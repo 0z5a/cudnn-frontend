@@ -1,0 +1,92 @@
+{
+  "stage": "CPU_PREDECODE_ZERO_SIGN_DIAGNOSIS_NOT_ACTUAL_GPU_WORD_PROOF",
+  "producer_returncode": 1,
+  "producer_elapsed_seconds": 38.761020611993445,
+  "all_five_c_bf16_d_amax_boundaries_passed": true,
+  "rows": [
+    {
+      "case": "saved_first_expert",
+      "operand": "A",
+      "mismatch_count": 0,
+      "only_negative_zero_sign_loss": true,
+      "coordinates": []
+    },
+    {
+      "case": "saved_first_expert",
+      "operand": "B",
+      "mismatch_count": 0,
+      "only_negative_zero_sign_loss": true,
+      "coordinates": []
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "operand": "A",
+      "mismatch_count": 0,
+      "only_negative_zero_sign_loss": true,
+      "coordinates": []
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "operand": "B",
+      "mismatch_count": 0,
+      "only_negative_zero_sign_loss": true,
+      "coordinates": []
+    },
+    {
+      "case": "ragged_e31_n128",
+      "operand": "A",
+      "mismatch_count": 0,
+      "only_negative_zero_sign_loss": true,
+      "coordinates": []
+    },
+    {
+      "case": "ragged_e31_n128",
+      "operand": "B",
+      "mismatch_count": 0,
+      "only_negative_zero_sign_loss": true,
+      "coordinates": []
+    },
+    {
+      "case": "ragged_e33_n256",
+      "operand": "A",
+      "mismatch_count": 0,
+      "only_negative_zero_sign_loss": true,
+      "coordinates": []
+    },
+    {
+      "case": "ragged_e33_n256",
+      "operand": "B",
+      "mismatch_count": 1,
+      "only_negative_zero_sign_loss": true,
+      "coordinates": [
+        [
+          31,
+          193,
+          223
+        ]
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "operand": "A",
+      "mismatch_count": 0,
+      "only_negative_zero_sign_loss": true,
+      "coordinates": []
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "operand": "B",
+      "mismatch_count": 1,
+      "only_negative_zero_sign_loss": true,
+      "coordinates": [
+        [
+          2,
+          752,
+          702
+        ]
+      ]
+    }
+  ],
+  "cuda_initialized": false,
+  "limits": "Predicts discrepancy from physical bytes and frozen native decode source; failed worker did not persist the actual failing word buffer. Need native old/new word controls and independent new audits before declaring fix."
+}

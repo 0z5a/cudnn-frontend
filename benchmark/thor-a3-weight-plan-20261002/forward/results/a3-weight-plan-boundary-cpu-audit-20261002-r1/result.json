@@ -1,0 +1,572 @@
+{
+  "independent_fp32_targets_sha256": "a92b5e5dd32a0f83374027d13067dabfb8e6e0c971654498059caa4ab0902207",
+  "stage": "INDEPENDENT_PREDECODE_NATIVE_BOUNDARY_CPU_AUDIT_COMPLETE",
+  "source_head": "a24a7401bb7d26d42d88d98b316f634ef487301c",
+  "producer_outer_status": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_weight_plan_queued_20261002_r1.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-weight-plan-20261002-r1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest29a0",
+    "started_utc": "2026-10-02T00:25:12.640590+00:00",
+    "deadline_seconds": 900.0,
+    "status": "EXITED",
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": "0"
+    },
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 71.1255379380018
+  },
+  "boundary_result_sha256": "1997902393954094fa8a515fc0911d7349a3d40090ef10409a754e7dff302233",
+  "boundary_outputs_sha256": "bb9be1a8506b532d1843054d6077358b3f09fac0fc3906e8ffeba97fb0b27a44",
+  "rows": [
+    {
+      "case": "saved_first_expert",
+      "count": 36864,
+      "repaired_fp32_words_verified": 36833,
+      "retained_native_words_verified": 31,
+      "all_c_bf16_reference_byte_equal": true,
+      "all_d_and_amax_reference_byte_equal": true,
+      "independent_cpu_activation_different_values": 0,
+      "independent_amax_byte_equal": true,
+      "physical_scale_unpack_and_high_low_reconstruction_byte_equal": true
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "count": 37888,
+      "repaired_fp32_words_verified": 37867,
+      "retained_native_words_verified": 21,
+      "all_c_bf16_reference_byte_equal": true,
+      "all_d_and_amax_reference_byte_equal": true,
+      "independent_cpu_activation_different_values": 0,
+      "independent_amax_byte_equal": true,
+      "physical_scale_unpack_and_high_low_reconstruction_byte_equal": true
+    },
+    {
+      "case": "ragged_e31_n128",
+      "count": 512,
+      "repaired_fp32_words_verified": 512,
+      "retained_native_words_verified": 0,
+      "all_c_bf16_reference_byte_equal": true,
+      "all_d_and_amax_reference_byte_equal": true,
+      "independent_cpu_activation_different_values": 0,
+      "independent_amax_byte_equal": true,
+      "physical_scale_unpack_and_high_low_reconstruction_byte_equal": true
+    },
+    {
+      "case": "ragged_e33_n256",
+      "count": 4608,
+      "repaired_fp32_words_verified": 4608,
+      "retained_native_words_verified": 0,
+      "all_c_bf16_reference_byte_equal": true,
+      "all_d_and_amax_reference_byte_equal": true,
+      "independent_cpu_activation_different_values": 0,
+      "independent_amax_byte_equal": true,
+      "physical_scale_unpack_and_high_low_reconstruction_byte_equal": true
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "count": 8192,
+      "repaired_fp32_words_verified": 8192,
+      "retained_native_words_verified": 0,
+      "all_c_bf16_reference_byte_equal": true,
+      "all_d_and_amax_reference_byte_equal": true,
+      "independent_cpu_activation_different_values": 0,
+      "independent_amax_byte_equal": true,
+      "physical_scale_unpack_and_high_low_reconstruction_byte_equal": true
+    }
+  ],
+  "all_c_count": 88064,
+  "fresh_scalar_count": 80,
+  "scalar_coordinates": [
+    {
+      "case": "saved_first_expert",
+      "row": 29,
+      "column": 305,
+      "fp32_word": 3191279485
+    },
+    {
+      "case": "saved_first_expert",
+      "row": 21,
+      "column": 381,
+      "fp32_word": 1060364318
+    },
+    {
+      "case": "saved_first_expert",
+      "row": 12,
+      "column": 521,
+      "fp32_word": 3214340179
+    },
+    {
+      "case": "saved_first_expert",
+      "row": 34,
+      "column": 127,
+      "fp32_word": 3221466961
+    },
+    {
+      "case": "saved_first_expert",
+      "row": 1,
+      "column": 383,
+      "fp32_word": 1034815527
+    },
+    {
+      "case": "saved_first_expert",
+      "row": 4,
+      "column": 634,
+      "fp32_word": 1089008528
+    },
+    {
+      "case": "saved_first_expert",
+      "row": 0,
+      "column": 1018,
+      "fp32_word": 3221442134
+    },
+    {
+      "case": "saved_first_expert",
+      "row": 17,
+      "column": 157,
+      "fp32_word": 3230485793
+    },
+    {
+      "case": "saved_first_expert",
+      "row": 12,
+      "column": 224,
+      "fp32_word": 1075963268
+    },
+    {
+      "case": "saved_first_expert",
+      "row": 29,
+      "column": 262,
+      "fp32_word": 3217290728
+    },
+    {
+      "case": "saved_first_expert",
+      "row": 0,
+      "column": 209,
+      "fp32_word": 3228918314
+    },
+    {
+      "case": "saved_first_expert",
+      "row": 1,
+      "column": 719,
+      "fp32_word": 3228044956
+    },
+    {
+      "case": "saved_first_expert",
+      "row": 6,
+      "column": 197,
+      "fp32_word": 3224856120
+    },
+    {
+      "case": "saved_first_expert",
+      "row": 11,
+      "column": 2,
+      "fp32_word": 3220641320
+    },
+    {
+      "case": "saved_first_expert",
+      "row": 8,
+      "column": 260,
+      "fp32_word": 3224119562
+    },
+    {
+      "case": "saved_first_expert",
+      "row": 19,
+      "column": 963,
+      "fp32_word": 3233651626
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "row": 29,
+      "column": 305,
+      "fp32_word": 1040590176
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "row": 10,
+      "column": 562,
+      "fp32_word": 1100039893
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "row": 28,
+      "column": 395,
+      "fp32_word": 1085101502
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "row": 29,
+      "column": 679,
+      "fp32_word": 1066290248
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "row": 6,
+      "column": 975,
+      "fp32_word": 1083814136
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "row": 12,
+      "column": 1,
+      "fp32_word": 1074367734
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "row": 32,
+      "column": 810,
+      "fp32_word": 1033743222
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "row": 2,
+      "column": 456,
+      "fp32_word": 1076504580
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "row": 22,
+      "column": 1016,
+      "fp32_word": 3228646160
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "row": 28,
+      "column": 114,
+      "fp32_word": 1084291967
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "row": 29,
+      "column": 127,
+      "fp32_word": 1051016204
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "row": 2,
+      "column": 592,
+      "fp32_word": 1079414092
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "row": 29,
+      "column": 577,
+      "fp32_word": 1075893924
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "row": 3,
+      "column": 763,
+      "fp32_word": 1077459490
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "row": 27,
+      "column": 380,
+      "fp32_word": 3222112411
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "row": 21,
+      "column": 79,
+      "fp32_word": 1072139916
+    },
+    {
+      "case": "ragged_e31_n128",
+      "row": 2,
+      "column": 119,
+      "fp32_word": 1024630968
+    },
+    {
+      "case": "ragged_e31_n128",
+      "row": 0,
+      "column": 115,
+      "fp32_word": 0
+    },
+    {
+      "case": "ragged_e31_n128",
+      "row": 1,
+      "column": 11,
+      "fp32_word": 1036737398
+    },
+    {
+      "case": "ragged_e31_n128",
+      "row": 0,
+      "column": 16,
+      "fp32_word": 0
+    },
+    {
+      "case": "ragged_e31_n128",
+      "row": 1,
+      "column": 49,
+      "fp32_word": 1020038544
+    },
+    {
+      "case": "ragged_e31_n128",
+      "row": 3,
+      "column": 58,
+      "fp32_word": 1017395107
+    },
+    {
+      "case": "ragged_e31_n128",
+      "row": 1,
+      "column": 121,
+      "fp32_word": 1035291971
+    },
+    {
+      "case": "ragged_e31_n128",
+      "row": 0,
+      "column": 24,
+      "fp32_word": 0
+    },
+    {
+      "case": "ragged_e31_n128",
+      "row": 2,
+      "column": 109,
+      "fp32_word": 3171188524
+    },
+    {
+      "case": "ragged_e31_n128",
+      "row": 1,
+      "column": 106,
+      "fp32_word": 3173079571
+    },
+    {
+      "case": "ragged_e31_n128",
+      "row": 3,
+      "column": 27,
+      "fp32_word": 3172808950
+    },
+    {
+      "case": "ragged_e31_n128",
+      "row": 2,
+      "column": 9,
+      "fp32_word": 1033740013
+    },
+    {
+      "case": "ragged_e31_n128",
+      "row": 3,
+      "column": 124,
+      "fp32_word": 3171327464
+    },
+    {
+      "case": "ragged_e31_n128",
+      "row": 1,
+      "column": 8,
+      "fp32_word": 3184130609
+    },
+    {
+      "case": "ragged_e31_n128",
+      "row": 1,
+      "column": 2,
+      "fp32_word": 996608600
+    },
+    {
+      "case": "ragged_e31_n128",
+      "row": 3,
+      "column": 31,
+      "fp32_word": 3179660639
+    },
+    {
+      "case": "ragged_e33_n256",
+      "row": 8,
+      "column": 112,
+      "fp32_word": 1011972139
+    },
+    {
+      "case": "ragged_e33_n256",
+      "row": 5,
+      "column": 112,
+      "fp32_word": 1039337781
+    },
+    {
+      "case": "ragged_e33_n256",
+      "row": 6,
+      "column": 255,
+      "fp32_word": 1036964955
+    },
+    {
+      "case": "ragged_e33_n256",
+      "row": 15,
+      "column": 136,
+      "fp32_word": 3180810612
+    },
+    {
+      "case": "ragged_e33_n256",
+      "row": 0,
+      "column": 67,
+      "fp32_word": 0
+    },
+    {
+      "case": "ragged_e33_n256",
+      "row": 4,
+      "column": 248,
+      "fp32_word": 3182039451
+    },
+    {
+      "case": "ragged_e33_n256",
+      "row": 15,
+      "column": 228,
+      "fp32_word": 1034438717
+    },
+    {
+      "case": "ragged_e33_n256",
+      "row": 8,
+      "column": 70,
+      "fp32_word": 3181771677
+    },
+    {
+      "case": "ragged_e33_n256",
+      "row": 0,
+      "column": 130,
+      "fp32_word": 0
+    },
+    {
+      "case": "ragged_e33_n256",
+      "row": 6,
+      "column": 24,
+      "fp32_word": 3177629355
+    },
+    {
+      "case": "ragged_e33_n256",
+      "row": 14,
+      "column": 4,
+      "fp32_word": 3175632172
+    },
+    {
+      "case": "ragged_e33_n256",
+      "row": 2,
+      "column": 206,
+      "fp32_word": 3149307484
+    },
+    {
+      "case": "ragged_e33_n256",
+      "row": 8,
+      "column": 143,
+      "fp32_word": 3148032872
+    },
+    {
+      "case": "ragged_e33_n256",
+      "row": 8,
+      "column": 72,
+      "fp32_word": 1039130270
+    },
+    {
+      "case": "ragged_e33_n256",
+      "row": 7,
+      "column": 129,
+      "fp32_word": 3156853464
+    },
+    {
+      "case": "ragged_e33_n256",
+      "row": 6,
+      "column": 149,
+      "fp32_word": 3164804047
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "row": 6,
+      "column": 845,
+      "fp32_word": 3150380111
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "row": 5,
+      "column": 185,
+      "fp32_word": 3165479373
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "row": 3,
+      "column": 905,
+      "fp32_word": 3152023536
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "row": 5,
+      "column": 701,
+      "fp32_word": 1011922391
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "row": 7,
+      "column": 991,
+      "fp32_word": 3180127799
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "row": 2,
+      "column": 632,
+      "fp32_word": 1028288610
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "row": 6,
+      "column": 649,
+      "fp32_word": 1031594236
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "row": 3,
+      "column": 508,
+      "fp32_word": 3171798400
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "row": 5,
+      "column": 94,
+      "fp32_word": 3149009303
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "row": 4,
+      "column": 138,
+      "fp32_word": 3172841772
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "row": 3,
+      "column": 866,
+      "fp32_word": 3174951814
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "row": 3,
+      "column": 182,
+      "fp32_word": 1031791340
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "row": 6,
+      "column": 35,
+      "fp32_word": 1037829608
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "row": 4,
+      "column": 469,
+      "fp32_word": 1030142086
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "row": 6,
+      "column": 994,
+      "fp32_word": 1026935869
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "row": 3,
+      "column": 952,
+      "fp32_word": 1037639795
+    }
+  ],
+  "cuda_initialized": false,
+  "new_native_calls": 0,
+  "harness_sha256": "cdf4c6a630852ac561f4a21a24a784c845edeed3a7823e95f8adce0f9fc427db",
+  "window_helper_sha256": "91533128b0e22ec3d65b5778c61aed4a9c4bf0d2d0cd4fccfa9d2d0579d84c97",
+  "producer_full_model_driver_counter_failed": false,
+  "limits": "New per-call integer predecode actual five native boundary/physical paths, independent integer repair and80 scalar coordinates. Current finite normal-BF16/zero corpus; no universal ISA or completed optimization/model-throughput claim. Full24 model and paired wrapper cost are audited separately."
+}

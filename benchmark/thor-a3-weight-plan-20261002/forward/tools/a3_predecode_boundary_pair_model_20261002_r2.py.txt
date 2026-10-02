@@ -1,0 +1,186 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""New encoded-word predecode: changed boundaries, exact r4 pairs, full Granite.
+
+The postfixed guard, integer target and actual MXFP8 main are unchanged. Test
+sharing decoded integer words across repair outputs, including true low-M
+E32/top8/N1024 geometry. No production API/support/capacity/oracle edit.
+"""
+
+import importlib.util
+import json
+from pathlib import Path
+import statistics
+import sys
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def execute(args, out):
+    assert "torch" not in sys.modules
+    tools = Path(__file__).parent
+    boundary = out / "boundaries"
+    boundary.mkdir()
+    b = load("a3_predecode_actual_boundaries", tools / "a3_guarded_rounding_boundary_queued_20261002_r7.py")
+    b.execute(args, boundary)
+    q, h = sys.modules["a3_guard_boundary_quant"], sys.modules["a3_guard_boundary_cuda"]
+    m, t = q.m, q.t
+    build = json.loads((m.ROOT / "results/a3-guarded-rounding-build-cpu-20261002-r6/result.json").read_text())
+    module = h.load_native(build["binary"]["path"], build["binary"]["sha256"])
+    oldh = load("a3_predecode_old_postfixed_control", tools / "a3_guarded_rounding_native_20261002_r4.py")
+    oldbuild = json.loads((m.ROOT / "results/a3-guarded-rounding-build-cpu-20261002-r4/result.json").read_text())
+    oldmodule = oldh.load_native(oldbuild["binary"]["path"], oldbuild["binary"]["sha256"])
+    old_decode_h = load("a3_predecode_old_word_control", tools / "a3_guarded_rounding_native_20261002_r5.py")
+    old_decode_build = json.loads((m.ROOT / "results/a3-guarded-rounding-build-cpu-20261002-r5/result.json").read_text())
+    old_decode_module = old_decode_h.load_native(old_decode_build["binary"]["path"], old_decode_build["binary"]["sha256"])
+    frozen = {
+        str(path): m.sha_file(path)
+        for path in [
+            Path(__file__),
+            Path(b.__file__),
+            Path(oldh.__file__),
+            Path(old_decode_h.__file__),
+            tools / "a3_guarded_rounding_full_model_20261002_r7.py",
+        ]
+    }
+    captured = t.load(boundary / "outputs.pt", map_location="cpu", weights_only=True)
+    rows = json.loads((boundary / "result.json").read_text())["rows"]
+    assert len(rows) == 5 and rows[-1]["name"] == "granite_decode_e32_n1024_top8"
+    saved, paired, decodes, zero_controls = {}, [], [], []
+
+    def equal(a, b):
+        return t.equal(a.contiguous().flatten().view(t.uint8), b.contiguous().flatten().view(t.uint8))
+
+    with t.inference_mode():
+        for row in rows:
+            name, v = row["name"], captured[row["name"]]
+            inputs = (
+                v["a_codes"].cuda().view(t.float8_e4m3fn),
+                v["b_codes"].cuda().view(t.float8_e4m3fn),
+                v["sfa"].cuda().view(t.float8_e8m0fnu),
+                v["sfb"].cuda().view(t.float8_e8m0fnu),
+                v["native_c"].cuda(),
+                v["destinations"].cuda(),
+                v["experts"].cuda(),
+                v["xstats"].cuda(),
+                v["wstats"].cuda(),
+            )
+            for operand, codes, scales, effective in (("A", inputs[0], inputs[2], v["effective_a"]), ("B", inputs[1], inputs[3], v["effective_b"])):
+                words = module.decode(codes, scales, operand == "A").cpu()
+                expected_words = effective.to(t.bfloat16).view(t.int16)
+                old_words = old_decode_module.decode(codes, scales, operand == "A").cpu()
+                saved[f"decode/{name}/{operand}"] = words
+                saved[f"old_decode/{name}/{operand}"] = old_words
+                different = old_words != words
+                control = {
+                    "case": name,
+                    "operand": operand,
+                    "mismatch_count": int(different.sum()),
+                    "only_old_negative_zero_sign_loss": bool(((old_words[different] == 0) & (words[different] == -32768)).all()),
+                }
+                zero_controls.append(control)
+                # Persist words and diagnostics before any assertion, including failures.
+                t.save(saved, out / "partial_pair_outputs.pt")
+                (out / "partial_pair.json").write_text(json.dumps({"negative_zero_controls": zero_controls, "paired": paired}, indent=2) + "\n")
+                assert words.dtype == t.int16 and equal(words, expected_words)
+                assert control["only_old_negative_zero_sign_loss"]
+                decodes.append({"case": name, "operand": operand, "words": words.numel(), "encoded_effective_bf16_word_byte_equal": True})
+            for worker, native in ((oldh, oldmodule), (h, module)):
+                worker.run(native, *inputs)
+            t.cuda.synchronize()
+            for repeat in range(5):
+                order = ("postfixed", "predecode", "predecode", "postfixed") if repeat % 2 == 0 else ("predecode", "postfixed", "postfixed", "predecode")
+                for position, mode in enumerate(order):
+                    worker, native = (oldh, oldmodule) if mode == "postfixed" else (h, module)
+                    before, after = t.cuda.Event(enable_timing=True), t.cuda.Event(enable_timing=True)
+                    before.record()
+                    value = worker.run(native, *inputs)
+                    after.record()
+                    after.synchronize()
+                    cpu = {key: tensor.cpu() for key, tensor in value.items()}
+                    assert all(equal(cpu[key], v[key]) for key in ("c", "flags", "d", "amax"))
+                    saved.update({f"pair/{name}/{repeat}/{position}/{key}": tensor for key, tensor in cpu.items()})
+                    paired.append(
+                        {
+                            "case": name,
+                            "repeat": repeat,
+                            "position": position,
+                            "mode": mode,
+                            "gpu_wrapper_ms": before.elapsed_time(after),
+                            "c_fp32_flags_d_amax_byte_equal": True,
+                            "flags": [int((cpu["flags"] == i).sum()) for i in (0, 1, 2)],
+                        }
+                    )
+            print(
+                json.dumps(
+                    {
+                        "stage": "PREDECODE_REPAIR_PAIR_COMPLETE",
+                        "case": name,
+                        "median_ms": {
+                            mode: statistics.median(x["gpu_wrapper_ms"] for x in paired if x["case"] == name and x["mode"] == mode)
+                            for mode in ("postfixed", "predecode")
+                        },
+                    }
+                ),
+                flush=True,
+            )
+    t.save(saved, out / "pair_outputs.pt")
+    comparisons = []
+    for row in rows:
+        medians = {
+            mode: statistics.median(x["gpu_wrapper_ms"] for x in paired if x["case"] == row["name"] and x["mode"] == mode)
+            for mode in ("postfixed", "predecode")
+        }
+        comparisons.append({"case": row["name"], "median_ms": medians, "postfixed_over_predecode_ratio": medians["postfixed"] / medians["predecode"]})
+    (out / "pair.json").write_text(
+        json.dumps(
+            {
+                "paired": paired,
+                "comparisons": comparisons,
+                "decodes": decodes,
+                "decode_validation_native_launches": 2 * len(decodes),
+                "negative_zero_controls": zero_controls,
+                "old_decode_build": old_decode_build,
+                "files": frozen,
+                "outputs_sha256": m.sha_file(out / "pair_outputs.pt"),
+                "old_build": oldbuild,
+                "new_build": build,
+                "old_repair_calls": oldh.POSTPROCESS_CALLS,
+                "old_postprocess_kernel_launches": oldh.POSTPROCESS_KERNEL_LAUNCHES,
+            },
+            indent=2,
+        )
+        + "\n"
+    )
+    model = out / "model"
+    model.mkdir()
+    g = load("a3_predecode_full24", tools / "a3_guarded_rounding_full_model_20261002_r7.py")
+    g.execute(args, model, boundary)
+    assert {path: m.sha_file(path) for path in frozen} == frozen
+    result = {
+        "stage": "PREDECODE_BOUNDARY_PAIR_FULL24_TERMINAL",
+        "head": args.expected_head,
+        "boundary_result_sha256": m.sha_file(boundary / "result.json"),
+        "model_stage": json.loads((model / "result.json").read_text())["stage"],
+        "pair_result_sha256": m.sha_file(out / "pair.json"),
+        "comparisons": comparisons,
+        "native_main_calls": m.NATIVE_CALLS,
+        "new_repair_calls": h.POSTPROCESS_CALLS,
+        "new_postprocess_kernel_launches": h.POSTPROCESS_KERNEL_LAUNCHES,
+        "decode_validation_native_launches": 2 * len(decodes),
+        "negative_zero_controls": zero_controls,
+        "old_decode_build": old_decode_build,
+        "files": frozen,
+        "generation_kv": "NOT_RUN_NEW_CANDIDATE",
+        "paired_whole_model_performance": "NOT_RUN",
+        "accepted_optimization": False,
+        "limits": "New per-call integer-word predecode candidate. Five native boundaries including E32/top8 low-M, 100 wrapper timing observations and original3 full24 numerical gates. Independent CPU audits and new-candidate cached generation/model timing remain required; no stock throughput or completion claim.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result), flush=True)

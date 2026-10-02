@@ -1,0 +1,27 @@
+{
+  "stage": "LATEST_WEIGHT_PLAN_CANDIDATE_TERMINAL",
+  "head": "a24a7401bb7d26d42d88d98b316f634ef487301c",
+  "base": "29a06d9cdc8843e33c5e374846be3bb0560a0711",
+  "binding": {
+    "path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest29a0/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so",
+    "sha256": "f8e1555dcba3cd56f4e1f27736d67431b164308c7252b12a86626c1a7f286563"
+  },
+  "candidate_result_sha256": "9a680711bad179fec7d7e5b0190ef6083af9fd05c4fce9c5cb0f92a92bb8a42b",
+  "files": {
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_weight_plan_queued_20261002_r1.py": "9a8620413f727b8cb32bcc9ebb4d7f50618d834f3f7db18ef0e5345f03d001f9",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_weight_plan_boundary_pair_model_20261002_r1.py": "79c8989bb9dd342083292edf29d29dc85f2119b7877c1102e873fd8eb8694c8e",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_boundary_queued_20261002_r8.py": "d4b0b0010a6e6467c053a49a90e1a7f470d623862650b3d1b7e42549d4eadb4e",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_full_model_20261002_r8.py": "500b214d56328ce51462f9c024ac0fa7bfbf493282a56a76d1d38c0c556379ff",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r7.py": "551818f57b08e8a0c6b0a60cc51844c38055bbffbc18888dd15a5be61d6d2fd3",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r4.py": "7de4a50b53f3b3dd56b220bca242cf0537e459ba74a4ddbdcab94d0d9a865728",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_mxfp8_bf16_staged_full_model_worker_20261001.py": "62304d6cc59fc2b604a19efe1c60c075e0737c6898de191404e4bbb6baf057d1",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_all24_precision_probe_20261001.py": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_model_e2e_mergefix_20261001.py": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest29-postfixed-full-pipeline-20261002-r1/regression/result.json": "b82de834dcaa1478c7465f30275214a19944e538b2c558a50392c8d792a67456",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-model-repair-a3sfdlatest4-n256-20261001/input-token-ids.json": "0983f2e3e173eb5d6dd1fdb286b1bd96b513bff54b1f1a2724cc76bdc82122dc"
+  },
+  "generation_kv": "NOT_RUN_NEW_CANDIDATE",
+  "formal_model_performance": "NOT_RUN",
+  "accepted_optimization": false
+}

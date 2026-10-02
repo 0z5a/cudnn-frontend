@@ -1,0 +1,112 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Admit one frozen predecode candidate after real latest31 qualification."""
+
+import argparse
+import fcntl
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import sys
+import time
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "a24a7401bb7d26d42d88d98b316f634ef487301c"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    tools = Path(__file__).parent
+    native = json.loads((ROOT / "results/a3-latest-29a0-native-provenance-20261002.json").read_text())
+    pipeline = ROOT / "results/a3-latest29-postfixed-full-pipeline-20261002-r1"
+    run = json.loads(pipeline.with_name(pipeline.name + "-launch").joinpath("run.json").read_text())
+    qualification = json.loads((pipeline / "regression/result.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    assert native["head"] == qualification["head"] == HEAD
+    assert qualification["passed"] == 31 and qualification["skipped"] == 0 and qualification["actual_native_calls"] == 61
+    assert qualification["binding"]["sha256"] == native["binding"]["sha256"]
+    inputs = ROOT / "results/a3-frozen-input-ids-audit-cpu-20261002-r1"
+    im = json.loads((inputs / "result.json").read_text())
+    ir = json.loads(inputs.with_name(inputs.name + "-launch").joinpath("run.json").read_text())
+    assert ir["status"] == "EXITED" and ir["returncode"] == 0 and im["all_nine_original_model_files_size_sha256_verified"]
+    paths = [
+        Path(__file__),
+        tools / "a3_predecode_boundary_pair_model_20261002_r1.py",
+        tools / "a3_guarded_rounding_boundary_queued_20261002_r6.py",
+        tools / "a3_guarded_rounding_full_model_20261002_r6.py",
+        tools / "a3_guarded_rounding_native_20261002_r5.py",
+        tools / "a3_guarded_rounding_native_20261002_r4.py",
+        tools / "a3_mxfp8_bf16_staged_full_model_worker_20261001.py",
+        tools / "a3_all24_precision_probe_20261001.py",
+        tools / "a3_model_e2e_mergefix_20261001.py",
+        tools / "a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+        pipeline / "regression/result.json",
+        ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001/input-token-ids.json",
+    ]
+    frozen = {str(p): sha(p) for p in paths}
+    assert frozen[str(paths[-1])] == im["fixed_inputs_json_sha256"]
+    (out / "frozen_inputs.json").write_text(json.dumps({"files": frozen, "native": native, "qualification": qualification, "input_audit": im}, indent=2) + "\n")
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        start = time.monotonic()
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - start > 30:
+                    (out / "admission.json").write_text(json.dumps({"stage": "NOT_RUN_SHARED_LOCK_BUSY", "torch_imported": False}) + "\n")
+                    return 75
+                time.sleep(1)
+        assert "torch" not in sys.modules
+        assert all(sha(p) == v for p, v in frozen.items())
+        assert all(sha(Path(native["source"]) / item["path"]) == item["sha256"] for item in native["native_input_digests"])
+        (out / "admission.json").write_text(
+            json.dumps(
+                {
+                    "stage": "LOCK_ADMITTED",
+                    "pid": os.getpid(),
+                    "wait_seconds": time.monotonic() - start,
+                    "cuda_module_loading": os.environ.get("CUDA_MODULE_LOADING"),
+                }
+            )
+            + "\n"
+        )
+        args.expected_source = native["source"]
+        args.expected_head = HEAD
+        args.expected_binding_sha = native["binding"]["sha256"]
+        model = out / "candidate"
+        model.mkdir()
+        spec = importlib.util.spec_from_file_location("a3_predecode_candidate", paths[1])
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = module
+        spec.loader.exec_module(module)
+        module.execute(args, model)
+        assert all(sha(p) == v for p, v in frozen.items())
+        result = {
+            "stage": "LATEST_PREDECODE_CANDIDATE_TERMINAL",
+            "head": HEAD,
+            "base": native["base"],
+            "binding": native["binding"],
+            "candidate_result_sha256": sha(model / "result.json"),
+            "files": frozen,
+            "generation_kv": "NOT_RUN_NEW_CANDIDATE",
+            "formal_model_performance": "NOT_RUN",
+            "accepted_optimization": False,
+        }
+        (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps(result), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

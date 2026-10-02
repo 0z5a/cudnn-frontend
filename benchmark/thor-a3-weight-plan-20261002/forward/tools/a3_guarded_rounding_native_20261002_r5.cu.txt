@@ -1,0 +1,392 @@
+// SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+// SPDX-License-Identifier: Apache-2.0
+
+// Private numerical control: actual MXFP8 TC C is retained when certified.
+// Ambiguous outputs are recomputed from FP8 codes/scales using integer ALU.
+// No BF16 Tensor Core GEMM, Torch dot, model-oracle input or fitted bias.
+
+#include <ATen/ATen.h>
+#include <c10/cuda/CUDAException.h>
+#include <c10/cuda/CUDAGuard.h>
+#include <c10/cuda/CUDAStream.h>
+#include <cmath>
+#include <cstdint>
+#include <cuda_bf16.h>
+#include <cuda_runtime.h>
+#include <math_constants.h>
+
+namespace {
+
+__device__ int
+exponent64(double x) {
+    return x == 0.0 ? -10000 : int((uint64_t(__double_as_longlong(x)) >> 52) & 2047) - 1023;
+}
+
+__device__ double
+power64(int exponent) {
+    return __longlong_as_double(int64_t(exponent + 1023) << 52);
+}
+
+// Proven postfixed enclosure: replace the 192-step FP64 recurrences, not
+// the target arithmetic. A looser interval may repair more outputs. This is
+// an unaccepted candidate until actual correctness and paired costs are tested.
+__device__ double
+upward(double x) {
+    return x == 0.0 ? 0.0 : nextafter(x, CUDART_INF);
+}
+
+__device__ double
+loss_step(double s, double error, int product_raw, int group) {
+    double upper        = upward(s + error);
+    int quantum         = max(exponent64(upper), product_raw) - 25;
+    double alignment    = (group + 1) * power64(quantum);
+    double intermediate = upward(upper + alignment);
+    double ulp          = power64(max(exponent64(intermediate) - 23, -149));
+    return upward(alignment + ulp);
+}
+
+__device__ double
+error_bound(double s, int product_raw, int group, int updates) {
+    if (s == 0.0) return 0.0;
+    if (!isfinite(s) || s < 0.0) return CUDART_INF;
+    double error = upward(4.0 * updates * loss_step(s, 0.0, product_raw, group));
+    for (int i = 0; i < 8; ++i) {
+        double rhs = upward(updates * loss_step(s, error, product_raw, group));
+        if (isfinite(error) && error >= upward(2.0 * rhs)) return error;
+        error = upward(error * 2.0);
+    }
+    // Failed proof never returns an empirical finite estimate.
+    return CUDART_INF;
+}
+
+__device__ uint16_t
+bfword(float x) {
+    return __bfloat16_as_ushort(__float2bfloat16_rn(x));
+}
+
+__device__ bool
+certify(float value, const double *xs, const double *ws) {
+    double native_s       = upward(xs[1] * ws[1]);
+    double target_s       = upward(xs[0] * ws[0]);
+    double en             = error_bound(native_s, int(xs[4]) + int(ws[4]), 32, 128);
+    double er             = error_bound(target_s, int(xs[3]) + int(ws[3]), 16, 64);
+    double reconstruction = upward(upward(upward(xs[2] * ws[0]) + upward(xs[0] * ws[2])) + upward(xs[2] * ws[2]));
+    double bound          = upward(upward(en + er) + reconstruction);
+    if (!isfinite(bound)) return false;
+    double low = __dsub_rd(double(value), bound), high = __dadd_ru(double(value), bound);
+    float lower = __double2float_rn(low), upper = __double2float_rn(high);
+    if (double(lower) > low) lower = nextafterf(lower, -CUDART_INF_F);
+    if (double(upper) < high) upper = nextafterf(upper, CUDART_INF_F);
+    return bfword(lower) == bfword(upper);
+}
+
+__device__ int64_t
+sfindex(int row, int scale_column, int rows, int batch) {
+    // Physical F8_128x4: [batch,row/128,K/128,row%32,(row%128)/32,Kscale%4].
+    return (((((int64_t(batch) * (rows / 128) + row / 128) * 32 + scale_column / 4) * 32 + row % 32) * 4 +
+             (row % 128) / 32) *
+                4 +
+            scale_column % 4);
+}
+
+__device__ float
+decode_scaled(uint8_t code, uint8_t scale) {
+    int encoded  = (code >> 3) & 15;
+    int mantissa = (code & 7) + (encoded ? 8 : 0);
+    if (code & 128) mantissa = -mantissa;
+    return ldexpf(float(mantissa), max(encoded, 1) - 10 + int(scale) - 127);
+}
+
+__device__ uint16_t
+reconstructed_word(const uint8_t *codes, const uint8_t *scales, int row, int k, int rows, int batch, bool operand_a) {
+    int block = k / 32, lane = k % 32, low_component = operand_a ? 2 : 1;
+    int64_t base = (int64_t(batch) * rows + row) * 4096 + block * 128;
+    float high   = decode_scaled(codes[base + lane], scales[sfindex(row, block * 4, rows, batch)]);
+    float low    = decode_scaled(codes[base + low_component * 32 + lane],
+                              scales[sfindex(row, block * 4 + low_component, rows, batch)]);
+    return bfword(__fadd_rn(high, low));
+}
+
+// Decode each encoded recipe word once per call, then share across C outputs.
+// These are integer word buffers derived from E4M3/UE8M0 only, not BF16 inputs.
+__global__ void
+predecode_kernel(const uint8_t *codes, const uint8_t *scales, uint16_t *words, int rows, int batches, bool operand_a) {
+    int64_t pos = int64_t(blockIdx.x) * blockDim.x + threadIdx.x;
+    if (pos >= int64_t(batches) * rows * 1024) return;
+    int k = int(pos % 1024), row = int((pos / 1024) % rows);
+    int batch  = int(pos / (int64_t(rows) * 1024));
+    words[pos] = reconstructed_word(codes, scales, row, k, rows, batch, operand_a);
+}
+
+__device__ void
+decode_bf(uint16_t word, int &mantissa, int &raw) {
+    int encoded = (word >> 7) & 255;
+    mantissa    = (word & 127) + (encoded ? 128 : 0);
+    if (word & 32768) mantissa = -mantissa;
+    raw = max(encoded, 1) - 127;
+}
+
+__device__ int64_t
+align_integer(int64_t mantissa, int exponent, int quantum) {
+    if (!mantissa) return 0;
+    int shift          = exponent - quantum;
+    uint64_t magnitude = mantissa < 0 ? uint64_t(-mantissa) : uint64_t(mantissa);
+    magnitude          = shift >= 0 ? magnitude << shift : (-shift >= 64 ? 0 : magnitude >> -shift);
+    return mantissa < 0 ? -int64_t(magnitude) : int64_t(magnitude);
+}
+
+__device__ uint32_t
+normalize_rtz(int64_t value, int quantum) {
+    if (!value) return 0;
+    uint32_t sign      = value < 0 ? 0x80000000u : 0;
+    uint64_t magnitude = value < 0 ? uint64_t(-value) : uint64_t(value);
+    int length         = 64 - __clzll(magnitude);
+    int exponent       = quantum + length - 1;
+    if (exponent > 127) return sign | 0x7f800000u;
+    if (exponent < -126) {
+        int shift         = quantum + 149;
+        uint64_t fraction = shift >= 0 ? magnitude << shift : (-shift >= 64 ? 0 : magnitude >> -shift);
+        return fraction ? sign | uint32_t(fraction) : 0;
+    }
+    int shift         = length - 24;
+    uint64_t mantissa = shift >= 0 ? magnitude >> shift : magnitude << -shift;
+    return sign | uint32_t(exponent + 127) << 23 | (uint32_t(mantissa) & 0x7fffffu);
+}
+
+__global__ void
+rounding_kernel(const uint16_t *a_words,
+                const uint16_t *b_words,
+                const float *native_c,
+                const int64_t *destinations,
+                const int64_t *experts,
+                const double *xstats,
+                const double *wstats,
+                float *output,
+                uint8_t *flags,
+                int rows,
+                int n,
+                int e,
+                int live) {
+    int lane    = threadIdx.x & 15;
+    int64_t pos = int64_t(blockIdx.x) * 8 + threadIdx.x / 16;
+    if (pos >= int64_t(live) * n) return;
+    int r = int(pos / n), col = int(pos % n);
+    int64_t expert_id = experts[r], destination = destinations[r];
+    bool valid = expert_id >= 0 && expert_id < e && destination >= 0 && destination < rows;
+    int expert = valid ? int(expert_id) : 0, source_row = valid ? int(destination) : 0;
+    unsigned mask = 0xffffu << ((threadIdx.x & 31) >= 16 ? 16 : 0);
+    float c       = 0.0f;
+    int keep      = 0;
+    if (lane == 0 && valid) {
+        c     = native_c[int64_t(source_row) * n + col];
+        valid = isfinite(c);
+        if (valid) keep = certify(c, xstats + int64_t(r) * 5, wstats + (int64_t(expert) * n + col) * 5);
+    }
+    int status = __shfl_sync(mask, lane == 0 ? int(valid) : 0, 0, 16);
+    keep       = __shfl_sync(mask, keep, 0, 16);
+    if (!status) {
+        if (lane == 0) {
+            output[pos] = CUDART_NAN_F;
+            flags[pos]  = 2;
+        }
+        return;
+    }
+    if (keep) {
+        if (lane == 0) {
+            output[pos] = c;
+            flags[pos]  = 0;
+        }
+        return;
+    }
+    uint32_t accumulator = 0;
+    for (int begin = 0; begin < 1024; begin += 16) {
+        int ma, mb, ra, rb;
+        decode_bf(a_words[int64_t(source_row) * 1024 + begin + lane], ma, ra);
+        decode_bf(b_words[(int64_t(expert) * n + col) * 1024 + begin + lane], mb, rb);
+        int64_t product = int64_t(ma) * mb;
+        int raw_product = product ? ra + rb : -10000;
+        for (int offset = 1; offset < 16; offset <<= 1)
+            raw_product = max(raw_product, __shfl_xor_sync(mask, raw_product, offset, 16));
+        int encoded = (accumulator >> 23) & 255;
+        int64_t cm  = (accumulator & 0x7fffffu) + (encoded ? 0x800000u : 0);
+        if (accumulator & 0x80000000u) cm = -cm;
+        int rc        = max(encoded, 1) - 127;
+        int dominant  = max(raw_product, cm ? rc : -10000);
+        int quantum   = dominant == -10000 ? 0 : dominant - 25;
+        int64_t units = align_integer(product, ra + rb - 14, quantum);
+        for (int offset = 1; offset < 16; offset <<= 1)
+            units += __shfl_xor_sync(mask, static_cast<long long>(units), offset, 16);
+        units += align_integer(cm, rc - 23, quantum);
+        accumulator = normalize_rtz(units, quantum);
+    }
+    if (lane == 0) {
+        output[pos] = __uint_as_float(accumulator);
+        flags[pos]  = 1;
+    }
+}
+
+__device__ void
+max_amax(float *address, float value) {
+    auto p       = reinterpret_cast<unsigned *>(address);
+    unsigned old = *p;
+    for (;;) {
+        unsigned assumed = old;
+        float previous   = __uint_as_float(assumed);
+        float updated    = isnan(previous) || isnan(value) ? CUDART_NAN_F : fmaxf(previous, value);
+        old              = atomicCAS(p, assumed, __float_as_uint(updated));
+        if (old == assumed) break;
+    }
+}
+
+__global__ void
+activation_kernel(const float *c, const int64_t *experts, __nv_bfloat16 *d, float *amax, int live, int n, int e) {
+    int64_t pos = int64_t(blockIdx.x) * blockDim.x + threadIdx.x;
+    int width   = n / 2;
+    if (pos >= int64_t(live) * width) return;
+    int row = int(pos / width), column = int(pos % width);
+    if (experts[row] < 0 || experts[row] >= e) {
+        d[pos] = __float2bfloat16_rn(CUDART_NAN_F);
+        return;
+    }
+    int64_t gate_pos = int64_t(row) * n + (column / 32) * 64 + column % 32;
+    float gate       = __bfloat162float(__float2bfloat16_rn(c[gate_pos]));
+    float up         = __bfloat162float(__float2bfloat16_rn(c[gate_pos + 32]));
+    // Same explicit numerical nodes as the fixed independent staged oracle.
+    float activated       = gate / (1.0f + expf(-gate));
+    activated             = __bfloat162float(__float2bfloat16_rn(activated));
+    __nv_bfloat16 product = __float2bfloat16_rn(__fmul_rn(activated, up));
+    d[pos]                = product;
+    max_amax(amax + experts[row], fabsf(__bfloat162float(product)));
+}
+
+__global__ void
+postfixed_bounds_kernel(const double *s, const int64_t *raw, double *out, int64_t count, int group, int updates) {
+    int64_t index = int64_t(blockIdx.x) * blockDim.x + threadIdx.x;
+    if (index < count) out[index] = error_bound(s[index], int(raw[index]), group, updates);
+}
+
+}  // namespace
+
+at::Tensor
+reconstruct_words_cuda(const at::Tensor &codes, const at::Tensor &scales, bool operand_a) {
+    TORCH_CHECK(codes.is_cuda() && codes.is_contiguous() && codes.scalar_type() == at::ScalarType::Float8_e4m3fn,
+                "codes must be contiguous CUDA E4M3");
+    TORCH_CHECK(scales.is_cuda() && scales.is_contiguous() && scales.device() == codes.device() &&
+                    scales.scalar_type() == at::ScalarType::Float8_e8m0fnu,
+                "scales must be contiguous UE8M0 on the codes device");
+    TORCH_CHECK((operand_a && codes.dim() == 2) || (!operand_a && codes.dim() == 3 && codes.size(0) > 0),
+                "encoded operand shape invalid");
+    int rows = int(codes.size(-2)), batches = operand_a ? 1 : int(codes.size(0));
+    TORCH_CHECK(codes.size(-1) == 4096 && rows % 128 == 0 && (operand_a || rows > 0), "recipe dimensions invalid");
+    TORCH_CHECK(scales.numel() == int64_t(batches) * rows * 128, "scale storage size invalid");
+    c10::cuda::CUDAGuard guard(codes.device());
+    auto shape   = codes.sizes().vec();
+    shape.back() = 1024;
+    auto words   = at::empty(shape, codes.options().dtype(at::kShort));
+    if (!words.numel()) return words;
+    auto stream = c10::cuda::getCurrentCUDAStream(codes.get_device()).stream();
+    predecode_kernel<<<(words.numel() + 255) / 256, 256, 0, stream>>>(
+        reinterpret_cast<const uint8_t *>(codes.data_ptr()),
+        reinterpret_cast<const uint8_t *>(scales.data_ptr()),
+        reinterpret_cast<uint16_t *>(words.data_ptr<int16_t>()),
+        rows,
+        batches,
+        operand_a);
+    C10_CUDA_KERNEL_LAUNCH_CHECK();
+    return words;
+}
+
+void
+guarded_rounding_cuda(const at::Tensor &a,
+                      const at::Tensor &b,
+                      const at::Tensor &sfa,
+                      const at::Tensor &sfb,
+                      const at::Tensor &native_c,
+                      const at::Tensor &destinations,
+                      const at::Tensor &experts,
+                      const at::Tensor &xstats,
+                      const at::Tensor &wstats,
+                      const at::Tensor &output,
+                      const at::Tensor &flags,
+                      const at::Tensor &d,
+                      const at::Tensor &amax) {
+    for (const auto &tensor :
+         {a, b, sfa, sfb, native_c, destinations, experts, xstats, wstats, output, flags, d, amax}) {
+        TORCH_CHECK(tensor.is_cuda() && tensor.is_contiguous() && tensor.device() == a.device(),
+                    "all tensors must be contiguous on one CUDA device");
+    }
+    TORCH_CHECK(a.dim() == 2 && a.size(1) == 4096 && a.size(0) % 128 == 0,
+                "A must be padded K4096 four-component recipe");
+    TORCH_CHECK(b.dim() == 3 && b.size(0) > 0 && b.size(1) > 0 && b.size(1) % 128 == 0 && b.size(2) == 4096,
+                "B recipe shape invalid");
+    TORCH_CHECK(a.scalar_type() == at::ScalarType::Float8_e4m3fn && b.scalar_type() == a.scalar_type(),
+                "A/B must be E4M3");
+    TORCH_CHECK(sfa.scalar_type() == at::ScalarType::Float8_e8m0fnu && sfb.scalar_type() == sfa.scalar_type(),
+                "scales must be UE8M0");
+    int rows = int(a.size(0)), n = int(b.size(1)), e = int(b.size(0)), live = int(destinations.numel());
+    TORCH_CHECK(sfa.numel() == int64_t(rows) * 128 && sfb.numel() == int64_t(e) * n * 128,
+                "scale storage size invalid");
+    TORCH_CHECK(native_c.scalar_type() == at::kFloat && native_c.sizes() == at::IntArrayRef({rows, n}),
+                "native C must be MxN FP32");
+    TORCH_CHECK(destinations.scalar_type() == at::kLong && destinations.dim() == 1 &&
+                    experts.scalar_type() == at::kLong && experts.sizes() == destinations.sizes(),
+                "routes must be matching int64 vectors");
+    TORCH_CHECK(xstats.scalar_type() == at::kDouble && xstats.sizes() == at::IntArrayRef({live, 5}) &&
+                    wstats.scalar_type() == at::kDouble && wstats.sizes() == at::IntArrayRef({e, n, 5}),
+                "input-only bound summaries invalid");
+    TORCH_CHECK(output.scalar_type() == at::kFloat && output.sizes() == at::IntArrayRef({live, n}),
+                "output C storage invalid");
+    TORCH_CHECK(flags.scalar_type() == at::kByte && flags.sizes() == output.sizes(), "flag storage invalid");
+    TORCH_CHECK(d.scalar_type() == at::kBFloat16 && d.sizes() == at::IntArrayRef({live, n / 2}), "D storage invalid");
+    TORCH_CHECK(amax.scalar_type() == at::kFloat && amax.sizes() == at::IntArrayRef({e}), "AMAX storage invalid");
+    c10::cuda::CUDAGuard guard(a.device());
+    auto stream = c10::cuda::getCurrentCUDAStream(a.get_device()).stream();
+    if (!live) return;
+    auto a_words = reconstruct_words_cuda(a, sfa, true);
+    auto b_words = reconstruct_words_cuda(b, sfb, false);
+    rounding_kernel<<<(int64_t(live) * n + 7) / 8, 128, 0, stream>>>(
+        reinterpret_cast<const uint16_t *>(a_words.data_ptr<int16_t>()),
+        reinterpret_cast<const uint16_t *>(b_words.data_ptr<int16_t>()),
+        native_c.data_ptr<float>(),
+        destinations.data_ptr<int64_t>(),
+        experts.data_ptr<int64_t>(),
+        xstats.data_ptr<double>(),
+        wstats.data_ptr<double>(),
+        output.data_ptr<float>(),
+        flags.data_ptr<uint8_t>(),
+        rows,
+        n,
+        e,
+        live);
+    C10_CUDA_KERNEL_LAUNCH_CHECK();
+    activation_kernel<<<(int64_t(live) * (n / 2) + 255) / 256, 256, 0, stream>>>(
+        output.data_ptr<float>(),
+        experts.data_ptr<int64_t>(),
+        reinterpret_cast<__nv_bfloat16 *>(d.data_ptr()),
+        amax.data_ptr<float>(),
+        live,
+        n,
+        e);
+    C10_CUDA_KERNEL_LAUNCH_CHECK();
+}
+
+void
+postfixed_bounds_cuda(const at::Tensor &s, const at::Tensor &raw, const at::Tensor &out, int group, int updates) {
+    TORCH_CHECK(s.is_cuda() && s.is_contiguous() && s.dim() == 1 && s.scalar_type() == at::kDouble,
+                "S must be a contiguous CUDA F64 vector");
+    TORCH_CHECK(raw.is_cuda() && raw.is_contiguous() && raw.device() == s.device() && raw.scalar_type() == at::kLong &&
+                    raw.sizes() == s.sizes(),
+                "raw exponent vector invalid");
+    TORCH_CHECK(out.is_cuda() && out.is_contiguous() && out.device() == s.device() &&
+                    out.scalar_type() == at::kDouble && out.sizes() == s.sizes(),
+                "bound output invalid");
+    TORCH_CHECK((group == 16 && updates == 64) || (group == 32 && updates == 128),
+                "only declared instruction-group domains supported");
+    c10::cuda::CUDAGuard guard(s.device());
+    if (!s.numel()) return;
+    auto stream = c10::cuda::getCurrentCUDAStream(s.get_device()).stream();
+    postfixed_bounds_kernel<<<(s.numel() + 127) / 128, 128, 0, stream>>>(
+        s.data_ptr<double>(), raw.data_ptr<int64_t>(), out.data_ptr<double>(), s.numel(), group, updates);
+    C10_CUDA_KERNEL_LAUNCH_CHECK();
+}
