@@ -1,0 +1,348 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Prepared routed-A native7/native9 reuse and physical-row comparison.
+
+Import is CPU-only. GPU execution is allowed only inside an admitted driver.
+Original BF16/effective values are used by comparisons, never native repair.
+"""
+
+import hashlib
+import importlib.util
+import json
+from pathlib import Path
+import sys
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def route_policies(counts):
+    """Routes always use the same source-row/expert association as the real main."""
+    assert counts and all(isinstance(value, int) and value >= 0 for value in counts) and sum(counts) > 0
+    edges, experts, shifted, start = [], [], [], 0
+    for expert, count in enumerate(counts):
+        padding = ((count + 255) // 256) * 256
+        if padding:
+            local = sorted({position for position in (0, 1, 31, 32, 127, 128, padding - 2, padding - 1) if position < padding})
+            edges.extend(start + position for position in local)
+            experts.extend([expert] * len(local))
+            shifted.extend(start + (position + 1) % padding for position in local)
+        start += padding
+    reverse = list(reversed(edges)), list(reversed(experts))
+    duplicate = edges + edges[:3] + edges[-3:], experts + experts[:3] + experts[-3:]
+    bad_dest, bad_expert = edges[:], experts[:]
+    invalid_dest = [-1, start, start + 1, 1 << 32, -(1 << 32), -(1 << 63), (1 << 63) - 1]
+    invalid_expert = [-1, len(counts), 1 << 32, -(1 << 32), -(1 << 63), (1 << 63) - 1]
+    for i, value in enumerate(invalid_dest):
+        bad_dest[i % len(bad_dest)] = value
+    for i, value in enumerate(invalid_expert):
+        bad_expert[i % len(bad_expert)] = value
+    return {
+        "tile_edges": (edges, experts),
+        "reverse_tile_edges": reverse,
+        "duplicates": duplicate,
+        "changed_same_route_storage": (shifted, experts),
+        "mixed_invalid_destination": (bad_dest, experts),
+        "mixed_invalid_expert": (edges, bad_expert),
+        "empty_live": ([], []),
+    }
+
+
+def execute(args, boundary, out):
+    assert "torch" in sys.modules and "a3_guard_boundary_quant" in sys.modules
+    out.mkdir(exist_ok=False)
+    q, candidate = sys.modules["a3_guard_boundary_quant"], sys.modules["a3_guard_boundary_cuda"]
+    m, t = q.m, q.t
+    tools = Path(__file__).parent
+    control = load("a3_route_reuse_native7_control", tools / "a3_guarded_rounding_native_20261002_r7.py")
+    builds = {}
+    for label, name in (("control", "a3-guarded-rounding-build-cpu-20261002-r7"), ("candidate", "a3-guarded-rounding-build-cpu-20261002-r9-route-decode")):
+        folder = m.ROOT / "results" / name
+        terminal = json.loads(folder.with_name(name + "-launch").joinpath("run.json").read_text())
+        assert terminal["status"] == "EXITED" and terminal["returncode"] == 0 and terminal["signal"] is None
+        builds[label] = json.loads((folder / "result.json").read_text())
+        assert not builds[label]["cuda_initialized"] and builds[label]["native_calls"] == 0
+        for path, digest in builds[label]["sources"].items():
+            assert sha(path) == digest
+    modules = {
+        "control": control.load_native(builds["control"]["binary"]["path"], builds["control"]["binary"]["sha256"]),
+        "candidate": candidate.load_native(builds["candidate"]["binary"]["path"], builds["candidate"]["binary"]["sha256"]),
+    }
+    metadata = json.loads((boundary / "result.json").read_text())
+    assert sha(boundary / "outputs.pt") == metadata["outputs_sha256"]
+    corpus = t.load(boundary / "outputs.pt", map_location="cpu", weights_only=True)
+    assert len(metadata["rows"]) == 5 and metadata["native_main_calls"] == 5
+    frozen = {str(path): sha(path) for path in [Path(__file__), Path(control.__file__), Path(candidate.__file__)]}
+    for build in builds.values():
+        frozen.update(build["sources"])
+    saved, records, owners, decode_shapes, protected = {}, [], [], [], []
+    before = {label: (helper.POSTPROCESS_CALLS, helper.POSTPROCESS_KERNEL_LAUNCHES) for label, helper in (("control", control), ("candidate", candidate))}
+    main_before = m.NATIVE_CALLS
+
+    def cpu(value):
+        return value.detach().cpu().contiguous()
+
+    def same(a, b):
+        return a.shape == b.shape and a.dtype == b.dtype and t.equal(cpu(a).flatten().view(t.uint8), cpu(b).flatten().view(t.uint8))
+
+    def reference_amax(d, experts, count):
+        result = t.full((count,), -t.inf, dtype=t.float32, device="cuda")
+        for expert in range(count):
+            mask = experts == expert
+            if bool(mask.any()):
+                result[expert] = d[mask].float().abs().max()
+        return result
+
+    def retain_outputs(prefix, outputs):
+        for label, result in outputs.items():
+            snapshot = {key: cpu(tensor) for key, tensor in result.items()}
+            protected.append((result, snapshot))
+            saved.update({f"{prefix}/{label}/{key}": tensor for key, tensor in snapshot.items()})
+
+    def check_retained():
+        for result, snapshot in protected:
+            assert all(same(result[key], snapshot[key]) for key in result), "Later allocation or input mutation altered an earlier output"
+
+    with t.inference_mode():
+        for case in metadata["rows"]:
+            name, value = case["name"], corpus[case["name"]]
+            a = value["a_codes"].cuda().view(t.float8_e4m3fn)
+            sfa = value["sfa"].cuda().view(t.float8_e8m0fnu)
+            sa = value["sa"].cuda()
+            b = value["b_codes"].cuda().view(t.float8_e4m3fn)
+            sfb = value["sfb"].cuda().view(t.float8_e8m0fnu)
+            native_c = value["native_c"].cuda()
+            plans = {label: helper.prepare_b_plan(modules[label], b, sfb) for label, helper in (("control", control), ("candidate", candidate))}
+            assert plans["control"].b is not plans["candidate"].b and plans["control"].words is not plans["candidate"].words
+            assert same(plans["control"].b, plans["candidate"].b) and same(plans["control"].sfb, plans["candidate"].sfb)
+            assert same(plans["control"].words, plans["candidate"].words)
+            wstats = value["wstats"].cuda()
+            policies = route_policies(case["counts"])
+            # Keep the qualified matrix shape/instruction grouping of the
+            # independent BF16 staged comparison, instead of rowwise GEMV.
+            expected_full = t.empty(native_c.shape, dtype=t.bfloat16, device="cuda")
+            start = 0
+            for expert_id, count in enumerate(case["counts"]):
+                padding = ((count + 255) // 256) * 256
+                if padding:
+                    expected_full[start : start + padding] = m.F.linear(
+                        value["effective_a"][start : start + padding].cuda().to(t.bfloat16), value["effective_b"][expert_id].cuda().to(t.bfloat16)
+                    )
+                start += padding
+            assert start == a.shape[0]
+            route_storage = None
+            old_results = []
+            for policy, (positions, expert_ids) in policies.items():
+                if policy == "changed_same_route_storage":
+                    assert route_storage is not None and len(positions) == route_storage[0].numel()
+                    destinations, experts = route_storage
+                    original_pointers = destinations.data_ptr(), experts.data_ptr()
+                    destinations.copy_(t.tensor(positions, dtype=t.int64, device="cuda"))
+                    experts.copy_(t.tensor(expert_ids, dtype=t.int64, device="cuda"))
+                    assert (destinations.data_ptr(), experts.data_ptr()) == original_pointers
+                else:
+                    destinations = t.tensor(positions, dtype=t.int64, device="cuda")
+                    experts = t.tensor(expert_ids, dtype=t.int64, device="cuda")
+                    if policy == "tile_edges":
+                        route_storage = destinations, experts
+                valid_destination = (destinations >= 0) & (destinations < a.shape[0])
+                valid_expert = (experts >= 0) & (experts < b.shape[0])
+                safe_destinations = t.where(valid_destination, destinations, 0)
+                xstats = candidate.recipe_stats(a, sa, "A", safe_destinations)
+                outputs = {}
+                for label, helper in (("control", control), ("candidate", candidate)):
+                    plan = plans[label]
+                    outputs[label] = helper.run(modules[label], a, plan.b, sfa, plan.sfb, native_c, destinations, experts, xstats, wstats, b_plan=plan)
+                t.cuda.synchronize()
+                assert all(same(outputs["candidate"][key], outputs["control"][key]) for key in ("c", "flags", "d", "amax"))
+                invalid = ~(valid_destination & valid_expert)
+                if invalid.any():
+                    assert (outputs["candidate"]["flags"][invalid] == 2).all()
+                    assert t.isnan(outputs["candidate"]["c"][invalid]).all() and t.isnan(outputs["candidate"]["d"][invalid]).all()
+                if policy == "empty_live":
+                    assert outputs["candidate"]["c"].shape == (0, b.shape[1]) and t.isneginf(outputs["candidate"]["amax"]).all()
+                if not invalid.any() and positions:
+                    # Independent BF16 staged dot/activation comparison only.
+                    expected_c = expected_full.index_select(0, destinations)
+                    split = expected_c.reshape(len(positions), -1, 2, 32)
+                    expected_d = (m.F.silu(split[:, :, 0]) * split[:, :, 1]).reshape(len(positions), b.shape[1] // 2)
+                    expected_amax = reference_amax(expected_d, experts, b.shape[0])
+                    assert same(outputs["candidate"]["c"].to(t.bfloat16), expected_c) and same(outputs["candidate"]["d"], expected_d)
+                    assert same(outputs["candidate"]["amax"], expected_amax)
+                    for key, tensor in (("c_bf16", expected_c), ("d", expected_d), ("amax", expected_amax)):
+                        saved[f"{name}/{policy}/comparison_only/{key}"] = cpu(tensor)
+                for old, snap in old_results:
+                    assert all(same(old[key], snap[key]) for key in old), "Later route mutation/allocation altered an earlier output"
+                snapshots = {label: {key: cpu(tensor) for key, tensor in result.items()} for label, result in outputs.items()}
+                old_results.append((outputs["candidate"], snapshots["candidate"]))
+                retain_outputs(f"{name}/{policy}", outputs)
+                saved[f"{name}/{policy}/destinations"] = cpu(destinations)
+                saved[f"{name}/{policy}/experts"] = cpu(experts)
+                saved[f"{name}/{policy}/xstats"] = cpu(xstats)
+                record = {
+                    "case": name,
+                    "policy": policy,
+                    "rows": a.shape[0],
+                    "live": len(positions),
+                    "invalid": int(invalid.sum()),
+                    "all_native7_native9_C_flags_D_AMAX_byte_equal": True,
+                    "reference_comparison": bool(positions) and not bool(invalid.any()),
+                    "same_route_tensor_storage_reused": policy == "changed_same_route_storage",
+                }
+                records.append(record)
+                print(json.dumps(record), flush=True)
+            if name == "saved_first_expert":
+                # Change encoded A and its physical/logical scales in the same
+                # storage; rerun the real MXFP8 main so its C remains valid.
+                changed = corpus["changed_input_weight_and_live_rows"]
+                pointers = a.data_ptr(), sfa.data_ptr(), sa.data_ptr()
+                a.copy_(changed["a_codes"].cuda().view(t.float8_e4m3fn))
+                sfa.copy_(changed["sfa"].cuda().view(t.float8_e8m0fnu))
+                sa.copy_(changed["sa"].cuda())
+                assert (a.data_ptr(), sfa.data_ptr(), sa.data_ptr()) == pointers
+                plan = plans["candidate"]
+                actual = m.api.grouped_gemm_swiglu_wrapper_sm100(
+                    a_tensor=a,
+                    b_tensor=plan.b,
+                    sfa_tensor=sfa,
+                    sfb_tensor=plan.sfb,
+                    padded_offsets=t.tensor([a.shape[0]], dtype=t.int32, device="cuda"),
+                    alpha_tensor=t.ones(1, dtype=t.float32, device="cuda"),
+                    norm_const_tensor=t.ones(1, dtype=t.float32, device="cuda"),
+                    prob_tensor=None,
+                    acc_dtype=t.float32,
+                    c_dtype=t.float32,
+                    d_dtype=t.bfloat16,
+                    mma_tiler_mn=(256, 256),
+                    cluster_shape_mn=(2, 1),
+                    sf_vec_size=32,
+                    m_aligned=256,
+                    current_stream=m.cuda.CUstream(t.cuda.current_stream().cuda_stream),
+                )
+                mutated_c = actual["c_tensor"].squeeze(-1)
+                positions, expert_ids = policies["tile_edges"]
+                destinations = t.tensor(positions, dtype=t.int64, device="cuda")
+                experts = t.tensor(expert_ids, dtype=t.int64, device="cuda")
+                xstats = candidate.recipe_stats(a, sa, "A", destinations)
+                expected_full = m.F.linear(changed["effective_a"].cuda().to(t.bfloat16), value["effective_b"][0].cuda().to(t.bfloat16))
+                expected_c = expected_full.index_select(0, destinations)
+                split = expected_c.reshape(len(positions), -1, 2, 32)
+                expected_d = (m.F.silu(split[:, :, 0]) * split[:, :, 1]).reshape(len(positions), b.shape[1] // 2)
+                expected_amax = reference_amax(expected_d, experts, b.shape[0])
+                default, side, ready = t.cuda.current_stream(), t.cuda.Stream(), t.cuda.Event()
+                ready.record(default)
+                side.wait_event(ready)
+                outputs = {}
+                for label, helper in (("control", control), ("candidate", candidate)):
+                    plan = plans[label]
+                    generation = plan.generations
+                    outputs[label] = helper.run(
+                        modules[label], a, plan.b, sfa, plan.sfb, mutated_c, destinations, experts, xstats, wstats, b_plan=plan, stream=side
+                    )
+                    assert t.cuda.current_stream() == default and plan.generations == generation
+                side.synchronize()
+                assert all(same(outputs["candidate"][key], outputs["control"][key]) for key in outputs["candidate"])
+                assert same(outputs["candidate"]["c"].to(t.bfloat16), expected_c) and same(outputs["candidate"]["d"], expected_d)
+                assert same(outputs["candidate"]["amax"], expected_amax)
+                for old, snap in old_results:
+                    assert all(same(old[key], snap[key]) for key in old)
+                retain_outputs(f"{name}/mutated_A_same_storage", outputs)
+                saved[f"{name}/mutated_A_same_storage/a_codes"] = cpu(a.view(t.uint8))
+                saved[f"{name}/mutated_A_same_storage/sfa"] = cpu(sfa.view(t.uint8))
+                saved[f"{name}/mutated_A_same_storage/sa"] = cpu(sa)
+                for key, tensor in (("native_c", mutated_c), ("destinations", destinations), ("experts", experts), ("xstats", xstats)):
+                    saved[f"{name}/mutated_A_same_storage/{key}"] = cpu(tensor)
+                for key, tensor in (("c_bf16", expected_c), ("d", expected_d), ("amax", expected_amax)):
+                    saved[f"{name}/mutated_A_same_storage/comparison_only/{key}"] = cpu(tensor)
+                records.append(
+                    {
+                        "case": name,
+                        "policy": "mutated_A_same_storage",
+                        "rows": a.shape[0],
+                        "live": len(positions),
+                        "same_A_physical_logical_scale_storage": True,
+                        "real_MXFP8_main_reexecuted": True,
+                        "all_native7_native9_C_flags_D_AMAX_byte_equal": True,
+                        "reference_comparison": True,
+                        "different_execution_stream_with_explicit_ready_event": True,
+                    }
+                )
+            # Preserve rejection of a plan owned by another native module.
+            good_dest = t.tensor(policies["tile_edges"][0], dtype=t.int64, device="cuda")
+            good_exp = t.tensor(policies["tile_edges"][1], dtype=t.int64, device="cuda")
+            good_stats = candidate.recipe_stats(a, sa, "A", good_dest)
+            wrong = plans["control"]
+            try:
+                candidate.run(modules["candidate"], a, wrong.b, sfa, wrong.sfb, native_c, good_dest, good_exp, good_stats, wstats, b_plan=wrong)
+            except AssertionError as error:
+                assert "another native module" in str(error)
+                owners.append({"case": name, "cross_module_plan_declined_before_native_call": True})
+            else:
+                raise AssertionError("A plan cannot be used by the other native module")
+            for zero_live in (False, True):
+                destinations = good_dest[:0] if zero_live else t.tensor([-1, 0, (1 << 63) - 1], dtype=t.int64, device="cuda")
+                experts = good_exp[:0] if zero_live else t.zeros(3, dtype=t.int64, device="cuda")
+                xstats = t.zeros((destinations.numel(), 5), dtype=t.float64, device="cuda")
+                empty_a, empty_sfa, empty_c = a[:0], sfa[:0], native_c[:0]
+                assert empty_sfa.numel() == 0
+                outputs = {}
+                for label, helper in (("control", control), ("candidate", candidate)):
+                    plan = plans[label]
+                    count = helper.POSTPROCESS_KERNEL_LAUNCHES
+                    outputs[label] = helper.run(
+                        modules[label], empty_a, plan.b, empty_sfa, plan.sfb, empty_c, destinations, experts, xstats, wstats, b_plan=plan
+                    )
+                    assert helper.POSTPROCESS_KERNEL_LAUNCHES - count == (0 if zero_live else 2)
+                t.cuda.synchronize()
+                assert all(same(outputs["candidate"][key], outputs["control"][key]) for key in outputs["candidate"])
+                if not zero_live:
+                    assert (outputs["candidate"]["flags"] == 2).all() and t.isnan(outputs["candidate"]["c"]).all() and t.isnan(outputs["candidate"]["d"]).all()
+                    assert t.isnan(outputs["candidate"]["amax"][0]) and t.isneginf(outputs["candidate"]["amax"][1:]).all()
+                else:
+                    assert t.isneginf(outputs["candidate"]["amax"]).all()
+                policy = "M0_empty_live" if zero_live else "M0_invalid_live"
+                retain_outputs(f"{name}/{policy}", outputs)
+                saved[f"{name}/{policy}/destinations"] = cpu(destinations)
+                saved[f"{name}/{policy}/experts"] = cpu(experts)
+                records.append({"case": name, "policy": policy, "rows": 0, "live": destinations.numel(), "all_native7_native9_C_flags_D_AMAX_byte_equal": True})
+            decode_shapes.append({"case": name, "full_A_words": a.shape[0] * 1024, "actual_route_words": case["live_rows"] * 1024})
+        check_retained()
+    assert len(records) == 46 and len(owners) == 5 and m.NATIVE_CALLS - main_before == 1
+    for label, helper in (("control", control), ("candidate", candidate)):
+        assert helper.POSTPROCESS_CALLS - before[label][0] == 46
+        assert helper.POSTPROCESS_KERNEL_LAUNCHES - before[label][1] == 103
+    t.save(saved, out / "outputs.pt")
+    assert all(sha(path) == digest for path, digest in frozen.items())
+    result = {
+        "stage": "ROUTED_A_NATIVE_REUSE_PROBE_COMPLETE_NOT_MODEL_OR_SPEEDUP",
+        "records": records,
+        "case_count": len(records),
+        "cross_module_owner_declines": owners,
+        "new_native_main_calls": m.NATIVE_CALLS - main_before,
+        "per_arm_repair_calls": 46,
+        "per_arm_postprocess_kernel_launches": 103,
+        "decode_work_geometry_only": decode_shapes,
+        "builds": builds,
+        "frozen": frozen,
+        "outputs_sha256": sha(out / "outputs.pt"),
+        "boundary_capture": {"path": str(boundary / "outputs.pt"), "sha256": sha(boundary / "outputs.pt")},
+        "all_earlier_outputs_stable_after_all_cases_and_input_mutations": True,
+        "harness_sha256": sha(__file__),
+        "source_head": args.expected_head,
+        "full_model": "NOT_RUN",
+        "generation_KV": "NOT_RUN",
+        "paired_performance": "NOT_RUN",
+        "accepted_optimization": False,
+        "limits": "Actual native7/native9 comparisons and independent BF16 staged reference remain outside the native branch. This prepared source is not a result until a real admitted GPU execution and terminal record exist; extra route tests retain real main source-row/expert association. No BF16/Torch gate-up result substitution, model/capacity reduction, or measured speedup.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({key: result[key] for key in ("stage", "case_count", "per_arm_repair_calls", "per_arm_postprocess_kernel_launches")}), flush=True)

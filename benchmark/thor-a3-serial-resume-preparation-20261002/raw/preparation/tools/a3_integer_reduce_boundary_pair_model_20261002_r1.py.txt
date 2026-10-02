@@ -1,0 +1,175 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Exact signed32 warp reduction versus qualified cached-weight integer control.
+
+Same encoded-only cache plan, postfixed bound, integer target, actual MXFP8 main,
+stream/AMAX/ownership contracts and full original Granite model/gates. Neither
+original BF16 operands nor oracle tensors enter the actual native repair.
+"""
+
+import importlib.util
+import json
+from pathlib import Path
+import statistics
+import sys
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def execute(args, out):
+    assert "torch" not in sys.modules
+    tools = Path(__file__).parent
+    boundary = out / "boundaries"
+    boundary.mkdir()
+    b = load("a3_integer_reduce_actual_boundaries", tools / "a3_guarded_rounding_boundary_queued_20261002_r9.py")
+    b.execute(args, boundary)
+    q, h = sys.modules["a3_guard_boundary_quant"], sys.modules["a3_guard_boundary_cuda"]
+    m, t = q.m, q.t
+    build = json.loads((m.ROOT / "results/a3-guarded-rounding-build-cpu-20261002-r8/result.json").read_text())
+    module = h.load_native(build["binary"]["path"], build["binary"]["sha256"])
+    oldh = load("a3_integer_reduce_cached_control", tools / "a3_guarded_rounding_native_20261002_r7.py")
+    oldbuild = json.loads((m.ROOT / "results/a3-guarded-rounding-build-cpu-20261002-r7/result.json").read_text())
+    oldmodule = oldh.load_native(oldbuild["binary"]["path"], oldbuild["binary"]["sha256"])
+    frozen = {
+        str(path): m.sha_file(path) for path in [Path(__file__), Path(b.__file__), Path(oldh.__file__), tools / "a3_guarded_rounding_full_model_20261002_r9.py"]
+    }
+    captured = t.load(boundary / "outputs.pt", map_location="cpu", weights_only=True)
+    rows = json.loads((boundary / "result.json").read_text())["rows"]
+    assert len(rows) == 5 and rows[-1]["name"] == "granite_decode_e32_n1024_top8"
+    saved, paired, probe_values, probes = {}, [], {}, []
+
+    def equal(a, b):
+        return t.equal(a.contiguous().flatten().view(t.uint8), b.contiguous().flatten().view(t.uint8))
+
+    with t.inference_mode():
+        limit = 65535 << 11
+        patterns = (
+            [limit] * 16,
+            [-limit] * 16,
+            [limit, -limit] * 8,
+            [limit] * 15 + [-limit],
+            [-limit] * 15 + [limit],
+            [0] * 16,
+            [0] * 15 + [limit],
+            [-1, 1] * 8,
+        )
+        for groups in (0, 1, 2, 7, 8, 9, 15, 16, 17, 33):
+            units = t.tensor([patterns[i % len(patterns)] for i in range(groups)], dtype=t.int64).reshape(groups, 16)
+            raw = t.tensor([[-10000 if lane != i % 16 else 254 - i for lane in range(16)] for i in range(groups)], dtype=t.int32).reshape(groups, 16)
+            expected = t.stack((units.sum(-1), raw.amax(-1).long()), -1)
+            result = module.integer_reduction_probe(units.cuda(), raw.cuda()).cpu()
+            probe_values.update({f"{groups}/units": units, f"{groups}/raw": raw, f"{groups}/native": result})
+            t.save(probe_values, out / "integer_reduction_probe_outputs.pt")
+            assert equal(result[:, :2], expected) and equal(result[:, 2:], expected)
+            probes.append({"groups": groups, "integer_redux_and_signed64_shuffle_byte_equal_cpu": True, "native_kernel_launches": int(groups > 0)})
+        for row in rows:
+            name, v = row["name"], captured[row["name"]]
+            inputs = (
+                v["a_codes"].cuda().view(t.float8_e4m3fn),
+                v["b_codes"].cuda().view(t.float8_e4m3fn),
+                v["sfa"].cuda().view(t.float8_e8m0fnu),
+                v["sfb"].cuda().view(t.float8_e8m0fnu),
+                v["native_c"].cuda(),
+                v["destinations"].cuda(),
+                v["experts"].cuda(),
+                v["xstats"].cuda(),
+                v["wstats"].cuda(),
+            )
+            new_plan, old_plan = h.prepare_b_plan(module, inputs[1], inputs[3]), oldh.prepare_b_plan(oldmodule, inputs[1], inputs[3])
+            assert new_plan.b is not old_plan.b and new_plan.words is not old_plan.words
+            assert equal(new_plan.b.cpu(), old_plan.b.cpu()) and equal(new_plan.sfb.cpu(), old_plan.sfb.cpu())
+            assert equal(new_plan.words.cpu(), old_plan.words.cpu())
+            saved[f"cached_plan/{name}/new_words"] = new_plan.words.cpu()
+            saved[f"cached_plan/{name}/old_words"] = old_plan.words.cpu()
+            arms = {"cached_shuffle": (oldh, oldmodule, old_plan), "integer_redux": (h, module, new_plan)}
+
+            def invoke(mode):
+                worker, native, plan = arms[mode]
+                return worker.run(native, inputs[0], plan.b, inputs[2], plan.sfb, *inputs[4:], b_plan=plan)
+
+            control, actual = invoke("cached_shuffle"), invoke("integer_redux")
+            t.cuda.synchronize()
+            assert all(equal(actual[key].cpu(), control[key].cpu()) and equal(actual[key].cpu(), v[key]) for key in ("c", "flags", "d", "amax"))
+            for repeat in range(5):
+                order = (
+                    ("cached_shuffle", "integer_redux", "integer_redux", "cached_shuffle")
+                    if repeat % 2 == 0
+                    else ("integer_redux", "cached_shuffle", "cached_shuffle", "integer_redux")
+                )
+                for position, mode in enumerate(order):
+                    before, after = t.cuda.Event(enable_timing=True), t.cuda.Event(enable_timing=True)
+                    before.record()
+                    result = invoke(mode)
+                    after.record()
+                    after.synchronize()
+                    cpu = {key: value.cpu().contiguous() for key, value in result.items()}
+                    assert all(equal(cpu[key], v[key]) for key in ("c", "flags", "d", "amax"))
+                    saved.update({f"pair/{name}/{repeat}/{position}/{key}": value for key, value in cpu.items()})
+                    paired.append(
+                        {
+                            "case": name,
+                            "repeat": repeat,
+                            "position": position,
+                            "mode": mode,
+                            "gpu_wrapper_ms": before.elapsed_time(after),
+                            "c_fp32_flags_d_amax_byte_equal": True,
+                        }
+                    )
+            print(json.dumps({"stage": "INTEGER_REDUX_WRAPPER_PAIR_COMPLETE", "case": name}), flush=True)
+    t.save(saved, out / "pair_outputs.pt")
+    comparisons = []
+    for row in rows:
+        medians = {
+            mode: statistics.median(x["gpu_wrapper_ms"] for x in paired if x["case"] == row["name"] and x["mode"] == mode)
+            for mode in ("cached_shuffle", "integer_redux")
+        }
+        comparisons.append(
+            {"case": row["name"], "median_ms": medians, "cached_shuffle_over_integer_redux_ratio": medians["cached_shuffle"] / medians["integer_redux"]}
+        )
+    pair = {
+        "paired": paired,
+        "comparisons": comparisons,
+        "files": frozen,
+        "outputs_sha256": m.sha_file(out / "pair_outputs.pt"),
+        "old_build": oldbuild,
+        "new_build": build,
+        "probes": probes,
+        "probe_outputs_sha256": m.sha_file(out / "integer_reduction_probe_outputs.pt"),
+        "probe_native_kernel_launches": sum(x["native_kernel_launches"] for x in probes),
+        "old_repair_calls": oldh.POSTPROCESS_CALLS,
+        "old_postprocess_kernel_launches": oldh.POSTPROCESS_KERNEL_LAUNCHES,
+        "separate_old_new_plan_encoded_inputs_byte_equal": True,
+        "one_time_weight_preparation_excluded_from_warmed_wrapper_latency": True,
+    }
+    (out / "pair.json").write_text(json.dumps(pair, indent=2) + "\n")
+    model = out / "model"
+    model.mkdir()
+    g = load("a3_integer_reduce_full24", tools / "a3_guarded_rounding_full_model_20261002_r9.py")
+    g.execute(args, model, boundary)
+    assert {path: m.sha_file(path) for path in frozen} == frozen
+    result = {
+        "stage": "INTEGER_REDUX_BOUNDARY_PAIR_FULL24_TERMINAL",
+        "head": args.expected_head,
+        "boundary_result_sha256": m.sha_file(boundary / "result.json"),
+        "model_stage": json.loads((model / "result.json").read_text())["stage"],
+        "pair_result_sha256": m.sha_file(out / "pair.json"),
+        "comparisons": comparisons,
+        "native_main_calls": m.NATIVE_CALLS,
+        "new_repair_calls": h.POSTPROCESS_CALLS,
+        "new_postprocess_kernel_launches": h.POSTPROCESS_KERNEL_LAUNCHES,
+        "weight_prepare_calls": h.WEIGHT_PREPARE_CALLS,
+        "weight_prepare_kernel_launches": h.WEIGHT_PREPARE_KERNEL_LAUNCHES,
+        "probe_native_kernel_launches": pair["probe_native_kernel_launches"],
+        "files": frozen,
+        "generation_kv": "NOT_RUN_NEW_CANDIDATE",
+        "paired_whole_model_performance": "NOT_RUN",
+        "accepted_optimization": False,
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result), flush=True)

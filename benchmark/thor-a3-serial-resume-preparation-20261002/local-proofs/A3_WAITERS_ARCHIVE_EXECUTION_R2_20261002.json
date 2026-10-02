@@ -1,0 +1,5 @@
+{
+  "returncode": 0,
+  "stdout": "{\"archive\": \"/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-waiters-terminal-evidence-20261002.tar.gz\", \"sha256\": \"3f1d505cedd25e8c29351edca80e10f61878a0e450422a2b60f012f1fdb68613\", \"bytes\": 14822, \"payload_files\": 28, \"manifest\": \"results/a3-waiters-terminal-evidence-20261002-manifest.json\", \"manifest_sha256\": \"ac0a8e9bf4949096431cb265b5cd7cbbed771f30a98cafba9785c904a87e79a7\"}\n",
+  "stderr": ""
+}

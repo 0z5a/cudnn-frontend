@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latestb1fe_iteration_resume_20261002_r3.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latestb1fe-iteration-20261002-r3",
+    "--lock-wait-seconds",
+    "7200"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-02T04:28:21.169258+00:00",
+  "deadline_seconds": 18000.0,
+  "status": "EXITED",
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": ""
+  },
+  "returncode": 75,
+  "signal": null,
+  "elapsed_seconds": 7200.466909435003
+}

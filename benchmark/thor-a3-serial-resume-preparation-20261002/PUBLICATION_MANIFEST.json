@@ -1,0 +1,640 @@
+{
+  "utc": "2026-10-02T07:03:24.291357+00:00",
+  "files": [
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-latest-ac89-regression-20261002-r1-admission/dependency.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-latest-ac89-regression-20261002-r1-admission/dependency.json",
+      "sha256": "0c9e30eb1501e20f8f8ccf0a270caf8333c18f0b6427f364dfc719991813df81",
+      "bytes": 854
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-latest-ac89-regression-20261002-r1-admission/result.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-latest-ac89-regression-20261002-r1-admission/result.json",
+      "sha256": "46313790cea5ab14e35bd1c0a1b2854a693c31b917c8280d38296bf367e39db0",
+      "bytes": 63
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-latest-ac89-regression-20261002-r1-launch/run.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-latest-ac89-regression-20261002-r1-launch/run.json",
+      "sha256": "175a29a2e388bea5de98f0cf8a6a26713418df1703895a141543da0e43582e17",
+      "bytes": 734
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-latest-ac89-regression-20261002-r1-launch/stderr.log",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-latest-ac89-regression-20261002-r1-launch/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-latest-ac89-regression-20261002-r1-launch/stdout.log",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-latest-ac89-regression-20261002-r1-launch/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-latest-ac89-regression-background-20261002-r1/driver.log",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-latest-ac89-regression-background-20261002-r1/driver.log",
+      "sha256": "175a29a2e388bea5de98f0cf8a6a26713418df1703895a141543da0e43582e17",
+      "bytes": 734
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-latest-ac89-regression-background-20261002-r1/launch.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-latest-ac89-regression-background-20261002-r1/launch.json",
+      "sha256": "8cae5ec1152933eff0aa2bdbd7fb75cc7b8678db7dd36401d988123a25db2bb9",
+      "bytes": 1054
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-latestb1fe-iteration-20261002-r3/frozen_inputs.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-latestb1fe-iteration-20261002-r3/frozen_inputs.json",
+      "sha256": "567bd0616f4be4fac2737cdfcedb6946d6fd85214ce6c5ef408fa3321866d4bd",
+      "bytes": 5462
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-latestb1fe-iteration-20261002-r3/predecessors.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-latestb1fe-iteration-20261002-r3/predecessors.json",
+      "sha256": "a9410cb08f493c2fb6845f3f952e12866ea62a208df7bc09457190382d2f1552",
+      "bytes": 2668
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-latestb1fe-iteration-20261002-r3/prior_build_and_terminal_parent.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-latestb1fe-iteration-20261002-r3/prior_build_and_terminal_parent.json",
+      "sha256": "61127ca482add6a9639f276e1d40684b119572cce024b12bbb50475b672d20d3",
+      "bytes": 1863
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-latestb1fe-iteration-20261002-r3/result.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-latestb1fe-iteration-20261002-r3/result.json",
+      "sha256": "ad62aad5e8280dec1a951a309d1e2853772b321cc9e425b0537fedd0d2d45124",
+      "bytes": 190
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-latestb1fe-iteration-20261002-r3-launch/run.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-latestb1fe-iteration-20261002-r3-launch/run.json",
+      "sha256": "01f24294e6b9700ea9327b6434aa0c6ec31c4b68e7b94e8594edf01ad5441cda",
+      "bytes": 677
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-latestb1fe-iteration-20261002-r3-launch/stderr.log",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-latestb1fe-iteration-20261002-r3-launch/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-latestb1fe-iteration-20261002-r3-launch/stdout.log",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-latestb1fe-iteration-20261002-r3-launch/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-latestb1fe-iteration-background-20261002-r3/driver.log",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-latestb1fe-iteration-background-20261002-r3/driver.log",
+      "sha256": "01f24294e6b9700ea9327b6434aa0c6ec31c4b68e7b94e8594edf01ad5441cda",
+      "bytes": 677
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-latestb1fe-iteration-background-20261002-r3/launch.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-latestb1fe-iteration-background-20261002-r3/launch.json",
+      "sha256": "06cff68f0b8ff0aab372f8de0d6141199a40fc7218a786d12fa478a8f0cd8a24",
+      "bytes": 1907
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-native-a-compact-background-20261002-r1/driver.log",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-native-a-compact-background-20261002-r1/driver.log",
+      "sha256": "26f2e4c5d437b7d83a5c09458a2fc47f402abe9f9db3e4efa9bced57772acd13",
+      "bytes": 646
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-native-a-compact-background-20261002-r1/pid.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-native-a-compact-background-20261002-r1/pid.json",
+      "sha256": "42b7f935f4d40f72f7efb5410dcc043ec5d92d45da5e51ccee0bfdbbfc1052dd",
+      "bytes": 1206
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-native-a-compact-pipeline-20261002-r1/frozen_inputs.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-native-a-compact-pipeline-20261002-r1/frozen_inputs.json",
+      "sha256": "f8308f16d07ce7f1858d0a7fba29170f0c3345218ed3db8c8f929d95f396f9a5",
+      "bytes": 2887
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-native-a-compact-pipeline-20261002-r1/result.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-native-a-compact-pipeline-20261002-r1/result.json",
+      "sha256": "e40fc2c50ad60dd510b4d62ece44452c9f1a596b82464a5e6d2663537fc32973",
+      "bytes": 92
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-native-a-compact-pipeline-20261002-r1-launch/run.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-native-a-compact-pipeline-20261002-r1-launch/run.json",
+      "sha256": "26f2e4c5d437b7d83a5c09458a2fc47f402abe9f9db3e4efa9bced57772acd13",
+      "bytes": 646
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-native-a-compact-pipeline-20261002-r1-launch/stderr.log",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-native-a-compact-pipeline-20261002-r1-launch/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-native-a-compact-pipeline-20261002-r1-launch/stdout.log",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-native-a-compact-pipeline-20261002-r1-launch/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/tools/a3_latestb1fe_iteration_resume_20261002_r3.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/tools/a3_latestb1fe_iteration_resume_20261002_r3.py.txt",
+      "sha256": "5d7ddfbc52f99cc7569f80519c13b171122480392057da87249218dac5f30260",
+      "bytes": 12719
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/tools/a3_native_a_compact_pipeline_queued_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/tools/a3_native_a_compact_pipeline_queued_20261002_r1.py.txt",
+      "sha256": "61bcfcd7d9e5d5eb24938cf1640f5574c8e86a3b417deb66e4b662b51528fc70",
+      "bytes": 8141
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/tools/pack_a3_waiters_terminal_evidence_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/tools/pack_a3_waiters_terminal_evidence_20261002_r1.py.txt",
+      "sha256": "b8d5c1f845eb972e4634598ee0bab7d46ef50cbf74f5bedf910cecc98de74b2a",
+      "bytes": 4458
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/tools/pack_a3_waiters_terminal_evidence_20261002_r2.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/tools/pack_a3_waiters_terminal_evidence_20261002_r2.py.txt",
+      "sha256": "b401aa638453342aca4b076473ea0e075b4105f4d01e34892c37834b91a58459",
+      "bytes": 4610
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/tools/run_a3_latest_ac89_regression_queued_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/tools/run_a3_latest_ac89_regression_queued_20261002_r1.py.txt",
+      "sha256": "0b56d18d2fabcef7c00b1000123a193532841dde4dab60cb0cd24ce94ce9d25a",
+      "bytes": 7850
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-waiters-terminal-evidence-20261002/results/a3-waiters-terminal-evidence-20261002-manifest.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/waiters/results/a3-waiters-terminal-evidence-20261002-manifest.json",
+      "sha256": "ac0a8e9bf4949096431cb265b5cd7cbbed771f30a98cafba9785c904a87e79a7",
+      "bytes": 9263
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/results/a3-latest-5f27-native-provenance-20261002.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/results/a3-latest-5f27-native-provenance-20261002.json",
+      "sha256": "84d14415fcd6739564ea8f7127e8fc83fe0fc4b36ed9e80b4018bd50b164daf8",
+      "bytes": 19746
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/results/a3-route-probe-preparation-cpu-audit-20261002-r1/result.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/results/a3-route-probe-preparation-cpu-audit-20261002-r1/result.json",
+      "sha256": "6856a0ecb756db9379b1d364d881e357461824c98fb3667841e00c671bd26a90",
+      "bytes": 6361
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/results/a3-route-probe-preparation-cpu-audit-20261002-r1-launch/run.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/results/a3-route-probe-preparation-cpu-audit-20261002-r1-launch/run.json",
+      "sha256": "598741272a9c2e2bcfcec792c482b872c1e4854e9b67cacb395cd270b815411f",
+      "bytes": 655
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/results/a3-route-probe-preparation-cpu-audit-20261002-r1-launch/stderr.log",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/results/a3-route-probe-preparation-cpu-audit-20261002-r1-launch/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/results/a3-route-probe-preparation-cpu-audit-20261002-r1-launch/stdout.log",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/results/a3-route-probe-preparation-cpu-audit-20261002-r1-launch/stdout.log",
+      "sha256": "2103ecd0277f6473957bc07104089d3bfd30cdd83d98b0de7596cc602e869905",
+      "bytes": 210
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/results/a3-serial-iteration-20261002-r4/closed_predecessors.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/results/a3-serial-iteration-20261002-r4/closed_predecessors.json",
+      "sha256": "730a5f1615caab197ccf0699ec8362afaa51c24d9571de427c49539271356064",
+      "bytes": 3246
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/results/a3-serial-iteration-20261002-r4/frozen_inputs.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/results/a3-serial-iteration-20261002-r4/frozen_inputs.json",
+      "sha256": "7a6008c8477b353f9f4adc285771450259d5eb9a7b9a1bf63bc34218cd8a5d99",
+      "bytes": 8608
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/results/a3-serial-iteration-20261002-r4/predecessors.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/results/a3-serial-iteration-20261002-r4/predecessors.json",
+      "sha256": "a9410cb08f493c2fb6845f3f952e12866ea62a208df7bc09457190382d2f1552",
+      "bytes": 2668
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/results/a3-serial-iteration-20261002-r4/prior_build_and_terminal_parent.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/results/a3-serial-iteration-20261002-r4/prior_build_and_terminal_parent.json",
+      "sha256": "61127ca482add6a9639f276e1d40684b119572cce024b12bbb50475b672d20d3",
+      "bytes": 1863
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/results/a3-serial-iteration-background-20261002-r4/launch.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/results/a3-serial-iteration-background-20261002-r4/launch.json",
+      "sha256": "197daef85e0cf721b278b41a077571124a667b20663017b0a7b87a6caf7220e0",
+      "bytes": 1312
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/results/a3-serial-preflight-cpu-audit-20261002-r1/result.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/results/a3-serial-preflight-cpu-audit-20261002-r1/result.json",
+      "sha256": "d576a41217a9d7f4fc3977584f6ee258b668a35dbaeba2dac677e1841d072d52",
+      "bytes": 9572
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/results/a3-serial-preflight-cpu-audit-20261002-r1-launch/run.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/results/a3-serial-preflight-cpu-audit-20261002-r1-launch/run.json",
+      "sha256": "65dc9215328af062e8b9066a09a25b9e88521098fff0eeabb45b3d0b49d6db30",
+      "bytes": 641
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/results/a3-serial-preflight-cpu-audit-20261002-r1-launch/stderr.log",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/results/a3-serial-preflight-cpu-audit-20261002-r1-launch/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/results/a3-serial-preflight-cpu-audit-20261002-r1-launch/stdout.log",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/results/a3-serial-preflight-cpu-audit-20261002-r1-launch/stdout.log",
+      "sha256": "0e403d0c113de8d5212641c1b1814a43796a86561947359e76dbebcd4eb6c8d2",
+      "bytes": 185
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/results/a3-weight-plan-20261002-r1/candidate/boundaries/result.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/results/a3-weight-plan-20261002-r1/candidate/boundaries/result.json",
+      "sha256": "1997902393954094fa8a515fc0911d7349a3d40090ef10409a754e7dff302233",
+      "bytes": 10088
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_all24_precision_probe_20261001.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_all24_precision_probe_20261001.py.txt",
+      "sha256": "b47fd9e41a0a7a8ae484bb380fa795af77aa3eb19dc9a20226e493b20f6268c5",
+      "bytes": 12896
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_guarded_rounding_boundary_queued_20261002_r8.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_guarded_rounding_boundary_queued_20261002_r8.py.txt",
+      "sha256": "d4b0b0010a6e6467c053a49a90e1a7f470d623862650b3d1b7e42549d4eadb4e",
+      "bytes": 23846
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_guarded_rounding_boundary_queued_20261002_r9.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_guarded_rounding_boundary_queued_20261002_r9.py.txt",
+      "sha256": "7371c91955acda7ada3b65f12297f35c78f65c39b31ff9c35288187a360eb707",
+      "bytes": 23846
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_guarded_rounding_full_model_20261002_r8.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_guarded_rounding_full_model_20261002_r8.py.txt",
+      "sha256": "500b214d56328ce51462f9c024ac0fa7bfbf493282a56a76d1d38c0c556379ff",
+      "bytes": 13713
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_guarded_rounding_full_model_20261002_r9.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_guarded_rounding_full_model_20261002_r9.py.txt",
+      "sha256": "3c1ba00dd9594ab2609b57b6223d9c7209e196d1397bc25e7131356ca2ce9165",
+      "bytes": 13713
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_guarded_rounding_model_runtime_20261002_r4.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_guarded_rounding_model_runtime_20261002_r4.py.txt",
+      "sha256": "458634a0ec31dde149df96c90d9e0f23cbd155e823e184ff9fee6fbb68989c2a",
+      "bytes": 7469
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_guarded_rounding_model_runtime_20261002_r5.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_guarded_rounding_model_runtime_20261002_r5.py.txt",
+      "sha256": "d159add5789e66f6889627398a3f54c4a6ad84ff92efb4c2ab8741fa3a56f928",
+      "bytes": 7469
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_guarded_rounding_native_20261002_r4.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_guarded_rounding_native_20261002_r4.py.txt",
+      "sha256": "7de4a50b53f3b3dd56b220bca242cf0537e459ba74a4ddbdcab94d0d9a865728",
+      "bytes": 4195
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_guarded_rounding_native_20261002_r7.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_guarded_rounding_native_20261002_r7.py.txt",
+      "sha256": "551818f57b08e8a0c6b0a60cc51844c38055bbffbc18888dd15a5be61d6d2fd3",
+      "bytes": 7245
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_guarded_rounding_native_20261002_r8.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_guarded_rounding_native_20261002_r8.py.txt",
+      "sha256": "88d8ef70a550c58d40e14cb589096be275e30bcfca3f2840c6b0fdd8498b6ad0",
+      "bytes": 7368
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_guarded_rounding_native_20261002_r9_route_decode.cpp",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_guarded_rounding_native_20261002_r9_route_decode.cpp.txt",
+      "sha256": "1fe8890cc64cdaae0f1d58ea12494446173fa8efd48c44d52e124c34aeb66868",
+      "bytes": 1328
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_guarded_rounding_native_20261002_r9_route_decode.cu",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_guarded_rounding_native_20261002_r9_route_decode.cu.txt",
+      "sha256": "10ba822eceef85dbb1716ac83c77311b285d8499e8eaa9f72427419c13491315",
+      "bytes": 20335
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_guarded_rounding_native_20261002_r9_route_decode.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_guarded_rounding_native_20261002_r9_route_decode.py.txt",
+      "sha256": "96055f5cb47a388b36adae3b3d04eec796d5b4c20b974732e819aa3b34151480",
+      "bytes": 7258
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_guarded_rounding_request_runtime_20261002_r3.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_guarded_rounding_request_runtime_20261002_r3.py.txt",
+      "sha256": "08f952dcd813ef7624a5743eec506740a55f47bb62d2afb0724d776b9a8a49ca",
+      "bytes": 6755
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_guarded_rounding_request_runtime_20261002_r4.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_guarded_rounding_request_runtime_20261002_r4.py.txt",
+      "sha256": "40ae1e92a706f8a5856ac7199d196355b5c5be45a8242f7d255f72f24426866d",
+      "bytes": 6764
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_guarded_rounding_route_boundary_prepared_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_guarded_rounding_route_boundary_prepared_20261002_r1.py.txt",
+      "sha256": "75c3244fbb982ed33d5cb00f11e0e8d6b4d6990ffd21453816477ba489c0f44a",
+      "bytes": 23994
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_integer_reduce_boundary_pair_model_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_integer_reduce_boundary_pair_model_20261002_r1.py.txt",
+      "sha256": "886b71464497a08062ae8f86f051eb528d13ff57a20ab44db2d011cb641ce4d5",
+      "bytes": 9151
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_integer_reduce_full_generation_pair_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_integer_reduce_full_generation_pair_20261002_r1.py.txt",
+      "sha256": "f74418813e6284c7814b9be3990a8b7ec7076b7f1a920b603069480140268049",
+      "bytes": 13498
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_latestb1fe_gpu_phase_admitted_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_latestb1fe_gpu_phase_admitted_20261002_r1.py.txt",
+      "sha256": "d6f5a62425349f4f8807a928c5f7d14a842642dcce90915032276179166131cf",
+      "bytes": 4979
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_latestb1fe_iteration_coordinator_20261002_r2.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_latestb1fe_iteration_coordinator_20261002_r2.py.txt",
+      "sha256": "9f2ce1fe58fd1493967acd13c42ec63ac440dc37efb009dd5130218816dd709b",
+      "bytes": 10849
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_model_e2e_mergefix_20261001.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_model_e2e_mergefix_20261001.py.txt",
+      "sha256": "78a313dc7bdca45f8bb4aa22dc003072adfc3f76c7b1fa355ae3bc97cf877cea",
+      "bytes": 24684
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_mxfp8_bf16_staged_full_model_worker_20261001.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_mxfp8_bf16_staged_full_model_worker_20261001.py.txt",
+      "sha256": "62304d6cc59fc2b604a19efe1c60c075e0737c6898de191404e4bbb6baf057d1",
+      "bytes": 12860
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_mxfp8_bf16_staged_native_kernel_20261001.py.txt",
+      "sha256": "68d7c926dec0fbdf7bb0015a80df605d4ba8045af83929db5376b3b66b89feb3",
+      "bytes": 131629
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_native_a_compact_full_model_generation_pair_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_native_a_compact_full_model_generation_pair_20261002_r1.py.txt",
+      "sha256": "91cf6b4eacbacf285877a7a45a370ed6f146e7ae8c23ca89e4ad8aaf6d69b6d5",
+      "bytes": 23510
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_native_a_compact_gpu_admitted_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_native_a_compact_gpu_admitted_20261002_r1.py.txt",
+      "sha256": "10cdea0f78a2d76045d860dd4155df777043369dd2c30fb6d1b5fbc57a72770b",
+      "bytes": 4361
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_native_a_compact_pipeline_admitted_20261002_r2.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_native_a_compact_pipeline_admitted_20261002_r2.py.txt",
+      "sha256": "c7c7e810c4bd5410a0e5ce18c037bcad71cc69da009462b2399602c42f3f03bc",
+      "bytes": 7770
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_native_a_quantizer_compact_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_native_a_quantizer_compact_20261002_r1.py.txt",
+      "sha256": "625843454b5d996ea676dadd200baf6efe4864521a963af38efb0ec528f8b5ec",
+      "bytes": 2069
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_route_decode_gpu_admitted_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_route_decode_gpu_admitted_20261002_r1.py.txt",
+      "sha256": "bd97579e9d8f516ace47770e883618158f4e41c8a13888292a3c9abfa4b6d8f7",
+      "bytes": 4728
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_route_decode_reuse_probe_prepared_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_route_decode_reuse_probe_prepared_20261002_r1.py.txt",
+      "sha256": "a2c2dd01088653c937f5794d58f63f30dfee8d0898fc7fd225bf9edca4e0c75d",
+      "bytes": 21539
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_serial_iteration_resume_20261002_r4.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_serial_iteration_resume_20261002_r4.py.txt",
+      "sha256": "9303f04cae5032a50f5ba4d4d2c4698e472c0a807fe860f2867e2bc67d44797a",
+      "bytes": 16974
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_weight_plan_full_generation_pair_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_weight_plan_full_generation_pair_20261002_r1.py.txt",
+      "sha256": "dc35191edbdbe6bab8b4ccb97c3f618968c1d39943a6ea4799793ef8df253918",
+      "bytes": 12644
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/a3_weight_plan_generation_admitted_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/a3_weight_plan_generation_admitted_20261002_r1.py.txt",
+      "sha256": "bee326454c6e7247fcedb3f5c3769cee400cbb88e0622298db4fe967f35d7ea0",
+      "bytes": 7678
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/audit_a3_guard_pinned_model_cpu_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/audit_a3_guard_pinned_model_cpu_20261002_r1.py.txt",
+      "sha256": "45ff1240bd070e03fe29003e74b6dc98a66697772e69b29805ac23129e64d83f",
+      "bytes": 7604
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/audit_a3_integer_reduce_boundary_cpu_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/audit_a3_integer_reduce_boundary_cpu_20261002_r1.py.txt",
+      "sha256": "3e17842eedb3e9eaaf2bef996939a509b30662343a5e63de769c2db66a0ddc88",
+      "bytes": 9917
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/audit_a3_integer_reduce_full_model_cpu_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/audit_a3_integer_reduce_full_model_cpu_20261002_r1.py.txt",
+      "sha256": "f7dc1cd86146c92c4149a048e08a8473c3605f362903df81b3a4a817ec013e9d",
+      "bytes": 7746
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/audit_a3_integer_reduce_generation_pair_cpu_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/audit_a3_integer_reduce_generation_pair_cpu_20261002_r1.py.txt",
+      "sha256": "8e3c3f5298de076b18086cfea8865421f8407f4aeac4e7d12c7686e220432d50",
+      "bytes": 13282
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/audit_a3_integer_reduce_pair_cpu_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/audit_a3_integer_reduce_pair_cpu_20261002_r1.py.txt",
+      "sha256": "8edaf2f80044849a14f2aa14132a946c856361f4779d5fb7d70824f201f1ea8e",
+      "bytes": 9066
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/audit_a3_native_a_compact_full_model_generation_pair_cpu_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/audit_a3_native_a_compact_full_model_generation_pair_cpu_20261002_r1.py.txt",
+      "sha256": "8f06e19f0e2b0af6b05eafff5842d637016ab6fb127bf4651514149cc1a3ce72",
+      "bytes": 19999
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/audit_a3_native_a_quantizer_compact_cpu_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/audit_a3_native_a_quantizer_compact_cpu_20261002_r1.py.txt",
+      "sha256": "44046e6602174a5006fa6ed8c7bc8aaa4d4aa416ff591ebb363b9669fccdb8e3",
+      "bytes": 8251
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/audit_a3_route_decode_boundary_cpu_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/audit_a3_route_decode_boundary_cpu_20261002_r1.py.txt",
+      "sha256": "7d4d0129e7c2ab8fddf111a244a274689d498e1f39025d8c0869ee666303e4f0",
+      "bytes": 9863
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/audit_a3_route_decode_reuse_cpu_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/audit_a3_route_decode_reuse_cpu_20261002_r1.py.txt",
+      "sha256": "6bc1930b2da9fe14db41b1d32c1540135cfc57a65392e024309cbbe9a23fceff",
+      "bytes": 9147
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/audit_a3_route_probe_preparation_cpu_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/audit_a3_route_probe_preparation_cpu_20261002_r1.py.txt",
+      "sha256": "4bbe3ecde455ec1c5697a001f67d05f942309b10f240bb3460d0cf6d8bcdff4f",
+      "bytes": 7523
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/audit_a3_serial_preflight_cpu_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/audit_a3_serial_preflight_cpu_20261002_r1.py.txt",
+      "sha256": "778650e6040fe76717267e92fb494acb0c3ae5e8b46999f3ae25c870aa507998",
+      "bytes": 4089
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/audit_a3_weight_plan_generation_pair_cpu_20261002_r3.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/audit_a3_weight_plan_generation_pair_cpu_20261002_r3.py.txt",
+      "sha256": "633da805862ceb4c534a0e575aabf050c955dd6599d99fcf8a5b843243e8741a",
+      "bytes": 12998
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/diagnose_a3_fixed_window_cpu_20261001.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/diagnose_a3_fixed_window_cpu_20261001.py.txt",
+      "sha256": "91533128b0e22ec3d65b5778c61aed4a9c4bf0d2d0cd4fccfa9d2d0579d84c97",
+      "bytes": 10844
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/pack_a3_serial_resume_preparation_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/pack_a3_serial_resume_preparation_20261002_r1.py.txt",
+      "sha256": "44152f914461a7e0733e619e2342fb2c10796ea7e8a41183208413a90484f4a8",
+      "bytes": 3478
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/prepare_build_a3_latest_b1fe_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/prepare_build_a3_latest_b1fe_20261002_r1.py.txt",
+      "sha256": "7b28a1a56cbf14067af6a2669487f9f073a6a7ed6f3cbc999ae143cdf7ad4632",
+      "bytes": 6761
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/run_a3_latest_5f27_regression_admitted_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/run_a3_latest_5f27_regression_admitted_20261002_r1.py.txt",
+      "sha256": "ee5eb18a5e29ad0bac8d48ed930f3a2507dc5974046a5ffada6f71d641d45746",
+      "bytes": 6457
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/tools/run_a3_latest_b1fe_regression_queued_20261002_r1.py",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/tools/run_a3_latest_b1fe_regression_queued_20261002_r1.py.txt",
+      "sha256": "98a95d18b15166e9fef6ec6bdc47e561c51a4e4e21de7e7246b04fad3e9eaf41",
+      "bytes": 6432
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-serial-resume-preparation-20261002/results/a3-serial-resume-preparation-20261002-manifest.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/raw/preparation/results/a3-serial-resume-preparation-20261002-manifest.json",
+      "sha256": "9163cc392845150d8dcdb87b0c8928e045b9833a909a4d89fd3517e4dc5c2fe9",
+      "bytes": 14451
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_WAITERS_ARCHIVE_EXECUTION_20261002.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/local-proofs/A3_WAITERS_ARCHIVE_EXECUTION_20261002.json",
+      "sha256": "d0eafd2a9d467b3acaeea4a09334a36236d7f4d467c4038971d6509e01dc2dbf",
+      "bytes": 1159
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_WAITERS_ARCHIVE_EXECUTION_R2_20261002.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/local-proofs/A3_WAITERS_ARCHIVE_EXECUTION_R2_20261002.json",
+      "sha256": "52705e42ff719ad809939b7c513ae775578f61f99354a1559e26ffe499643edd",
+      "bytes": 471
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_WAITERS_MAC_VERIFIED_20261002.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/local-proofs/A3_WAITERS_MAC_VERIFIED_20261002.json",
+      "sha256": "2afc2e4d7b9ffd4e62f48db5e9e3963e15de4247eeb2c688ca7dd4843d2718cb",
+      "bytes": 273
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_SERIAL_R4_LAUNCH_EXECUTION_20261002.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/local-proofs/A3_SERIAL_R4_LAUNCH_EXECUTION_20261002.json",
+      "sha256": "17ba169be684fba2b86af780fe3dca2661cb13cd3853ecd051eabb08e3ef84bb",
+      "bytes": 277
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_SERIAL_R4_LAUNCH_EXECUTION_R2_20261002.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/local-proofs/A3_SERIAL_R4_LAUNCH_EXECUTION_R2_20261002.json",
+      "sha256": "b9808bd1a0fb525f14cc77cfe0ad5772609736c67895dcdcfe4ddeff6c8b17f9",
+      "bytes": 1450
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_SERIAL_R4_LAUNCH_20261002.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/local-proofs/A3_SERIAL_R4_LAUNCH_20261002.json",
+      "sha256": "197daef85e0cf721b278b41a077571124a667b20663017b0a7b87a6caf7220e0",
+      "bytes": 1312
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_SERIAL_R4_FROZEN_SOURCE_20261002.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/local-proofs/A3_SERIAL_R4_FROZEN_SOURCE_20261002.json",
+      "sha256": "f1d2d32a06325be3243fcadf9d5c05ed60a7d45a966139ac2ad4737811c6ff87",
+      "bytes": 9996
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_SERIAL_R4_PROCESS_SNAPSHOT_20261002.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/local-proofs/A3_SERIAL_R4_PROCESS_SNAPSHOT_20261002.json",
+      "sha256": "fb85af2e403d3d186cb3f5e10cfc4fb7ad23947eaa151effcf11b20a6754b3f3",
+      "bytes": 1796
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_SERIAL_R4_WORKER_VERIFIED_20261002.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/local-proofs/A3_SERIAL_R4_WORKER_VERIFIED_20261002.json",
+      "sha256": "ae7876770d854e813602b0f82f793ca83b46e5c754b2eaeb21b362aea53833dd",
+      "bytes": 1660
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_SERIAL_PREPARATION_MAC_VERIFIED_20261002.json",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/local-proofs/A3_SERIAL_PREPARATION_MAC_VERIFIED_20261002.json",
+      "sha256": "10a52a218d365063a9d7ae950f0a334d20a3fe79d231869bd9da3e6d142d7ecc",
+      "bytes": 518
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_SERIAL_RESUME_PREPARATION_RESULT_20261002.md",
+      "path": "benchmark/thor-a3-serial-resume-preparation-20261002/RESULT.md",
+      "sha256": "7be2fee9495e4c68eaf83ca88d8aa75131052f724cac6ffb4bded92f75769092",
+      "bytes": 5085
+    }
+  ],
+  "scope": "Closed waiters and CPU-only preparation; serial GPU queue, not GPU/model/performance success. Code snapshots use .txt to preserve actual tested bytes.",
+  "archive_SHA256": [
+    "3f1d505cedd25e8c29351edca80e10f61878a0e450422a2b60f012f1fdb68613",
+    "6a5a9f642facc4df3bf8842c78285b45301cec4f7c057adba8007ed43928694a"
+  ]
+}

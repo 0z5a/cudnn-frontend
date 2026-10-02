@@ -1,0 +1,162 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""CPU independent encoded-word reconstruction and exact frozen wrapper audit."""
+
+import argparse
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import statistics
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+import torch as t
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def equal(a, b):
+    return t.equal(a.contiguous().flatten().view(t.uint8), b.contiguous().flatten().view(t.uint8))
+
+
+def info(x):
+    return {"shape": list(x.shape), "dtype": str(x.dtype), "sha256": hashlib.sha256(x.contiguous().flatten().view(t.uint8).numpy().tobytes()).hexdigest()}
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", required=True)
+    args = ap.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized()
+    source = ROOT / "results/a3-integer-reduction-latestb1fe-20261002-r1"
+    run = json.loads(source.with_name(source.name + "-launch").joinpath("run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    candidate = source / "candidate"
+    meta = json.loads((candidate / "pair.json").read_text())
+    for p, digest in meta["files"].items():
+        assert sha(p) == digest
+    for name in ("old_build", "new_build"):
+        build = meta[name]
+        assert sha(build["binary"]["path"]) == build["binary"]["sha256"]
+        for p, digest in build["sources"].items():
+            assert sha(p) == digest
+    assert sha(candidate / "pair_outputs.pt") == meta["outputs_sha256"]
+    boundary = candidate / "boundaries"
+    bm = json.loads((boundary / "result.json").read_text())
+    assert sha(boundary / "outputs.pt") == bm["outputs_sha256"]
+    assert len(bm["rows"]) == 5 and bm["native_main_calls"] == 5
+    assert bm["native_repair_calls"] == 18 and bm["native_postprocess_kernel_launches"] == 51
+    assert bm["stream_detector"]["new_integer_word_scratch_pool_primed_without_native_call"]
+    assert bm["warm_side_completed_before_default"] and bm["rows"][0]["side_completed_before_default"]
+    audit = ROOT / "results/a3-integer-reduction-boundary-cpu-audit-20261002-r1"
+    ar = json.loads(audit.with_name(audit.name + "-launch").joinpath("run.json").read_text())
+    am = json.loads((audit / "result.json").read_text())
+    assert ar["status"] == "EXITED" and ar["returncode"] == 0 and not am["cuda_initialized"] and am["new_native_calls"] == 0
+    assert sha(audit / "independent_fp32_targets.pt") == am["independent_fp32_targets_sha256"]
+    helper = ROOT / "tools/audit_a3_integer_reduce_boundary_cpu_20261002_r1.py"
+    assert sha(helper) == am["harness_sha256"]
+    spec = importlib.util.spec_from_file_location("a3_independent_predecode_unpack", helper)
+    h = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(h)
+    saved = t.load(candidate / "pair_outputs.pt", map_location="cpu", weights_only=True)
+    captured = t.load(boundary / "outputs.pt", map_location="cpu", weights_only=True)
+    targets = t.load(audit / "independent_fp32_targets.pt", map_location="cpu", weights_only=True)
+    assert len(saved) == 410 and len(meta["paired"]) == 100
+    assert meta["old_repair_calls"] == 55 and meta["old_postprocess_kernel_launches"] == 165
+    assert meta["separate_old_new_plan_encoded_inputs_byte_equal"] and meta["one_time_weight_preparation_excluded_from_warmed_wrapper_latency"]
+    seen, decoded_words = set(), 0
+    for case in bm["rows"]:
+        name, v = case["name"], captured[case["name"]]
+        words = h.unpack(v["b_codes"], v["sfb"], v["sb"], "B").to(t.bfloat16).view(t.int16)
+        for field in ("new_words", "old_words"):
+            key = f"cached_plan/{name}/{field}"
+            assert equal(saved[key], words)
+            seen.add(key)
+        decoded_words += words.numel()
+    probe_file = candidate / "integer_reduction_probe_outputs.pt"
+    assert sha(probe_file) == meta["probe_outputs_sha256"]
+    probes = t.load(probe_file, map_location="cpu", weights_only=True)
+    assert len(probes) == 30 and [r["groups"] for r in meta["probes"]] == [0, 1, 2, 7, 8, 9, 15, 16, 17, 33]
+    assert meta["probe_native_kernel_launches"] == 9
+    probe_seen, checked_groups = set(), 0
+    for row in meta["probes"]:
+        groups = row["groups"]
+        units, raw, actual = [probes[f"{groups}/{field}"] for field in ("units", "raw", "native")]
+        assert units.shape == raw.shape == (groups, 16) and units.dtype == actual.dtype == t.int64 and raw.dtype == t.int32
+        assert actual.shape == (groups, 4) and (units.abs() <= (65535 << 11)).all()
+        expected = t.stack((units.sum(-1), raw.amax(-1).long()), -1)
+        assert equal(actual[:, :2], expected) and equal(actual[:, 2:], expected)
+        assert row["integer_redux_and_signed64_shuffle_byte_equal_cpu"] and row["native_kernel_launches"] == int(groups > 0)
+        assert (units.abs().sum(-1) <= 2147450880).all()
+        checked_groups += groups
+        probe_seen.update(f"{groups}/{field}" for field in ("units", "raw", "native"))
+    assert probe_seen == set(probes)
+    verified_c = 0
+    for record in meta["paired"]:
+        name, repeat, position, mode = (record[k] for k in ("case", "repeat", "position", "mode"))
+        order = (
+            ("cached_shuffle", "integer_redux", "integer_redux", "cached_shuffle")
+            if repeat % 2 == 0
+            else ("integer_redux", "cached_shuffle", "cached_shuffle", "integer_redux")
+        )
+        assert mode == order[position] and 0 <= repeat < 5 and record["gpu_wrapper_ms"] > 0
+        v = captured[name]
+        value = {key: saved[f"pair/{name}/{repeat}/{position}/{key}"] for key in ("c", "flags", "d", "amax")}
+        assert all(equal(value[key], v[key]) for key in value)
+        keep, repair = value["flags"] == 0, value["flags"] == 1
+        assert (keep | repair).all()
+        assert equal(value["c"][repair], targets[name][repair])
+        assert equal(value["c"][keep], v["native_c"][v["destinations"]][keep])
+        assert equal(value["c"].to(t.bfloat16), v["reference_c_bf16"]) and equal(value["d"], v["reference_d"]) and equal(value["amax"], v["reference_amax"])
+        assert record["c_fp32_flags_d_amax_byte_equal"]
+        verified_c += value["c"].numel()
+        seen.update(f"pair/{name}/{repeat}/{position}/{key}" for key in value)
+    assert seen == set(saved)
+    comparisons = []
+    for expected in meta["comparisons"]:
+        name = expected["case"]
+        observations = [x for x in meta["paired"] if x["case"] == name]
+        assert len(observations) == 20 and all(sum(x["mode"] == mode for x in observations) == 10 for mode in ("cached_shuffle", "integer_redux"))
+        medians = {mode: statistics.median(x["gpu_wrapper_ms"] for x in observations if x["mode"] == mode) for mode in ("cached_shuffle", "integer_redux")}
+        ratio = medians["cached_shuffle"] / medians["integer_redux"]
+        assert medians == expected["median_ms"] and ratio == expected["cached_shuffle_over_integer_redux_ratio"]
+        comparisons.append({"case": name, "median_ms": medians, "cached_shuffle_over_integer_redux_ratio": ratio})
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "INDEPENDENT_INTEGER_REDUX_WORD_PAIR_AUDIT_COMPLETE",
+        "head": bm["source_head"],
+        "producer_run": run,
+        "producer_pair_result_sha256": sha(candidate / "pair.json"),
+        "producer_outputs_sha256": meta["outputs_sha256"],
+        "decoded_words_verified": decoded_words,
+        "paired_c_fp32_words_verified": verified_c,
+        "tensor_count": len(saved),
+        "integer_reduction_probe_tensor_count": len(probes),
+        "integer_reduction_probe_groups_checked": checked_groups,
+        "integer_reduction_probe_tensors": {k: info(v) for k, v in probes.items()},
+        "tensors": {k: info(v) for k, v in saved.items()},
+        "comparisons": comparisons,
+        "cuda_initialized": False,
+        "new_native_calls": 0,
+        "harness_sha256": sha(__file__),
+        "independent_boundary_audit_sha256": sha(audit / "result.json"),
+        "accepted_optimization": False,
+        "generation_kv": "NOT_RUN_NEW_CANDIDATE",
+        "whole_model_paired_performance": "NOT_RUN",
+        "producer_full_model_driver_counter_failed": False,
+        "limits": "Five new native boundaries, every decoded word independently reconstructed from physical bytes, all100 wrapper observations/410 pair tensors plus30 integer probe tensors and integer C targets verified. This is not whole-model throughput or A3 completion.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({k: result[k] for k in ["stage", "decoded_words_verified", "paired_c_fp32_words_verified", "tensor_count", "comparisons"]}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

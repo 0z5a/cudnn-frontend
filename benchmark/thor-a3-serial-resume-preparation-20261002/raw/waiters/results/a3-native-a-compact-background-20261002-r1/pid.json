@@ -1,0 +1,23 @@
+{
+  "logger_pid": 653458,
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestb1fe/bin/python",
+    "/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-native-a-compact-pipeline-20261002-r1-launch",
+    "--cwd",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "--timeout",
+    "21000",
+    "--",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestb1fe/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_native_a_compact_pipeline_queued_20261002_r1.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-native-a-compact-pipeline-20261002-r1"
+  ],
+  "started_utc": "2026-10-02T03:00:12.793387+00:00",
+  "source_package_sha256": "d3ccdff6be6bb6ea665773da35344a22448103e330d450a2854c695cbe62337b",
+  "initial_phase": "CPU-only dependency wait, no Torch import",
+  "requires": "cached7 generation/audit r4 and latestb57 native31 actual0, then shared flock",
+  "scope": "additional distinct private native-A dead-result optimization, no current frozen pipeline edits"
+}

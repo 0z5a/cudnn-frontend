@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestb1fe/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_native_a_compact_pipeline_queued_20261002_r1.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-native-a-compact-pipeline-20261002-r1"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-02T03:00:12.836937+00:00",
+  "deadline_seconds": 21000.0,
+  "status": "EXITED",
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": ""
+  },
+  "returncode": 75,
+  "signal": null,
+  "elapsed_seconds": 12001.501442581
+}

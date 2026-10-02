@@ -1,0 +1,235 @@
+"""CPU hypothesis test on frozen Thor outputs, not a native arithmetic change.
+
+Independently implements the raw-exponent formula documented by sf-tensor's
+B200 research model at d96b82180ac9041c09295f3a6a3c2c4e592ddce6.
+The formula's applicability to Thor is deliberately a test outcome.
+"""
+
+import argparse
+import hashlib
+import json
+import os
+import struct
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+import torch as t
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+INPUT = ROOT / "results/a3-stock-dot-ncu-20261001-r3/target"
+TRUTH = ROOT / "results/a3-bf16-dot-fp32-output-20261001-r1"
+
+
+def sha(path):
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for data in iter(lambda: f.read(4194304), b""):
+            h.update(data)
+    return h.hexdigest()
+
+
+def words(value):
+    return value.contiguous().view(t.int32)
+
+
+def rtz_f32(value):
+    rounded = value.float()
+    result = t.where(rounded.double().abs() > value.abs(), t.nextafter(rounded, t.zeros_like(rounded)), rounded)
+    return t.where(result == 0, t.zeros_like(result), result)
+
+
+def raw_exp(value):
+    encoded = (words(value) >> 23) & 255
+    return t.where(value == 0, -10000, t.clamp(encoded, min=1) - 127)
+
+
+def fixed_window(products, product_exponents, bits, group=16):
+    acc = t.zeros(products.shape[0], dtype=t.float32)
+    for k in range(0, products.shape[1], group):
+        p = products[:, k : k + group]
+        exponent = t.maximum(product_exponents[:, k : k + group].amax(1), raw_exp(acc))
+        quantum = t.where(exponent == -10000, 0, exponent - bits)
+        aligned = t.trunc(t.ldexp(p, -quantum[:, None]))
+        c_aligned = t.trunc(t.ldexp(acc.double(), -quantum))
+        assert aligned.abs().max() < 2**45 and c_aligned.abs().max() < 2**45
+        units = aligned.to(t.int64).sum(1) + c_aligned.to(t.int64)
+        assert units.abs().max() < 2**53
+        acc = rtz_f32(t.ldexp(units.double(), quantum))
+    return acc
+
+
+def ieee_groups(products, group_round, add_round):
+    acc = t.zeros(products.shape[0], dtype=t.float32)
+    for k in range(0, products.shape[1], 16):
+        subtotal = products[:, k : k + 16].sum(1)
+        subtotal = subtotal.float() if group_round == "rn" else rtz_f32(subtotal)
+        value = acc.double() + subtotal.double()
+        acc = value.float() if add_round == "rn" else rtz_f32(value)
+    return acc
+
+
+def decode(word, fraction):
+    e = (word >> fraction) & 255
+    assert e != 255
+    mantissa = (word & ((1 << fraction) - 1)) + ((1 << fraction) if e else 0)
+    if word >> (fraction + 8):
+        mantissa = -mantissa
+    raw = max(e, 1) - 127
+    return mantissa, raw - fraction, raw
+
+
+def integer_rtz_units(mantissa, exponent, quantum):
+    shift = exponent - quantum
+    magnitude = abs(mantissa) << shift if shift >= 0 else abs(mantissa) >> -shift
+    return -magnitude if mantissa < 0 else magnitude
+
+
+def pack_f32_rtz(integer, quantum):
+    if integer == 0:
+        return 0
+    magnitude = abs(integer)
+    exponent = quantum + magnitude.bit_length() - 1
+    sign = (integer < 0) << 31
+    assert exponent <= 127, "This finite-input diagnosis must not overflow"
+    if exponent < -126:
+        shift = quantum + 149
+        fraction = magnitude << shift if shift >= 0 else magnitude >> -shift
+        return sign | fraction if fraction else 0
+    shift = magnitude.bit_length() - 24
+    mantissa = magnitude >> shift if shift >= 0 else magnitude << -shift
+    return sign | ((exponent + 127) << 23) | (mantissa & 0x7FFFFF)
+
+
+def scalar_prediction(x_words, w_words, bits):
+    acc_word = 0
+    for k in range(0, len(x_words), 16):
+        terms = []
+        raw = []
+        for a, b in zip(x_words[k : k + 16], w_words[k : k + 16]):
+            ma, ea, ra = decode(a, 7)
+            mb, eb, rb = decode(b, 7)
+            if ma and mb:
+                terms.append((ma * mb, ea + eb))
+                raw.append(ra + rb)
+        mc, ec, rc = decode(acc_word, 23)
+        if mc:
+            terms.append((mc, ec))
+            raw.append(rc)
+        if not terms:
+            acc_word = 0
+            continue
+        q = max(raw) - bits
+        total = sum(integer_rtz_units(m, e, q) for m, e in terms)
+        acc_word = pack_f32_rtz(total, q)
+    return acc_word
+
+
+def stats(pred, truth, stock, exact):
+    diff = pred.double() - truth.double()
+    ideal_error = pred.double() - exact
+    return {
+        "count": pred.numel(),
+        "fp32_word_mismatches": (words(pred) != words(truth)).sum().item(),
+        "stock_bf16_word_mismatches": (pred.to(t.bfloat16).view(t.int16) != stock.view(t.int16)).sum().item(),
+        "max_abs_vs_gpu_fp32": diff.abs().max().item(),
+        "l2_vs_gpu_fp32": (t.linalg.vector_norm(diff) / t.linalg.vector_norm(truth.double())).item(),
+        "mean_error_vs_exact": ideal_error.mean().item(),
+        "max_abs_vs_exact": ideal_error.abs().max().item(),
+        "toward_zero_vs_exact_count": (pred.double().abs() < exact.abs()).sum().item(),
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized()
+    assert sha(INPUT / "outputs.pt") == "0aafa01f30a4d4bcc4941ac0d507da94b28d7fa76417e034067dd58ee1d13ab6"
+    assert sha(TRUTH / "outputs.pt") == "6b3d5e538917e16f08c5289dfdd7d8efe1840fe3c3142e2e01718fb85434a18e"
+    saved = t.load(INPUT / "outputs.pt", map_location="cpu", weights_only=True)
+    observed = t.load(TRUTH / "outputs.pt", map_location="cpu", weights_only=True)
+    x, w = saved["input_bf16"][:36], saved["weight_bf16"]
+    truth = observed["36/bf16_input_fp32_output"]
+    stock = saved["stock_c_before"][:36]
+    assert x.shape == (36, 1024) and w.shape == (1024, 1024)
+    assert t.equal(words(truth), words(observed["256/bf16_input_fp32_output"][:36]))
+    assert t.equal(truth.to(t.bfloat16).view(t.int16), stock.view(t.int16))
+    input_diagnostics = {}
+    for name, value in (("input", x), ("weight", w)):
+        e = (value.view(t.int16).to(t.int32) >> 7) & 255
+        assert t.isfinite(value).all()
+        subnormal = (e == 0) & (value != 0)
+        input_diagnostics[name] = {"zeros": (value == 0).sum().item(), "subnormals": subnormal.sum().item()}
+        assert not subnormal.any(), "Current vector test intentionally restricts this corpus to normal BF16 or zero"
+    products = (x[:, None, :].double() * w[None, :, :].double()).reshape(-1, 1024)
+    assert t.equal(products, products.float().double())
+    ex = raw_exp(x.float())[:, None, :]
+    ew = raw_exp(w.float())[None, :, :]
+    product_exp = (ex + ew).expand(36, 1024, 1024).reshape(-1, 1024)
+    product_exp = t.where(products == 0, -10000, product_exp)
+    exact = products.sum(1)
+    predictions = {"raw_window25_k16": fixed_window(products, product_exp, 25)}
+    # These controls are predefined, not selected from output mismatch coordinates.
+    predictions["raw_window24_k16"] = fixed_window(products, product_exp, 24)
+    predictions["raw_window26_k16"] = fixed_window(products, product_exp, 26)
+    predictions["raw_window25_k32_control"] = fixed_window(products, product_exp, 25, 32)
+    predictions["exact_dot_rn_f32"] = exact.float()
+    predictions["exact_dot_rtz_f32"] = rtz_f32(exact)
+    for group_round in ("rn", "rz"):
+        for add_round in ("rn", "rz"):
+            predictions[f"ieee_k16_group_{group_round}_add_{add_round}"] = ieee_groups(products, group_round, add_round)
+    t.save({"exact_dot_fp64": exact.reshape(36, 1024), **{n: v.reshape(36, 1024) for n, v in predictions.items()}}, out / "outputs.pt")
+    # Independent bit/integer scalar implementation audits unconditioned coordinates.
+    coordinates = t.randperm(36 * 1024, generator=t.Generator().manual_seed(2026100101))[:64].tolist()
+    x_bits, w_bits = x.view(t.int16).to(t.int32) & 65535, w.view(t.int16).to(t.int32) & 65535
+    scalar_rows = []
+    for bits in (24, 25, 26):
+        name = f"raw_window{bits}_k16"
+        for pos in coordinates:
+            row, col = divmod(pos, 1024)
+            scalar = scalar_prediction(x_bits[row].tolist(), w_bits[col].tolist(), bits)
+            vector = words(predictions[name])[pos].item() & 0xFFFFFFFF
+            assert scalar == vector, (name, row, col, hex(scalar), hex(vector))
+            scalar_rows.append({"bits": bits, "row": row, "column": col, "word": scalar})
+    rows = []
+    truth_flat, stock_flat = truth.flatten(), stock.flatten()
+    for name, pred in predictions.items():
+        rows.append(
+            {
+                "name": name,
+                "all36_unconditioned_rows": stats(pred, truth_flat, stock_flat, exact),
+                "discovery_rows0to17": stats(pred[: 18 * 1024], truth_flat[: 18 * 1024], stock_flat[: 18 * 1024], exact[: 18 * 1024]),
+                "heldout_rows18to35": stats(pred[18 * 1024 :], truth_flat[18 * 1024 :], stock_flat[18 * 1024 :], exact[18 * 1024 :]),
+            }
+        )
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "CPU_FIXED_WINDOW_HYPOTHESIS_TEST_COMPLETE_NOT_MODEL_SUCCESS",
+        "cuda_initialized": False,
+        "native_calls": 0,
+        "predeclared_hypothesis": "25 raw-exponent fraction bits, independently RTZ aligned products/C, integer sum then F32 RTZ, ascending contiguous K16 updates",
+        "research_source": "https://github.com/sf-tensor/tcgen05/blob/d96b82180ac9041c09295f3a6a3c2c4e592ddce6/tcgen05_model/MODEL.md",
+        "scope": "Original first-layer expert0, all36 actual rows and1024 output columns, no padded-zero inflation; first18/last18 split; no mismatch-coordinate conditioning",
+        "input_diagnostics": input_diagnostics,
+        "actual36_vs_padded256_gpu_fp32_byte_equal": True,
+        "scalar_independent_audited_coordinates_per_bits": 64,
+        "scalar_integer_audit": scalar_rows,
+        "rows": rows,
+        "input_outputs_sha256": sha(INPUT / "outputs.pt"),
+        "gpu_fp32_outputs_sha256": sha(TRUTH / "outputs.pt"),
+        "input_metadata_sha256": sha(INPUT / "result.json"),
+        "gpu_fp32_metadata_sha256": sha(TRUTH / "result.json"),
+        "outputs_sha256": sha(out / "outputs.pt"),
+        "harness_sha256": sha(Path(__file__)),
+        "torch": t.__version__,
+        "limits": "B200 research arithmetic is an unverified Thor hypothesis. Saved BF16-input/FP32-output GPU kernel was not NCU profiled; its cast matching stock BF16 is not identical-instruction proof. No new GPU call, A3 source edit, model recipe, policy/oracle/baseline replacement, full24 validation, generation/KV or performance run.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "rows": rows, "native_calls": 0}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

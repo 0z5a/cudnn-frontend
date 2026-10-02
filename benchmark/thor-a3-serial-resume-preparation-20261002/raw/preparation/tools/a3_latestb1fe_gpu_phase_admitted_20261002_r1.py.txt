@@ -1,0 +1,106 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""One fresh process per GPU phase under the coordinator's verified parent flock."""
+
+import argparse
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "b57c65f1a1b60c2405e1e04c6b5ec6c6b2903bb5"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--out", required=True)
+    p.add_argument("--phase", choices=("regression", "candidate", "generation"), required=True)
+    args = p.parse_args()
+    holder, fd = (int(os.environ[name]) for name in ("A3_ITERATION_LOCK_HOLDER", "A3_ITERATION_LOCK_FD"))
+    link = Path(f"/proc/{holder}/fd/{fd}")
+    assert link.stat().st_ino == Path("/tmp/codex-thor-perf.lock").stat().st_ino
+    fdinfo = Path(f"/proc/{holder}/fdinfo/{fd}").read_text()
+    assert "FLOCK ADVISORY WRITE" in " ".join(fdinfo.split())
+    assert "torch" not in sys.modules and os.environ["CUDA_VISIBLE_DEVICES"] == "0" and os.environ["CUDA_MODULE_LOADING"] == "EAGER"
+    assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+    native = json.loads((ROOT / "results/a3-latest-b1fe-native-provenance-20261002.json").read_text())
+    assert native["head"] == HEAD and native["native_build"] == "FRESH_RC0"
+    assert native["build_run"]["status"] == "EXITED" and native["build_run"]["returncode"] == 0
+    assert sha(native["binding"]["path"]) == native["binding"]["sha256"]
+    assert all(sha(Path(native["source"]) / row["path"]) == row["sha256"] for row in native["native_input_digests"])
+    args.expected_head, args.expected_source, args.expected_binding_sha = HEAD, native["source"], native["binding"]["sha256"]
+    tools, out = Path(__file__).parent, Path(args.out)
+    os.environ["A3_LATEST_GUARD_LOCK_ADMITTED"] = "1"
+    if args.phase == "regression":
+        regression = load("a3_actual_latest_b1fe_regression", tools / "run_a3_latest_b1fe_regression_queued_20261002_r1.py")
+        return regression.execute(out)
+    out.mkdir(exist_ok=False)
+    (out / "admission.json").write_text(
+        json.dumps(
+            {
+                "parent_flock_holder": holder,
+                "parent_flock_fd": fd,
+                "parent_flock_fdinfo_sha256": hashlib.sha256(fdinfo.encode()).hexdigest(),
+                "head": HEAD,
+                "phase": args.phase,
+            }
+        )
+        + "\n"
+    )
+    if args.phase == "candidate":
+        candidate = out / "candidate"
+        candidate.mkdir()
+        worker = load("a3_integer_reduce_latest_candidate", tools / "a3_integer_reduce_boundary_pair_model_20261002_r1.py")
+        worker.execute(args, candidate)
+        child = candidate / "result.json"
+    else:
+        q = load("a3_guard_boundary_quant", tools / "a3_mxfp8_bf16_staged_full_model_worker_20261001.py")
+        load("a3_guard_boundary_cuda", tools / "a3_guarded_rounding_native_20261002_r8.py")
+        q.t.set_num_threads(4)
+        q.t.backends.cuda.matmul.allow_tf32 = q.t.backends.cudnn.allow_tf32 = False
+        q.t.set_float32_matmul_precision("highest")
+        assert q.t.cuda.get_device_capability() == (11, 0)
+        for module in (q.m.cudnn, q.m.api, q.m._compiled_module):
+            assert Path(module.__file__).resolve().is_relative_to(Path(native["source"]) / "python")
+        assert sha(q.m._compiled_module.__file__) == args.expected_binding_sha
+        worker = load("a3_integer_reduce_latest_generation", tools / "a3_integer_reduce_full_generation_pair_20261002_r1.py")
+        e2e = out / "e2e"
+        e2e.mkdir()
+        boundary = ROOT / "results/a3-integer-reduction-latestb1fe-20261002-r1/candidate/boundaries"
+        worker.execute(args, e2e, boundary)
+        child = e2e / "result.json"
+    assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+    assert all(sha(Path(native["source"]) / row["path"]) == row["sha256"] for row in native["native_input_digests"])
+    result = {
+        "stage": "LATEST_B1FE_GPU_PHASE_TERMINAL",
+        "phase": args.phase,
+        "head": HEAD,
+        "base": native["base"],
+        "binding": native["binding"],
+        "child_result_sha256": sha(child),
+        "accepted_optimization": False,
+        "service_final": "inactive",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

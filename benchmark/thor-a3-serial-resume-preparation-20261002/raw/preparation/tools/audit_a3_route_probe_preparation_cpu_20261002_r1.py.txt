@@ -1,0 +1,147 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Check prepared routing against independent padded expert intervals, CPU only.
+
+This audits route inputs and preserved native call parameters; it executes no
+native kernel and cannot qualify a GPU, model, stream, or performance result.
+"""
+
+import argparse
+import ast
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import sys
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    assert os.environ["CUDA_VISIBLE_DEVICES"] == "" and "torch" not in sys.modules
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    tools = Path(__file__).parent
+    probe = tools / "a3_route_decode_reuse_probe_prepared_20261002_r1.py"
+    boundary = tools / "a3_guarded_rounding_route_boundary_prepared_20261002_r1.py"
+    parent = tools / "a3_guarded_rounding_boundary_queued_20261002_r8.py"
+    qualified = ROOT / "results/a3-weight-plan-20261002-r1"
+    terminal = json.loads(qualified.with_name(qualified.name + "-launch").joinpath("run.json").read_text())
+    assert terminal["status"] == "EXITED" and terminal["returncode"] == 0 and terminal["signal"] is None
+    metadata_path = qualified / "candidate/boundaries/result.json"
+    metadata = json.loads(metadata_path.read_text())
+    assert metadata["source_head"] == "a24a7401bb7d26d42d88d98b316f634ef487301c"
+    assert len(metadata["rows"]) == 5 and metadata["native_main_calls"] == 5
+    spec = importlib.util.spec_from_file_location("a3_route_preparation_CPU_only", probe)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    rows, calls, kernels, valid_routes, bad_routes = [], 0, 0, 0, 0
+    for case in metadata["rows"]:
+        # Enumerate every padded row with its expert independently of the
+        # prepared policy implementation, then validate each supplied route.
+        association = []
+        for expert, count in enumerate(case["counts"]):
+            association.extend([expert] * (256 * ((count + 255) // 256)))
+        assert len(association) == case["padded_rows"]
+        policies = module.route_policies(case["counts"])
+        assert len(policies) == 7 and policies["empty_live"] == ([], [])
+        per_case = []
+        for name, (destinations, experts) in policies.items():
+            assert len(destinations) == len(experts)
+            assert all(-(1 << 63) <= value < (1 << 63) for value in destinations + experts)
+            validity = [(0 <= dest < len(association) and 0 <= expert < case["experts"]) for dest, expert in zip(destinations, experts)]
+            for dest, expert, valid in zip(destinations, experts, validity):
+                if valid:
+                    assert association[dest] == expert, "Reference/main source row must belong to this expert"
+            invalid = len(validity) - sum(validity)
+            if name.startswith("mixed_invalid_"):
+                assert invalid and sum(validity)
+                values = destinations if name.endswith("destination") else experts
+                assert -(1 << 63) in values and (1 << 63) - 1 in values and -(1 << 32) in values and 1 << 32 in values
+            else:
+                assert not invalid
+            calls += 1
+            kernels += 3 if destinations else 0
+            valid_routes += sum(validity)
+            bad_routes += invalid
+            per_case.append({"policy": name, "live": len(destinations), "invalid_int64_routes": invalid})
+        original, experts = policies["tile_edges"]
+        # Probe both sides of each physical 128-row SF tile and each 32-code
+        # vector transition inside every populated expert interval.
+        for expert in set(association):
+            interval = [index for index, owner in enumerate(association) if owner == expert]
+            start, end = interval[0], interval[-1] + 1
+            required = {start, start + 31, start + 32, start + 127, start + 128, end - 1}
+            assert required.issubset({dest for dest, owner in zip(original, experts) if owner == expert})
+        assert policies["reverse_tile_edges"] == (original[::-1], experts[::-1])
+        duplicate, duplicate_experts = policies["duplicates"]
+        assert len(duplicate) > len(set(duplicate)) and all(association[d] == e for d, e in zip(duplicate, duplicate_experts))
+        shifted, shifted_experts = policies["changed_same_route_storage"]
+        assert len(shifted) == len(original) and shifted_experts == experts and shifted != original
+        assert all(association[d] == e for d, e in zip(shifted, shifted_experts))
+        calls += 2  # M=0 live-invalid and live-empty: independent of routes.
+        kernels += 2
+        rows.append({"case": case["name"], "full_rows": len(association), "policies": per_case})
+    calls += 1  # Genuine in-place A/scales mutation followed by real main.
+    kernels += 3
+    assert calls == 46 and kernels == 103 and len(rows) == 5
+
+    def main_call(path):
+        tree = ast.parse(path.read_text())
+        compile(tree, str(path), "exec")
+        calls = [
+            node
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "grouped_gemm_swiglu_wrapper_sm100"
+        ]
+        assert len(calls) == 1
+        return {item.arg: ast.dump(item.value, include_attributes=False) for item in calls[0].keywords}
+
+    original, prepared, mutation = main_call(parent), main_call(boundary), main_call(probe)
+    assert original == prepared, "Boundary retains original main input/tiling/stream contract"
+    adjusted_operands = {"a_tensor", "b_tensor", "sfa_tensor", "sfb_tensor", "padded_offsets", "alpha_tensor"}
+    assert original.keys() == mutation.keys()
+    assert all(original[key] == mutation[key] for key in original.keys() - adjusted_operands)
+    assert "torch" not in sys.modules
+    result = {
+        "stage": "PREPARED_ROUTE_INPUT_AND_MAIN_CONTRACT_CPU_AUDIT_COMPLETE_GPU_NOT_RUN",
+        "qualified_case_count": len(rows),
+        "expected_per_arm_repair_calls_NOT_EXECUTED": calls,
+        "expected_per_arm_postprocess_launches_NOT_EXECUTED": kernels,
+        "valid_route_inputs_checked": valid_routes,
+        "invalid_int64_route_inputs_checked": bad_routes,
+        "independent_padded_expert_associations": rows,
+        "original_boundary_main_AST_unchanged": True,
+        "mutation_main_original_precision_tiling_stream_AST_unchanged": True,
+        "torch_imported": False,
+        "new_native_calls": 0,
+        "GPU_correctness": "NOT_RUN",
+        "stream_reuse_correctness": "NOT_RUN",
+        "full_model": "NOT_RUN",
+        "paired_performance": "NOT_RUN",
+        "accepted_optimization": False,
+        "files": {str(path): sha(path) for path in [Path(__file__), probe, boundary, parent, metadata_path]},
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(
+        json.dumps(
+            {
+                key: result[key]
+                for key in ["stage", "qualified_case_count", "valid_route_inputs_checked", "invalid_int64_route_inputs_checked", "new_native_calls"]
+            }
+        ),
+        flush=True,
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

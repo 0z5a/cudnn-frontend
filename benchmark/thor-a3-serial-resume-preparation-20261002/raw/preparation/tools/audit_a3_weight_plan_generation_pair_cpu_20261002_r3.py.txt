@@ -1,0 +1,225 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Independent CPU audit cached-weight-plan all56 tensors, all17 requests and unchanged gates."""
+
+import argparse
+import ast
+import hashlib
+import importlib.util
+import json
+import math
+import os
+from pathlib import Path
+import statistics
+import sys
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+import torch as t
+from transformers import AutoTokenizer
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "a24a7401bb7d26d42d88d98b316f634ef487301c"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def equal(a, b):
+    return t.equal(a.contiguous().flatten().view(t.uint8), b.contiguous().flatten().view(t.uint8))
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--out", required=True)
+    args = p.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    src = ROOT / "results/a3-weight-plan-generation-20261002-r4"
+    run = json.loads(src.with_name(src.name + "-launch").joinpath("run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    folder = src / "e2e"
+    producer = json.loads((folder / "result.json").read_text())
+    assert producer["head"] == HEAD and producer["model_parameters"] == 1334628352 and producer["layers"] == 24 and producer["gemm_k"] == 4096
+    assert producer["experts"] == 32 and producer["topk"] == 8 and producer["hidden"] == 1024 and producer["intermediate"] == 512
+    assert not producer["original_forward_baseline_replaced"] and not producer["oracle_replaced"] and not producer["production_feature_accepted"]
+    for path, digest in producer["files"].items():
+        assert sha(path) == digest
+    for value in producer["imports"].values():
+        assert sha(value["path"]) == value["sha256"] and Path(value["path"]).resolve().is_relative_to(Path(producer["source"]) / "python")
+    helper = ROOT / "tools/audit_a3_guard_pinned_model_cpu_20261002_r1.py"
+    spec = importlib.util.spec_from_file_location("a3_independent_latest_generation_metrics", helper)
+    q = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = q
+    spec.loader.exec_module(q)
+
+    def forward_ast(name, normalize=False):
+        tree = ast.parse((ROOT / "tools" / name).read_text())
+        node = next(x for x in ast.walk(tree) if isinstance(x, ast.FunctionDef) and x.name == "forward")
+        if normalize:
+            for call in ast.walk(node):
+                if (
+                    isinstance(call, ast.Call)
+                    and isinstance(call.func, ast.Attribute)
+                    and isinstance(call.func.value, ast.Attribute)
+                    and call.func.value.attr == "repair_worker"
+                ):
+                    call.func.value = ast.Name(id="h", ctx=ast.Load())
+                    assert isinstance(call.args[0], ast.Attribute) and call.args[0].attr == "repair_module"
+                    call.args[0] = ast.Name(id="module", ctx=ast.Load())
+        return ast.dump(node, include_attributes=False)
+
+    actual = "a3_guarded_rounding_model_runtime_20261002_r4.py"
+    qualified = "a3_guarded_rounding_full_model_20261002_r8.py"
+    assert forward_ast(actual, True) == forward_ast(qualified)
+    assert forward_ast(actual) != forward_ast(qualified)
+    runtime_meta = json.loads((folder / "runtime/frozen_inputs.json").read_text())
+    assert runtime_meta["native_forward_literal_byte_identical_to_qualified_g8"] is False
+    assert runtime_meta["native_forward_math_except_explicit_module_and_wrapper_handles_ast_identical"] is True
+    assert producer["weight_plan_generations"] == [1] * 24
+    assert producer["weight_preparation_excluded_from_warmed_request_latency"] is True
+    assert producer["prepared_weight_native_kernel_launches"] == 24
+    prior_dir = ROOT / "results/a3-guard-pinned-generation-20261002-r1/e2e"
+    prior = json.loads((prior_dir / "result.json").read_text())
+    assert sha(prior_dir / "outputs.pt") == producer["prior_frozen_generation_outputs_sha256"] == prior["outputs_sha256"]
+    old = t.load(prior_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    assert sha(folder / "outputs.pt") == producer["outputs_sha256"]
+    values = t.load(folder / "outputs.pt", map_location="cpu", weights_only=True)
+    assert len(values) == 56
+    tokenizer = AutoTokenizer.from_pretrained("/home/jwipc/models/granite-3.1-1b-a400m-instruct-0da7a48b", local_files_only=True, trust_remote_code=False)
+    rows, keys = [], set()
+
+    def check_outputs(name, key, tokens):
+        ids, logits, flags = [values[key + "/" + field] for field in ("ids", "logits", "flags")]
+        keys.update(key + "/" + field for field in ("ids", "logits", "flags"))
+        assert ids.shape == (1, 32) and logits.shape == (1, 32, 49155) and flags.shape == (24, 32, 3)
+        assert ids.dtype == flags.dtype == t.int64 and t.isfinite(logits).all()
+        assert equal(ids, logits.argmax(-1)) and equal(ids, old[name + "/reference/ids"])
+        assert equal(logits, old[name + "/reference/logits"])
+        assert (flags >= 0).all() and (flags[:, :, 2] == 0).all()
+        assert (flags[:, 0].sum(-1) == tokens * 8 * 1024).all() and (flags[:, 1:].sum(-1) == 8 * 1024).all()
+        return ids, logits, flags
+
+    for row in producer["quality"]:
+        name, tokens = row["case"], row["input_tokens"]
+        keys.add(name + "/input_ids")
+        assert equal(values[name + "/input_ids"], old[name + "/input_ids"])
+        ids, logits, flags = check_outputs(name, name, tokens)
+        oe, be = q.metrics(logits, old[name + "/reference/logits"]), q.metrics(logits, old[name + "/stock_teacher/logits"])
+        for actual, expected in ((oe, row["native_oracle"]), (be, row["native_original_bf16_same_context"])):
+            assert all(actual[key] == expected[key] for key in ("max_abs", "relative_l2", "argmax_equal_fraction"))
+        assert row["same_context_for_numeric_gates"] and row["oracle_logits_byte_equal"] and row["oracle_ids_byte_equal"]
+        op, bp = oe["relative_l2"] <= 0.01, be["relative_l2"] <= 0.05
+        assert row["oracle_gate_pass"] == op and row["bf16_gate_pass"] == bp and op and bp
+        assert oe["relative_l2_fp64"] <= 0.01 and be["relative_l2_fp64"] <= 0.05
+        assert equal(ids, old[name + "/stock/ids"]) == row["original_stock_greedy_ids_byte_equal"]
+        decoded_ids = ids[0].tolist()
+        if tokenizer.eos_token_id in decoded_ids:
+            decoded_ids = decoded_ids[: decoded_ids.index(tokenizer.eos_token_id)]
+        decoded = tokenizer.decode(decoded_ids, skip_special_tokens=True).strip()
+        original = next(value for value in prior["quality"] if value["case"] == name)
+        app = bool(decoded) and (original["expected"] is None or original["expected"] in decoded.lower())
+        assert row["text"] == decoded == original["texts"]["native"] and row["prior_original_stock_text"] == original["texts"]["stock"]
+        assert row["application_answer_pass"] == app and row["application_answer_unchanged_from_prior"]
+        assert row["flag_totals"] == flags.sum((0, 1)).tolist() and row["cache_object_reused"] and row["cache_final_tokens"] == tokens + 31
+        assert row["native_main_calls"] == row["native_repair_calls"] == 768 and row["native_postprocess_kernel_launches"] == 2304
+        assert row["implementation"] == "predecode"
+        rows.append(
+            {
+                "case": name,
+                "native_oracle": oe,
+                "native_original_bf16_same_context": be,
+                "application_answer_pass": app,
+                "text": decoded,
+                "cache_final_tokens": row["cache_final_tokens"],
+            }
+        )
+    observations = producer["observations"]
+    assert len(observations) == 12
+    for i, row in enumerate(observations):
+        local = i % 6
+        stage, position, expected_arm = (
+            ("warmup", local, ("postfixed", "predecode")[local])
+            if local < 2
+            else ("timed", local - 2, ("postfixed", "predecode", "predecode", "postfixed")[local - 2])
+        )
+        assert row["stage"] == stage and row["position"] == position and row["implementation"] == expected_arm
+        assert row["input_tokens"] == (256 if i < 6 else 1024) and row["new_tokens"] == 32
+        check_outputs(row["case"], f"{row['case']}/{stage}/{position}", row["input_tokens"])
+        assert row["cache_object_reused"] and row["cache_final_tokens"] == row["input_tokens"] + 31
+        assert row["native_main_calls"] == row["native_repair_calls"] == 768 and row["native_postprocess_kernel_launches"] == (
+            1536 if expected_arm == "postfixed" else 2304
+        )
+        assert all(math.isfinite(row[key]) and row[key] > 0 for key in ("prefill_ms", "decode_ms", "request_ms"))
+        assert math.isclose(row["prefill_ms"] + row["decode_ms"], row["request_ms"], rel_tol=1e-12)
+        assert row["binary_sha256"] == producer["old_native_build" if expected_arm == "postfixed" else "new_native_build"]["binary"]["sha256"]
+    assert set(values) == keys
+    comparisons = []
+    for name in ("prefix256", "prefix1024"):
+        medians = {
+            arm: {
+                key: statistics.median(row[key] for row in observations if row["case"] == name and row["stage"] == "timed" and row["implementation"] == arm)
+                for key in ("prefill_ms", "decode_ms", "request_ms")
+            }
+            for arm in ("postfixed", "predecode")
+        }
+        comparisons.append(
+            {
+                "case": name,
+                "median_ms": medians,
+                "postfixed_over_predecode_request_ratio": medians["postfixed"]["request_ms"] / medians["predecode"]["request_ms"],
+            }
+        )
+    assert comparisons == producer["comparisons"] and producer["quality_all_five_numeric_gates_pass"]
+    assert not producer["application_all_five_answers_pass"] and sum(row["application_answer_pass"] for row in rows) == 4
+    assert (
+        producer["native_main_calls"] == producer["native_repair_calls"] == 17 * 768
+        and producer["native_postprocess_kernel_launches"] == 11 * 2304 + 6 * 1536 == 34560
+    )
+    for field in ("old_native_build", "new_native_build"):
+        build = producer[field]
+        assert sha(build["binary"]["path"]) == build["binary"]["sha256"] and all(sha(path) == digest for path, digest in build["sources"].items())
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "INDEPENDENT_CACHED_WEIGHT_FULL_GENERATION_PAIR_AUDIT_COMPLETE",
+        "head": HEAD,
+        "quality_all_five_numeric_gates_pass": True,
+        "application_all_five_answers_pass": False,
+        "rows": rows,
+        "comparisons": comparisons,
+        "observations": observations,
+        "tensor_count": 56,
+        "tensors": {key: q.info(value) for key, value in values.items()},
+        "producer_run": run,
+        "producer_result_sha256": sha(folder / "result.json"),
+        "producer_outputs_sha256": producer["outputs_sha256"],
+        "prior_generation_outputs_sha256": prior["outputs_sha256"],
+        "native_main_calls": producer["native_main_calls"],
+        "native_repair_calls": producer["native_repair_calls"],
+        "native_postprocess_kernel_launches": producer["native_postprocess_kernel_launches"],
+        "actual_native_forward_literal_byte_identical": False,
+        "native_forward_math_except_explicit_module_and_wrapper_handles_ast_identical": True,
+        "factory_literal_byte_identity_label_is_correctly_false": True,
+        "weight_plan_generations": producer["weight_plan_generations"],
+        "prepared_weight_native_kernel_launches": producer["prepared_weight_native_kernel_launches"],
+        "weight_preparation_excluded_from_warmed_request_latency": True,
+        "raw_factory_metadata_preserved": True,
+        "cuda_initialized": False,
+        "new_native_calls": 0,
+        "harness_sha256": sha(__file__),
+        "metric_reference_sha256": sha(helper),
+        "accepted_production_feature": False,
+        "limits": "All56 actual tensors and17 full32 cached requests checked against unchanged frozen oracle/stock references. Numerical gates1%/5% pass, original83 refusal remains an application failure. Two timed observations per private arm at each256/1024. Whole-model ratio compares postfixed/cached-weight-plan private controls with diagnostic reductions included and 24 one-time encoded-weight preparations excluded from warmed request latency, not original BF16/defaultK1024 throughput or completed optimization.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(
+        json.dumps(
+            {key: result[key] for key in ("stage", "quality_all_five_numeric_gates_pass", "application_all_five_answers_pass", "comparisons", "tensor_count")}
+        ),
+        flush=True,
+    )
+
+
+if __name__ == "__main__":
+    main()

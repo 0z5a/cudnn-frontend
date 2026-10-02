@@ -1,0 +1,78 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Archive closed CPU preparation and immutable sources, not GPU results."""
+
+import datetime
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import tarfile
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    names = ["a3-route-probe-preparation-cpu-audit-20261002-r1", "a3-serial-preflight-cpu-audit-20261002-r1"]
+    files, runs = [Path(__file__)], {}
+    for name in names:
+        folder = ROOT / "results" / name
+        launch = folder.with_name(name + "-launch")
+        run = json.loads((launch / "run.json").read_text())
+        result = json.loads((folder / "result.json").read_text())
+        assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+        assert not result["torch_imported"] and result["new_native_calls"] == 0
+        assert all(sha(Path(path)) == digest for path, digest in result["files"].items())
+        runs[name] = {"actual_terminal": run, "stage": result["stage"]}
+        files.extend(Path(path) for path in result["files"])
+        files.extend(path for directory in [folder, launch] for path in directory.rglob("*") if path.is_file())
+    iteration = ROOT / "results/a3-serial-iteration-20261002-r4"
+    for name in ["frozen_inputs.json", "predecessors.json", "closed_predecessors.json", "prior_build_and_terminal_parent.json"]:
+        files.append(iteration / name)
+    files.append(ROOT / "results/a3-serial-iteration-background-20261002-r4/launch.json")
+    files = sorted(set(files))
+    assert all(path.is_file() and not path.is_symlink() and path.suffix not in {".pt", ".so", ".safetensors", ".bundle", ".engine"} for path in files)
+    assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+    manifest = ROOT / "results/a3-serial-resume-preparation-20261002-manifest.json"
+    archive = ROOT / "results/a3-serial-resume-preparation-20261002.tar.gz"
+    assert not manifest.exists() and not archive.exists()
+    manifest.write_text(
+        json.dumps(
+            {
+                "utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                "closed_CPU_runs": runs,
+                "queued_iteration": "a3-serial-iteration-20261002-r4",
+                "GPU_scope": "NOT_A_GPU_RESULT_ARCHIVE",
+                "GPU_correctness_performance_model_success": "NOT_CLAIMED",
+                "service_final": "inactive",
+                "files": [{"path": str(path.relative_to(ROOT)), "sha256": sha(path), "bytes": path.stat().st_size} for path in files],
+            },
+            indent=2,
+        )
+        + "\n"
+    )
+    with tarfile.open(archive, "w:gz") as tar:
+        for path in files + [manifest]:
+            tar.add(path, arcname=str(path.relative_to(ROOT)), recursive=False)
+    print(
+        json.dumps(
+            {
+                "archive": str(archive),
+                "sha256": sha(archive),
+                "bytes": archive.stat().st_size,
+                "payload_files": len(files),
+                "manifest": str(manifest.relative_to(ROOT)),
+                "manifest_sha256": sha(manifest),
+            }
+        ),
+        flush=True,
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

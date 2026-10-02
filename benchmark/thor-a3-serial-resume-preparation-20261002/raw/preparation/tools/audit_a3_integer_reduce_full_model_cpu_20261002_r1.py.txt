@@ -1,0 +1,147 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""CPU audit actual whole-logit native control; distinguish audit0 from quality."""
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+import torch as t
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(p):
+    h = hashlib.sha256()
+    with Path(p).open("rb") as f:
+        for b in iter(lambda: f.read(4194304), b""):
+            h.update(b)
+    return h.hexdigest()
+
+
+def info(x):
+    return {"shape": list(x.shape), "dtype": str(x.dtype), "sha256": hashlib.sha256(x.contiguous().flatten().view(t.uint8).numpy().tobytes()).hexdigest()}
+
+
+def eq(a, b):
+    return t.equal(a.contiguous().flatten().view(t.uint8), b.contiguous().flatten().view(t.uint8))
+
+
+def metrics(a, b):
+    af, bf = a.float(), b.float()
+    ad, bd = a.double(), b.double()
+    assert t.isfinite(ad).all() and t.isfinite(bd).all()
+    return {
+        "byte_equal": eq(a, b),
+        "different_values": int((a != b).sum()),
+        "max_abs": float((af - bf).abs().max()),
+        "relative_l2": float(t.linalg.vector_norm(af - bf) / t.linalg.vector_norm(bf).clamp_min(1e-12)),
+        "relative_l2_fp64": float(t.linalg.vector_norm(ad - bd) / t.linalg.vector_norm(bd)),
+        "argmax_equal_fraction": float((a.argmax(-1) == b.argmax(-1)).float().mean()),
+    }
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--input", required=True)
+    ap.add_argument("--out", required=True)
+    a = ap.parse_args()
+    src = Path(a.input)
+    out = Path(a.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    run = json.loads(src.with_name(src.name + "-launch").joinpath("run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    model = src / "candidate/model"
+    m = json.loads((model / "result.json").read_text())
+    assert m["source_head"] == "b57c65f1a1b60c2405e1e04c6b5ec6c6b2903bb5"
+    assert m["model_parameters"] == 1334628352 and m["experts"] == 32 and m["topk"] == 8
+    assert m["native_main_calls"] == m["native_repair_calls"] == 72 and m["native_postprocess_kernel_launches"] == 216
+    assert m["weight_plan_generations"] == [1] * 24 and m["weight_plan_encoded_owners_normal_version_tracked"]
+    assert m["original_baseline_replaced"] is False and m["declared_oracle_replaced"] is False and m["input_ids_regenerated_from_current_date"] is False
+    assert m["original_baseline_head"] == "7bfeda6bfeaa63a1e59fadc5d9fb48676f03f744"
+    assert sha(model / "outputs.pt") == m["outputs_sha256"]
+    for p, h in m["files"].items():
+        assert sha(p) == h
+    for v in m["imports"].values():
+        assert sha(v["path"]) == v["sha256"] and Path(v["path"]).resolve().is_relative_to(Path(m["source"]) / "python")
+    assert sha(m["native_binary"]["path"]) == m["native_binary"]["sha256"]
+    base = ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001"
+    fixed = ROOT / "results/a3-mxfp8-bf16-staged-full-model-20261001-r1"
+    assert sha(base / "outputs.pt") == m["original_baseline_outputs_sha256"] == "a997dac0bbd8b137ecbf7ddbefc5f356c2633d75a9d3cde1d035335cb028440f"
+    assert sha(fixed / "outputs.pt") == m["prior_failed_control_outputs_sha256"] == "96dcdce434fd9efce3bc3045097725eb1024cdfeb68a68cadbddc78306b3babe"
+    assert sha(base / "input-token-ids.json") == m["original_input_tokens_json_sha256"]
+    bv = t.load(base / "outputs.pt", map_location="cpu", weights_only=True)
+    fv = t.load(fixed / "outputs.pt", map_location="cpu", weights_only=True)
+    values = t.load(model / "outputs.pt", map_location="cpu", weights_only=True)
+    assert len(values) == 12
+    oldids = json.loads((base / "input-token-ids.json").read_text())
+    cases = [oldids["prompts"][0], oldids["prompts"][1], oldids["workloads"]["256"]]
+    rows = []
+    for i, tokens in enumerate([73, 70, 256]):
+        ids = values[f"{i}/input_ids"]
+        oracle = values[f"{i}/reference"]
+        native = values[f"{i}/native"]
+        flags = values[f"{i}/flag_counts"]
+        assert eq(ids, t.tensor(cases[i], dtype=t.int64)) and info(ids) == m["input_tokens"][i]
+        assert oracle.shape == native.shape == bv[f"forward_{i}_stock"].shape == (1, tokens, 49155)
+        assert eq(oracle, fv[f"k32_mxfp8_dot_bf16_stage/{i}/reference"])
+        assert flags.shape == (24, 3) and flags.dtype == t.int64 and (flags >= 0).all() and (flags[:, 2] == 0).all()
+        assert (flags.sum(-1) == tokens * 8 * 1024).all()
+        oe, be = metrics(native, oracle), metrics(native, bv[f"forward_{i}_stock"])
+        producer = m["rows"][i]
+        for actual, expected in [(oe, producer["native_oracle"]), (be, producer["native_bf16"])]:
+            assert all(actual[k] == expected[k] for k in ["max_abs", "relative_l2", "argmax_equal_fraction"])
+        assert producer["native_oracle_byte_equal"] == oe["byte_equal"] and producer["flag_counts_per_layer"] == flags.tolist()
+        assert producer["oracle_gate_pass"] == (oe["relative_l2"] <= 0.01) and producer["bf16_gate_pass"] == (be["relative_l2"] <= 0.05)
+        assert (oe["relative_l2_fp64"] <= 0.01) == producer["oracle_gate_pass"] and (be["relative_l2_fp64"] <= 0.05) == producer["bf16_gate_pass"]
+        row = {
+            "case": i,
+            "input_tokens": tokens,
+            "native_oracle": oe,
+            "native_original_bf16": be,
+            "oracle_gate_pass": producer["oracle_gate_pass"],
+            "bf16_gate_pass": producer["bf16_gate_pass"],
+            "oracle_byte_equal_to_original_fixed": True,
+            "flags": flags.sum(0).tolist(),
+            "ambiguous_fraction": float(flags[:, 1].sum().double() / flags.sum().double()),
+            "native_main_calls": 24,
+            "native_repair_calls": 24,
+        }
+        rows.append(row)
+        print(json.dumps(row), flush=True)
+    passed = all(v["oracle_gate_pass"] and v["bf16_gate_pass"] for v in rows)
+    assert passed == m["all_three_cases_both_gates"] and not t.cuda.is_initialized()
+    result = {
+        "stage": "INDEPENDENT_INTEGER_REDUX_FULL24_NATIVE_CONTROL_AUDIT_COMPLETE",
+        "quality_all_three_cases_both_gates": passed,
+        "head": m["source_head"],
+        "producer_run": run,
+        "producer_result_sha256": sha(model / "result.json"),
+        "producer_outputs_sha256": m["outputs_sha256"],
+        "tensor_count": len(values),
+        "tensors": {k: info(v) for k, v in values.items()},
+        "rows": rows,
+        "native_main_calls": 72,
+        "native_repair_calls": 72,
+        "native_postprocess_kernel_launches": 216,
+        "cuda_initialized": False,
+        "new_native_calls": 0,
+        "harness_sha256": sha(__file__),
+        "original_baseline_outputs_sha256": m["original_baseline_outputs_sha256"],
+        "original_fixed_oracle_outputs_sha256": m["prior_failed_control_outputs_sha256"],
+        "original_token_ids_json_sha256": m["original_input_tokens_json_sha256"],
+        "generation_kv": "NOT_RUN",
+        "formal_performance": "NOT_RUN",
+        "accepted_optimization": False,
+        "limits": "Independent full12 saved tensor/hash/metrics/gate audit of actual whole-logit input forward. New five boundary cases are at current a24, original baseline7b/fixed oracle741 unchanged. Actual native integer repair can be costly; success here is not generation/KV, throughput, efficient/public feature or completed A3 optimization.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"stage": result["stage"], "quality_pass": passed, "tensor_count": 12}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

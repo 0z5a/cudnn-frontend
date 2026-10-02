@@ -1,0 +1,54 @@
+{
+  "parent_run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latestb1fe_iteration_coordinator_20261002_r2.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latestb1fe-iteration-20261002-r2",
+      "--lock-wait-seconds",
+      "7200"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-02T02:21:17.679375+00:00",
+    "deadline_seconds": 18000.0,
+    "status": "EXITED",
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "returncode": 75,
+    "signal": null,
+    "elapsed_seconds": 7537.329531704003
+  },
+  "parent_run_sha256": "2c607f55b03e027fefbda5e3faf0f11b554837401955ce78bf8a80564e50c5b4",
+  "parent_scope": {
+    "stage": "NOT_RUN_NEXT_SHARED_LOCK_BUSY",
+    "cached_parent_audit_pass": false,
+    "latest_fresh_native_build_done": true,
+    "torch_imported": false
+  },
+  "prior_native_provenance_sha256": "b1a05300315b5016a0e6c4bbf37f2a80aa0dbea59aef1846b486b0e31d94383b",
+  "prior_fresh_native_build": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestb1fe/bin/python",
+      "-m",
+      "pip",
+      "install",
+      "--no-deps",
+      "--no-build-isolation",
+      "-e",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestb1fe"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatestb1fe",
+    "started_utc": "2026-10-02T02:21:40.006731+00:00",
+    "deadline_seconds": 3600.0,
+    "status": "EXITED",
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 288.4336155819983
+  },
+  "new_CPU_build": "NOT_RUN_REUSE_ALREADY_COMPLETED",
+  "torch_imported": false
+}

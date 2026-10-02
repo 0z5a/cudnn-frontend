@@ -1,0 +1,231 @@
+{
+  "stage": "PREPARED_ROUTE_INPUT_AND_MAIN_CONTRACT_CPU_AUDIT_COMPLETE_GPU_NOT_RUN",
+  "qualified_case_count": 5,
+  "expected_per_arm_repair_calls_NOT_EXECUTED": 46,
+  "expected_per_arm_postprocess_launches_NOT_EXECUTED": 103,
+  "valid_route_inputs_checked": 637,
+  "invalid_int64_route_inputs_checked": 65,
+  "independent_padded_expert_associations": [
+    {
+      "case": "saved_first_expert",
+      "full_rows": 256,
+      "policies": [
+        {
+          "policy": "tile_edges",
+          "live": 8,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "reverse_tile_edges",
+          "live": 8,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "duplicates",
+          "live": 14,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "changed_same_route_storage",
+          "live": 8,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "mixed_invalid_destination",
+          "live": 8,
+          "invalid_int64_routes": 7
+        },
+        {
+          "policy": "mixed_invalid_expert",
+          "live": 8,
+          "invalid_int64_routes": 6
+        },
+        {
+          "policy": "empty_live",
+          "live": 0,
+          "invalid_int64_routes": 0
+        }
+      ]
+    },
+    {
+      "case": "changed_input_weight_and_live_rows",
+      "full_rows": 256,
+      "policies": [
+        {
+          "policy": "tile_edges",
+          "live": 8,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "reverse_tile_edges",
+          "live": 8,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "duplicates",
+          "live": 14,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "changed_same_route_storage",
+          "live": 8,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "mixed_invalid_destination",
+          "live": 8,
+          "invalid_int64_routes": 7
+        },
+        {
+          "policy": "mixed_invalid_expert",
+          "live": 8,
+          "invalid_int64_routes": 6
+        },
+        {
+          "policy": "empty_live",
+          "live": 0,
+          "invalid_int64_routes": 0
+        }
+      ]
+    },
+    {
+      "case": "ragged_e31_n128",
+      "full_rows": 512,
+      "policies": [
+        {
+          "policy": "tile_edges",
+          "live": 16,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "reverse_tile_edges",
+          "live": 16,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "duplicates",
+          "live": 22,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "changed_same_route_storage",
+          "live": 16,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "mixed_invalid_destination",
+          "live": 16,
+          "invalid_int64_routes": 7
+        },
+        {
+          "policy": "mixed_invalid_expert",
+          "live": 16,
+          "invalid_int64_routes": 6
+        },
+        {
+          "policy": "empty_live",
+          "live": 0,
+          "invalid_int64_routes": 0
+        }
+      ]
+    },
+    {
+      "case": "ragged_e33_n256",
+      "full_rows": 512,
+      "policies": [
+        {
+          "policy": "tile_edges",
+          "live": 16,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "reverse_tile_edges",
+          "live": 16,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "duplicates",
+          "live": 22,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "changed_same_route_storage",
+          "live": 16,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "mixed_invalid_destination",
+          "live": 16,
+          "invalid_int64_routes": 7
+        },
+        {
+          "policy": "mixed_invalid_expert",
+          "live": 16,
+          "invalid_int64_routes": 6
+        },
+        {
+          "policy": "empty_live",
+          "live": 0,
+          "invalid_int64_routes": 0
+        }
+      ]
+    },
+    {
+      "case": "granite_decode_e32_n1024_top8",
+      "full_rows": 2048,
+      "policies": [
+        {
+          "policy": "tile_edges",
+          "live": 64,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "reverse_tile_edges",
+          "live": 64,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "duplicates",
+          "live": 70,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "changed_same_route_storage",
+          "live": 64,
+          "invalid_int64_routes": 0
+        },
+        {
+          "policy": "mixed_invalid_destination",
+          "live": 64,
+          "invalid_int64_routes": 7
+        },
+        {
+          "policy": "mixed_invalid_expert",
+          "live": 64,
+          "invalid_int64_routes": 6
+        },
+        {
+          "policy": "empty_live",
+          "live": 0,
+          "invalid_int64_routes": 0
+        }
+      ]
+    }
+  ],
+  "original_boundary_main_AST_unchanged": true,
+  "mutation_main_original_precision_tiling_stream_AST_unchanged": true,
+  "torch_imported": false,
+  "new_native_calls": 0,
+  "GPU_correctness": "NOT_RUN",
+  "stream_reuse_correctness": "NOT_RUN",
+  "full_model": "NOT_RUN",
+  "paired_performance": "NOT_RUN",
+  "accepted_optimization": false,
+  "files": {
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_route_probe_preparation_cpu_20261002_r1.py": "4bbe3ecde455ec1c5697a001f67d05f942309b10f240bb3460d0cf6d8bcdff4f",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_route_decode_reuse_probe_prepared_20261002_r1.py": "a2c2dd01088653c937f5794d58f63f30dfee8d0898fc7fd225bf9edca4e0c75d",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_route_boundary_prepared_20261002_r1.py": "75c3244fbb982ed33d5cb00f11e0e8d6b4d6990ffd21453816477ba489c0f44a",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_boundary_queued_20261002_r8.py": "d4b0b0010a6e6467c053a49a90e1a7f470d623862650b3d1b7e42549d4eadb4e",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-weight-plan-20261002-r1/candidate/boundaries/result.json": "1997902393954094fa8a515fc0911d7349a3d40090ef10409a754e7dff302233"
+  }
+}

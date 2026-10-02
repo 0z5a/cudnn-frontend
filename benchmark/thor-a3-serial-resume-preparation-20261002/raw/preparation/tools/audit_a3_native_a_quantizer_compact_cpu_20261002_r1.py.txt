@@ -1,0 +1,167 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""CPU-only source/numeric proof for discarded native-A quantization work.
+
+Execute the actual frozen pure Torch quantizers without importing the CUDA model
+worker. This proves CPU output bytes and removed dequantize calls, not GPU model
+correctness, supported kernel geometry, or any performance improvement.
+"""
+
+import argparse
+import ast
+import copy
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+from types import SimpleNamespace
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+import torch as t
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def raw(value):
+    return value.contiguous().view(t.uint8).numpy().tobytes()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    tools = Path(__file__).parent
+    original = tools / "a3_mxfp8_bf16_staged_full_model_worker_20261001.py"
+    primitive = tools / "a3_model_e2e_mergefix_20261001.py"
+    helper = tools / "a3_native_a_quantizer_compact_20261002_r1.py"
+    assert sha(original) == "62304d6cc59fc2b604a19efe1c60c075e0737c6898de191404e4bbb6baf057d1"
+    sources = {str(path): sha(path) for path in (original, primitive, helper, Path(__file__))}
+    assert not t.cuda.is_initialized() and os.environ["CUDA_VISIBLE_DEVICES"] == ""
+    t.set_num_threads(2)
+    old = next(x for x in ast.parse(original.read_text()).body if isinstance(x, ast.FunctionDef) and x.name == "expanded_quantize")
+    new = next(x for x in ast.walk(ast.parse(helper.read_text())) if isinstance(x, ast.FunctionDef) and x.name == "expanded_quantize_native_a")
+    expected = copy.deepcopy(old.body[:-2])
+    expected.append(ast.Return(value=ast.Tuple(elts=copy.deepcopy(old.body[-1].value.elts[:3]), ctx=ast.Load())))
+    assert [ast.dump(x, include_attributes=False) for x in expected] == [ast.dump(x, include_attributes=False) for x in new.body[1:]]
+    functions = [x for x in ast.parse(primitive.read_text()).body if isinstance(x, ast.FunctionDef) and x.name in ("quantize_mxfp8", "dequantize")]
+    assert len(functions) == 2
+    namespace = {"torch": t}
+    exec(compile(ast.Module(body=functions, type_ignores=[]), str(primitive), "exec"), namespace)
+    dequantize = namespace["dequantize"]
+    counts = {"dequantize": 0}
+
+    def counted_dequantize(*values):
+        counts["dequantize"] += 1
+        return dequantize(*values)
+
+    m = SimpleNamespace(quantize_mxfp8=namespace["quantize_mxfp8"], dequantize=counted_dequantize)
+    original_namespace = {"m": m, "t": t, "quantize": m.quantize_mxfp8, "K_BLOCK": 32}
+    exec(compile(ast.Module(body=[old], type_ignores=[]), str(original), "exec"), original_namespace)
+    q = SimpleNamespace(m=m, t=t, quantize=m.quantize_mxfp8, K_BLOCK=32, expanded_quantize=original_namespace["expanded_quantize"])
+    spec = importlib.util.spec_from_file_location("a3_cpu_compact_quantizer", helper)
+    candidate = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(candidate)
+    compact = candidate.prepare_native_a(q)
+    original_object, quantizer_object = q.expanded_quantize, m.quantize_mxfp8
+    tiny = t.finfo(t.bfloat16).tiny
+    maximum = t.finfo(t.bfloat16).max
+    patterns = t.tensor([0.0, -0.0, tiny / 128, -tiny / 128, tiny, -tiny, maximum, -maximum, 448.0, -448.0, 1.0, -1.0])
+    rows = []
+    generator = t.Generator().manual_seed(20261002)
+    for shape in ((128, 1024), (256, 1024), (512, 1024), (2, 256, 1024)):
+        for dtype in (t.bfloat16, t.float32):
+            for kind in ("zero_signed", "finite_extremes", "changed_noncontiguous"):
+                if kind == "zero_signed":
+                    value = t.zeros(shape, dtype=dtype)
+                    value.reshape(-1)[1::2] = -0.0
+                elif kind == "finite_extremes":
+                    value = (
+                        patterns.repeat((t.tensor(shape).prod().item() + patterns.numel() - 1) // patterns.numel())[: t.tensor(shape).prod().item()]
+                        .reshape(shape)
+                        .to(dtype)
+                    )
+                else:
+                    base = t.randn((*shape[:-1], shape[-1] * 2), dtype=t.float32, generator=generator).to(dtype)
+                    value = base[..., ::2]
+                    assert not value.is_contiguous()
+                for generation in (1, 2):
+                    if generation == 2:
+                        value.copy_(-value)
+                    before = raw(value)
+                    counts["dequantize"] = 0
+                    reference = q.expanded_quantize(value, "A")
+                    old_calls = counts["dequantize"]
+                    counts["dequantize"] = 0
+                    actual = compact(value, "A")
+                    new_calls = counts["dequantize"]
+                    assert old_calls == 3 and new_calls == 1 and len(actual) == 3 and len(reference) == 4
+                    assert raw(value) == before and q.expanded_quantize is original_object and m.quantize_mxfp8 is quantizer_object
+                    outputs = []
+                    for field, a, b in zip(("encoded_a", "physical_sfa", "logical_scale"), actual, reference[:3], strict=True):
+                        assert a.shape == b.shape and a.dtype == b.dtype and raw(a) == raw(b)
+                        assert a.data_ptr() != b.data_ptr()
+                        outputs.append(
+                            {"field": field, "shape": list(a.shape), "dtype": str(a.dtype), "sha256": hashlib.sha256(raw(a)).hexdigest(), "bytes": len(raw(a))}
+                        )
+                    rows.append(
+                        {
+                            "shape": list(shape),
+                            "dtype": str(dtype),
+                            "kind": kind,
+                            "generation": generation,
+                            "input_sha256": hashlib.sha256(before).hexdigest(),
+                            "reference_dequantize_calls": old_calls,
+                            "compact_dequantize_calls": new_calls,
+                            "outputs": outputs,
+                        }
+                    )
+    rejected = []
+    for shape in ((127, 1024), (256, 1000), (0, 1024)):
+        errors = []
+        for fn in (original_object, compact):
+            try:
+                fn(t.zeros(shape, dtype=t.bfloat16), "A")
+            except (AssertionError, RuntimeError, IndexError) as exc:
+                errors.append(type(exc).__name__)
+            else:
+                errors.append("SUCCEEDED")
+        assert errors[0] == errors[1] and errors[0] != "SUCCEEDED"
+        rejected.append({"shape": list(shape), "errors": errors})
+    try:
+        compact(t.zeros((128, 1024), dtype=t.bfloat16), "B")
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("Private native-A factory must reject B")
+    result = {
+        "stage": "CPU_COMPACT_NATIVE_A_BYTE_AND_SOURCE_PROOF_NOT_GPU_OR_MODEL_SUCCESS",
+        "files": sources,
+        "torch": t.__version__,
+        "torch_git": t.version.git_version,
+        "cuda_initialized": t.cuda.is_initialized(),
+        "cuda_visible_devices": os.environ["CUDA_VISIBLE_DEVICES"],
+        "new_native_calls": 0,
+        "new_GPU_calls": 0,
+        "paired_cases": len(rows),
+        "paired_tensor_buffers": 3 * len(rows),
+        "rows": rows,
+        "invalid_geometry": rejected,
+        "original_B_and_reference_function_object_unchanged": True,
+        "AST_change": "A-only guard, remove final unused effective assignment and fourth return element",
+        "GPU_boundary_stream_reuse_and_full_model_validation": "NOT_RUN",
+        "performance_claim": False,
+        "production_optimization_accepted": False,
+    }
+    assert not result["cuda_initialized"] and all(sha(path) == digest for path, digest in sources.items())
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({key: value for key, value in result.items() if key != "rows"}), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,101 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Execute frozen routed-A boundaries/reuse only under a verified parent flock."""
+
+import argparse
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "aab01504ad3ad97170d19087ce23bef48d95dfa0"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    assert "torch" not in sys.modules and os.environ["CUDA_VISIBLE_DEVICES"] == "0"
+    assert os.environ["CUDA_MODULE_LOADING"] == "EAGER"
+    holder, fd = (int(os.environ[name]) for name in ("A3_ITERATION_LOCK_HOLDER", "A3_ITERATION_LOCK_FD"))
+    assert Path(f"/proc/{holder}/fd/{fd}").stat().st_ino == Path("/tmp/codex-thor-perf.lock").stat().st_ino
+    fdinfo = Path(f"/proc/{holder}/fdinfo/{fd}").read_text()
+    assert "FLOCK ADVISORY WRITE" in " ".join(fdinfo.split())
+    assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+    native = json.loads((ROOT / "results/a3-latest-5f27-native-provenance-20261002.json").read_text())
+    assert native["head"] == HEAD and native["native_build"] == "REUSED_BYTE_IDENTICAL_ALL_NATIVE_INPUTS_UNCHANGED"
+    assert native["prior_fresh_native_build"]["status"] == "EXITED" and native["prior_fresh_native_build"]["returncode"] == 0
+    assert sha(native["binding"]["path"]) == native["binding"]["sha256"]
+    assert all(sha(Path(native["source"]) / row["path"]) == row["sha256"] for row in native["native_input_digests"])
+    args.expected_head, args.expected_source, args.expected_binding_sha = HEAD, native["source"], native["binding"]["sha256"]
+    tools, out = Path(__file__).parent, Path(args.out)
+    preparation = ROOT / "results/a3-route-probe-preparation-cpu-audit-20261002-r1"
+    terminal = json.loads(preparation.with_name(preparation.name + "-launch").joinpath("run.json").read_text())
+    assert terminal["status"] == "EXITED" and terminal["returncode"] == 0 and terminal["signal"] is None
+    proof = json.loads((preparation / "result.json").read_text())
+    assert not proof["torch_imported"] and proof["new_native_calls"] == 0
+    assert all(sha(path) == digest for path, digest in proof["files"].items())
+    paths = [
+        Path(__file__),
+        tools / "a3_guarded_rounding_route_boundary_prepared_20261002_r1.py",
+        tools / "a3_route_decode_reuse_probe_prepared_20261002_r1.py",
+    ]
+    frozen = {str(path): sha(path) for path in paths}
+    out.mkdir(exist_ok=False)
+    (out / "admission.json").write_text(
+        json.dumps(
+            {
+                "parent_flock_holder": holder,
+                "parent_flock_fd": fd,
+                "parent_flock_fdinfo_sha256": hashlib.sha256(fdinfo.encode()).hexdigest(),
+                "torch_imported": False,
+                "head": HEAD,
+                "files": frozen,
+            },
+            indent=2,
+        )
+        + "\n"
+    )
+    boundary = out / "boundaries"
+    boundary.mkdir()
+    load("a3_routed_A_boundaries", paths[1]).execute(args, boundary)
+    load("a3_routed_A_reuse", paths[2]).execute(args, boundary, out / "reuse_probe")
+    assert all(sha(path) == digest for path, digest in frozen.items())
+    assert all(sha(Path(native["source"]) / row["path"]) == row["sha256"] for row in native["native_input_digests"])
+    assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+    result = {
+        "stage": "ROUTED_A_NATIVE_BOUNDARIES_AND_REUSE_GPU_TERMINAL_NOT_MODEL_OR_SPEEDUP",
+        "head": HEAD,
+        "binding": native["binding"],
+        "files": frozen,
+        "child_results": {str(folder / "result.json"): sha(folder / "result.json") for folder in [boundary, out / "reuse_probe"]},
+        "independent_CPU_capture_audit": "PENDING",
+        "full_model": "NOT_RUN",
+        "generation_KV": "NOT_RUN",
+        "paired_performance": "NOT_RUN",
+        "accepted_optimization": False,
+        "service_final": "inactive",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

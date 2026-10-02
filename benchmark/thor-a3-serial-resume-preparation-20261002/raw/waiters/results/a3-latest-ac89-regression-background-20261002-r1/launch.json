@@ -1,0 +1,26 @@
+{
+  "pid": 689175,
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestac89/bin/python",
+    "/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-ac89-regression-20261002-r1-launch",
+    "--cwd",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "--timeout",
+    "18000",
+    "--",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestac89/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/run_a3_latest_ac89_regression_queued_20261002_r1.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-ac89-regression-20261002-r1",
+    "--lock-wait-seconds",
+    "7200",
+    "--core-terminal-wait-seconds",
+    "9000"
+  ],
+  "source_sha256": "0b56d18d2fabcef7c00b1000123a193532841dde4dab60cb0cd24ce94ce9d25a",
+  "stage": "DEPENDENCY_WAIT_BEFORE_SHARED_FLOCK",
+  "GPU_tests": "NOT_RUN",
+  "torch_imported": false
+}

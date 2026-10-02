@@ -1,0 +1,12 @@
+{
+  "archive_sha256": "3f1d505cedd25e8c29351edca80e10f61878a0e450422a2b60f012f1fdb68613",
+  "payload_files": 28,
+  "all_local_raw_bytes_SHA256_verified": true,
+  "all_three_actual_returncodes": [
+    75,
+    75,
+    75
+  ],
+  "GPU_executions": 0,
+  "service": "inactive"
+}

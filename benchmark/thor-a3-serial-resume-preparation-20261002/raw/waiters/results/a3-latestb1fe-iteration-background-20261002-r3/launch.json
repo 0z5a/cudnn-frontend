@@ -1,0 +1,49 @@
+{
+  "pid": 712389,
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+    "/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latestb1fe-iteration-20261002-r3-launch",
+    "--cwd",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "--timeout",
+    "18000",
+    "--",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latestb1fe_iteration_resume_20261002_r3.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latestb1fe-iteration-20261002-r3",
+    "--lock-wait-seconds",
+    "7200"
+  ],
+  "source_sha256": "5d7ddfbc52f99cc7569f80519c13b171122480392057da87249218dac5f30260",
+  "parent_run": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latestb1fe_iteration_coordinator_20261002_r2.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latestb1fe-iteration-20261002-r2",
+      "--lock-wait-seconds",
+      "7200"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-02T02:21:17.679375+00:00",
+    "deadline_seconds": 18000.0,
+    "status": "EXITED",
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "returncode": 75,
+    "signal": null,
+    "elapsed_seconds": 7537.329531704003
+  },
+  "parent_detail": {
+    "stage": "NOT_RUN_NEXT_SHARED_LOCK_BUSY",
+    "cached_parent_audit_pass": false,
+    "latest_fresh_native_build_done": true,
+    "torch_imported": false
+  },
+  "new_CPU_build": "NOT_RUN_PRIOR_BUILD_REUSED",
+  "GPU_stage": "QUEUED_BEFORE_SHARED_FLOCK"
+}

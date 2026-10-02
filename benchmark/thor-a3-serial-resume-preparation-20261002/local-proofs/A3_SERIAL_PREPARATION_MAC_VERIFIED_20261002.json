@@ -1,0 +1,10 @@
+{
+  "archive": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-resume-preparation-20261002.tar.gz",
+  "sha256": "6a5a9f642facc4df3bf8842c78285b45301cec4f7c057adba8007ed43928694a",
+  "bytes": 153459,
+  "payload_files": 64,
+  "manifest": "results/a3-serial-resume-preparation-20261002-manifest.json",
+  "manifest_sha256": "9163cc392845150d8dcdb87b0c8928e045b9833a909a4d89fd3517e4dc5c2fe9",
+  "all_Mac_payload_bytes_and_SHA256_verified": true,
+  "excludes_PT_models_caches_engines_binaries": true
+}

@@ -1,0 +1,22 @@
+{
+  "utc": "2026-10-02T06:54:21.675085+00:00",
+  "logger": 807143,
+  "workers": [
+    807144
+  ],
+  "ps": " 807144  807143 Ss   /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_serial_iteration_resume_20261002_r4.py --out /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r4 --lock-wait-seconds 43200\n",
+  "handles": {
+    "807143": {
+      "alive": true,
+      "torch_loaded": false,
+      "cuda_loaded": false,
+      "cmdline": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python /home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py --out /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r4-launch --cwd /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928 --timeout 63000 -- /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_serial_iteration_resume_20261002_r4.py --out /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r4 --lock-wait-seconds 43200 "
+    },
+    "807144": {
+      "alive": true,
+      "torch_loaded": false,
+      "cuda_loaded": false,
+      "cmdline": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_serial_iteration_resume_20261002_r4.py --out /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r4 --lock-wait-seconds 43200 "
+    }
+  }
+}

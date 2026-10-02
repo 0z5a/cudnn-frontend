@@ -1,0 +1,172 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Independently audit actual routed-A captures; CPU only, no GPU producer import."""
+
+import argparse
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+
+assert os.environ["CUDA_VISIBLE_DEVICES"] == ""
+import torch as t
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def same(a, b):
+    return a.shape == b.shape and a.dtype == b.dtype and t.equal(a.contiguous().flatten().view(t.uint8), b.contiguous().flatten().view(t.uint8))
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    assert not t.cuda.is_initialized()
+    source = ROOT / "results/a3-route-decode-latest5f27-gpu-20261002-r1"
+    terminal = json.loads(source.with_name(source.name + "-launch").joinpath("run.json").read_text())
+    assert terminal["status"] == "EXITED" and terminal["returncode"] == 0 and terminal["signal"] is None
+    boundary = source / "boundaries"
+    reuse = source / "reuse_probe"
+    bm, rm = (json.loads((folder / "result.json").read_text()) for folder in [boundary, reuse])
+    assert bm["source_head"] == rm["source_head"] == "aab01504ad3ad97170d19087ce23bef48d95dfa0"
+    assert sha(boundary / "outputs.pt") == bm["outputs_sha256"] == rm["boundary_capture"]["sha256"]
+    assert sha(reuse / "outputs.pt") == rm["outputs_sha256"]
+    assert rm["case_count"] == 46 and rm["per_arm_repair_calls"] == 46 and rm["per_arm_postprocess_kernel_launches"] == 103
+    assert rm["new_native_main_calls"] == 1 and len(rm["cross_module_owner_declines"]) == 5
+    assert rm["all_earlier_outputs_stable_after_all_cases_and_input_mutations"]
+    assert all(sha(path) == digest for path, digest in rm["frozen"].items())
+    helper_path = ROOT / "tools/diagnose_a3_fixed_window_cpu_20261001.py"
+    assert sha(helper_path) == "91533128b0e22ec3d65b5778c61aed4a9c4bf0d2d0cd4fccfa9d2d0579d84c97"
+    diagnostic = load("a3_route_reuse_independent_window", helper_path)
+    unpack_path = ROOT / "tools/audit_a3_route_decode_boundary_cpu_20261002_r1.py"
+    unpacker = load("a3_route_reuse_independent_physical_unpack", unpack_path)
+    original = t.load(boundary / "outputs.pt", map_location="cpu", weights_only=True)
+    capture = t.load(reuse / "outputs.pt", map_location="cpu", weights_only=True)
+    decoded = {}
+    for name, value in original.items():
+        if not isinstance(value, dict) or "a_codes" not in value:
+            continue
+        xa = unpacker.unpack(value["a_codes"], value["sfa"], value["sa"], "A")
+        wb = unpacker.unpack(value["b_codes"], value["sfb"], value["sb"], "B")
+        assert same(xa, value["effective_a"]) and same(wb, value["effective_b"])
+        decoded[name] = xa, wb
+    cases = {row["name"]: row for row in bm["rows"]}
+    checked, repaired, retained, invalid_total, comparisons, rows = 0, 0, 0, 0, 0, []
+    for record in rm["records"]:
+        name, policy = record["case"], record["policy"]
+        prefix = f"{name}/{policy}"
+        control = {key: capture[f"{prefix}/control/{key}"] for key in ["c", "flags", "d", "amax"]}
+        candidate = {key: capture[f"{prefix}/candidate/{key}"] for key in control}
+        assert all(same(candidate[key], control[key]) for key in candidate)
+        destinations, experts = capture[f"{prefix}/destinations"], capture[f"{prefix}/experts"]
+        assert destinations.dtype == experts.dtype == t.int64 and destinations.numel() == record["live"]
+        n, e = cases[name]["n"], cases[name]["experts"]
+        assert candidate["c"].shape == candidate["flags"].shape == (record["live"], n)
+        assert candidate["d"].shape == (record["live"], n // 2) and candidate["amax"].shape == (e,)
+        xa, wb = decoded[name]
+        native_c = original[name]["native_c"]
+        if policy == "mutated_A_same_storage":
+            xa = unpacker.unpack(capture[f"{prefix}/a_codes"], capture[f"{prefix}/sfa"], capture[f"{prefix}/sa"], "A")
+            assert same(xa, original["changed_input_weight_and_live_rows"]["effective_a"])
+            native_c = capture[f"{prefix}/native_c"]
+        valid = (destinations >= 0) & (destinations < record["rows"]) & (experts >= 0) & (experts < e)
+        bad = ~valid
+        invalid_total += int(bad.sum())
+        if bool(bad.any()):
+            assert (candidate["flags"][bad] == 2).all() and t.isnan(candidate["c"][bad]).all() and t.isnan(candidate["d"][bad]).all()
+        if bool(valid.any()):
+            idx = t.where(valid)[0]
+            x = xa[destinations[idx]].to(t.bfloat16).float()
+            w = wb.to(t.bfloat16).float()
+            for operand in [x, w]:
+                exponent = (operand.contiguous().view(t.int32) >> 23) & 255
+                assert not ((exponent == 0) & (operand != 0)).any()
+            predicted = t.empty((idx.numel(), n), dtype=t.float32)
+            for begin in range(0, predicted.numel(), 2048):
+                coords = t.arange(begin, min(begin + 2048, predicted.numel()))
+                route, column = coords // n, coords % n
+                xr, wr = x[route], w[experts[idx[route]], column]
+                products = xr.double() * wr.double()
+                raw = diagnostic.raw_exp(xr) + diagnostic.raw_exp(wr)
+                raw = t.where(products == 0, -10000, raw)
+                predicted.flatten()[coords] = diagnostic.fixed_window(products, raw, 25)
+            actual, flags = candidate["c"][idx], candidate["flags"][idx]
+            keep, repair = flags == 0, flags == 1
+            assert (keep | repair).all()
+            assert same(actual[repair], predicted[repair])
+            assert same(actual[keep], native_c[destinations[idx]][keep])
+            assert same(actual.to(t.bfloat16), predicted.to(t.bfloat16))
+            checked += actual.numel()
+            repaired += int(repair.sum())
+            retained += int(keep.sum())
+            if record.get("reference_comparison"):
+                assert same(candidate["c"].to(t.bfloat16), capture[f"{prefix}/comparison_only/c_bf16"])
+                assert same(candidate["d"], capture[f"{prefix}/comparison_only/d"])
+                assert same(candidate["amax"], capture[f"{prefix}/comparison_only/amax"])
+                comparisons += 1
+            elif policy.startswith("mixed_invalid_"):
+                edge_prefix = f"{name}/tile_edges"
+                edge_dest = capture[f"{edge_prefix}/destinations"].tolist()
+                select = t.tensor([edge_dest.index(int(value)) for value in destinations[idx]])
+                assert same(candidate["d"][idx], capture[f"{edge_prefix}/comparison_only/d"][select])
+        expected_amax = t.full((e,), -t.inf, dtype=t.float32)
+        for expert in range(e):
+            mask = experts == expert
+            if bool(mask.any()):
+                expected_amax[expert] = candidate["d"][mask].float().abs().max()
+        nan = t.isnan(expected_amax)
+        assert t.equal(nan, t.isnan(candidate["amax"])) and same(expected_amax[~nan], candidate["amax"][~nan])
+        rows.append(
+            {
+                "case": name,
+                "policy": policy,
+                "valid_rows": int(valid.sum()),
+                "invalid_rows": int(bad.sum()),
+                "native7_native9_all_outputs_byte_equal": True,
+                "independent_encoded_integer_C_and_retained_native_C": True,
+                "independent_AMAX_finite_bytes_and_NaN_semantics": True,
+            }
+        )
+    assert len(rows) == 46 and comparisons == 21 and checked == repaired + retained
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "INDEPENDENT_ROUTED_A_REUSE_CAPTURE_CPU_AUDIT_COMPLETE_NOT_MODEL_OR_SPEEDUP",
+        "actual_GPU_outer": terminal,
+        "case_count": len(rows),
+        "valid_C_words_checked": checked,
+        "repaired_FP32_words_checked": repaired,
+        "retained_native_FP32_words_checked": retained,
+        "invalid_int64_route_rows": invalid_total,
+        "original_geometry_BF16_reference_C_D_AMAX_comparisons": comparisons,
+        "rows": rows,
+        "files": {str(path): sha(path) for path in [Path(__file__), helper_path, unpack_path, boundary / "result.json", reuse / "result.json"]},
+        "cuda_initialized": False,
+        "new_native_calls": 0,
+        "full_model": "NOT_RUN",
+        "generation_KV": "NOT_RUN",
+        "paired_performance": "NOT_RUN",
+        "accepted_optimization": False,
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({key: result[key] for key in ["stage", "case_count", "valid_C_words_checked", "invalid_int64_route_rows"]}), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

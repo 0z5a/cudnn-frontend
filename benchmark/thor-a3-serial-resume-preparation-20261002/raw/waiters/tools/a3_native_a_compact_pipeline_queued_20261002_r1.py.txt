@@ -1,0 +1,161 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Await real latest31/cache7 E2E proofs, then serial compact-A GPU and CPU audit.
+
+This never edits or duplicates the current native8 pipeline. Its separate private
+optimization is admitted only after numerical qualification and one shared flock.
+No Torch import during dependency/lock waits, no automatic production promotion.
+"""
+
+import argparse
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+LOGGER = "/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py"
+HEAD = "b57c65f1a1b60c2405e1e04c6b5ec6c6b2903bb5"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def terminal(name):
+    run = json.loads((ROOT / "results" / (name + "-launch") / "run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    return run
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--out", required=True)
+    args = p.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    tools = Path(__file__).parent
+    names = [
+        Path(__file__).name,
+        "a3_native_a_compact_gpu_admitted_20261002_r1.py",
+        "a3_native_a_compact_full_model_generation_pair_20261002_r1.py",
+        "audit_a3_native_a_compact_full_model_generation_pair_cpu_20261002_r1.py",
+        "a3_native_a_quantizer_compact_20261002_r1.py",
+        "audit_a3_native_a_quantizer_compact_cpu_20261002_r1.py",
+        "a3_guarded_rounding_request_runtime_20261002_r3.py",
+        "a3_guarded_rounding_model_runtime_20261002_r4.py",
+        "a3_guarded_rounding_full_model_20261002_r8.py",
+        "a3_guarded_rounding_native_20261002_r7.py",
+        "a3_mxfp8_bf16_staged_full_model_worker_20261001.py",
+        "a3_all24_precision_probe_20261001.py",
+        "a3_model_e2e_mergefix_20261001.py",
+        "a3_mxfp8_bf16_staged_native_kernel_20261001.py",
+        "audit_a3_guard_pinned_model_cpu_20261002_r1.py",
+    ]
+    frozen = {str(tools / n): sha(tools / n) for n in names}
+    cpu_name = "a3-native-a-compact-cpu-audit-20261002-r1"
+    terminal(cpu_name)
+    cpu = json.loads((ROOT / "results" / cpu_name / "result.json").read_text())
+    assert cpu["paired_cases"] == 48 and cpu["paired_tensor_buffers"] == 144 and not cpu["cuda_initialized"] and cpu["new_native_calls"] == 0
+    assert all(sha(path) == digest for path, digest in cpu["files"].items())
+    (out / "frozen_inputs.json").write_text(
+        json.dumps({"head": HEAD, "files": frozen, "CPU_only_proof": cpu_name, "all_GPU_phases": "NOT_RUN"}, indent=2) + "\n"
+    )
+    dependencies = ("a3-weight-plan-generation-20261002-r4", "a3-weight-plan-generation-pair-cpu-audit-20261002-r4", "a3-latest-b1fe-regression-20261002-r1")
+    begin = time.monotonic()
+    while True:
+        assert "torch" not in sys.modules
+        seen = {}
+        for name in dependencies:
+            path = ROOT / "results" / (name + "-launch") / "run.json"
+            if path.exists():
+                seen[name] = json.loads(path.read_text())
+                if seen[name]["returncode"] != 0:
+                    (out / "result.json").write_text(
+                        json.dumps({"stage": "COMPACT_A_NOT_RUN_DEPENDENCY_NONZERO", "dependency": name, "run": seen[name], "torch_imported": False}) + "\n"
+                    )
+                    return 75
+        if len(seen) == len(dependencies):
+            break
+        if time.monotonic() - begin > 12000:
+            (out / "result.json").write_text(json.dumps({"stage": "COMPACT_A_NOT_RUN_DEPENDENCY_WAIT_EXPIRED", "seen": seen, "torch_imported": False}) + "\n")
+            return 75
+        time.sleep(2)
+    for name in dependencies:
+        terminal(name)
+    qualification = json.loads((ROOT / "results/a3-latest-b1fe-regression-20261002-r1/result.json").read_text())
+    assert qualification["head"] == HEAD and qualification["passed"] == 31 and qualification["skipped"] == 0 and qualification["actual_native_calls"] == 61
+    cache_audit = json.loads((ROOT / "results/a3-weight-plan-generation-pair-cpu-audit-20261002-r4/result.json").read_text())
+    assert cache_audit["quality_all_five_numeric_gates_pass"] and cache_audit["tensor_count"] == 56 and not cache_audit["cuda_initialized"]
+    python = ROOT / "venvs/a3sfdlatestb1fe/bin/python"
+    runs = []
+
+    def logged(name, script, gpu, timeout):
+        folder = ROOT / "results" / name
+        launch = folder.with_name(name + "-launch")
+        assert not folder.exists() and not launch.exists()
+        env = os.environ.copy()
+        env.update(CUDA_VISIBLE_DEVICES="0" if gpu else "", CUDA_MODULE_LOADING="EAGER", PYTHONPATH=str(ROOT / "a3sfdlatestb1fe/python"))
+        rc = subprocess.run(
+            [str(python), LOGGER, "--out", str(launch), "--cwd", str(ROOT), "--timeout", str(timeout), "--", str(python), str(script), "--out", str(folder)],
+            env=env,
+        ).returncode
+        run = json.loads((launch / "run.json").read_text())
+        assert run["status"] == "EXITED" and run["returncode"] == rc and run["signal"] is None
+        runs.append({"name": name, "run": run})
+        (out / "completed_runs.json").write_text(json.dumps(runs, indent=2) + "\n")
+        if rc:
+            raise RuntimeError(f"Actual private compact phase {name} failed rc{rc}; preserve its raw evidence")
+        return folder
+
+    with open("/tmp/codex-thor-perf.lock", "a") as lock:
+        begin = time.monotonic()
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() - begin > 3600:
+                    (out / "result.json").write_text(json.dumps({"stage": "COMPACT_A_NOT_RUN_SHARED_LOCK_BUSY", "torch_imported": False}) + "\n")
+                    return 75
+                time.sleep(1)
+        assert "torch" not in sys.modules and all(sha(path) == digest for path, digest in frozen.items())
+        os.environ.update(A3_ITERATION_LOCK_HOLDER=str(os.getpid()), A3_ITERATION_LOCK_FD=str(lock.fileno()))
+        (out / "admission.json").write_text(
+            json.dumps({"stage": "LOCK_ADMITTED_BEFORE_TORCH", "pid": os.getpid(), "wait_seconds": time.monotonic() - begin}) + "\n"
+        )
+        logged("a3-native-a-compact-latestb1fe-20261002-r1-gpu", tools / "a3_native_a_compact_gpu_admitted_20261002_r1.py", True, 3000)
+        folder = logged(
+            "a3-native-a-compact-full-model-generation-pair-cpu-audit-20261002-r1",
+            tools / "audit_a3_native_a_compact_full_model_generation_pair_cpu_20261002_r1.py",
+            False,
+            300,
+        )
+        proof = json.loads((folder / "result.json").read_text())
+        assert proof["quality_all_five_numeric_gates_pass"] and not proof["cuda_initialized"] and proof["new_native_calls"] == 0
+        assert all(sha(path) == digest for path, digest in frozen.items())
+        assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+        result = {
+            "stage": "COMPACT_NATIVE_A_PRIVATE_PIPELINE_ACTUAL_COMPLETE",
+            "head": HEAD,
+            "independent_CPU_audit_pass": True,
+            "comparisons": proof["comparisons"],
+            "all_GPU_scope": "24 mutation/two-stream A quantizer cases, 6 complete full forwards, 5 full32 numeric cases, 12 warm/timed requests",
+            "unchanged_default_K1024_quality": "HISTORICAL_FAILED",
+            "unchanged_passcode83_application_answer": False,
+            "accepted_production_optimization": False,
+            "runs": runs,
+            "files": frozen,
+            "service_final": "inactive",
+        }
+        (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps(result), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

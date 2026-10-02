@@ -1,0 +1,46 @@
+{
+  "utc": "2026-10-02T06:52:47.173086+00:00",
+  "logger": 807143,
+  "workers": [],
+  "handles": {
+    "807143": {
+      "alive": true,
+      "torch_loaded": false,
+      "cuda_loaded": false,
+      "cmdline": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python /home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py --out /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r4-launch --cwd /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928 --timeout 63000 -- /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_serial_iteration_resume_20261002_r4.py --out /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r4 --lock-wait-seconds 43200 "
+    }
+  },
+  "checks": {
+    "result.json": {
+      "exists": false,
+      "sha256": null
+    },
+    "admission.json": {
+      "exists": false,
+      "sha256": null
+    },
+    "completed_runs.json": {
+      "exists": false,
+      "sha256": null
+    },
+    "frozen_inputs.json": {
+      "exists": true,
+      "sha256": "7a6008c8477b353f9f4adc285771450259d5eb9a7b9a1bf63bc34218cd8a5d99"
+    },
+    "closed_predecessors.json": {
+      "exists": true,
+      "sha256": "730a5f1615caab197ccf0699ec8362afaa51c24d9571de427c49539271356064"
+    },
+    "prior_build_and_terminal_parent.json": {
+      "exists": true,
+      "sha256": "61127ca482add6a9639f276e1d40684b119572cce024b12bbb50475b672d20d3"
+    }
+  },
+  "outer_terminal": null,
+  "driver_tail": "",
+  "perf_lock_records": [
+    "26: FLOCK  ADVISORY  WRITE 545711 103:01:1048611 0 EOF",
+    "26: -> FLOCK  ADVISORY  WRITE 555938 103:01:1048611 0 EOF"
+  ],
+  "service": "inactive"
+}

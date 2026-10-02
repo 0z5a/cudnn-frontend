@@ -1,0 +1,107 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Archive only three genuinely closed, GPU-not-admitted A3 waiters."""
+
+import datetime
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import tarfile
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    jobs = [
+        (
+            "a3-latestb1fe-iteration-20261002-r3",
+            "a3-latestb1fe-iteration-background-20261002-r3",
+            "result.json",
+            [712389, 712397],
+            "NOT_RUN_NEXT_SHARED_LOCK_BUSY",
+            "a3_latestb1fe_iteration_resume_20261002_r3.py",
+        ),
+        (
+            "a3-latest-ac89-regression-20261002-r1",
+            "a3-latest-ac89-regression-background-20261002-r1",
+            "../a3-latest-ac89-regression-20261002-r1-admission/result.json",
+            [689175, 689193],
+            "NOT_RUN_SHARED_LOCK_BUSY",
+            "run_a3_latest_ac89_regression_queued_20261002_r1.py",
+        ),
+        (
+            "a3-native-a-compact-pipeline-20261002-r1",
+            "a3-native-a-compact-background-20261002-r1",
+            "result.json",
+            [653458, 653459],
+            "COMPACT_A_NOT_RUN_DEPENDENCY_WAIT_EXPIRED",
+            "a3_native_a_compact_pipeline_queued_20261002_r1.py",
+        ),
+    ]
+    records, files = [], [Path(__file__), ROOT / "tools/pack_a3_waiters_terminal_evidence_20261002_r1.py"]
+    for name, background, detail, pids, stage, source in jobs:
+        folder = ROOT / "results" / name
+        launch = folder.with_name(name + "-launch")
+        run = json.loads((launch / "run.json").read_text())
+        scope = json.loads((folder / detail).resolve().read_text())
+        assert run["status"] == "EXITED" and run["returncode"] == 75 and run["signal"] is None
+        assert scope["stage"] == stage and scope["torch_imported"] is False
+        assert all(not Path("/proc", str(pid)).exists() for pid in pids)
+        assert not (folder / "admission.json").exists() and not (folder / "completed_runs.json").exists()
+        directories = [folder, launch, ROOT / "results" / background]
+        if "ac89" in name:
+            directories.append(folder.with_name(name + "-admission"))
+        for directory in directories:
+            if not directory.exists():
+                assert "ac89" in name and directory == folder
+                continue
+            files.extend(path for path in directory.rglob("*") if path.is_file())
+        files.append(ROOT / "tools" / source)
+        records.append({"name": name, "actual_terminal": run, "scope": scope, "original_handles_dead": pids, "GPU_tests": "NOT_RUN"})
+    files = sorted(set(files))
+    assert all(not path.is_symlink() and path.suffix not in {".pt", ".so", ".safetensors", ".bundle", ".engine"} for path in files)
+    assert subprocess.run(["systemctl", "is-active", "vllm.service"], capture_output=True, text=True).stdout.strip() == "inactive"
+    stat = Path("/tmp/codex-thor-perf.lock").stat()
+    lock_rows = [line for line in Path("/proc/locks").read_text().splitlines() if line.split()[5 if "->" not in line else 6].endswith(":" + str(stat.st_ino))]
+    manifest = ROOT / "results/a3-waiters-terminal-evidence-20261002-manifest.json"
+    archive = ROOT / "results/a3-waiters-terminal-evidence-20261002.tar.gz"
+    assert not manifest.exists() and not archive.exists()
+    manifest.write_text(
+        json.dumps(
+            {
+                "utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                "records": records,
+                "perf_lock_records_at_archive": lock_rows,
+                "service_final": "inactive",
+                "files": [{"path": str(path.relative_to(ROOT)), "sha256": sha(path), "bytes": path.stat().st_size} for path in files],
+            },
+            indent=2,
+        )
+        + "\n"
+    )
+    with tarfile.open(archive, "w:gz") as tar:
+        for path in files + [manifest]:
+            tar.add(path, arcname=str(path.relative_to(ROOT)), recursive=False)
+    print(
+        json.dumps(
+            {
+                "archive": str(archive),
+                "sha256": sha(archive),
+                "bytes": archive.stat().st_size,
+                "payload_files": len(files),
+                "manifest": str(manifest.relative_to(ROOT)),
+                "manifest_sha256": sha(manifest),
+            }
+        ),
+        flush=True,
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

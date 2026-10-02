@@ -1,0 +1,321 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Independent CPU audit cached-weight-plan all56 tensors, all17 requests and unchanged gates."""
+
+import argparse
+import ast
+import hashlib
+import importlib.util
+import json
+import math
+import os
+from pathlib import Path
+import statistics
+import sys
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+import torch as t
+from transformers import AutoTokenizer
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+HEAD = "b57c65f1a1b60c2405e1e04c6b5ec6c6b2903bb5"
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def equal(a, b):
+    return t.equal(a.contiguous().flatten().view(t.uint8), b.contiguous().flatten().view(t.uint8))
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--out", required=True)
+    args = p.parse_args()
+    out = Path(args.out)
+    out.mkdir(exist_ok=False)
+    t.set_num_threads(4)
+    src = ROOT / "results/a3-native-a-compact-latestb1fe-20261002-r1-gpu"
+    run = json.loads(src.with_name(src.name + "-launch").joinpath("run.json").read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    folder = src / "e2e"
+    producer = json.loads((folder / "result.json").read_text())
+    assert producer["head"] == HEAD and producer["model_parameters"] == 1334628352 and producer["layers"] == 24 and producer["gemm_k"] == 4096
+    assert producer["experts"] == 32 and producer["topk"] == 8 and producer["hidden"] == 1024 and producer["intermediate"] == 512
+    assert not producer["original_forward_baseline_replaced"] and not producer["oracle_replaced"] and not producer["production_feature_accepted"]
+    for path, digest in producer["files"].items():
+        assert sha(path) == digest
+    for value in producer["imports"].values():
+        assert sha(value["path"]) == value["sha256"] and Path(value["path"]).resolve().is_relative_to(Path(producer["source"]) / "python")
+    helper = ROOT / "tools/audit_a3_guard_pinned_model_cpu_20261002_r1.py"
+    spec = importlib.util.spec_from_file_location("a3_independent_latest_generation_metrics", helper)
+    q = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = q
+    spec.loader.exec_module(q)
+
+    def forward_ast(name, normalize=False):
+        tree = ast.parse((ROOT / "tools" / name).read_text())
+        node = next(x for x in ast.walk(tree) if isinstance(x, ast.FunctionDef) and x.name == "forward")
+        if normalize:
+            for call in ast.walk(node):
+                if (
+                    isinstance(call, ast.Call)
+                    and isinstance(call.func, ast.Attribute)
+                    and isinstance(call.func.value, ast.Attribute)
+                    and call.func.value.attr == "repair_worker"
+                ):
+                    call.func.value = ast.Name(id="h", ctx=ast.Load())
+                    assert isinstance(call.args[0], ast.Attribute) and call.args[0].attr == "repair_module"
+                    call.args[0] = ast.Name(id="module", ctx=ast.Load())
+        return ast.dump(node, include_attributes=False)
+
+    actual = "a3_guarded_rounding_model_runtime_20261002_r4.py"
+    qualified = "a3_guarded_rounding_full_model_20261002_r8.py"
+    assert forward_ast(actual, True) == forward_ast(qualified)
+    assert forward_ast(actual) != forward_ast(qualified)
+    runtime_meta = json.loads((folder / "runtime/frozen_inputs.json").read_text())
+    assert runtime_meta["native_forward_literal_byte_identical_to_qualified_g8"] is False
+    assert runtime_meta["native_forward_math_except_explicit_module_and_wrapper_handles_ast_identical"] is True
+    assert producer["weight_plan_generations"] == [1] * 24
+    assert producer["weight_preparation_excluded_from_warmed_request_latency"] is True
+    assert producer["prepared_weight_native_kernel_launches"] == 24
+    prior_dir = ROOT / "results/a3-guard-pinned-generation-20261002-r1/e2e"
+    prior = json.loads((prior_dir / "result.json").read_text())
+    assert sha(prior_dir / "outputs.pt") == producer["prior_frozen_generation_outputs_sha256"] == prior["outputs_sha256"]
+    old = t.load(prior_dir / "outputs.pt", map_location="cpu", weights_only=True)
+    assert sha(folder / "outputs.pt") == producer["outputs_sha256"]
+    values = t.load(folder / "outputs.pt", map_location="cpu", weights_only=True)
+    assert len(values) == 56
+    tokenizer = AutoTokenizer.from_pretrained("/home/jwipc/models/granite-3.1-1b-a400m-instruct-0da7a48b", local_files_only=True, trust_remote_code=False)
+    rows, keys = [], set()
+
+    def check_outputs(name, key, tokens):
+        ids, logits, flags = [values[key + "/" + field] for field in ("ids", "logits", "flags")]
+        keys.update(key + "/" + field for field in ("ids", "logits", "flags"))
+        assert ids.shape == (1, 32) and logits.shape == (1, 32, 49155) and flags.shape == (24, 32, 3)
+        assert ids.dtype == flags.dtype == t.int64 and t.isfinite(logits).all()
+        assert equal(ids, logits.argmax(-1)) and equal(ids, old[name + "/reference/ids"])
+        assert equal(logits, old[name + "/reference/logits"])
+        assert (flags >= 0).all() and (flags[:, :, 2] == 0).all()
+        assert (flags[:, 0].sum(-1) == tokens * 8 * 1024).all() and (flags[:, 1:].sum(-1) == 8 * 1024).all()
+        return ids, logits, flags
+
+    for row in producer["quality"]:
+        name, tokens = row["case"], row["input_tokens"]
+        keys.add(name + "/input_ids")
+        assert equal(values[name + "/input_ids"], old[name + "/input_ids"])
+        ids, logits, flags = check_outputs(name, name, tokens)
+        oe, be = q.metrics(logits, old[name + "/reference/logits"]), q.metrics(logits, old[name + "/stock_teacher/logits"])
+        for actual, expected in ((oe, row["native_oracle"]), (be, row["native_original_bf16_same_context"])):
+            assert all(actual[key] == expected[key] for key in ("max_abs", "relative_l2", "argmax_equal_fraction"))
+        assert row["same_context_for_numeric_gates"] and row["oracle_logits_byte_equal"] and row["oracle_ids_byte_equal"]
+        op, bp = oe["relative_l2"] <= 0.01, be["relative_l2"] <= 0.05
+        assert row["oracle_gate_pass"] == op and row["bf16_gate_pass"] == bp and op and bp
+        assert oe["relative_l2_fp64"] <= 0.01 and be["relative_l2_fp64"] <= 0.05
+        assert equal(ids, old[name + "/stock/ids"]) == row["original_stock_greedy_ids_byte_equal"]
+        decoded_ids = ids[0].tolist()
+        if tokenizer.eos_token_id in decoded_ids:
+            decoded_ids = decoded_ids[: decoded_ids.index(tokenizer.eos_token_id)]
+        decoded = tokenizer.decode(decoded_ids, skip_special_tokens=True).strip()
+        original = next(value for value in prior["quality"] if value["case"] == name)
+        app = bool(decoded) and (original["expected"] is None or original["expected"] in decoded.lower())
+        assert row["text"] == decoded == original["texts"]["native"] and row["prior_original_stock_text"] == original["texts"]["stock"]
+        assert row["application_answer_pass"] == app and row["application_answer_unchanged_from_prior"]
+        assert row["flag_totals"] == flags.sum((0, 1)).tolist() and row["cache_object_reused"] and row["cache_final_tokens"] == tokens + 31
+        assert row["native_main_calls"] == row["native_repair_calls"] == 768 and row["native_postprocess_kernel_launches"] == 2304
+        assert row["implementation"] == "compact_quantizer"
+        rows.append(
+            {
+                "case": name,
+                "native_oracle": oe,
+                "native_original_bf16_same_context": be,
+                "application_answer_pass": app,
+                "text": decoded,
+                "cache_final_tokens": row["cache_final_tokens"],
+            }
+        )
+    observations = producer["observations"]
+    assert len(observations) == 12
+    for i, row in enumerate(observations):
+        local = i % 6
+        stage, position, expected_arm = (
+            ("warmup", local, ("original_quantizer", "compact_quantizer")[local])
+            if local < 2
+            else ("timed", local - 2, ("original_quantizer", "compact_quantizer", "compact_quantizer", "original_quantizer")[local - 2])
+        )
+        assert row["stage"] == stage and row["position"] == position and row["implementation"] == expected_arm
+        assert row["input_tokens"] == (256 if i < 6 else 1024) and row["new_tokens"] == 32
+        check_outputs(row["case"], f"{row['case']}/{stage}/{position}", row["input_tokens"])
+        assert row["cache_object_reused"] and row["cache_final_tokens"] == row["input_tokens"] + 31
+        assert row["native_main_calls"] == row["native_repair_calls"] == 768 and row["native_postprocess_kernel_launches"] == (2304)
+        assert all(math.isfinite(row[key]) and row[key] > 0 for key in ("prefill_ms", "decode_ms", "request_ms"))
+        assert math.isclose(row["prefill_ms"] + row["decode_ms"], row["request_ms"], rel_tol=1e-12)
+        assert row["binary_sha256"] == producer["old_native_build" if expected_arm == "original_quantizer" else "new_native_build"]["binary"]["sha256"]
+    assert set(values) == keys
+    comparisons = []
+    for name in ("prefix256", "prefix1024"):
+        medians = {
+            arm: {
+                key: statistics.median(row[key] for row in observations if row["case"] == name and row["stage"] == "timed" and row["implementation"] == arm)
+                for key in ("prefill_ms", "decode_ms", "request_ms")
+            }
+            for arm in ("original_quantizer", "compact_quantizer")
+        }
+        comparisons.append(
+            {
+                "case": name,
+                "median_ms": medians,
+                "original_over_compact_request_ratio": medians["original_quantizer"]["request_ms"] / medians["compact_quantizer"]["request_ms"],
+            }
+        )
+    assert comparisons == producer["comparisons"] and producer["quality_all_five_numeric_gates_pass"]
+    assert not producer["application_all_five_answers_pass"] and sum(row["application_answer_pass"] for row in rows) == 4
+    assert producer["native_main_calls"] == producer["native_repair_calls"] == 17 * 768 and producer["native_postprocess_kernel_launches"] == 17 * 2304 == 39168
+    for field in ("old_native_build", "new_native_build"):
+        build = producer[field]
+        assert sha(build["binary"]["path"]) == build["binary"]["sha256"] and all(sha(path) == digest for path, digest in build["sources"].items())
+    extra_scope = audit_quant_and_full_forward(folder, producer, q)
+    assert not t.cuda.is_initialized()
+    result = {
+        "stage": "INDEPENDENT_COMPACT_NATIVE_A_FULL_GENERATION_PAIR_AUDIT_COMPLETE",
+        "head": HEAD,
+        "native_quantizer_and_full_forward_scope": extra_scope,
+        "quality_all_five_numeric_gates_pass": True,
+        "application_all_five_answers_pass": False,
+        "rows": rows,
+        "comparisons": comparisons,
+        "observations": observations,
+        "tensor_count": 56,
+        "tensors": {key: q.info(value) for key, value in values.items()},
+        "producer_run": run,
+        "producer_result_sha256": sha(folder / "result.json"),
+        "producer_outputs_sha256": producer["outputs_sha256"],
+        "prior_generation_outputs_sha256": prior["outputs_sha256"],
+        "native_main_calls": producer["native_main_calls"],
+        "native_repair_calls": producer["native_repair_calls"],
+        "native_postprocess_kernel_launches": producer["native_postprocess_kernel_launches"],
+        "actual_native_forward_literal_byte_identical": False,
+        "native_forward_math_except_explicit_module_and_wrapper_handles_ast_identical": True,
+        "factory_literal_byte_identity_label_is_correctly_false": True,
+        "weight_plan_generations": producer["weight_plan_generations"],
+        "prepared_weight_native_kernel_launches": producer["prepared_weight_native_kernel_launches"],
+        "weight_preparation_excluded_from_warmed_request_latency": True,
+        "raw_factory_metadata_preserved": True,
+        "cuda_initialized": False,
+        "new_native_calls": 0,
+        "harness_sha256": sha(__file__),
+        "metric_reference_sha256": sha(helper),
+        "accepted_production_feature": False,
+        "limits": "All56 actual tensors and17 full32 cached requests plus24 GPU quantization mutation/two-stream cases and six complete forwards checked against unchanged frozen oracle/stock references. Numerical gates1%/5% pass, original83 refusal remains an application failure. Two timed observations per private arm at each256/1024. Whole-model ratio compares original/compact native A quantization over the same cached7 private control with diagnostic reductions included and 24 one-time encoded-weight preparations excluded from warmed request latency, not original BF16/defaultK1024 throughput or completed optimization.",
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(
+        json.dumps(
+            {key: result[key] for key in ("stage", "quality_all_five_numeric_gates_pass", "application_all_five_answers_pass", "comparisons", "tensor_count")}
+        ),
+        flush=True,
+    )
+
+
+def audit_quant_and_full_forward(folder, producer, metrics):
+    qmeta = producer["native_a_quantization_boundary"]
+    assert qmeta == json.loads((folder / "quantization_boundary.json").read_text())
+    assert qmeta["cases"] == 24 and qmeta["tensor_count"] == 168 and qmeta["native_GEMM_calls"] == 0
+    assert qmeta["original_global_function_objects_unchanged"]
+    assert sha(folder / "quantization_outputs.pt") == qmeta["outputs_sha256"]
+    values = t.load(folder / "quantization_outputs.pt", map_location="cpu", weights_only=True)
+    assert len(values) == 168
+    keys = set()
+    for i, row in enumerate(qmeta["rows"]):
+        key = row["key"]
+        assert key == f"case{i}" and row["generation"] == i % 2 + 1
+        assert row["explicit_stream_index"] == row["generation"] - 1 and row["ambient_stream_restored"]
+        assert row["output_bytes_equal"] and row["output_buffers_distinct"]
+        keys.add(key + "/input")
+        inp = values[key + "/input"]
+        assert list(inp.shape) == row["shape"] and str(inp.dtype) == row["dtype"] and t.isfinite(inp).all()
+        if row["generation"] == 2:
+            assert equal(inp, -values[f"case{i-1}/input"])
+        for field in ("a", "sfa", "scale"):
+            first, second = f"{key}/original/{field}", f"{key}/compact/{field}"
+            keys.update((first, second))
+            a, b = values[first], values[second]
+            meta = next(x for x in row["outputs"] if x["name"] == field)
+            assert a.shape == b.shape and a.dtype == b.dtype and equal(a, b)
+            assert list(a.shape) == meta["shape"] and str(a.dtype) == meta["dtype"]
+            if field == "scale":
+                assert t.isfinite(a).all() and (a > 0).all()
+    assert keys == set(values)
+    assert qmeta["invalid_geometry"] == [
+        {"shape": [127, 1024], "errors": ["AssertionError", "AssertionError"]},
+        {"shape": [256, 1000], "errors": ["AssertionError", "AssertionError"]},
+        {"shape": [0, 1024], "errors": ["RuntimeError", "RuntimeError"]},
+    ]
+    original_path = ROOT / "tools/a3_mxfp8_bf16_staged_full_model_worker_20261001.py"
+    compact_path = ROOT / "tools/a3_native_a_quantizer_compact_20261002_r1.py"
+    original_fn = next(x for x in ast.parse(original_path.read_text()).body if isinstance(x, ast.FunctionDef) and x.name == "expanded_quantize")
+    compact_fn = next(x for x in ast.walk(ast.parse(compact_path.read_text())) if isinstance(x, ast.FunctionDef) and x.name == "expanded_quantize_native_a")
+    import copy
+
+    expected = copy.deepcopy(original_fn.body[:-2])
+    expected.append(ast.Return(value=ast.Tuple(elts=copy.deepcopy(original_fn.body[-1].value.elts[:3]), ctx=ast.Load())))
+    assert [ast.dump(x, include_attributes=False) for x in expected] == [ast.dump(x, include_attributes=False) for x in compact_fn.body[1:]]
+    override = producer["native_only_closure_override"]
+    assert override["original_B_and_reference_function_object_unchanged"] and override["original_m_quantize_object_unchanged"]
+    assert override["only_changed_cell"] == "q" and override["discarded_effective_now_none"]
+    runtime = ROOT / "tools/a3_guarded_rounding_model_runtime_20261002_r4.py"
+    code = compile(runtime.read_text(), str(runtime), "exec", dont_inherit=True)
+    from types import CodeType
+
+    prepare = next(x for x in code.co_consts if isinstance(x, CodeType) and x.co_name == "prepare")
+    forward = next(x for x in prepare.co_consts if isinstance(x, CodeType) and x.co_name == "forward")
+    digest = hashlib.sha256(forward.co_code).hexdigest()
+    assert len(override["rows"]) == 24
+    for row in override["rows"]:
+        assert row["freevars"] == list(forward.co_freevars) and row["code_bytecode_sha256"] == digest
+        assert row["changed_cell"] == "q" and row["same_code_and_globals"] and row["all_other_cells_same_object"]
+    forward_meta = producer["full_forward_probe"]
+    assert forward_meta == json.loads((folder / "full_forward_probe.json").read_text())
+    assert forward_meta["counts"] == [144, 144, 432] and forward_meta["tensor_count"] == 12
+    assert forward_meta["original_gates"] == {"fixed_oracle": 0.01, "original_BF16": 0.05} and not forward_meta["baseline_and_oracle_replaced"]
+    baseline = ROOT / "results/a3-model-repair-a3sfdlatest4-n256-20261001/outputs.pt"
+    oracle = ROOT / "results/a3-mxfp8-bf16-staged-full-model-20261001-r1/outputs.pt"
+    assert sha(baseline) == forward_meta["baseline_sha256"] == "a997dac0bbd8b137ecbf7ddbefc5f356c2633d75a9d3cde1d035335cb028440f"
+    assert sha(oracle) == forward_meta["oracle_sha256"] == "96dcdce434fd9efce3bc3045097725eb1024cdfeb68a68cadbddc78306b3babe"
+    original_bf16 = t.load(baseline, map_location="cpu", weights_only=True)
+    fixed_oracle = t.load(oracle, map_location="cpu", weights_only=True)
+    assert sha(folder / "forward_outputs.pt") == forward_meta["outputs_sha256"]
+    full = t.load(folder / "forward_outputs.pt", map_location="cpu", weights_only=True)
+    assert len(full) == 12 and len(forward_meta["rows"]) == 6
+    cases = []
+    for i, tokens in enumerate((73, 70, 256)):
+        stock, fixed = full[f"case{i}/original_bf16"], full[f"case{i}/fixed_oracle"]
+        assert equal(stock, original_bf16[f"forward_{i}_stock"])
+        assert equal(fixed, fixed_oracle[f"k32_mxfp8_dot_bf16_stage/{i}/reference"])
+        assert stock.shape == fixed.shape == (1, tokens, 49155)
+        for arm in ("original_quantizer", "compact_quantizer"):
+            value = full[f"case{i}/" + arm]
+            row = next(x for x in forward_meta["rows"] if x["case"] == i and x["implementation"] == arm)
+            oe, be = metrics.metrics(value, fixed), metrics.metrics(value, stock)
+            for a, b in ((oe, row["native_oracle"]), (be, row["native_original_bf16"])):
+                assert all(a[key] == b[key] for key in ("max_abs", "relative_l2", "argmax_equal_fraction"))
+            assert equal(value, fixed) and oe["relative_l2_fp64"] <= 0.01 and be["relative_l2_fp64"] <= 0.05
+            assert row["input_tokens"] == tokens and row["counts"] == [24, 24, 72] and row["oracle_bytes_equal"]
+            cases.append({"case": i, "implementation": arm, "native_oracle": oe, "native_original_bf16": be})
+    return {
+        "quantization_cases": 24,
+        "quantization_tensor_count": 168,
+        "full_forward_tensor_count": 12,
+        "full_forward_cases": cases,
+        "forward_original_body_bytecode_sha256": digest,
+        "only_changed_native_closure_cell": "q",
+        "original_B_reference_quantization_unchanged": True,
+        "same_native7_binary_both_arms": producer["old_native_build"]["binary"] == producer["new_native_build"]["binary"],
+        "new_native_calls": 0,
+        "production_feature_accepted": False,
+    }
+
+
+if __name__ == "__main__":
+    main()

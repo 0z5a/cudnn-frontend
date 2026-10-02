@@ -1,0 +1,252 @@
+{
+  "utc": "2026-10-02T06:32:48.932322+00:00",
+  "records": [
+    {
+      "name": "a3-latestb1fe-iteration-20261002-r3",
+      "actual_terminal": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_latestb1fe_iteration_resume_20261002_r3.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latestb1fe-iteration-20261002-r3",
+          "--lock-wait-seconds",
+          "7200"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+        "started_utc": "2026-10-02T04:28:21.169258+00:00",
+        "deadline_seconds": 18000.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 75,
+        "signal": null,
+        "elapsed_seconds": 7200.466909435003
+      },
+      "scope": {
+        "stage": "NOT_RUN_NEXT_SHARED_LOCK_BUSY",
+        "cached_parent_audit_pass": false,
+        "latest_fresh_native_build_done": true,
+        "new_CPU_build": "NOT_RUN_PRIOR_BUILD_REUSED",
+        "torch_imported": false
+      },
+      "original_handles_dead": [
+        712389,
+        712397
+      ],
+      "GPU_tests": "NOT_RUN"
+    },
+    {
+      "name": "a3-latest-ac89-regression-20261002-r1",
+      "actual_terminal": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestac89/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/run_a3_latest_ac89_regression_queued_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-ac89-regression-20261002-r1",
+          "--lock-wait-seconds",
+          "7200",
+          "--core-terminal-wait-seconds",
+          "9000"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+        "started_utc": "2026-10-02T03:55:07.538126+00:00",
+        "deadline_seconds": 18000.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": "0"
+        },
+        "returncode": 75,
+        "signal": null,
+        "elapsed_seconds": 9111.933101846007
+      },
+      "scope": {
+        "stage": "NOT_RUN_SHARED_LOCK_BUSY",
+        "torch_imported": false
+      },
+      "original_handles_dead": [
+        689175,
+        689193
+      ],
+      "GPU_tests": "NOT_RUN"
+    },
+    {
+      "name": "a3-native-a-compact-pipeline-20261002-r1",
+      "actual_terminal": {
+        "argv": [
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestb1fe/bin/python",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_native_a_compact_pipeline_queued_20261002_r1.py",
+          "--out",
+          "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-native-a-compact-pipeline-20261002-r1"
+        ],
+        "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+        "started_utc": "2026-10-02T03:00:12.836937+00:00",
+        "deadline_seconds": 21000.0,
+        "status": "EXITED",
+        "selected_env": {
+          "CUDA_VISIBLE_DEVICES": ""
+        },
+        "returncode": 75,
+        "signal": null,
+        "elapsed_seconds": 12001.501442581
+      },
+      "scope": {
+        "stage": "COMPACT_A_NOT_RUN_DEPENDENCY_WAIT_EXPIRED",
+        "seen": {},
+        "torch_imported": false
+      },
+      "original_handles_dead": [
+        653458,
+        653459
+      ],
+      "GPU_tests": "NOT_RUN"
+    }
+  ],
+  "perf_lock_records_at_archive": [
+    "26: FLOCK  ADVISORY  WRITE 545711 103:01:1048611 0 EOF",
+    "26: -> FLOCK  ADVISORY  WRITE 555938 103:01:1048611 0 EOF"
+  ],
+  "service_final": "inactive",
+  "files": [
+    {
+      "path": "results/a3-latest-ac89-regression-20261002-r1-admission/dependency.json",
+      "sha256": "0c9e30eb1501e20f8f8ccf0a270caf8333c18f0b6427f364dfc719991813df81",
+      "bytes": 854
+    },
+    {
+      "path": "results/a3-latest-ac89-regression-20261002-r1-admission/result.json",
+      "sha256": "46313790cea5ab14e35bd1c0a1b2854a693c31b917c8280d38296bf367e39db0",
+      "bytes": 63
+    },
+    {
+      "path": "results/a3-latest-ac89-regression-20261002-r1-launch/run.json",
+      "sha256": "175a29a2e388bea5de98f0cf8a6a26713418df1703895a141543da0e43582e17",
+      "bytes": 734
+    },
+    {
+      "path": "results/a3-latest-ac89-regression-20261002-r1-launch/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "results/a3-latest-ac89-regression-20261002-r1-launch/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "results/a3-latest-ac89-regression-background-20261002-r1/driver.log",
+      "sha256": "175a29a2e388bea5de98f0cf8a6a26713418df1703895a141543da0e43582e17",
+      "bytes": 734
+    },
+    {
+      "path": "results/a3-latest-ac89-regression-background-20261002-r1/launch.json",
+      "sha256": "8cae5ec1152933eff0aa2bdbd7fb75cc7b8678db7dd36401d988123a25db2bb9",
+      "bytes": 1054
+    },
+    {
+      "path": "results/a3-latestb1fe-iteration-20261002-r3/frozen_inputs.json",
+      "sha256": "567bd0616f4be4fac2737cdfcedb6946d6fd85214ce6c5ef408fa3321866d4bd",
+      "bytes": 5462
+    },
+    {
+      "path": "results/a3-latestb1fe-iteration-20261002-r3/predecessors.json",
+      "sha256": "a9410cb08f493c2fb6845f3f952e12866ea62a208df7bc09457190382d2f1552",
+      "bytes": 2668
+    },
+    {
+      "path": "results/a3-latestb1fe-iteration-20261002-r3/prior_build_and_terminal_parent.json",
+      "sha256": "61127ca482add6a9639f276e1d40684b119572cce024b12bbb50475b672d20d3",
+      "bytes": 1863
+    },
+    {
+      "path": "results/a3-latestb1fe-iteration-20261002-r3/result.json",
+      "sha256": "ad62aad5e8280dec1a951a309d1e2853772b321cc9e425b0537fedd0d2d45124",
+      "bytes": 190
+    },
+    {
+      "path": "results/a3-latestb1fe-iteration-20261002-r3-launch/run.json",
+      "sha256": "01f24294e6b9700ea9327b6434aa0c6ec31c4b68e7b94e8594edf01ad5441cda",
+      "bytes": 677
+    },
+    {
+      "path": "results/a3-latestb1fe-iteration-20261002-r3-launch/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "results/a3-latestb1fe-iteration-20261002-r3-launch/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "results/a3-latestb1fe-iteration-background-20261002-r3/driver.log",
+      "sha256": "01f24294e6b9700ea9327b6434aa0c6ec31c4b68e7b94e8594edf01ad5441cda",
+      "bytes": 677
+    },
+    {
+      "path": "results/a3-latestb1fe-iteration-background-20261002-r3/launch.json",
+      "sha256": "06cff68f0b8ff0aab372f8de0d6141199a40fc7218a786d12fa478a8f0cd8a24",
+      "bytes": 1907
+    },
+    {
+      "path": "results/a3-native-a-compact-background-20261002-r1/driver.log",
+      "sha256": "26f2e4c5d437b7d83a5c09458a2fc47f402abe9f9db3e4efa9bced57772acd13",
+      "bytes": 646
+    },
+    {
+      "path": "results/a3-native-a-compact-background-20261002-r1/pid.json",
+      "sha256": "42b7f935f4d40f72f7efb5410dcc043ec5d92d45da5e51ccee0bfdbbfc1052dd",
+      "bytes": 1206
+    },
+    {
+      "path": "results/a3-native-a-compact-pipeline-20261002-r1/frozen_inputs.json",
+      "sha256": "f8308f16d07ce7f1858d0a7fba29170f0c3345218ed3db8c8f929d95f396f9a5",
+      "bytes": 2887
+    },
+    {
+      "path": "results/a3-native-a-compact-pipeline-20261002-r1/result.json",
+      "sha256": "e40fc2c50ad60dd510b4d62ece44452c9f1a596b82464a5e6d2663537fc32973",
+      "bytes": 92
+    },
+    {
+      "path": "results/a3-native-a-compact-pipeline-20261002-r1-launch/run.json",
+      "sha256": "26f2e4c5d437b7d83a5c09458a2fc47f402abe9f9db3e4efa9bced57772acd13",
+      "bytes": 646
+    },
+    {
+      "path": "results/a3-native-a-compact-pipeline-20261002-r1-launch/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "results/a3-native-a-compact-pipeline-20261002-r1-launch/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "tools/a3_latestb1fe_iteration_resume_20261002_r3.py",
+      "sha256": "5d7ddfbc52f99cc7569f80519c13b171122480392057da87249218dac5f30260",
+      "bytes": 12719
+    },
+    {
+      "path": "tools/a3_native_a_compact_pipeline_queued_20261002_r1.py",
+      "sha256": "61bcfcd7d9e5d5eb24938cf1640f5574c8e86a3b417deb66e4b662b51528fc70",
+      "bytes": 8141
+    },
+    {
+      "path": "tools/pack_a3_waiters_terminal_evidence_20261002_r1.py",
+      "sha256": "b8d5c1f845eb972e4634598ee0bab7d46ef50cbf74f5bedf910cecc98de74b2a",
+      "bytes": 4458
+    },
+    {
+      "path": "tools/pack_a3_waiters_terminal_evidence_20261002_r2.py",
+      "sha256": "b401aa638453342aca4b076473ea0e075b4105f4d01e34892c37834b91a58459",
+      "bytes": 4610
+    },
+    {
+      "path": "tools/run_a3_latest_ac89_regression_queued_20261002_r1.py",
+      "sha256": "0b56d18d2fabcef7c00b1000123a193532841dde4dab60cb0cd24ce94ce9d25a",
+      "bytes": 7850
+    }
+  ]
+}

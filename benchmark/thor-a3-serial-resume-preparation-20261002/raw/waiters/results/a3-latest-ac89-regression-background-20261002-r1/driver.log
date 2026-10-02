@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatestac89/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/run_a3_latest_ac89_regression_queued_20261002_r1.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-ac89-regression-20261002-r1",
+    "--lock-wait-seconds",
+    "7200",
+    "--core-terminal-wait-seconds",
+    "9000"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-02T03:55:07.538126+00:00",
+  "deadline_seconds": 18000.0,
+  "status": "EXITED",
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": "0"
+  },
+  "returncode": 75,
+  "signal": null,
+  "elapsed_seconds": 9111.933101846007
+}
