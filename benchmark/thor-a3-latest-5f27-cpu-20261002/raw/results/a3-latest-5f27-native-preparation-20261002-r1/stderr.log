@@ -1,0 +1,6 @@
+Cloning into '/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest5f27'...
+/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3-latest-5f27-20261002-r2.bundle is okay
+From /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3-latest-5f27-20261002-r2.bundle
+ * branch            codex/a3-sfd-latest-5f27-20261002 -> FETCH_HEAD
+Previous HEAD position was b57c65f Merge verified upstream develop b1fe8a0f into A3 correctness
+HEAD is now at aab0150 Merge commit '5f27ff4f023e23c1d36261e4a2300cc1e4a9a2c6' into codex/a3-sfd-latest-5f27-20261002

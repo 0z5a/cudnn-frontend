@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "python3",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_reuse_a3_latest_5f27_20261002_r1.py"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-02T05:27:19.886083+00:00",
+  "deadline_seconds": 900.0,
+  "status": "EXITED",
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": ""
+  },
+  "returncode": 0,
+  "signal": null,
+  "elapsed_seconds": 41.910220877005486
+}

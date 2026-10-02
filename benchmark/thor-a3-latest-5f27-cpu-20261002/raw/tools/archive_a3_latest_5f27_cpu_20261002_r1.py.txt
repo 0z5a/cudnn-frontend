@@ -1,0 +1,94 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Preserve closed latest-source CPU preparation without models/binaries/cache."""
+
+import hashlib
+import json
+import shutil
+import subprocess
+import tarfile
+from pathlib import Path
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def main():
+    source = ROOT / "a3sfdlatest5f27"
+    head, base = "aab01504ad3ad97170d19087ce23bef48d95dfa0", "5f27ff4f023e23c1d36261e4a2300cc1e4a9a2c6"
+    assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == head
+    assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain"], text=True).strip()
+    paths = subprocess.check_output(["git", "-C", str(source), "diff", "--name-only", base, head], text=True).splitlines()
+    assert len(paths) == 7
+    provenance_path = ROOT / "results/a3-latest-5f27-native-provenance-20261002.json"
+    provenance = json.loads(provenance_path.read_text())
+    run_path = ROOT / "results/a3-latest-5f27-native-preparation-20261002-r1/run.json"
+    run = json.loads(run_path.read_text())
+    assert run["status"] == "EXITED" and run["returncode"] == 0 and run["signal"] is None
+    assert provenance["head"] == head and provenance["base"] == base and not provenance["cuda_initialized"] and provenance["new_native_calls"] == 0
+    assert len(provenance["native_input_digests"]) == 114 and provenance["changed_native_inputs"] == []
+    assert all(sha(source / item["path"]) == item["sha256"] for item in provenance["native_input_digests"])
+    assert sha(provenance["binding"]["path"]) == provenance["binding"]["sha256"]
+    export, archive = ROOT / "results/a3-latest-5f27-cpu-export-20261002-r1", ROOT / "results/a3-latest-5f27-cpu-evidence-20261002.tar.gz"
+    assert not export.exists() and not archive.exists()
+    export.mkdir()
+    files = ["a3sfdlatest5f27/" + name for name in paths + ["AGENTS.md", ".clang-format"]]
+    files += [
+        "tools/prepare_reuse_a3_latest_5f27_20261002_r1.py",
+        "tools/A3_LATEST_5F27_CPU_KIT_20261002.json",
+        "tools/archive_a3_latest_5f27_cpu_20261002_r1.py",
+        "results/a3-latest-5f27-native-provenance-20261002.json",
+        "results/a3-latest-5f27-native-preparation-20261002-r1/run.json",
+        "results/a3-latest-5f27-native-preparation-20261002-r1/stdout.log",
+        "results/a3-latest-5f27-native-preparation-20261002-r1/stderr.log",
+        "results/a3-latest-5f27-preparation-background-20261002-r1/driver.log",
+    ]
+    assert len(files) == len(set(files)) == 17
+    manifest = []
+    for name in files:
+        original, target = ROOT / name, export / name
+        assert original.is_file() and not original.is_symlink()
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(original, target)
+        assert sha(original) == sha(target)
+        manifest.append({"path": name, "sha256": sha(original), "bytes": original.stat().st_size})
+    (export / "MANIFEST.json").write_text(
+        json.dumps(
+            {
+                "head": head,
+                "base": base,
+                "files": manifest,
+                "scope": "actual CPU preparation/import only; native binding reused after114 unchanged inputs",
+                "excluded": ["bundles", "models", "cache", "engines", "pt outputs", "native binaries", "live GPU jobs"],
+                "GPU_tests": "NOT_RUN",
+            },
+            indent=2,
+        )
+        + "\n"
+    )
+    with tarfile.open(archive, "w:gz") as tar:
+        for path in sorted(export.rglob("*")):
+            if path.is_file():
+                tar.add(path, arcname=str(path.relative_to(export)), recursive=False)
+    assert all(sha(ROOT / item["path"]) == item["sha256"] for item in manifest)
+    print(
+        json.dumps(
+            {
+                "archive": str(archive),
+                "sha256": sha(archive),
+                "bytes": archive.stat().st_size,
+                "payload_files": len(manifest),
+                "head": head,
+                "base": base,
+                "terminal": run,
+            }
+        ),
+        flush=True,
+    )
+
+
+if __name__ == "__main__":
+    main()

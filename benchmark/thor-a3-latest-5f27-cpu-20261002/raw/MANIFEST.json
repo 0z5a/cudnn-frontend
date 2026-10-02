@@ -1,0 +1,102 @@
+{
+  "head": "aab01504ad3ad97170d19087ce23bef48d95dfa0",
+  "base": "5f27ff4f023e23c1d36261e4a2300cc1e4a9a2c6",
+  "files": [
+    {
+      "path": "a3sfdlatest5f27/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+      "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef",
+      "bytes": 52640
+    },
+    {
+      "path": "a3sfdlatest5f27/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+      "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d",
+      "bytes": 131027
+    },
+    {
+      "path": "a3sfdlatest5f27/test/AGENTS.md",
+      "sha256": "222f014f01cdb1270508fba5c8503634ad09768e890a96ea88f5941dace20889",
+      "bytes": 52116
+    },
+    {
+      "path": "a3sfdlatest5f27/test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py",
+      "sha256": "152e36f7e8d659af8865787af2b30b8eec1b3c120265e4abe6ca5c492e880b2c",
+      "bytes": 44588
+    },
+    {
+      "path": "a3sfdlatest5f27/test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+      "sha256": "38f60c55058056ccc222ec0699d664e91d6526f2bdd8fce5832c0a89ff2f4a34",
+      "bytes": 9189
+    },
+    {
+      "path": "a3sfdlatest5f27/test/python/gemm/cutedsl/test_swiglu_amax_per_call.py",
+      "sha256": "d3017b0723ce039fb89e6db5770bdab80e56613e0f6e8cb8873f3b19cda4a465",
+      "bytes": 2164
+    },
+    {
+      "path": "a3sfdlatest5f27/test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py",
+      "sha256": "5c9587dea4ffbf8d33e3b7e25197e9c8a5463763a4390b8f113fb3e68e649af7",
+      "bytes": 3535
+    },
+    {
+      "path": "a3sfdlatest5f27/AGENTS.md",
+      "sha256": "0cbd903dd1d536761bf16b587bd789859659dde630f7fa0ef0f3f4917c43e63a",
+      "bytes": 14318
+    },
+    {
+      "path": "a3sfdlatest5f27/.clang-format",
+      "sha256": "810164efd52a3dd28992c4081645a63ae30c2758fac9007335ada53a25a23dbd",
+      "bytes": 2663
+    },
+    {
+      "path": "tools/prepare_reuse_a3_latest_5f27_20261002_r1.py",
+      "sha256": "975fd252f0f2865bf344c2c6180e777a00c547aba9cc84871664e8268d5c34d2",
+      "bytes": 5715
+    },
+    {
+      "path": "tools/A3_LATEST_5F27_CPU_KIT_20261002.json",
+      "sha256": "c8f42c2f2a1ad0137d0c7102e1a6d3915cb19f878f57a711a4ce4ab07059dd5a",
+      "bytes": 948
+    },
+    {
+      "path": "tools/archive_a3_latest_5f27_cpu_20261002_r1.py",
+      "sha256": "70d5c156b4fa8d20ffe2af00e0c6851f3b1f7734b4cb988d3656655f53a823ba",
+      "bytes": 4330
+    },
+    {
+      "path": "results/a3-latest-5f27-native-provenance-20261002.json",
+      "sha256": "84d14415fcd6739564ea8f7127e8fc83fe0fc4b36ed9e80b4018bd50b164daf8",
+      "bytes": 19746
+    },
+    {
+      "path": "results/a3-latest-5f27-native-preparation-20261002-r1/run.json",
+      "sha256": "886211601614d57a725b895816a4cc4068b7aa7c03838fcb7ba823b5147ff3d9",
+      "bytes": 443
+    },
+    {
+      "path": "results/a3-latest-5f27-native-preparation-20261002-r1/stdout.log",
+      "sha256": "55a0e933cf34b0fd1e6880f56bb77e95615bca8eb3f403fbb7d7e3ad2e46726f",
+      "bytes": 706
+    },
+    {
+      "path": "results/a3-latest-5f27-native-preparation-20261002-r1/stderr.log",
+      "sha256": "92b9cbccbf1daceefc2c3fb35315c44acc0dec8aa024d26943014bd009e37d8f",
+      "bytes": 563
+    },
+    {
+      "path": "results/a3-latest-5f27-preparation-background-20261002-r1/driver.log",
+      "sha256": "886211601614d57a725b895816a4cc4068b7aa7c03838fcb7ba823b5147ff3d9",
+      "bytes": 443
+    }
+  ],
+  "scope": "actual CPU preparation/import only; native binding reused after114 unchanged inputs",
+  "excluded": [
+    "bundles",
+    "models",
+    "cache",
+    "engines",
+    "pt outputs",
+    "native binaries",
+    "live GPU jobs"
+  ],
+  "GPU_tests": "NOT_RUN"
+}

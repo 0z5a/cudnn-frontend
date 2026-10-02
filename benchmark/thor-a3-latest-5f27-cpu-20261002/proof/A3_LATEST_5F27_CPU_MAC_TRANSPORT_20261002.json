@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-02T05:32:18.865213+00:00",
+  "archive": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002.tar.gz",
+  "archive_sha256": "fdc7895647b62550d7590ec43547d8731612bdf3811258437c812eefec091b16",
+  "bytes": 89637,
+  "payload_files": 17,
+  "actual_archive_files": 18,
+  "all_manifest_bytes_and_sha256_verified": true,
+  "head": "aab01504ad3ad97170d19087ce23bef48d95dfa0",
+  "upstream": "5f27ff4f023e23c1d36261e4a2300cc1e4a9a2c6",
+  "actual_CPU_returncode": 0,
+  "actual_CPU_elapsed_seconds": 41.910220877005486,
+  "GPU_tests": "NOT_RUN"
+}

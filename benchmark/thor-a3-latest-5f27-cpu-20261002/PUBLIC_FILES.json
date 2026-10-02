@@ -1,0 +1,138 @@
+{
+  "files": [
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002/a3sfdlatest5f27/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/raw/a3sfdlatest5f27/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py.txt",
+      "sha256": "eea561730035c3f5bb83f801b795beafbb758f833310deb92ec6c43369a8fcef",
+      "bytes": 52640
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002/a3sfdlatest5f27/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/raw/a3sfdlatest5f27/python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py.txt",
+      "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d",
+      "bytes": 131027
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002/a3sfdlatest5f27/test/AGENTS.md",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/raw/a3sfdlatest5f27/test/AGENTS.md.txt",
+      "sha256": "222f014f01cdb1270508fba5c8503634ad09768e890a96ea88f5941dace20889",
+      "bytes": 52116
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002/a3sfdlatest5f27/test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/raw/a3sfdlatest5f27/test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py.txt",
+      "sha256": "152e36f7e8d659af8865787af2b30b8eec1b3c120265e4abe6ca5c492e880b2c",
+      "bytes": 44588
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002/a3sfdlatest5f27/test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/raw/a3sfdlatest5f27/test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py.txt",
+      "sha256": "38f60c55058056ccc222ec0699d664e91d6526f2bdd8fce5832c0a89ff2f4a34",
+      "bytes": 9189
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002/a3sfdlatest5f27/test/python/gemm/cutedsl/test_swiglu_amax_per_call.py",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/raw/a3sfdlatest5f27/test/python/gemm/cutedsl/test_swiglu_amax_per_call.py.txt",
+      "sha256": "d3017b0723ce039fb89e6db5770bdab80e56613e0f6e8cb8873f3b19cda4a465",
+      "bytes": 2164
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002/a3sfdlatest5f27/test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/raw/a3sfdlatest5f27/test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py.txt",
+      "sha256": "5c9587dea4ffbf8d33e3b7e25197e9c8a5463763a4390b8f113fb3e68e649af7",
+      "bytes": 3535
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002/a3sfdlatest5f27/AGENTS.md",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/raw/a3sfdlatest5f27/AGENTS.md.txt",
+      "sha256": "0cbd903dd1d536761bf16b587bd789859659dde630f7fa0ef0f3f4917c43e63a",
+      "bytes": 14318
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002/a3sfdlatest5f27/.clang-format",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/raw/a3sfdlatest5f27/.clang-format",
+      "sha256": "810164efd52a3dd28992c4081645a63ae30c2758fac9007335ada53a25a23dbd",
+      "bytes": 2663
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002/tools/prepare_reuse_a3_latest_5f27_20261002_r1.py",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/raw/tools/prepare_reuse_a3_latest_5f27_20261002_r1.py.txt",
+      "sha256": "975fd252f0f2865bf344c2c6180e777a00c547aba9cc84871664e8268d5c34d2",
+      "bytes": 5715
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002/tools/A3_LATEST_5F27_CPU_KIT_20261002.json",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/raw/tools/A3_LATEST_5F27_CPU_KIT_20261002.json",
+      "sha256": "c8f42c2f2a1ad0137d0c7102e1a6d3915cb19f878f57a711a4ce4ab07059dd5a",
+      "bytes": 948
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002/tools/archive_a3_latest_5f27_cpu_20261002_r1.py",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/raw/tools/archive_a3_latest_5f27_cpu_20261002_r1.py.txt",
+      "sha256": "70d5c156b4fa8d20ffe2af00e0c6851f3b1f7734b4cb988d3656655f53a823ba",
+      "bytes": 4330
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002/results/a3-latest-5f27-native-provenance-20261002.json",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/raw/results/a3-latest-5f27-native-provenance-20261002.json",
+      "sha256": "84d14415fcd6739564ea8f7127e8fc83fe0fc4b36ed9e80b4018bd50b164daf8",
+      "bytes": 19746
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002/results/a3-latest-5f27-native-preparation-20261002-r1/run.json",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/raw/results/a3-latest-5f27-native-preparation-20261002-r1/run.json",
+      "sha256": "886211601614d57a725b895816a4cc4068b7aa7c03838fcb7ba823b5147ff3d9",
+      "bytes": 443
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002/results/a3-latest-5f27-native-preparation-20261002-r1/stdout.log",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/raw/results/a3-latest-5f27-native-preparation-20261002-r1/stdout.log",
+      "sha256": "55a0e933cf34b0fd1e6880f56bb77e95615bca8eb3f403fbb7d7e3ad2e46726f",
+      "bytes": 706
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002/results/a3-latest-5f27-native-preparation-20261002-r1/stderr.log",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/raw/results/a3-latest-5f27-native-preparation-20261002-r1/stderr.log",
+      "sha256": "92b9cbccbf1daceefc2c3fb35315c44acc0dec8aa024d26943014bd009e37d8f",
+      "bytes": 563
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002/results/a3-latest-5f27-preparation-background-20261002-r1/driver.log",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/raw/results/a3-latest-5f27-preparation-background-20261002-r1/driver.log",
+      "sha256": "886211601614d57a725b895816a4cc4068b7aa7c03838fcb7ba823b5147ff3d9",
+      "bytes": 443
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-cpu-evidence-20261002/MANIFEST.json",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/raw/MANIFEST.json",
+      "sha256": "492d7b540fe01e9bb092a579b6c2c3b212d66245c68c07c12ec7f7a15617e260",
+      "bytes": 3663
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_LATEST_5F27_SOURCE_CREATED_20261002.json",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/proof/A3_LATEST_5F27_SOURCE_CREATED_20261002.json",
+      "sha256": "7a223501c92fcfcce25ea1a419c7d652129cad1c81cf99994bb3efae7da66f16",
+      "bytes": 1992
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_UPSTREAM_5F27_DIFF_CHECK_20261002.json",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/proof/A3_UPSTREAM_5F27_DIFF_CHECK_20261002.json",
+      "sha256": "e28d0c169a5e3404138b87c3872fc5d491fd8cd4cd15e56c92cbbccd437e5dcb",
+      "bytes": 1727
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_LATEST_5F27_PRECOMMIT_20261002.log",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/proof/A3_LATEST_5F27_PRECOMMIT_20261002.log",
+      "sha256": "f287f3e0a98cd2e0398bf24b8bf9e09a298904c5ba476a745e95db19962f4791",
+      "bytes": 320
+    },
+    {
+      "source": "/Users/0z5a/Documents/infra/thor-validation-20260930/A3_LATEST_5F27_CPU_MAC_TRANSPORT_20261002.json",
+      "path": "benchmark/thor-a3-latest-5f27-cpu-20261002/proof/A3_LATEST_5F27_CPU_MAC_TRANSPORT_20261002.json",
+      "sha256": "f56c67d4807904511ed7f41f5b054c22292bd7cca88dd55891cc661f1de5eebf",
+      "bytes": 590
+    }
+  ],
+  "payload_mappings": 22,
+  "source_snapshot_bytes_preserved": true
+}

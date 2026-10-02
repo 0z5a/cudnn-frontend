@@ -1,0 +1,19 @@
+{
+  "utc": "2026-10-02T05:27:15.238501+00:00",
+  "head": "aab01504ad3ad97170d19087ce23bef48d95dfa0",
+  "upstream": "5f27ff4f023e23c1d36261e4a2300cc1e4a9a2c6",
+  "bundle": "a3-latest-5f27-20261002-r2.bundle",
+  "bundle_sha256": "e3f47cb66defd8766d7e4618f8f6f3c9dedfc0e2049bc0eb3088a3fdf88957f8",
+  "harness_sha256": "975fd252f0f2865bf344c2c6180e777a00c547aba9cc84871664e8268d5c34d2",
+  "native_inputs_identical": 114,
+  "seven_PR_diff_paths_byte_equal": {
+    "python/cudnn/gemm/cutedsl/grouped/swiglu/api.py": true,
+    "python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py": true,
+    "test/AGENTS.md": true,
+    "test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py": true,
+    "test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py": true,
+    "test/python/gemm/cutedsl/test_swiglu_amax_per_call.py": true,
+    "test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py": true
+  },
+  "GPU_validation": "NOT_RUN"
+}

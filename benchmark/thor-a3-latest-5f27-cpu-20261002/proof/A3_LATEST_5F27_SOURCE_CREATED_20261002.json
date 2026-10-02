@@ -1,0 +1,31 @@
+{
+  "utc": "2026-10-02T05:26:26.787298+00:00",
+  "source": "/Users/0z5a/Documents/infra/artifacts/cudnn-sm110-a1-a3-20260928/a3sfdlatest5f27-oct2",
+  "head": "aab01504ad3ad97170d19087ce23bef48d95dfa0",
+  "upstream": "5f27ff4f023e23c1d36261e4a2300cc1e4a9a2c6",
+  "branch": "codex/a3-sfd-latest-5f27-20261002",
+  "old_source_head": "ff6adf01e51f22de504470eb493e94bbf112f7fa",
+  "seven_PR_paths_byte_equal": {
+    "python/cudnn/gemm/cutedsl/grouped/swiglu/api.py": true,
+    "python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py": true,
+    "test/AGENTS.md": true,
+    "test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py": true,
+    "test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py": true,
+    "test/python/gemm/cutedsl/test_swiglu_amax_per_call.py": true,
+    "test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py": true
+  },
+  "native_inputs": 114,
+  "changed_native_inputs": [],
+  "precommit_returncode": 0,
+  "precommit_log_sha256": "f287f3e0a98cd2e0398bf24b8bf9e09a298904c5ba476a745e95db19962f4791",
+  "bundle": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-5f27-20261002-r2.bundle",
+  "bundle_sha256": "e3f47cb66defd8766d7e4618f8f6f3c9dedfc0e2049bc0eb3088a3fdf88957f8",
+  "bundle_bytes": 124059,
+  "bundle_prerequisite": "b57c65f1a1b60c2405e1e04c6b5ec6c6b2903bb5",
+  "bundle_verify_stdout": "The bundle contains this ref:\naab01504ad3ad97170d19087ce23bef48d95dfa0 refs/heads/codex/a3-sfd-latest-5f27-20261002\nThe bundle requires these 2 refs:\nb57c65f1a1b60c2405e1e04c6b5ec6c6b2903bb5 \nb1fe8a0f9e7701cea8d6f7f0ad8c11d043e024fc \nThe bundle uses this hash algorithm: sha1",
+  "GPU_validation": "NOT_RUN",
+  "old_frozen_sources_modified": false,
+  "initial_merge_stash_error_resolved": "clean clone verified; merge --no-autostash0",
+  "full_history_bundle_failure_preserved": "unable to read e7fb3a2096a323ec72774a0c454a1d60ed4f63d5; pack-objects died; no completed full bundle claimed",
+  "incremental_bundle_returncode": 0
+}

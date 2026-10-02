@@ -1,0 +1,48 @@
+{
+  "utc": "2026-10-02T05:20:20.458330+00:00",
+  "actual_fetch_source": "https://github.com/NVIDIA/cudnn-frontend.git",
+  "inspected": [
+    {
+      "cmd": [
+        "git",
+        "rev-parse",
+        "FETCH_HEAD"
+      ],
+      "output": "5f27ff4f023e23c1d36261e4a2300cc1e4a9a2c6"
+    },
+    {
+      "cmd": [
+        "git",
+        "log",
+        "--oneline",
+        "ac89fd14a91556680f486c31b8ad69a368197336..FETCH_HEAD"
+      ],
+      "output": "5f27ff4f frost(gated_attention_block): fuse_wgrad_overlap -- the two weight-gradient GEMMs on a block-owned side stream, forked and joined through events (bitwise the in-order block, +0.5..+2.8 % on the whole backward) (#1331)"
+    },
+    {
+      "cmd": [
+        "git",
+        "diff",
+        "--stat",
+        "ac89fd14a91556680f486c31b8ad69a368197336",
+        "FETCH_HEAD"
+      ],
+      "output": "docs/fe-oss-apis/gated_attention_block.md          |  87 +-\n python/cudnn/gated_attention_block/api_bwd.py      | 348 +++++++-\n .../cutedsl/test_block_backward.py                 | 938 ++++++++++++++++++++-\n 3 files changed, 1327 insertions(+), 46 deletions(-)"
+    },
+    {
+      "cmd": [
+        "git",
+        "diff",
+        "--name-only",
+        "ac89fd14a91556680f486c31b8ad69a368197336",
+        "FETCH_HEAD"
+      ],
+      "output": "docs/fe-oss-apis/gated_attention_block.md\npython/cudnn/gated_attention_block/api_bwd.py\ntest/python/gated_attention_block/cutedsl/test_block_backward.py"
+    }
+  ],
+  "earlier_local_fetch_errors": [
+    "origin has no develop; origin is a local predecessor clone",
+    "FETCH_HEAD inspected while fetch was still in progress; sequential inspection now after actual fetch0"
+  ],
+  "existing_frozen_sources_modified": false
+}
