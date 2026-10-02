@@ -1,0 +1,14 @@
+GroupedGemmSwigluSm100 is an experimental API
+Loading weights:   0%|          | 0/218 [00:00<?, ?it/s]Loading weights: 100%|██████████| 218/218 [00:00<00:00, 8539.26it/s]
+Traceback (most recent call last):
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_predecode_queued_20261002_r2.py", line 112, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_predecode_queued_20261002_r2.py", line 93, in main
+    module.execute(args, model)
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_predecode_boundary_pair_model_20261002_r2.py", line 164, in execute
+    g.execute(args, model, boundary)
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_full_model_20261002_r7.py", line 143, in execute
+    assert m.NATIVE_CALLS - bm == 24 and h.POSTPROCESS_CALLS - br == 24 and h.POSTPROCESS_KERNEL_LAUNCHES - bk == 48
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
