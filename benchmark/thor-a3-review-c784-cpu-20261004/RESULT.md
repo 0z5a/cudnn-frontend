@@ -1,0 +1,15 @@
+# Thor A3 review follow-up: independent CPU environment
+
+Current public source is `c7841117c988fc09cad1df415f10e3ce7d6fa50e`, a direct child of `6c252fab563ae531e92a7c8114de345217ea9761` on observed upstream `9ecb75e7771fcfb933e19136ace70ab8fade83fa`. The follow-up stores only the compiled SwiGLU plan in the wrapper cache and updates its ownership/reuse test; that test also skips GPUs belowSM100 before setup. These are the only two changed source paths. This validation did not push or modify the source branch.
+
+Independent Thor preparation **actually returned EXITED0, signal null,112.484658807 seconds**, under the audited observation-only runner, with zero termination signals. It created a dedicated `a3sfdreviewc784` checkout and matching venv, verified its actual source head/parent and imported the package and binding from that checkout. `CUDA_VISIBLE_DEVICES` was empty and CUDA remained uninitialized.
+
+All **118 native input paths and SHA256 hashes** match the qualified6c source exactly. The binding was copied into the new checkout only after that comparison and rechecked after import. Its SHA256 is `d6ed1ac6d7b43d024e48c5fd864678c0988bc5e5b8bfc8673c8a78c4c47dbd7e`. **No new compile was invoked atc784.** The inherited fresh native build0/583.499847741s belongs to6c, notc784. [Original fresh compile and source provenance](https://github.com/0z5a/cudnn-frontend/blob/7c697c53e50f649d9aeaadb22e54eb97e2e8c744/benchmark/thor-a3-latest-9ecb-cpu-20261004/RESULT.md).
+
+The new API/test hashes are recorded separately; the six-file byte-identity statement for6c/A24 does not describe this follow-up. The native input identity justifies extension reuse, not Python-kernel correctness or performance. Existing external CPU-mock probes were not repeated here and are not counted as hardware validation.
+
+**Currentc784 GPU31/native61, complete Granite E2E and paired performance remain NOT_RUN.** Historical GPU qualification still belongs toA24. The original R6 queue continues its frozenAAB/A24/b57 scope while waiting for the shared lock; it is not a currentc784 test. After successful R6 and all required independent phase audits, a separate latest-head follow-on must qualify the actual current source/binding before native9 complete-model work. Do not run the obsolete E491 entry unchanged.
+
+All48 frozen R6 source inputs were rechecked unchanged. No model/oracle/token/checkpoint, quality gate, stream/AMAX/support behavior, shared lock or live process was altered. Original defaultK1024 quality failure and passcode83 refusal remain disclosed; no accepted production optimization or overall A3 completion is claimed. vLLM service remains inactive; there is no restore timer, GPU-setting change or other-task interruption.
+
+Raw preparation logs, actual returncodes, import/native reuse provenance and the exact producer source are retained in this directory; `PUBLIC_FILES.json` maps the original sizes andSHA256 hashes. The closed archive was copied toMac and all payload bytes verified. Models/cache/engines/.pt/native/JIT binaries are excluded. The binary reuse happened only onThor; no binary is part of this publication.

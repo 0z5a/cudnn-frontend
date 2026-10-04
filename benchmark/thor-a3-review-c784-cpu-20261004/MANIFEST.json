@@ -1,0 +1,68 @@
+{
+  "head": "c7841117c988fc09cad1df415f10e3ce7d6fa50e",
+  "actual_CPU_preparation": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9ecb_r2/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_a3_review_c784_native_reuse_20261004_r1.py"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-04T13:09:48.590469+00:00",
+    "deadline_seconds": 1800.0,
+    "status": "EXITED",
+    "runner_policy": "OBSERVE_ONLY_NO_SIGNALS",
+    "signals_sent": 0,
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "pid": 2907767,
+    "returncode": 0,
+    "signal": null,
+    "deadline_observed": false,
+    "elapsed_seconds": 112.48465880699223
+  },
+  "native_compiled_head": "6c252fab563ae531e92a7c8114de345217ea9761",
+  "new_compile": false,
+  "GPU_scope": "NOT_RUN",
+  "files": [
+    {
+      "path": "results/a3-review-c784-native-preparation-20261004-r1/run.json",
+      "bytes": 645,
+      "sha256": "a4a0a3a2433254e9bf6b01cb8a21fe7f2fb0ee811b16032524965be43ffc9dc6"
+    },
+    {
+      "path": "results/a3-review-c784-native-preparation-20261004-r1/run.live.json",
+      "bytes": 694,
+      "sha256": "99890d4af41375f5c15dafc08580c063ebd359239544a483bde9ddadd5c6e327"
+    },
+    {
+      "path": "results/a3-review-c784-native-preparation-20261004-r1/stderr.log",
+      "bytes": 248,
+      "sha256": "3b215b21097cc1b2d4661504e08ef707b275a6c5d7e2195669b441e3d7d82681"
+    },
+    {
+      "path": "results/a3-review-c784-native-preparation-20261004-r1/stdout.log",
+      "bytes": 2457,
+      "sha256": "ebcdfbfe9fb145987370d034b12547e56c8a04b00064b16839c19ec1546e2294"
+    },
+    {
+      "path": "results/a3-review-c784-native-provenance-20261004-r1.json",
+      "bytes": 21048,
+      "sha256": "9d74e12fc352e472a7046eb5075c94cb7934e35f60caca5df52709d09ea5dc20"
+    },
+    {
+      "path": "results/a3-review-c784-preparation-background-20261004-r1/driver.log",
+      "bytes": 645,
+      "sha256": "a4a0a3a2433254e9bf6b01cb8a21fe7f2fb0ee811b16032524965be43ffc9dc6"
+    },
+    {
+      "path": "results/a3-review-c784-preparation-background-20261004-r1/launch.json",
+      "bytes": 991,
+      "sha256": "b8e4bc0c89038de9000383fa87373a6e6f21380f1e75c5f86e7e178c50cad9a3"
+    },
+    {
+      "path": "tools/prepare_a3_review_c784_native_reuse_20261004_r1.py",
+      "bytes": 7413,
+      "sha256": "0deefcebb58dda9a490231c9181b56b6ab6c4153f24a57fd34ea92efb60e8620"
+    }
+  ]
+}

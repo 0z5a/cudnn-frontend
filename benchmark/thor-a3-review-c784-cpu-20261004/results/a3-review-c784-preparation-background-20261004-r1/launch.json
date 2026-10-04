@@ -1,0 +1,22 @@
+{
+  "logger_pid": 2907764,
+  "started_utc": "2026-10-04T13:09:48.476184+00:00",
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9ecb_r2/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_async_policy_20261004/run_logged_observe.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-review-c784-native-preparation-20261004-r1",
+    "--cwd",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "--timeout",
+    "1800",
+    "--",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9ecb_r2/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_a3_review_c784_native_reuse_20261004_r1.py"
+  ],
+  "script_sha256": "0deefcebb58dda9a490231c9181b56b6ab6c4153f24a57fd34ea92efb60e8620",
+  "cpu_only": true,
+  "new_compile": "NOT_PLANNED_REUSE_REQUIRES118_EXACT_HASHES",
+  "head": "c7841117c988fc09cad1df415f10e3ce7d6fa50e",
+  "signals_sent": 0
+}

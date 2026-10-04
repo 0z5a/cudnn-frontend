@@ -1,0 +1,86 @@
+{
+  "head": "c7841117c988fc09cad1df415f10e3ce7d6fa50e",
+  "native_compiled_head": "6c252fab563ae531e92a7c8114de345217ea9761",
+  "new_compile": false,
+  "GPU_scope": "NOT_RUN",
+  "files": [
+    {
+      "original_path": "results/a3-review-c784-native-preparation-20261004-r1/run.json",
+      "public_path": "results/a3-review-c784-native-preparation-20261004-r1/run.json",
+      "bytes": 645,
+      "sha256": "a4a0a3a2433254e9bf6b01cb8a21fe7f2fb0ee811b16032524965be43ffc9dc6"
+    },
+    {
+      "original_path": "results/a3-review-c784-native-preparation-20261004-r1/run.live.json",
+      "public_path": "results/a3-review-c784-native-preparation-20261004-r1/run.live.json",
+      "bytes": 694,
+      "sha256": "99890d4af41375f5c15dafc08580c063ebd359239544a483bde9ddadd5c6e327"
+    },
+    {
+      "original_path": "results/a3-review-c784-native-preparation-20261004-r1/stderr.log",
+      "public_path": "results/a3-review-c784-native-preparation-20261004-r1/stderr.log",
+      "bytes": 248,
+      "sha256": "3b215b21097cc1b2d4661504e08ef707b275a6c5d7e2195669b441e3d7d82681"
+    },
+    {
+      "original_path": "results/a3-review-c784-native-preparation-20261004-r1/stdout.log",
+      "public_path": "results/a3-review-c784-native-preparation-20261004-r1/stdout.log",
+      "bytes": 2457,
+      "sha256": "ebcdfbfe9fb145987370d034b12547e56c8a04b00064b16839c19ec1546e2294"
+    },
+    {
+      "original_path": "results/a3-review-c784-native-provenance-20261004-r1.json",
+      "public_path": "results/a3-review-c784-native-provenance-20261004-r1.json",
+      "bytes": 21048,
+      "sha256": "9d74e12fc352e472a7046eb5075c94cb7934e35f60caca5df52709d09ea5dc20"
+    },
+    {
+      "original_path": "results/a3-review-c784-preparation-background-20261004-r1/driver.log",
+      "public_path": "results/a3-review-c784-preparation-background-20261004-r1/driver.log",
+      "bytes": 645,
+      "sha256": "a4a0a3a2433254e9bf6b01cb8a21fe7f2fb0ee811b16032524965be43ffc9dc6"
+    },
+    {
+      "original_path": "results/a3-review-c784-preparation-background-20261004-r1/launch.json",
+      "public_path": "results/a3-review-c784-preparation-background-20261004-r1/launch.json",
+      "bytes": 991,
+      "sha256": "b8e4bc0c89038de9000383fa87373a6e6f21380f1e75c5f86e7e178c50cad9a3"
+    },
+    {
+      "original_path": "tools/prepare_a3_review_c784_native_reuse_20261004_r1.py",
+      "public_path": "tools/prepare_a3_review_c784_native_reuse_20261004_r1.py.txt",
+      "bytes": 7413,
+      "sha256": "0deefcebb58dda9a490231c9181b56b6ab6c4153f24a57fd34ea92efb60e8620"
+    },
+    {
+      "original_path": "MANIFEST.json",
+      "public_path": "MANIFEST.json",
+      "bytes": 2489,
+      "sha256": "88d0c6f6ffc6474a61d6ca5c71422b3e7b95b14cf122edc2558303b66f505706"
+    },
+    {
+      "original_path": "A3_REVIEW_C784_CPU_RESULT_20261004.md",
+      "public_path": "RESULT.md",
+      "bytes": 3145,
+      "sha256": "aa21a804c47cd239674d6ed66f165a28bbe903305d48c050ffe144042b6f6b96"
+    },
+    {
+      "original_path": "A3_REVIEW_C784_SOURCE_GITHUB_VERIFIED_20261004.json",
+      "public_path": "SOURCE_VERIFICATION.json",
+      "bytes": 643,
+      "sha256": "f3e7ff6beabe5b78fbfcd6768c40ff4fddc7de8197b1df19d11c8b3af00efc17"
+    },
+    {
+      "original_path": "test_swiglu_amax_per_call.py.txt",
+      "public_path": "public_source/test/python/gemm/cutedsl/test_swiglu_amax_per_call.py.txt",
+      "bytes": 2221,
+      "sha256": "1eebe12349c5a88d119d50ca8d85c947ae2e549c73a8d8fced13916a15a385dd"
+    },
+    {
+      "original_path": "api.py.txt",
+      "public_path": "public_source/python/cudnn/gemm/cutedsl/grouped/swiglu/api.py.txt",
+      "bytes": 52622,
+      "sha256": "b3585b89e463712eac8b041ed59a8bb4f342e17a06c7baa4303f2d8d6550880c"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "head": "c7841117c988fc09cad1df415f10e3ce7d6fa50e",
+  "changed2_actual_Thor_bytes_match_public_API": [
+    {
+      "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+      "sha256": "b3585b89e463712eac8b041ed59a8bb4f342e17a06c7baa4303f2d8d6550880c",
+      "bytes": 52622,
+      "git_blob_sha1": "d97c4144e7b9d43fd36636cde032537a1ac3db61"
+    },
+    {
+      "path": "test/python/gemm/cutedsl/test_swiglu_amax_per_call.py",
+      "sha256": "1eebe12349c5a88d119d50ca8d85c947ae2e549c73a8d8fced13916a15a385dd",
+      "bytes": 2221,
+      "git_blob_sha1": "48bf690fc6e44578d0f5929646c7031f044a0973"
+    }
+  ],
+  "GPU_scope": "NOT_RUN"
+}
