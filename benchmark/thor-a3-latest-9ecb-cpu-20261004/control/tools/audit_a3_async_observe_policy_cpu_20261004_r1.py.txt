@@ -1,0 +1,125 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Real CPU deadlines, nested policy propagation and frozen-source integrity."""
+
+import argparse
+import ast
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--out", required=True)
+    a = p.parse_args()
+    out = Path(a.out)
+    out.mkdir(exist_ok=False)
+    assert os.environ["CUDA_VISIBLE_DEVICES"] == "" and "torch" not in sys.modules
+    policy = ROOT / "tools/a3_async_policy_20261004"
+    legacy = Path("/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py")
+    old_hash = sha(legacy)
+    assert getattr(subprocess.Popen, "_a3_observe_only_installed", False)
+    marker = out / "completed-after-deadline.txt"
+    case = out / "deadline"
+    child = "import time;from pathlib import Path;time.sleep(0.35);Path(" + repr(str(marker)) + ').write_text("COMPLETED");raise SystemExit(7)'
+    rc = subprocess.run(
+        [sys.executable, str(legacy), "--out", str(case), "--cwd", str(ROOT), "--timeout", "0.05", "--", sys.executable, "-c", child]
+    ).returncode
+    record = json.loads((case / "run.json").read_text())
+    live = json.loads((case / "run.live.json").read_text())
+    assert rc == record["returncode"] == 7 and record["status"] == "EXITED" and record["signal"] is None and record["signals_sent"] == 0
+    assert record["deadline_observed"] and marker.read_text() == "COMPLETED" and live["status"] == "EXITED" and not live["child_alive"]
+    second = out / "nested"
+    marker2 = out / "nested-completed.txt"
+    code = (
+        'import os,sys,subprocess;assert os.environ["PYTHONPATH"].split(os.pathsep)[0]=='
+        + repr(str(policy))
+        + ";raise SystemExit(subprocess.run("
+        + repr(
+            [
+                sys.executable,
+                str(legacy),
+                "--out",
+                str(second),
+                "--cwd",
+                str(ROOT),
+                "--timeout",
+                "0.05",
+                "--",
+                sys.executable,
+                "-c",
+                "import time;from pathlib import Path;time.sleep(0.25);Path(" + repr(str(marker2)) + ').write_text("COMPLETED");raise SystemExit(9)',
+            ]
+        )
+        + ").returncode)"
+    )
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(out / "original-source-python-path")
+    rc2 = subprocess.run([sys.executable, "-c", code], env=env).returncode
+    r2 = json.loads((second / "run.json").read_text())
+    assert (
+        rc2 == r2["returncode"] == 9
+        and r2["status"] == "EXITED"
+        and r2["signal"] is None
+        and r2["deadline_observed"]
+        and r2["signals_sent"] == 0
+        and marker2.read_text() == "COMPLETED"
+    )
+    old_flag = os.environ["A3_NO_SIGNAL_POLICY"]
+    os.environ["A3_NO_SIGNAL_POLICY"] = "0"
+    try:
+        control = subprocess.run(
+            [sys.executable, "-c", 'import subprocess; assert not getattr(subprocess.Popen,"_a3_observe_only_installed",False);print("POLICY_OFF")'],
+            capture_output=True,
+            text=True,
+        )
+        assert control.returncode == 0 and control.stdout.strip() == "POLICY_OFF"
+    finally:
+        os.environ["A3_NO_SIGNAL_POLICY"] = old_flag
+    assert sha(legacy) == old_hash
+    frozen = json.loads((ROOT / "results/a3-serial-iteration-20261002-r5/frozen_inputs.json").read_text())["files"]
+    assert len(frozen) == 48 and all(sha(path) == digest for path, digest in frozen.items())
+    original = json.loads((ROOT / "results/a3-serial-iteration-20261002-r5-launch/run.json").read_text())
+    assert original["status"] == "EXITED" and original["returncode"] == 75 and original["signal"] is None
+    assert all(not Path("/proc", str(pid)).exists() for pid in (860061, 860123))
+    redirects = list(Path(os.environ["A3_POLICY_AUDIT_DIR"]).glob("redirect-*.json"))
+    assert len(redirects) >= 2
+    for name in ["run_logged_observe.py", "a3_no_signal_redirect.py", "sitecustomize.py"]:
+        for node in ast.walk(ast.parse((policy / name).read_text())):
+            assert not (
+                isinstance(node, ast.Call)
+                and isinstance(node.func, ast.Attribute)
+                and node.func.attr in ["kill", "killpg", "terminate", "send_signal", "signal"]
+            )
+    assert "torch" not in sys.modules
+    result = {
+        "stage": "OBSERVE_ONLY_LOGGER_CPU_VERIFIED_NO_GPU",
+        "actual_overdeadline_cases": [record, r2],
+        "policy_off_control_rc": control.returncode,
+        "legacy_logger_unchanged": True,
+        "R5_actual_terminal": original,
+        "R5_48_frozen_sources_unchanged": True,
+        "redirect_receipts": len(redirects),
+        "policy_files": json.loads((policy / "manifest.json").read_text()),
+        "torch_imported": False,
+        "new_native_calls": 0,
+        "signals_sent": 0,
+        "queued_GPU": False,
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result), flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

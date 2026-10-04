@@ -1,0 +1,87 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+"""Replay only the genuinely closed R5 scope, preserving all frozen math."""
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import runpy
+import sys
+
+ROOT = Path("/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928")
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--out", required=True)
+    a = p.parse_args()
+    out = Path(a.out)
+    assert "torch" not in sys.modules and os.environ["CUDA_VISIBLE_DEVICES"] == "" and os.environ["A3_NO_SIGNAL_POLICY"] == "1"
+    audit = ROOT / "results/a3-async-observe-policy-cpu-audit-20261004-r1"
+    actual = json.loads(audit.with_name(audit.name + "-launch").joinpath("run.json").read_text())
+    proof = json.loads((audit / "result.json").read_text())
+    assert (
+        actual["status"] == "EXITED" and actual["returncode"] == 0 and actual["signal"] is None and proof["signals_sent"] == 0 and not proof["torch_imported"]
+    )
+    old = ROOT / "results/a3-serial-iteration-20261002-r5"
+    closed = json.loads(old.with_name(old.name + "-launch").joinpath("run.json").read_text())
+    assert closed["status"] == "EXITED" and closed["returncode"] == 75 and closed["signal"] is None
+    assert not (old / "admission.json").exists() and not (old / "completed_runs.json").exists()
+    assert all(not Path("/proc", str(pid)).exists() for pid in (860061, 860123))
+    frozen = json.loads((old / "frozen_inputs.json").read_text())["files"]
+    assert len(frozen) == 48 and all(sha(path) == value for path, value in frozen.items())
+    planned = [
+        "a3-latest-5f27-regression-20261002-r1",
+        "a3-weight-plan-generation-20261002-r4",
+        "a3-weight-plan-generation-pair-cpu-audit-20261002-r4",
+        "a3-latest-b1fe-regression-20261002-r1",
+        "a3-integer-reduction-latestb1fe-20261002-r1",
+        "a3-integer-reduction-boundary-cpu-audit-20261002-r1",
+        "a3-integer-reduction-pair-cpu-audit-20261002-r1",
+        "a3-integer-reduction-full_model-cpu-audit-20261002-r1",
+        "a3-integer-reduction-generation-latestb1fe-20261002-r1",
+        "a3-integer-reduction-generation-pair-cpu-audit-20261002-r2",
+        "a3-native-a-compact-pipeline-admitted-20261002-r2",
+        "a3-route-decode-latest5f27-gpu-20261002-r1",
+        "a3-route-decode-boundary-cpu-audit-20261002-r1",
+        "a3-route-decode-reuse-cpu-audit-20261002-r1",
+    ]
+    for name in planned:
+        assert not (ROOT / "results" / name).exists() and not (ROOT / "results" / (name + "-launch")).exists(), (
+            "Existing phase receipt must be inspected, never duplicated: " + name
+        )
+    assert not out.exists()
+    receipt = out.with_name(out.name + "-policy")
+    receipt.mkdir(exist_ok=False)
+    source = ROOT / "tools/a3_serial_iteration_resume_20261002_r5.py"
+    metadata = {
+        "original_source": str(source),
+        "original_source_sha256": sha(source),
+        "original_48_frozen_input_hashes_unchanged": True,
+        "actual_closed_R5": closed,
+        "math_runtime_and_numeric_gates": "UNCHANGED_FROZEN_R5",
+        "tested_source_scopes": [
+            "aab01504ad3ad97170d19087ce23bef48d95dfa0",
+            "a24a7401bb7d26d42d88d98b316f634ef487301c",
+            "b57c65f1a1b60c2405e1e04c6b5ec6c6b2903bb5",
+        ],
+        "latest9ecb_GPU_scope": "NOT_RUN_SEPARATE_FOLLOW_ON_REQUIRED",
+        "runner_policy_manifest_sha256": sha(ROOT / "tools/a3_async_policy_20261004/manifest.json"),
+        "wrapper_sha256": sha(__file__),
+        "GPU_admission": "NOT_YET_REQUIRED_BY_ORIGINAL_PARENT_FLOCK",
+        "signals_sent": 0,
+        "all_A3_complete": False,
+    }
+    (receipt / "receipt.json").write_text(json.dumps(metadata, indent=2) + "\n")
+    sys.argv = [str(source), "--out", str(out), "--lock-wait-seconds", "43200"]
+    runpy.run_path(str(source), run_name="__main__")
+
+
+if __name__ == "__main__":
+    main()

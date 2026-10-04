@@ -1,0 +1,404 @@
+{
+  "tested_head": "6c252fab563ae531e92a7c8114de345217ea9761",
+  "GPU_scope": "NOT_RUN",
+  "files": [
+    {
+      "source_archive": "native",
+      "original_path": "results/a3-latest-9ecb-native-preparation-20261004-r2/run.json",
+      "public_path": "native/results/a3-latest-9ecb-native-preparation-20261004-r2/run.json",
+      "bytes": 634,
+      "sha256": "1d5d66dd53fa123fbb6c90d741bc1b435eeb72c2716c430d524c10083495abfa"
+    },
+    {
+      "source_archive": "native",
+      "original_path": "results/a3-latest-9ecb-native-preparation-20261004-r2/run.live.json",
+      "public_path": "native/results/a3-latest-9ecb-native-preparation-20261004-r2/run.live.json",
+      "bytes": 683,
+      "sha256": "015f93d882c59a7269e9bf25174cc061a26511b1ee4d25a6616e8470ec5a9201"
+    },
+    {
+      "source_archive": "native",
+      "original_path": "results/a3-latest-9ecb-native-preparation-20261004-r2/stderr.log",
+      "public_path": "native/results/a3-latest-9ecb-native-preparation-20261004-r2/stderr.log",
+      "bytes": 244,
+      "sha256": "b7cd0d6f8aaaddf9330ed727a83c8f906ed8c30f3e19245c94b46cf39b424dcf"
+    },
+    {
+      "source_archive": "native",
+      "original_path": "results/a3-latest-9ecb-native-preparation-20261004-r2/stdout.log",
+      "public_path": "native/results/a3-latest-9ecb-native-preparation-20261004-r2/stdout.log",
+      "bytes": 11785,
+      "sha256": "d8f11c033cd4f0e96accef4c3df540754609327dbe025f81aa427370dd233d5d"
+    },
+    {
+      "source_archive": "native",
+      "original_path": "results/a3-latest-9ecb-native-provenance-20261004-r2.json",
+      "public_path": "native/results/a3-latest-9ecb-native-provenance-20261004-r2.json",
+      "bytes": 22916,
+      "sha256": "215b1b768dcc2ad5963f7ac7cda223d774b6de56a6aad4ffae973f03a2021069"
+    },
+    {
+      "source_archive": "native",
+      "original_path": "results/a3-latest-9ecb-prebuild-20261004-r2.json",
+      "public_path": "native/results/a3-latest-9ecb-prebuild-20261004-r2.json",
+      "bytes": 21283,
+      "sha256": "2169e69d7cc041c501ce0ef8025fe88c962e35407d6c76aec7424c4a8b61d19e"
+    },
+    {
+      "source_archive": "native",
+      "original_path": "results/a3-latest-9ecb-preparation-background-20261004-r2/driver.log",
+      "public_path": "native/results/a3-latest-9ecb-preparation-background-20261004-r2/driver.log",
+      "bytes": 634,
+      "sha256": "1d5d66dd53fa123fbb6c90d741bc1b435eeb72c2716c430d524c10083495abfa"
+    },
+    {
+      "source_archive": "native",
+      "original_path": "results/a3-latest-9ecb-preparation-background-20261004-r2/launch.json",
+      "public_path": "native/results/a3-latest-9ecb-preparation-background-20261004-r2/launch.json",
+      "bytes": 1742,
+      "sha256": "ecbefca165ed8bd4dfa71130b1d953bd133c5dcfe710412b260878237114c7c9"
+    },
+    {
+      "source_archive": "native",
+      "original_path": "results/build-a3-latest-9ecb-20261004-r2/run.json",
+      "public_path": "native/results/build-a3-latest-9ecb-20261004-r2/run.json",
+      "bytes": 716,
+      "sha256": "a21c387668ebaff53e73eede04f45eaaeb2df8128d4306a149a29c4ed6b93002"
+    },
+    {
+      "source_archive": "native",
+      "original_path": "results/build-a3-latest-9ecb-20261004-r2/run.live.json",
+      "public_path": "native/results/build-a3-latest-9ecb-20261004-r2/run.live.json",
+      "bytes": 765,
+      "sha256": "e1a4d9f0d3994d4e23aca1599a7f8eea393953902d8b9bf84d95213b2e3ac129"
+    },
+    {
+      "source_archive": "native",
+      "original_path": "results/build-a3-latest-9ecb-20261004-r2/stderr.log",
+      "public_path": "native/results/build-a3-latest-9ecb-20261004-r2/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_archive": "native",
+      "original_path": "results/build-a3-latest-9ecb-20261004-r2/stdout.log",
+      "public_path": "native/results/build-a3-latest-9ecb-20261004-r2/stdout.log",
+      "bytes": 1765,
+      "sha256": "70c65cf912fd7040b013641e5c689ed2b8c629537e476cb3c1e2bea0336ffa4b"
+    },
+    {
+      "source_archive": "native",
+      "original_path": "tools/prepare_build_a3_latest_9ecb_20261004_r2.py",
+      "public_path": "native/tools/prepare_build_a3_latest_9ecb_20261004_r2.py.txt",
+      "bytes": 9117,
+      "sha256": "d6ea2c9dc46289d8833c6e5c76e54336e2a93428b6da7ce9f55a17d6111fdb13"
+    },
+    {
+      "source_archive": "native",
+      "original_path": "MANIFEST.json",
+      "public_path": "native/MANIFEST.json",
+      "bytes": 2701,
+      "sha256": "f56bff63100ee8e6221ad2305f52fbe591fc53ebb99b6855f18e218b6009179f"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-async-observe-policy-cpu-audit-20261004-r1/completed-after-deadline.txt",
+      "public_path": "control/results/a3-async-observe-policy-cpu-audit-20261004-r1/completed-after-deadline.txt",
+      "bytes": 9,
+      "sha256": "c48179f5246e3cc7b6572fe9172fff21506ccf80bfd34bb21fd0b2db4e294b7b"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-async-observe-policy-cpu-audit-20261004-r1/deadline/run.json",
+      "public_path": "control/results/a3-async-observe-policy-cpu-audit-20261004-r1/deadline/run.json",
+      "bytes": 784,
+      "sha256": "eefda93259316e314b6c901cd4d0ec01780089fbaaff9b97f3fe2c4f2832b3b2"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-async-observe-policy-cpu-audit-20261004-r1/deadline/run.live.json",
+      "public_path": "control/results/a3-async-observe-policy-cpu-audit-20261004-r1/deadline/run.live.json",
+      "bytes": 833,
+      "sha256": "af84e2c3bb7da0120769cc9ac475e15e3b3a60f02dc15f8b60a739a4b0a52ba0"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-async-observe-policy-cpu-audit-20261004-r1/deadline/stderr.log",
+      "public_path": "control/results/a3-async-observe-policy-cpu-audit-20261004-r1/deadline/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-async-observe-policy-cpu-audit-20261004-r1/deadline/stdout.log",
+      "public_path": "control/results/a3-async-observe-policy-cpu-audit-20261004-r1/deadline/stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-async-observe-policy-cpu-audit-20261004-r1/nested/run.json",
+      "public_path": "control/results/a3-async-observe-policy-cpu-audit-20261004-r1/nested/run.json",
+      "bytes": 774,
+      "sha256": "d9357366019ad570421b921fa383a8b9aced20b9ae8a86cc3792f5da59ff47be"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-async-observe-policy-cpu-audit-20261004-r1/nested/run.live.json",
+      "public_path": "control/results/a3-async-observe-policy-cpu-audit-20261004-r1/nested/run.live.json",
+      "bytes": 823,
+      "sha256": "9a8bdeafc9837d8467f14daaf764259c0a2df5d43648079ac1eea0e323e68e51"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-async-observe-policy-cpu-audit-20261004-r1/nested/stderr.log",
+      "public_path": "control/results/a3-async-observe-policy-cpu-audit-20261004-r1/nested/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-async-observe-policy-cpu-audit-20261004-r1/nested/stdout.log",
+      "public_path": "control/results/a3-async-observe-policy-cpu-audit-20261004-r1/nested/stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-async-observe-policy-cpu-audit-20261004-r1/nested-completed.txt",
+      "public_path": "control/results/a3-async-observe-policy-cpu-audit-20261004-r1/nested-completed.txt",
+      "bytes": 9,
+      "sha256": "c48179f5246e3cc7b6572fe9172fff21506ccf80bfd34bb21fd0b2db4e294b7b"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-async-observe-policy-cpu-audit-20261004-r1/redirects/redirect-2798366-2dcdf0998cdb4b648804a5c245da1c1d.json",
+      "public_path": "control/results/a3-async-observe-policy-cpu-audit-20261004-r1/redirects/redirect-2798366-2dcdf0998cdb4b648804a5c245da1c1d.json",
+      "bytes": 384,
+      "sha256": "a928f2f8e1239520693512f74eb59eecdc07dd5fb30e2f27eb7d4383dfba579c"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-async-observe-policy-cpu-audit-20261004-r1/redirects/redirect-2798387-247218415ccc46d594de77d61341f29f.json",
+      "public_path": "control/results/a3-async-observe-policy-cpu-audit-20261004-r1/redirects/redirect-2798387-247218415ccc46d594de77d61341f29f.json",
+      "bytes": 384,
+      "sha256": "bac55780e32511c40bd984908657cadd87764f432e49eb72f7c379cec6e2e08c"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-async-observe-policy-cpu-audit-20261004-r1/result.json",
+      "public_path": "control/results/a3-async-observe-policy-cpu-audit-20261004-r1/result.json",
+      "bytes": 3165,
+      "sha256": "2e72be70e9942df19037449f0ba0ea36abffc008ea258fe22d033a735cce0d79"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-async-observe-policy-cpu-audit-20261004-r1-launch/run.json",
+      "public_path": "control/results/a3-async-observe-policy-cpu-audit-20261004-r1-launch/run.json",
+      "bytes": 763,
+      "sha256": "3690be6b890134b877d2a835465105d59d51e626650fd37476562f0e4a1228ff"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-async-observe-policy-cpu-audit-20261004-r1-launch/run.live.json",
+      "public_path": "control/results/a3-async-observe-policy-cpu-audit-20261004-r1-launch/run.live.json",
+      "bytes": 812,
+      "sha256": "bc8e15ea5fe65b9d0e2c0a265993f5c244eebc1924665e5cc65957c3116e8826"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-async-observe-policy-cpu-audit-20261004-r1-launch/stderr.log",
+      "public_path": "control/results/a3-async-observe-policy-cpu-audit-20261004-r1-launch/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-async-observe-policy-cpu-audit-20261004-r1-launch/stdout.log",
+      "public_path": "control/results/a3-async-observe-policy-cpu-audit-20261004-r1-launch/stdout.log",
+      "bytes": 4291,
+      "sha256": "d35382777956c18efe8bdee7e7de5894568e27508785469919f32e980365215f"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-latest-9ecb-native-preparation-20261004-r1/run.json",
+      "public_path": "control/results/a3-latest-9ecb-native-preparation-20261004-r1/run.json",
+      "bytes": 635,
+      "sha256": "b53762ffac15212e192af75cd4821890b9449e135b6037386f5937bcb3a9f46d"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-latest-9ecb-native-preparation-20261004-r1/run.live.json",
+      "public_path": "control/results/a3-latest-9ecb-native-preparation-20261004-r1/run.live.json",
+      "bytes": 684,
+      "sha256": "42b975298f0531c7761fea5bda7f9eb9d3815ee78dd23b2699c3fdb2db30a48f"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-latest-9ecb-native-preparation-20261004-r1/stderr.log",
+      "public_path": "control/results/a3-latest-9ecb-native-preparation-20261004-r1/stderr.log",
+      "bytes": 1094,
+      "sha256": "3ba6e03bf926442a713ce70981e28084aabe4b3fe2d6f5e3d118f92d20973bb4"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-latest-9ecb-native-preparation-20261004-r1/stdout.log",
+      "public_path": "control/results/a3-latest-9ecb-native-preparation-20261004-r1/stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-latest-9ecb-preparation-background-20261004-r1/driver.log",
+      "public_path": "control/results/a3-latest-9ecb-preparation-background-20261004-r1/driver.log",
+      "bytes": 635,
+      "sha256": "b53762ffac15212e192af75cd4821890b9449e135b6037386f5937bcb3a9f46d"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-latest-9ecb-preparation-background-20261004-r1/launch.json",
+      "public_path": "control/results/a3-latest-9ecb-preparation-background-20261004-r1/launch.json",
+      "bytes": 981,
+      "sha256": "78bb606140bd102b4df55caf0fd5050b383aac72523c99c8bde1f7cf18698375"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-serial-iteration-20261002-r5/closed_predecessors.json",
+      "public_path": "control/results/a3-serial-iteration-20261002-r5/closed_predecessors.json",
+      "bytes": 3246,
+      "sha256": "730a5f1615caab197ccf0699ec8362afaa51c24d9571de427c49539271356064"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-serial-iteration-20261002-r5/frozen_inputs.json",
+      "public_path": "control/results/a3-serial-iteration-20261002-r5/frozen_inputs.json",
+      "bytes": 8810,
+      "sha256": "842fc5abd77c0abd9583e4839dab41ed313351142181f8205dce612d39a9e4e6"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-serial-iteration-20261002-r5/predecessors.json",
+      "public_path": "control/results/a3-serial-iteration-20261002-r5/predecessors.json",
+      "bytes": 2668,
+      "sha256": "a9410cb08f493c2fb6845f3f952e12866ea62a208df7bc09457190382d2f1552"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-serial-iteration-20261002-r5/prior_build_and_terminal_parent.json",
+      "public_path": "control/results/a3-serial-iteration-20261002-r5/prior_build_and_terminal_parent.json",
+      "bytes": 1863,
+      "sha256": "61127ca482add6a9639f276e1d40684b119572cce024b12bbb50475b672d20d3"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-serial-iteration-20261002-r5/r4_intentional_cpu_closure_and_accounting_fix.json",
+      "public_path": "control/results/a3-serial-iteration-20261002-r5/r4_intentional_cpu_closure_and_accounting_fix.json",
+      "bytes": 10028,
+      "sha256": "3e26c008cd40cd00e38cfd10a7d5c6aa90aae683bde3db0e4d61036ad99df2ab"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-serial-iteration-20261002-r5/result.json",
+      "public_path": "control/results/a3-serial-iteration-20261002-r5/result.json",
+      "bytes": 190,
+      "sha256": "ad62aad5e8280dec1a951a309d1e2853772b321cc9e425b0537fedd0d2d45124"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-serial-iteration-20261002-r5-launch/run.json",
+      "public_path": "control/results/a3-serial-iteration-20261002-r5-launch/run.json",
+      "bytes": 670,
+      "sha256": "3a0ede56e2c4d65129c577539ce9e0f75a04a63193ffeb08b300bd94c23d6619"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-serial-iteration-20261002-r5-launch/stderr.log",
+      "public_path": "control/results/a3-serial-iteration-20261002-r5-launch/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-serial-iteration-20261002-r5-launch/stdout.log",
+      "public_path": "control/results/a3-serial-iteration-20261002-r5-launch/stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "results/a3-serial-iteration-20261004-r6-policy/receipt.json",
+      "public_path": "control/results/a3-serial-iteration-20261004-r6-policy/receipt.json",
+      "bytes": 1610,
+      "sha256": "374c0a0fc50bd5e7094ec52f666038aa26a5c0aea60ed046e7a958f370c1b768"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "tools/a3_async_frozen_serial_worker_20261004_r6.py",
+      "public_path": "control/tools/a3_async_frozen_serial_worker_20261004_r6.py.txt",
+      "bytes": 4068,
+      "sha256": "f7ae00e7f9e569f691004c39c49c1d821b5a082df3b0043f57ed385a3820ffc4"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "tools/a3_async_policy_20261004/a3_no_signal_redirect.py",
+      "public_path": "control/tools/a3_async_policy_20261004/a3_no_signal_redirect.py.txt",
+      "bytes": 2444,
+      "sha256": "74e7c9ad184ca260e6645b77093f67e02122ccc3c62c647c392efa6ea1f7fafe"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "tools/a3_async_policy_20261004/manifest.json",
+      "public_path": "control/tools/a3_async_policy_20261004/manifest.json",
+      "bytes": 348,
+      "sha256": "f4dcac118f614c077af38cbd818d59ef32f738f4c06559ef4825d20e855b6a09"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "tools/a3_async_policy_20261004/run_logged_observe.py",
+      "public_path": "control/tools/a3_async_policy_20261004/run_logged_observe.py.txt",
+      "bytes": 3512,
+      "sha256": "80d9eeb5b26095a90095f7e96d63284a84ea478762335f792b014c78069831ce"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "tools/a3_async_policy_20261004/sitecustomize.py",
+      "public_path": "control/tools/a3_async_policy_20261004/sitecustomize.py.txt",
+      "bytes": 273,
+      "sha256": "5a3d527356723f7208c85b8d8adbb790afffb29c5991e4a0102361645a42f498"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "tools/audit_a3_async_observe_policy_cpu_20261004_r1.py",
+      "public_path": "control/tools/audit_a3_async_observe_policy_cpu_20261004_r1.py.txt",
+      "bytes": 5357,
+      "sha256": "c4d6ece31807f69700a47a3635dea75a6fa3d482ed71980551d2344bff9547fe"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "tools/prepare_build_a3_latest_9ecb_20261004_r1.py",
+      "public_path": "control/tools/prepare_build_a3_latest_9ecb_20261004_r1.py.txt",
+      "bytes": 7953,
+      "sha256": "a40d3b618eb49d78fd78e774eeb5f75f7b5de6eb74554d8d62c9034374da4cde"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "tools/prepare_build_a3_latest_9ecb_20261004_r2.py",
+      "public_path": "control/tools/prepare_build_a3_latest_9ecb_20261004_r2.py.txt",
+      "bytes": 9117,
+      "sha256": "d6ea2c9dc46289d8833c6e5c76e54336e2a93428b6da7ce9f55a17d6111fdb13"
+    },
+    {
+      "source_archive": "control",
+      "original_path": "MANIFEST.json",
+      "public_path": "control/MANIFEST.json",
+      "bytes": 8424,
+      "sha256": "d36f3e7ae959f9c4e9702e16e50eeaffe7e12fb031f72b312754fde8fd0e944d"
+    },
+    {
+      "original_path": "A3_LATEST_9ECB_CPU_RESULT_20261004.md",
+      "public_path": "RESULT.md",
+      "bytes": 5832,
+      "sha256": "d8ccf88ba6d2d4e4959ea6a424fcd0a5d20f1ed7c28040a2eb600467b6e0e3e1"
+    }
+  ]
+}

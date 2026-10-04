@@ -1,0 +1,23 @@
+{
+  "logger_pid": 2801791,
+  "started_utc": "2026-10-04T10:27:59.910129+00:00",
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_async_policy_20261004/run_logged_observe.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-9ecb-native-preparation-20261004-r1",
+    "--cwd",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "--timeout",
+    "4200",
+    "--",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_build_a3_latest_9ecb_20261004_r1.py"
+  ],
+  "script_sha256": "a40d3b618eb49d78fd78e774eeb5f75f7b5de6eb74554d8d62c9034374da4cde",
+  "cpu_only": true,
+  "compile_threads": 1,
+  "signals_sent": 0,
+  "upstream": "9ecb75e7771fcfb933e19136ace70ab8fade83fa",
+  "native_build": "NOT_YET_TERMINAL"
+}

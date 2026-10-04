@@ -1,0 +1,37 @@
+{
+  "original_source": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_serial_iteration_resume_20261002_r5.py",
+  "original_source_sha256": "6abc1cec75bc68bba71694c786de380adc200b97e03604e71b1314565a0a5298",
+  "original_48_frozen_input_hashes_unchanged": true,
+  "actual_closed_R5": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_serial_iteration_resume_20261002_r5.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r5",
+      "--lock-wait-seconds",
+      "43200"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-02T08:15:14.308534+00:00",
+    "deadline_seconds": 63000.0,
+    "status": "EXITED",
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "returncode": 75,
+    "signal": null,
+    "elapsed_seconds": 43207.69318550601
+  },
+  "math_runtime_and_numeric_gates": "UNCHANGED_FROZEN_R5",
+  "tested_source_scopes": [
+    "aab01504ad3ad97170d19087ce23bef48d95dfa0",
+    "a24a7401bb7d26d42d88d98b316f634ef487301c",
+    "b57c65f1a1b60c2405e1e04c6b5ec6c6b2903bb5"
+  ],
+  "latest9ecb_GPU_scope": "NOT_RUN_SEPARATE_FOLLOW_ON_REQUIRED",
+  "runner_policy_manifest_sha256": "f4dcac118f614c077af38cbd818d59ef32f738f4c06559ef4825d20e855b6a09",
+  "wrapper_sha256": "f7ae00e7f9e569f691004c39c49c1d821b5a082df3b0043f57ed385a3820ffc4",
+  "GPU_admission": "NOT_YET_REQUIRED_BY_ORIGINAL_PARENT_FLOCK",
+  "signals_sent": 0,
+  "all_A3_complete": false
+}

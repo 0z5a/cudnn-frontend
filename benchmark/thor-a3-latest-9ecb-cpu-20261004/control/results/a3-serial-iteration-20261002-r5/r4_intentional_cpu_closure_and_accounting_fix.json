@@ -1,0 +1,193 @@
+{
+  "closure_run": {
+    "argv": [
+      "python3",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/close_a3_r4_cpu_waiter_20261002_r1.py"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-02T08:09:14.299898+00:00",
+    "deadline_seconds": 30.0,
+    "status": "EXITED",
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 0.7148531189886853
+  },
+  "closure": {
+    "reason": "Correct cached-shuffle native7 generation audit accounting from1536 to2304; frozen R4 inputs remain intact",
+    "worker": 807144,
+    "logger": 807143,
+    "frozen_input_hashes_verified": 47,
+    "before_stop": {
+      "command": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_serial_iteration_resume_20261002_r4.py --out /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r4 --lock-wait-seconds 43200 ",
+      "status": "Name:\tpython\nUmask:\t0002\nState:\tS (sleeping)\nTgid:\t807144\nNgid:\t0\nPid:\t807144\nPPid:\t807143\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t64\nGroups:\t27 29 44 100 108 122 979 983 984 993 1000 2002 \nKthread:\t0\nVmPeak:\t   39608 kB\nVmSize:\t   33160 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   22476 kB\nVmRSS:\t   13720 kB\nRssAnon:\t    8236 kB\nRssFile:\t    5484 kB\nRssShmem:\t       0 kB\nVmData:\t    9316 kB\nVmStk:\t     132 kB\nVmExe:\t    6200 kB\nVmLib:\t    7112 kB\nVmPTE:\t      88 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nuntag_mask:\t0xffffffffffffff\nThreads:\t1\nSigQ:\t0/501107\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tunknown\nCpus_allowed:\t3fff\nCpus_allowed_list:\t0-13\nMems_allowed:\t0001\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t4908\nnonvoluntary_ctxt_switches:\t59\n",
+      "gpu_library_maps": [],
+      "children": "",
+      "shared_lock_fds": {
+        "3": "pos:\t0\nflags:\t02402001\nmnt_id:\t29\nino:\t1048611\n"
+      },
+      "shared_locks": [
+        "26: FLOCK  ADVISORY  WRITE 545711 103:01:1048611 0 EOF",
+        "26: -> FLOCK  ADVISORY  WRITE 555938 103:01:1048611 0 EOF"
+      ],
+      "admission_exists": false,
+      "completed_runs_exists": false,
+      "terminal_exists": false
+    },
+    "stopped_snapshot": {
+      "command": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_serial_iteration_resume_20261002_r4.py --out /home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r4 --lock-wait-seconds 43200 ",
+      "status": "Name:\tpython\nUmask:\t0002\nState:\tT (stopped)\nTgid:\t807144\nNgid:\t0\nPid:\t807144\nPPid:\t807143\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t64\nGroups:\t27 29 44 100 108 122 979 983 984 993 1000 2002 \nKthread:\t0\nVmPeak:\t   39608 kB\nVmSize:\t   33160 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   22476 kB\nVmRSS:\t   13720 kB\nRssAnon:\t    8236 kB\nRssFile:\t    5484 kB\nRssShmem:\t       0 kB\nVmData:\t    9316 kB\nVmStk:\t     132 kB\nVmExe:\t    6200 kB\nVmLib:\t    7112 kB\nVmPTE:\t      88 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nuntag_mask:\t0xffffffffffffff\nThreads:\t1\nSigQ:\t0/501107\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tunknown\nCpus_allowed:\t3fff\nCpus_allowed_list:\t0-13\nMems_allowed:\t0001\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t4910\nnonvoluntary_ctxt_switches:\t59\n",
+      "gpu_library_maps": [],
+      "children": "",
+      "shared_lock_fds": {
+        "3": "pos:\t0\nflags:\t02402001\nmnt_id:\t29\nino:\t1048611\n"
+      },
+      "shared_locks": [
+        "26: FLOCK  ADVISORY  WRITE 545711 103:01:1048611 0 EOF",
+        "26: -> FLOCK  ADVISORY  WRITE 555938 103:01:1048611 0 EOF"
+      ],
+      "admission_exists": false,
+      "completed_runs_exists": false,
+      "terminal_exists": false
+    },
+    "actual_terminal": {
+      "argv": [
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_serial_iteration_resume_20261002_r4.py",
+        "--out",
+        "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r4",
+        "--lock-wait-seconds",
+        "43200"
+      ],
+      "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+      "started_utc": "2026-10-02T06:51:26.511467+00:00",
+      "deadline_seconds": 63000.0,
+      "status": "EXITED",
+      "selected_env": {
+        "CUDA_VISIBLE_DEVICES": ""
+      },
+      "returncode": -15,
+      "signal": 15,
+      "elapsed_seconds": 4668.349893011997
+    },
+    "actual_terminal_sha256": "b45aab5b55de078cbda4c01b2c39795ccbbf0850a86ce705be6d358d1e5615b2",
+    "both_handles_absent": true,
+    "torch_imported": false,
+    "new_native_calls": 0,
+    "stage": "OWN_CPU_ONLY_WAITING_R4_INTENTIONALLY_CLOSED_ACTUAL_SIGTERM",
+    "frozen_inputs_unchanged": true,
+    "gpu_work": "NOT_RUN",
+    "service_final": "inactive"
+  },
+  "correction_run": {
+    "argv": [
+      "python3",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_integer_generation_accounting_preparation_cpu_20261002_r1.py",
+      "--out",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-integer-generation-accounting-preparation-cpu-audit-20261002-r1"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-02T08:13:09.638254+00:00",
+    "deadline_seconds": 30.0,
+    "status": "EXITED",
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "returncode": 0,
+    "signal": null,
+    "elapsed_seconds": 0.3652930149983149
+  },
+  "correction_proof": {
+    "stage": "GENERATION_ACCOUNTING_ASSERTION_CORRECTED_CPU_REGRESSION_COMPLETE",
+    "only_changed_assertion_ast": true,
+    "old_cached7_correct_count_false_rejection_reproduced": true,
+    "both_arms_expected_postprocess_kernels": 2304,
+    "regression_cases": [
+      {
+        "arm": "cached_shuffle",
+        "kernels": 2304,
+        "accepted": true
+      },
+      {
+        "arm": "cached_shuffle",
+        "changed": {
+          "main": 767
+        },
+        "accepted": false
+      },
+      {
+        "arm": "cached_shuffle",
+        "changed": {
+          "repair": 767
+        },
+        "accepted": false
+      },
+      {
+        "arm": "cached_shuffle",
+        "changed": {
+          "kernels": 1536
+        },
+        "accepted": false
+      },
+      {
+        "arm": "cached_shuffle",
+        "changed": {
+          "kernels": 2303
+        },
+        "accepted": false
+      },
+      {
+        "arm": "integer_redux",
+        "kernels": 2304,
+        "accepted": true
+      },
+      {
+        "arm": "integer_redux",
+        "changed": {
+          "main": 767
+        },
+        "accepted": false
+      },
+      {
+        "arm": "integer_redux",
+        "changed": {
+          "repair": 767
+        },
+        "accepted": false
+      },
+      {
+        "arm": "integer_redux",
+        "changed": {
+          "kernels": 1536
+        },
+        "accepted": false
+      },
+      {
+        "arm": "integer_redux",
+        "changed": {
+          "kernels": 2303
+        },
+        "accepted": false
+      }
+    ],
+    "qualified_cached7_actual_main_calls": 72,
+    "qualified_cached7_actual_postprocess_kernel_launches": 216,
+    "files": {
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_integer_generation_accounting_preparation_cpu_20261002_r1.py": "6ad85e1124733c8b6c80b7de7c54877aa6d7ce41033ee389fef9eaf380f9e334",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_integer_reduce_generation_pair_cpu_20261002_r1.py": "8e3c3f5298de076b18086cfea8865421f8407f4aeac4e7d12c7686e220432d50",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/audit_a3_integer_reduce_generation_pair_cpu_20261002_r2.py": "7b1051ed90d307b09261bf4b4bb0fbe4a0294e3ba1bd3b356e252c3db3177c09",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_request_runtime_20261002_r4.py": "40ae1e92a706f8a5856ac7199d196355b5c5be45a8242f7d255f72f24426866d",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r7.py": "551818f57b08e8a0c6b0a60cc51844c38055bbffbc18888dd15a5be61d6d2fd3",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_guarded_rounding_native_20261002_r8.py": "88d8ef70a550c58d40e14cb589096be275e30bcfca3f2840c6b0fdd8498b6ad0",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-weight-plan-20261002-r1-launch/run.json": "732441459cc5ac919e700336a69cae37928d05538060ee7d20b0cb407cd767b8",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-weight-plan-20261002-r1/candidate/model/result.json": "ddaa5cdd9b83f6e2e6fd35a0eeeb344c304cf55957e133b5ed3e904601e3d94a"
+    },
+    "torch_imported": false,
+    "new_native_calls": 0,
+    "integer8_generation_GPU_tests": "NOT_RUN",
+    "paired_performance": "NOT_RUN",
+    "accepted_optimization": false
+  }
+}

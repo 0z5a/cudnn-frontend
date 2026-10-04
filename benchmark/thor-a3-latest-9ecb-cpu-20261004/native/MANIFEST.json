@@ -1,0 +1,72 @@
+{
+  "head": "6c252fab563ae531e92a7c8114de345217ea9761",
+  "upstream": "9ecb75e7771fcfb933e19136ace70ab8fade83fa",
+  "scope": "FRESH_CPU_NATIVE_BUILD_AND_IMPORT; GPU_TESTS_NOT_RUN",
+  "files": [
+    {
+      "path": "results/a3-latest-9ecb-native-preparation-20261004-r2/run.json",
+      "bytes": 634,
+      "sha256": "1d5d66dd53fa123fbb6c90d741bc1b435eeb72c2716c430d524c10083495abfa"
+    },
+    {
+      "path": "results/a3-latest-9ecb-native-preparation-20261004-r2/run.live.json",
+      "bytes": 683,
+      "sha256": "015f93d882c59a7269e9bf25174cc061a26511b1ee4d25a6616e8470ec5a9201"
+    },
+    {
+      "path": "results/a3-latest-9ecb-native-preparation-20261004-r2/stderr.log",
+      "bytes": 244,
+      "sha256": "b7cd0d6f8aaaddf9330ed727a83c8f906ed8c30f3e19245c94b46cf39b424dcf"
+    },
+    {
+      "path": "results/a3-latest-9ecb-native-preparation-20261004-r2/stdout.log",
+      "bytes": 11785,
+      "sha256": "d8f11c033cd4f0e96accef4c3df540754609327dbe025f81aa427370dd233d5d"
+    },
+    {
+      "path": "results/a3-latest-9ecb-native-provenance-20261004-r2.json",
+      "bytes": 22916,
+      "sha256": "215b1b768dcc2ad5963f7ac7cda223d774b6de56a6aad4ffae973f03a2021069"
+    },
+    {
+      "path": "results/a3-latest-9ecb-prebuild-20261004-r2.json",
+      "bytes": 21283,
+      "sha256": "2169e69d7cc041c501ce0ef8025fe88c962e35407d6c76aec7424c4a8b61d19e"
+    },
+    {
+      "path": "results/a3-latest-9ecb-preparation-background-20261004-r2/driver.log",
+      "bytes": 634,
+      "sha256": "1d5d66dd53fa123fbb6c90d741bc1b435eeb72c2716c430d524c10083495abfa"
+    },
+    {
+      "path": "results/a3-latest-9ecb-preparation-background-20261004-r2/launch.json",
+      "bytes": 1742,
+      "sha256": "ecbefca165ed8bd4dfa71130b1d953bd133c5dcfe710412b260878237114c7c9"
+    },
+    {
+      "path": "results/build-a3-latest-9ecb-20261004-r2/run.json",
+      "bytes": 716,
+      "sha256": "a21c387668ebaff53e73eede04f45eaaeb2df8128d4306a149a29c4ed6b93002"
+    },
+    {
+      "path": "results/build-a3-latest-9ecb-20261004-r2/run.live.json",
+      "bytes": 765,
+      "sha256": "e1a4d9f0d3994d4e23aca1599a7f8eea393953902d8b9bf84d95213b2e3ac129"
+    },
+    {
+      "path": "results/build-a3-latest-9ecb-20261004-r2/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/build-a3-latest-9ecb-20261004-r2/stdout.log",
+      "bytes": 1765,
+      "sha256": "70c65cf912fd7040b013641e5c689ed2b8c629537e476cb3c1e2bea0336ffa4b"
+    },
+    {
+      "path": "tools/prepare_build_a3_latest_9ecb_20261004_r2.py",
+      "bytes": 9117,
+      "sha256": "d6ea2c9dc46289d8833c6e5c76e54336e2a93428b6da7ce9f55a17d6111fdb13"
+    }
+  ]
+}

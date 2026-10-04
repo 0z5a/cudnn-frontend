@@ -1,0 +1,7 @@
+{
+  "parent_pid": 2798387,
+  "original_logger": "/home/jwipc/experiments/sm110-validation-round2-20260928/pack/scripts/run_logged.py",
+  "replacement_logger": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_async_policy_20261004/run_logged_observe.py",
+  "policy_manifest_sha256": "f4dcac118f614c077af38cbd818d59ef32f738f4c06559ef4825d20e855b6a09",
+  "signals_sent": 0
+}

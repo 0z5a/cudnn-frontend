@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python",
+    "-c",
+    "import time;from pathlib import Path;time.sleep(0.25);Path('/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-async-observe-policy-cpu-audit-20261004-r1/nested-completed.txt').write_text(\"COMPLETED\");raise SystemExit(9)"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-04T10:22:32.637258+00:00",
+  "deadline_seconds": 0.05,
+  "status": "EXITED",
+  "runner_policy": "OBSERVE_ONLY_NO_SIGNALS",
+  "signals_sent": 0,
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": ""
+  },
+  "pid": 2798389,
+  "returncode": 9,
+  "signal": null,
+  "deadline_observed": true,
+  "elapsed_seconds": 4.424510176992044,
+  "logger_pid": 2798388,
+  "child_alive": false
+}

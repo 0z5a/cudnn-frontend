@@ -1,0 +1,44 @@
+{
+  "logger_pid": 2805767,
+  "started_utc": "2026-10-04T10:34:15.052566+00:00",
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_async_policy_20261004/run_logged_observe.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-9ecb-native-preparation-20261004-r2",
+    "--cwd",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "--timeout",
+    "4200",
+    "--",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_build_a3_latest_9ecb_20261004_r2.py"
+  ],
+  "script_sha256": "d6ea2c9dc46289d8833c6e5c76e54336e2a93428b6da7ce9f55a17d6111fdb13",
+  "cpu_only": true,
+  "compile_threads": 1,
+  "signals_sent": 0,
+  "upstream": "9ecb75e7771fcfb933e19136ace70ab8fade83fa",
+  "prior_actual_failure": {
+    "argv": [
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python",
+      "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_build_a3_latest_9ecb_20261004_r1.py"
+    ],
+    "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "started_utc": "2026-10-04T10:28:00.092757+00:00",
+    "deadline_seconds": 4200.0,
+    "status": "EXITED",
+    "runner_policy": "OBSERVE_ONLY_NO_SIGNALS",
+    "signals_sent": 0,
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "pid": 2801792,
+    "returncode": 1,
+    "signal": null,
+    "deadline_observed": false,
+    "elapsed_seconds": 12.906341068010079
+  },
+  "public_fetch_bypasses_global_rewrite_command_only": true,
+  "native_build": "NOT_YET_TERMINAL"
+}
