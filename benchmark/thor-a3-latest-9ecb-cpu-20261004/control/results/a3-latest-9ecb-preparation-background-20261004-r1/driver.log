@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_build_a3_latest_9ecb_20261004_r1.py"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-04T10:28:00.092757+00:00",
+  "deadline_seconds": 4200.0,
+  "status": "EXITED",
+  "runner_policy": "OBSERVE_ONLY_NO_SIGNALS",
+  "signals_sent": 0,
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": ""
+  },
+  "pid": 2801792,
+  "returncode": 1,
+  "signal": null,
+  "deadline_observed": false,
+  "elapsed_seconds": 12.906341068010079
+}

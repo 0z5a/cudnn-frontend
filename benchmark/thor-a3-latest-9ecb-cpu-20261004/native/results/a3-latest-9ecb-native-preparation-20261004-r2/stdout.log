@@ -1,0 +1,196 @@
+Auto-merging test/AGENTS.md
+Merge made by the 'ort' strategy.
+ docs/developer/overview.mdx                        |    6 +
+ docs/fe-oss-apis/attention/sdpa_bwd_sm107.md       |  156 ++-
+ docs/fe-oss-apis/gated_attention_block.md          |  226 ++-
+ docs/operations/Attention.md                       |   13 +
+ include/cudnn_frontend/graph_interface.h           |   77 +-
+ include/cudnn_frontend/graph_properties.h          |   17 +
+ include/cudnn_frontend/node/sdpa_fp8_bwd.h         |    6 +
+ include/cudnn_frontend/plans.h                     |   24 +-
+ python/CMakeLists.txt                              |    3 +
+ python/cudnn/AGENTS.md                             |   19 +
+ python/cudnn/_device.py                            |   11 +
+ python/cudnn/_pygraph.py                           |   49 +-
+ .../sparse_attention_backward/dsa_bwd_sm90.py      |  258 ++--
+ .../utils/sm90/bwd_tile_scheduler.py               |   91 ++
+ .../utils/sm90/primitives.py                       |   50 +-
+ python/cudnn/frost/tile_dsl/thd.py                 |    1 +
+ python/cudnn/gated_attention_block/api.py          |  382 ++++-
+ python/cudnn/gated_attention_block/api_bwd.py      |  436 +++++-
+ python/cudnn/sdpa/AGENTS.md                        |    5 +
+ python/cudnn/sdpa/_plan.py                         |   47 +-
+ python/cudnn/sdpa/bwd/api_dsl_sm107.py             |  351 +++--
+ python/cudnn/sdpa/bwd/config_sm100.py              |   38 +-
+ python/cudnn/sdpa/bwd/config_sm107.py              |   18 +-
+ python/cudnn/sdpa/bwd/engines.py                   |  156 ++-
+ .../cudnn/sdpa/bwd/kernels/bprop_chain_common.py   |   40 +-
+ .../sdpa/bwd/kernels/bprop_matmul_blackwell.py     |  125 +-
+ .../cudnn/sdpa/bwd/kernels/sm107/bprop_d256_fp8.py |  755 ++++++++--
+ .../sdpa/bwd/kernels/sm107/bprop_d256_mxfp8.py     |  130 +-
+ .../cudnn/sdpa/bwd/kernels/sm107/prepared_host.py  |  400 +++++-
+ python/cudnn/sdpa/bwd/prepared.py                  |   31 +-
+ python/cudnn/sdpa/bwd/prepared_sm107.py            |  248 +++-
+ python/cudnn/sdpa/frost/SUPPORT_MATRIX_TRACKER.md  |  196 ++-
+ python/cudnn/sdpa/fwd/api_dsl.py                   |  312 +++--
+ python/cudnn/sdpa/fwd/config_sm100.py              |   50 +-
+ python/cudnn/sdpa/fwd/config_sm107.py              |   21 +-
+ python/cudnn/sdpa/fwd/engines.py                   |   78 +-
+ python/cudnn/sdpa/fwd/heuristics.py                |  105 +-
+ python/cudnn/sdpa/fwd/kernels/_common_blackwell.py |    2 +-
+ python/cudnn/sdpa/fwd/kernels/_fp8_host.py         |    4 +-
+ python/cudnn/sdpa/fwd/kernels/_mxfp8_host.py       |    6 +-
+ .../sdpa/fwd/kernels/sm100/decode_d128_f16.py      |   30 +-
+ .../sdpa/fwd/kernels/sm100/decode_d256_f16.py      |    4 +-
+ .../sdpa/fwd/kernels/sm100/prefill_d128_f16.py     |   10 +-
+ .../sdpa/fwd/kernels/sm100/prefill_d128_fp8.py     |    6 +-
+ .../sdpa/fwd/kernels/sm100/prefill_d128_mxfp8.py   |    6 +-
+ .../fwd/kernels/sm100/prefill_d192_d128_f16.py     |   10 +-
+ .../sdpa/fwd/kernels/sm100/prefill_d256_f16.py     |   10 +-
+ .../sdpa/fwd/kernels/sm100/prefill_d512_f16.py     |   10 +-
+ .../sdpa/fwd/kernels/sm100/prefill_d512_fp8.py     |    6 +-
+ .../sdpa/fwd/kernels/sm107/prefill_d128_f16.py     |  251 ++--
+ .../sdpa/fwd/kernels/sm107/prefill_d128_fp8.py     |    8 +-
+ .../sdpa/fwd/kernels/sm107/prefill_d128_mxfp8.py   |    3 +-
+ .../fwd/kernels/sm107/prefill_d192_d128_f16.py     |  251 ++--
+ .../fwd/kernels/sm107/prefill_d192_d128_fp8.py     |  104 +-
+ .../fwd/kernels/sm107/prefill_d192_d128_mxfp8.py   |    3 +-
+ .../sdpa/fwd/kernels/sm107/prefill_d256_f16.py     |   10 +-
+ .../sdpa/fwd/kernels/sm107/prefill_d256_fp8.py     |    6 +-
+ .../sdpa/fwd/kernels/sm107/prefill_d256_mxfp8.py   |    3 +-
+ .../sdpa/fwd/kernels/sm107/prefill_d512_f16.py     |   10 +-
+ .../sdpa/fwd/kernels/sm107/prefill_d512_fp8.py     |    6 +-
+ .../sdpa/fwd/kernels/sm107/prefill_d512_mxfp8.py   |    3 +-
+ .../sdpa/fwd/kernels/sm120/prefill_d256_f16.py     |    6 +-
+ .../sdpa/fwd/kernels/sm120/prefill_d512_f16.py     |    6 +-
+ .../sdpa/fwd/kernels/sm120/prefill_d512_fp8.py     |    6 +-
+ python/cudnn/sdpa/fwd/kernels/sm120/prefill_f16.py |    6 +-
+ python/cudnn/sdpa/fwd/kernels/sm120/prefill_fp8.py |    6 +-
+ .../cudnn/sdpa/fwd/kernels/sm120/prepared_host.py  |    8 +-
+ .../cudnn/sdpa/fwd/kernels/sm90/prepared_host.py   |    4 +-
+ python/cudnn/sdpa/fwd/placement.py                 |    8 +-
+ python/cudnn/sdpa/fwd/prepared.py                  |  100 +-
+ python/cudnn/sdpa/fwd/prepared_sm80.py             |   30 +-
+ python/properties.cpp                              |   74 +
+ python/pygraph/pygraph.cpp                         |   31 +
+ python/pygraph/pygraph.h                           |   20 +-
+ python/pygraph/sdpa.cpp                            |   30 +-
+ python/pygraph/sdpa_bwd_binding.cpp                |  106 ++
+ python/pygraph/sdpa_dense_binding.cpp              |  657 +++++++++
+ python/pygraph/sdpa_fixed_binding.h                |  120 ++
+ python/pygraph/sdpa_sm80_binding.cpp               |  137 ++
+ python/pygraph/sdpa_thd_binding.cpp                |   47 +-
+ python/pygraph/variant_pack.cpp                    |   16 +
+ python/pygraph/variant_pack.h                      |   22 +
+ test/AGENTS.md                                     |  129 ++
+ test/cpp/CMakeLists.txt                            |    3 +
+ test/cpp/autotune.cpp                              |  127 ++
+ test/cpp/plan_selection.cpp                        |  149 ++
+ test/cpp/plans.cpp                                 |   64 +
+ test/python/api_index/api_index.txt                |   80 ++
+ test/python/api_index/api_index_modules.txt        |    2 +
+ test/python/core/cutedsl/test_workspace_device.py  |   81 ++
+ .../core/graph/test_ensure_current_context.py      |  124 +-
+ test/python/core/graph/test_execute_workspace.py   |  138 ++
+ .../cutedsl/gated_block_reference.py               |  182 +++
+ .../cutedsl/test_block_thd.py                      | 1241 +++++++++++++++++
+ .../cutedsl/test_block_thd_backward.py             |  921 ++++++++++++
+ .../cutedsl/test_proj_gemm_bwd.py                  |    2 +-
+ test/python/gemm/cutedsl/test_grouped_gemm_dglu.py |    8 +-
+ .../gemm/cutedsl/test_grouped_gemm_wrapper_memo.py |    7 +-
+ test/python/sdpa/cutedsl/test_compact_gqa.py       |   33 +-
+ test/python/sdpa/fp8.py                            |    8 +
+ test/python/sdpa/fp8_ref.py                        |   58 +-
+ test/python/sdpa/frost/frost_test_utils.py         |   29 +
+ test/python/sdpa/frost/prepared_bwd_cache_utils.py |    8 +
+ test/python/sdpa/frost/test_heuristic_geometry.py  |   58 +-
+ .../sdpa/frost/test_sdpa_bwd_config_sm107.py       |   20 +-
+ test/python/sdpa/frost/test_sdpa_bwd_dsl_sm107.py  |   93 +-
+ test/python/sdpa/frost/test_sdpa_bwd_dsl_sm120.py  |   21 +-
+ test/python/sdpa/frost/test_sdpa_bwd_fp8_sm107.py  |  643 ++++++++-
+ .../python/sdpa/frost/test_sdpa_bwd_mxfp8_sm107.py |  501 ++++++-
+ .../test_sdpa_bwd_stage3_block_scale_sm107.py      |   53 +-
+ .../sdpa/frost/test_sdpa_bwd_thd_fp8_sm107.py      | 1461 ++++++++++++++++++++
+ test/python/sdpa/frost/test_sdpa_bwd_thd_sm107.py  |   40 +-
+ test/python/sdpa/frost/test_sdpa_fp8_sm107.py      |  166 ++-
+ test/python/sdpa/frost/test_sdpa_fwd_dsl_sm107.py  |  282 +++-
+ test/python/sdpa/frost/test_sdpa_fwd_dsl_sm90.py   |    4 +
+ test/python/sdpa/frost/test_sdpa_fwd_heuristics.py |   11 +-
+ .../python/sdpa/frost/test_sdpa_fwd_paged_sm100.py |   13 +-
+ .../sdpa/frost/test_sdpa_fwd_split_kv_sm100.py     |    9 +-
+ test/python/sdpa/frost/test_sdpa_graph_analyzer.py |   37 +
+ .../sdpa/frost/test_sdpa_native_arch_binding.py    |  128 ++
+ .../sdpa/frost/test_sdpa_native_bwd_binding.py     |  234 ++++
+ .../sdpa/frost/test_sdpa_native_dense_binding.py   |  759 ++++++++++
+ .../frost/test_sdpa_native_fp8_arch_binding.py     |  101 ++
+ .../sdpa/frost/test_sdpa_native_fp8_binding.py     |  243 ++++
+ .../sdpa/frost/test_sdpa_native_prefill_binding.py |  138 ++
+ .../sdpa/frost/test_sdpa_native_sink_binding.py    |  180 +++
+ .../sdpa/frost/test_sdpa_native_sm120_binding.py   |  114 ++
+ .../sdpa/frost/test_sdpa_native_sm80_binding.py    |  239 ++++
+ .../sdpa/frost/test_sdpa_native_sm90_binding.py    |  268 ++++
+ .../sdpa/frost/test_sdpa_native_split_binding.py   |  222 +++
+ .../sdpa/frost/test_sdpa_native_thd_binding.py     |   45 +-
+ test/python/sdpa/frost/test_sdpa_prepared_fp8.py   |    4 +
+ .../sdpa/frost/test_sdpa_prepared_fp8_paged.py     |    2 +
+ .../sdpa/frost/test_sdpa_prepared_fp8_split.py     |    4 +-
+ test/python/sdpa/frost/test_sdpa_prepared_sm120.py |    3 +
+ .../sdpa/frost/test_sdpa_prepared_stats_int64.py   |  100 ++
+ test/python/sdpa/frost/test_sdpa_prepared_thd.py   |  226 ++-
+ .../sdpa/frost/test_sdpa_thd_tensormap_acquire.py  |   14 +-
+ test/python/sdpa/frost/test_split_kv_heuristic.py  |    1 +
+ test/python/sdpa/mxfp8_ref.py                      |   14 +-
+ test/python/test_sdpa_fp8_bwd_thd_attrs.py         |  289 ++++
+ 141 files changed, 15622 insertions(+), 1645 deletions(-)
+ create mode 100644 python/pygraph/sdpa_bwd_binding.cpp
+ create mode 100644 python/pygraph/sdpa_dense_binding.cpp
+ create mode 100644 python/pygraph/sdpa_fixed_binding.h
+ create mode 100644 python/pygraph/sdpa_sm80_binding.cpp
+ create mode 100644 test/cpp/autotune.cpp
+ create mode 100644 test/cpp/plan_selection.cpp
+ create mode 100644 test/cpp/plans.cpp
+ create mode 100644 test/python/core/cutedsl/test_workspace_device.py
+ create mode 100644 test/python/core/graph/test_execute_workspace.py
+ create mode 100644 test/python/gated_attention_block/cutedsl/test_block_thd.py
+ create mode 100644 test/python/gated_attention_block/cutedsl/test_block_thd_backward.py
+ create mode 100644 test/python/sdpa/frost/test_sdpa_bwd_thd_fp8_sm107.py
+ create mode 100644 test/python/sdpa/frost/test_sdpa_native_arch_binding.py
+ create mode 100644 test/python/sdpa/frost/test_sdpa_native_bwd_binding.py
+ create mode 100644 test/python/sdpa/frost/test_sdpa_native_dense_binding.py
+ create mode 100644 test/python/sdpa/frost/test_sdpa_native_fp8_arch_binding.py
+ create mode 100644 test/python/sdpa/frost/test_sdpa_native_fp8_binding.py
+ create mode 100644 test/python/sdpa/frost/test_sdpa_native_prefill_binding.py
+ create mode 100644 test/python/sdpa/frost/test_sdpa_native_sink_binding.py
+ create mode 100644 test/python/sdpa/frost/test_sdpa_native_sm120_binding.py
+ create mode 100644 test/python/sdpa/frost/test_sdpa_native_sm80_binding.py
+ create mode 100644 test/python/sdpa/frost/test_sdpa_native_sm90_binding.py
+ create mode 100644 test/python/sdpa/frost/test_sdpa_native_split_binding.py
+ create mode 100644 test/python/sdpa/frost/test_sdpa_prepared_stats_int64.py
+ create mode 100644 test/python/test_sdpa_fp8_bwd_thd_attrs.py
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest9ecb_r2/bin/python",
+    "-m",
+    "pip",
+    "install",
+    "--no-deps",
+    "--no-build-isolation",
+    "-e",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9ecb_r2"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9ecb_r2",
+  "started_utc": "2026-10-04T10:37:40.310305+00:00",
+  "deadline_seconds": 3600.0,
+  "status": "EXITED",
+  "runner_policy": "OBSERVE_ONLY_NO_SIGNALS",
+  "signals_sent": 0,
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": ""
+  },
+  "pid": 2808121,
+  "returncode": 0,
+  "signal": null,
+  "deadline_observed": false,
+  "elapsed_seconds": 583.4998477410118
+}
+{"head": "6c252fab563ae531e92a7c8114de345217ea9761", "base": "9ecb75e7771fcfb933e19136ace70ab8fade83fa", "fresh_build_rc": 0, "binding": {"path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9ecb_r2/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so", "sha256": "d6ed1ac6d7b43d024e48c5fd864678c0988bc5e5b8bfc8673c8a78c4c47dbd7e"}, "GPU_tests": "NOT_RUN"}

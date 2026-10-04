@@ -1,0 +1,43 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python",
+    "-c",
+    "import time;from pathlib import Path;time.sleep(0.35);Path('/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-async-observe-policy-cpu-audit-20261004-r1/completed-after-deadline.txt').write_text(\"COMPLETED\");raise SystemExit(7)"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-04T10:22:32.140366+00:00",
+  "deadline_seconds": 0.05,
+  "status": "EXITED",
+  "runner_policy": "OBSERVE_ONLY_NO_SIGNALS",
+  "signals_sent": 0,
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": ""
+  },
+  "pid": 2798374,
+  "returncode": 7,
+  "signal": null,
+  "deadline_observed": true,
+  "elapsed_seconds": 0.40506430401001126
+}
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python",
+    "-c",
+    "import time;from pathlib import Path;time.sleep(0.25);Path('/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-async-observe-policy-cpu-audit-20261004-r1/nested-completed.txt').write_text(\"COMPLETED\");raise SystemExit(9)"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+  "started_utc": "2026-10-04T10:22:32.637258+00:00",
+  "deadline_seconds": 0.05,
+  "status": "EXITED",
+  "runner_policy": "OBSERVE_ONLY_NO_SIGNALS",
+  "signals_sent": 0,
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": ""
+  },
+  "pid": 2798389,
+  "returncode": 9,
+  "signal": null,
+  "deadline_observed": true,
+  "elapsed_seconds": 4.424510176992044
+}
+{"stage": "OBSERVE_ONLY_LOGGER_CPU_VERIFIED_NO_GPU", "actual_overdeadline_cases": [{"argv": ["/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python", "-c", "import time;from pathlib import Path;time.sleep(0.35);Path('/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-async-observe-policy-cpu-audit-20261004-r1/completed-after-deadline.txt').write_text(\"COMPLETED\");raise SystemExit(7)"], "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928", "started_utc": "2026-10-04T10:22:32.140366+00:00", "deadline_seconds": 0.05, "status": "EXITED", "runner_policy": "OBSERVE_ONLY_NO_SIGNALS", "signals_sent": 0, "selected_env": {"CUDA_VISIBLE_DEVICES": ""}, "pid": 2798374, "returncode": 7, "signal": null, "deadline_observed": true, "elapsed_seconds": 0.40506430401001126}, {"argv": ["/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python", "-c", "import time;from pathlib import Path;time.sleep(0.25);Path('/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-async-observe-policy-cpu-audit-20261004-r1/nested-completed.txt').write_text(\"COMPLETED\");raise SystemExit(9)"], "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928", "started_utc": "2026-10-04T10:22:32.637258+00:00", "deadline_seconds": 0.05, "status": "EXITED", "runner_policy": "OBSERVE_ONLY_NO_SIGNALS", "signals_sent": 0, "selected_env": {"CUDA_VISIBLE_DEVICES": ""}, "pid": 2798389, "returncode": 9, "signal": null, "deadline_observed": true, "elapsed_seconds": 4.424510176992044}], "policy_off_control_rc": 0, "legacy_logger_unchanged": true, "R5_actual_terminal": {"argv": ["/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest29a0/bin/python", "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_serial_iteration_resume_20261002_r5.py", "--out", "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-serial-iteration-20261002-r5", "--lock-wait-seconds", "43200"], "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928", "started_utc": "2026-10-02T08:15:14.308534+00:00", "deadline_seconds": 63000.0, "status": "EXITED", "selected_env": {"CUDA_VISIBLE_DEVICES": ""}, "returncode": 75, "signal": null, "elapsed_seconds": 43207.69318550601}, "R5_48_frozen_sources_unchanged": true, "redirect_receipts": 2, "policy_files": {"files": {"run_logged_observe.py": "80d9eeb5b26095a90095f7e96d63284a84ea478762335f792b014c78069831ce", "a3_no_signal_redirect.py": "74e7c9ad184ca260e6645b77093f67e02122ccc3c62c647c392efa6ea1f7fafe", "sitecustomize.py": "5a3d527356723f7208c85b8d8adbb790afffb29c5991e4a0102361645a42f498"}, "policy": "OBSERVE_ONLY_NO_SIGNALS"}, "torch_imported": false, "new_native_calls": 0, "signals_sent": 0, "queued_GPU": false}

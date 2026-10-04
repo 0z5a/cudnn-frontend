@@ -1,0 +1,11 @@
+Cloning into '/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9ecb'...
+fatal: unable to access 'https://gh-proxy.com/https://github.com/NVIDIA/cudnn-frontend.git/': The requested URL returned error: 429
+Traceback (most recent call last):
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_build_a3_latest_9ecb_20261004_r1.py", line 155, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_build_a3_latest_9ecb_20261004_r1.py", line 29, in main
+    subprocess.run(["git", "-C", str(source), "-c", "credential.helper=", "fetch", "https://github.com/NVIDIA/cudnn-frontend.git", "develop"], check=True)
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest9ecb', '-c', 'credential.helper=', 'fetch', 'https://github.com/NVIDIA/cudnn-frontend.git', 'develop']' returned non-zero exit status 128.
