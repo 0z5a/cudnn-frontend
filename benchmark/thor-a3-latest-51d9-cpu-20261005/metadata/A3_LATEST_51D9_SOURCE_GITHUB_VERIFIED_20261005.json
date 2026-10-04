@@ -1,0 +1,634 @@
+{
+  "utc": "2026-10-04T17:19:48.702857+00:00",
+  "head": "2fc0bc608c19c75311a405b12cc57374741f9df1",
+  "base": "51d9d06b574222378a3d806009accab098e73705",
+  "draft": false,
+  "native_and_PR_blobs_verified": 125,
+  "verified": [
+    {
+      "path": "CMakeLists.txt",
+      "git_blob": "91f25e4c10b449e3aa3f16fe1f9abc17b9b8a605",
+      "size": 3714
+    },
+    {
+      "path": "cmake/cuDNN.cmake",
+      "git_blob": "bdcd310a6ceabddf7edfd1164a8b7f29f0709b30",
+      "size": 5875
+    },
+    {
+      "path": "include/cudnn_backend_base.h",
+      "git_blob": "4f79243decbace19df2649723f653c613644fb0f",
+      "size": 4673
+    },
+    {
+      "path": "include/cudnn_frontend.h",
+      "git_blob": "ea6cf09b35da955fcce573348987bb7a58bcf958",
+      "size": 5949
+    },
+    {
+      "path": "include/cudnn_frontend/AGENTS.md",
+      "git_blob": "77f29af25ca2bbc43f1722f3629950c8eedb5f9b",
+      "size": 4399
+    },
+    {
+      "path": "include/cudnn_frontend/backend/backend_descriptor.h",
+      "git_blob": "8527b1d5213b753fecac4771497a47eb49015e9c",
+      "size": 4451
+    },
+    {
+      "path": "include/cudnn_frontend/backend/device_properties.h",
+      "git_blob": "702d82ee0b752391d16d14bf2dcd55fd0b34b6dd",
+      "size": 5651
+    },
+    {
+      "path": "include/cudnn_frontend/backend/execution_helpers.h",
+      "git_blob": "6cebaf86a436ee59e71c994da1cf119008d51e3d",
+      "size": 6369
+    },
+    {
+      "path": "include/cudnn_frontend/backend/kernel_cache.h",
+      "git_blob": "9c7431c3a1e222a21ffc302300341d9b194fec0b",
+      "size": 11398
+    },
+    {
+      "path": "include/cudnn_frontend/backend/plan_helpers.h",
+      "git_blob": "cc728b7e1f1984e9b3f09427871283aed7e98c10",
+      "size": 11569
+    },
+    {
+      "path": "include/cudnn_frontend/context.h",
+      "git_blob": "f462a2c972a8e33df73af1d30ec27198d5ebdc20",
+      "size": 3583
+    },
+    {
+      "path": "include/cudnn_frontend/cudnn_interface.h",
+      "git_blob": "8bd87bec0f2c1a615ead71f6237490da73929926",
+      "size": 10602
+    },
+    {
+      "path": "include/cudnn_frontend/experimental/attention_utils.h",
+      "git_blob": "8322adcaaf195f40b0122bb9cfa2bf6a0acdc1fc",
+      "size": 7033
+    },
+    {
+      "path": "include/cudnn_frontend/experimental/nvrtc_shim.h",
+      "git_blob": "539248650782400856f7cb9bcdb208c56771174e",
+      "size": 7960
+    },
+    {
+      "path": "include/cudnn_frontend/experimental/oss_engine_interface.h",
+      "git_blob": "38befb11533bdde3cf39ffacf5c3b0d5d7528737",
+      "size": 3322
+    },
+    {
+      "path": "include/cudnn_frontend/experimental/sm100_rms_norm_silu_engine.h",
+      "git_blob": "05739bd7c972df921314aad0c25cd8fdcc2052b9",
+      "size": 30119
+    },
+    {
+      "path": "include/cudnn_frontend/experimental/sm100_rms_norm_silu_knobs.h",
+      "git_blob": "afbefc94127abe891fe9f8714550c59cb343c1ae",
+      "size": 9549
+    },
+    {
+      "path": "include/cudnn_frontend/generated/rms_norm_silu/sm100/ln_fwd_silu_kernel.h",
+      "git_blob": "17748305941ce040842eacbcf876360f6bedd683",
+      "size": 20899
+    },
+    {
+      "path": "include/cudnn_frontend/generated/rms_norm_silu/sm100/ln_headers.h",
+      "git_blob": "6748f2b8b00278ae01e67532a5167548de6f5a76",
+      "size": 77573
+    },
+    {
+      "path": "include/cudnn_frontend/graph_helpers.h",
+      "git_blob": "f14d46d6d2e69852d63962c4ae3700af236b3d51",
+      "size": 24267
+    },
+    {
+      "path": "include/cudnn_frontend/graph_interface.h",
+      "git_blob": "29e28fe123bb062394f4549019f5924b2b7fd165",
+      "size": 200151
+    },
+    {
+      "path": "include/cudnn_frontend/graph_properties.h",
+      "git_blob": "c86f6e69345be717a68417ed53caea4f914679d3",
+      "size": 105855
+    },
+    {
+      "path": "include/cudnn_frontend/knobs.h",
+      "git_blob": "4c37579e3824ef291ee74b899c062f4ecca20a48",
+      "size": 13512
+    },
+    {
+      "path": "include/cudnn_frontend/node/adaptive_layernorm.h",
+      "git_blob": "6062ac926209711d0e6cb1da7ac7c2c02e606840",
+      "size": 23978
+    },
+    {
+      "path": "include/cudnn_frontend/node/batchnorm.h",
+      "git_blob": "b39cdd59e8c009d5f1ef90cf1dc259f714b080f4",
+      "size": 14443
+    },
+    {
+      "path": "include/cudnn_frontend/node/batchnorm_inference.h",
+      "git_blob": "a13034cd7142a6b7f8313e8b9bcd83ac5901333f",
+      "size": 7731
+    },
+    {
+      "path": "include/cudnn_frontend/node/block_scale_dequantize.h",
+      "git_blob": "78c9f7eeb7dcb72f52ad0f398f2b432d0d1c854b",
+      "size": 8499
+    },
+    {
+      "path": "include/cudnn_frontend/node/block_scale_quantize.h",
+      "git_blob": "e9e9e6561873ddc1991e5460c12817143b9ad132",
+      "size": 10024
+    },
+    {
+      "path": "include/cudnn_frontend/node/bn_finalize.h",
+      "git_blob": "288180d7c4a191ea172873d0124c79927192c357",
+      "size": 14999
+    },
+    {
+      "path": "include/cudnn_frontend/node/concatenate.h",
+      "git_blob": "e4f7b1c4b8aa3a2fb2cf4bb7171eef96c3e4c136",
+      "size": 6943
+    },
+    {
+      "path": "include/cudnn_frontend/node/conv_dgrad.h",
+      "git_blob": "1ae4c12413ac369abac44d66e41ca892c1440caf",
+      "size": 10586
+    },
+    {
+      "path": "include/cudnn_frontend/node/conv_fprop.h",
+      "git_blob": "5a929b84560fd4e21db236d6e09553322ed2af4a",
+      "size": 12884
+    },
+    {
+      "path": "include/cudnn_frontend/node/conv_wgrad.h",
+      "git_blob": "3833cf5b15a288a15a9ce10b52a0419fe614cb52",
+      "size": 10320
+    },
+    {
+      "path": "include/cudnn_frontend/node/dbn.h",
+      "git_blob": "c604b5ef39c8dcd199a0c4ab3176da97b24344f8",
+      "size": 10370
+    },
+    {
+      "path": "include/cudnn_frontend/node/dbn_weight.h",
+      "git_blob": "b2aef8d23b00a180aac27ad45c0533c3eda2d20c",
+      "size": 11297
+    },
+    {
+      "path": "include/cudnn_frontend/node/diagonal_band_mask.h",
+      "git_blob": "122797dd1109357412b3870458e983f0dcb3b4c4",
+      "size": 24938
+    },
+    {
+      "path": "include/cudnn_frontend/node/dln.h",
+      "git_blob": "11ce93abce7279162980579564c3dcf5998ba9ee",
+      "size": 10424
+    },
+    {
+      "path": "include/cudnn_frontend/node/genstats.h",
+      "git_blob": "1835ef74aa872d0275a3b088e32f880c9e9ec0a4",
+      "size": 6646
+    },
+    {
+      "path": "include/cudnn_frontend/node/instancenorm.h",
+      "git_blob": "dc0a78c8db525aed57c5983cc831dd0327f28e4b",
+      "size": 20359
+    },
+    {
+      "path": "include/cudnn_frontend/node/layernorm.h",
+      "git_blob": "71cd05394e0b706809f1337b16ff928cf326997e",
+      "size": 12361
+    },
+    {
+      "path": "include/cudnn_frontend/node/matmul.h",
+      "git_blob": "d93ddd499af1b615db761ff222bb80b24824305c",
+      "size": 11794
+    },
+    {
+      "path": "include/cudnn_frontend/node/matmul_fp8.h",
+      "git_blob": "2b8aa41260c4fbb8b656687fc7529012193256c2",
+      "size": 4710
+    },
+    {
+      "path": "include/cudnn_frontend/node/moe_grouped_matmul.h",
+      "git_blob": "195bfaaff3e8d903f67365f697c4c790f530cc87",
+      "size": 14842
+    },
+    {
+      "path": "include/cudnn_frontend/node/moe_grouped_matmul_bwd.h",
+      "git_blob": "bab26c179effe4005e59fb7878798cebce3690db",
+      "size": 10081
+    },
+    {
+      "path": "include/cudnn_frontend/node/paged_cache_load.h",
+      "git_blob": "39c76b92e031c920187aca5f5d48f8503c86b841",
+      "size": 7945
+    },
+    {
+      "path": "include/cudnn_frontend/node/pointwise.h",
+      "git_blob": "d44c75c2135d7f1ae4a9f11add9579f28dffb310",
+      "size": 20512
+    },
+    {
+      "path": "include/cudnn_frontend/node/reduction.h",
+      "git_blob": "4b25be7124f400fe4d40d5742dedfbe5c8dc168a",
+      "size": 11061
+    },
+    {
+      "path": "include/cudnn_frontend/node/resample.h",
+      "git_blob": "6fd7599001c70515a191afbbd9adf2eef86df2a6",
+      "size": 14008
+    },
+    {
+      "path": "include/cudnn_frontend/node/reshape.h",
+      "git_blob": "b599daad17b71df6be1a783abd77de02ed940092",
+      "size": 8086
+    },
+    {
+      "path": "include/cudnn_frontend/node/rmsnorm.h",
+      "git_blob": "10490c3b54093a7e9111530ba0fe418b7cc1ae54",
+      "size": 18785
+    },
+    {
+      "path": "include/cudnn_frontend/node/rng.h",
+      "git_blob": "66fad38464ee6008da8ea1a2e04a4417ed1003c8",
+      "size": 8506
+    },
+    {
+      "path": "include/cudnn_frontend/node/rope.h",
+      "git_blob": "b3e058165152dfa3657f9153670c3c509167c2b7",
+      "size": 6560
+    },
+    {
+      "path": "include/cudnn_frontend/node/rope_backward.h",
+      "git_blob": "16e6a34df2dcee9c2180e6b82655d48ec8b88532",
+      "size": 6603
+    },
+    {
+      "path": "include/cudnn_frontend/node/scaled_dot_product_flash_attention.h",
+      "git_blob": "0cd2a933d4af5c99a12eb8ec7591fcb5c253e758",
+      "size": 170413
+    },
+    {
+      "path": "include/cudnn_frontend/node/sdpa_fp8_bwd.h",
+      "git_blob": "5a9eda86dac78cab35d15fa469259baf1174f676",
+      "size": 73814
+    },
+    {
+      "path": "include/cudnn_frontend/node/sdpa_support_surface.h",
+      "git_blob": "77100b0b343d90f8cfb1b4803910b381d96a90c4",
+      "size": 38190
+    },
+    {
+      "path": "include/cudnn_frontend/node/slice.h",
+      "git_blob": "166c522aed986f64afff27e7fbd6dc6bf1b9417e",
+      "size": 10732
+    },
+    {
+      "path": "include/cudnn_frontend/node/softmax.h",
+      "git_blob": "72f5240c56ae748da31bd386aca9e104a2e44751",
+      "size": 18573
+    },
+    {
+      "path": "include/cudnn_frontend/node/transpose.h",
+      "git_blob": "ec486370a1436db2ec31b5f6dffa0063794ba9dd",
+      "size": 7655
+    },
+    {
+      "path": "include/cudnn_frontend/node_interface.h",
+      "git_blob": "5be7e5980d6d88e698fa597056dc2f73e1562370",
+      "size": 21811
+    },
+    {
+      "path": "include/cudnn_frontend/plans.h",
+      "git_blob": "9105457311e5cc5af0ec8601df5353e14ec3f406",
+      "size": 47627
+    },
+    {
+      "path": "include/cudnn_frontend/thirdparty/nlohmann/LICENSE.MIT",
+      "git_blob": "1c1f7a690d815db3a79ea3d4c9138a497e2e7702",
+      "size": 1076
+    },
+    {
+      "path": "include/cudnn_frontend/thirdparty/nlohmann/json.hpp",
+      "git_blob": "85b4cdd399c161f1eeb63a2b961dc29201c5645d",
+      "size": 1042178
+    },
+    {
+      "path": "include/cudnn_frontend/utils/attn_score_modifiers.h",
+      "git_blob": "9f8fe441efad5cbe44b210cf9d39d470d2c269ad",
+      "size": 17575
+    },
+    {
+      "path": "include/cudnn_frontend/utils/cuda_graph_retention.h",
+      "git_blob": "13859cd53efb859b0fed766db8173c91f392b8a3",
+      "size": 9141
+    },
+    {
+      "path": "include/cudnn_frontend/utils/serialize.h",
+      "git_blob": "9f66c81c85b98d9780f1181fe73412d238a41c82",
+      "size": 42813
+    },
+    {
+      "path": "include/cudnn_frontend_ConvDesc.h",
+      "git_blob": "738e5b662c11d14c0373a2a5ae9995313f1e9086",
+      "size": 14462
+    },
+    {
+      "path": "include/cudnn_frontend_Engine.h",
+      "git_blob": "fff63ae86b93d992fb6687b6739b9788a44dd926",
+      "size": 11980
+    },
+    {
+      "path": "include/cudnn_frontend_EngineConfig.h",
+      "git_blob": "5297ee6f3d7a4b392fae7acb123b2b0a0e4b84a1",
+      "size": 9454
+    },
+    {
+      "path": "include/cudnn_frontend_EngineConfigGenerator.h",
+      "git_blob": "12c91c0e6068ec18969f1edc5df516ee61af10bd",
+      "size": 4552
+    },
+    {
+      "path": "include/cudnn_frontend_EngineFallbackList.h",
+      "git_blob": "613607b300a0c575c7372dea227f32be4ab7d006",
+      "size": 6328
+    },
+    {
+      "path": "include/cudnn_frontend_Errata.h",
+      "git_blob": "fb54a051495c03be859513b1f0c4fad291945502",
+      "size": 11722
+    },
+    {
+      "path": "include/cudnn_frontend_ExecutionPlan.h",
+      "git_blob": "0737a7f9ea10fd8bbd2cde3aa077288e167d8d5f",
+      "size": 33061
+    },
+    {
+      "path": "include/cudnn_frontend_ExecutionPlanCache.h",
+      "git_blob": "26dc9edd49af89687b3bee7bfe6200e1c437c204",
+      "size": 6596
+    },
+    {
+      "path": "include/cudnn_frontend_Filters.h",
+      "git_blob": "32f81a1054505fb28b7ca5e597685fe7d280707a",
+      "size": 3650
+    },
+    {
+      "path": "include/cudnn_frontend_Heuristics.h",
+      "git_blob": "7af73306b92428ebdd325a14325479070b3b3073",
+      "size": 20368
+    },
+    {
+      "path": "include/cudnn_frontend_Logging.h",
+      "git_blob": "d91760cc7e9e355f1682cb7ea391b04632ec8436",
+      "size": 5069
+    },
+    {
+      "path": "include/cudnn_frontend_MatMulDesc.h",
+      "git_blob": "e08632c27ca36898f8b95a94f32232524f2d2bb9",
+      "size": 6363
+    },
+    {
+      "path": "include/cudnn_frontend_Operation.h",
+      "git_blob": "e79252ecc45d06bb67deb1daa5e2112be7fbcd18",
+      "size": 148898
+    },
+    {
+      "path": "include/cudnn_frontend_OperationGraph.h",
+      "git_blob": "35ba8b97e535d06cfe92c47edbd789903fed5fe2",
+      "size": 13729
+    },
+    {
+      "path": "include/cudnn_frontend_PointWiseDesc.h",
+      "git_blob": "72ac3f0519060fedfe2ecf5b3183cb95d1ee8145",
+      "size": 16362
+    },
+    {
+      "path": "include/cudnn_frontend_ReductionDesc.h",
+      "git_blob": "8181da2d6438ecfd877a2dae40478f7aaba7d6bc",
+      "size": 8908
+    },
+    {
+      "path": "include/cudnn_frontend_Reorder_Tensor.h",
+      "git_blob": "8ffc037e7c796bcde7aa30226c819b3e8b20c48c",
+      "size": 3269
+    },
+    {
+      "path": "include/cudnn_frontend_Resample.h",
+      "git_blob": "6ec42cead4719a52d28148d7a11ce4a5ec5360cc",
+      "size": 18847
+    },
+    {
+      "path": "include/cudnn_frontend_Rng.h",
+      "git_blob": "98ddce2da7d5dbe5f14b332903dd5d6100e1d8b9",
+      "size": 11437
+    },
+    {
+      "path": "include/cudnn_frontend_Tensor.h",
+      "git_blob": "666c46aab794acbdfcb16d4c9270d4d14570e22a",
+      "size": 25857
+    },
+    {
+      "path": "include/cudnn_frontend_VariantPack.h",
+      "git_blob": "5ab4f4dedc97b2f723322318b181a0bcb3f9694a",
+      "size": 6903
+    },
+    {
+      "path": "include/cudnn_frontend_find_plan.h",
+      "git_blob": "576f1456aba4d5fdc6af20f434cd3c4e840d6239",
+      "size": 6388
+    },
+    {
+      "path": "include/cudnn_frontend_get_plan.h",
+      "git_blob": "120ac0e79c17947b8584da79a6859b6c82c76f47",
+      "size": 1648
+    },
+    {
+      "path": "include/cudnn_frontend_shim.h",
+      "git_blob": "f2d6e70a8d170df81701aa20129655051294b257",
+      "size": 69821
+    },
+    {
+      "path": "include/cudnn_frontend_utils.h",
+      "git_blob": "5183e8cc0d135c690ef29f1bb73dc8172dd9563a",
+      "size": 107924
+    },
+    {
+      "path": "include/cudnn_frontend_version.h",
+      "git_blob": "3bd1ce9484f70454f23e3175189a1b49b1d4a779",
+      "size": 427
+    },
+    {
+      "path": "pyproject.toml",
+      "git_blob": "596fe9c9e57e3c2174cecf252935d54af2e3f9ab",
+      "size": 5127
+    },
+    {
+      "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+      "git_blob": "d97c4144e7b9d43fd36636cde032537a1ac3db61",
+      "size": 52622
+    },
+    {
+      "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+      "git_blob": "2a9fc819701ef1d7d9a34c6b2729da7a12111145",
+      "size": 131027
+    },
+    {
+      "path": "python/cudnn/linear_attention/cake/kernels/cake_flashkda_training_c16_aligned_backward_0f8187e742.cu",
+      "git_blob": "52979f7683335b837002af3555d0f70410c17987",
+      "size": 231130
+    },
+    {
+      "path": "python/cudnn/linear_attention/cake/kernels/cake_flashkda_training_c16_aligned_forward_36075669f2.cu",
+      "git_blob": "e793975f21dd98a2b685662ac811d15e872c909e",
+      "size": 169935
+    },
+    {
+      "path": "python/cudnn/linear_attention/cake/kernels/cake_flashkda_training_c16_aligned_param_reduce_be120a1e72.cu",
+      "git_blob": "d74ba8c1068ba62306cc11e43e383d6625f62123",
+      "size": 9301
+    },
+    {
+      "path": "python/cudnn/linear_attention/cake/kernels/fe_cake_kda_helpers.cu",
+      "git_blob": "ecc155986e75a8bd5d1637c70765c976b41336f2",
+      "size": 1495
+    },
+    {
+      "path": "python/cudnn/linear_attention/cake/kernels/flashkda_training_aux.cu",
+      "git_blob": "c00a3de5882a275e1ed29552ead03ad7dc5d62d0",
+      "size": 22672
+    },
+    {
+      "path": "python/cudnn/linear_attention/cake/kernels/flashkda_training_c16.cu",
+      "git_blob": "8c43b7252b71c67fb3601d072e069e21550eb7e8",
+      "size": 407732
+    },
+    {
+      "path": "python/cudnn/linear_attention/hopper/cuda_kernels/kda_bwd_sm90.cu",
+      "git_blob": "63b87d305c227a472c957a99cfcb481f0bd94c0a",
+      "size": 95231
+    },
+    {
+      "path": "python/cudnn/linear_attention/hopper/cuda_kernels/kda_fused_sm90.cu",
+      "git_blob": "ef3c490e8e1bf04625068b60c1bf66efdb882db2",
+      "size": 49725
+    },
+    {
+      "path": "python/cudnn/sdpa/bwd/compact_gqa/csrc/compact_gqa_blas.cpp",
+      "git_blob": "a58664c826ddd9c0995325534aa39163875f93ab",
+      "size": 4626
+    },
+    {
+      "path": "python/gnn.cpp",
+      "git_blob": "fe2cbf178d3684ad3e6077f8f27021368b105b98",
+      "size": 26144
+    },
+    {
+      "path": "python/properties.cpp",
+      "git_blob": "6297f4490e200ebe0749b0e39fde40247fc28b77",
+      "size": 26736
+    },
+    {
+      "path": "python/pycudnn.cpp",
+      "git_blob": "c51ff161b1739a76c0a939dd29c5330f3a3be60e",
+      "size": 28179
+    },
+    {
+      "path": "python/pygraph/norm.cpp",
+      "git_blob": "14055ebfb634fdc12af10875512b9e7839961a89",
+      "size": 19088
+    },
+    {
+      "path": "python/pygraph/pointwise.cpp",
+      "git_blob": "503c0fcd249c9a8ffabc5f5e76c730f019c506dc",
+      "size": 49339
+    },
+    {
+      "path": "python/pygraph/pygraph.cpp",
+      "git_blob": "3e9b694d7ecb3e7454747e7b35429fbe62958905",
+      "size": 68680
+    },
+    {
+      "path": "python/pygraph/pygraph.h",
+      "git_blob": "2a08b280fcfcf7e05992ae69844277a024e2fd97",
+      "size": 49818
+    },
+    {
+      "path": "python/pygraph/sdpa.cpp",
+      "git_blob": "12ec1823a21f59a7406c9794dddd099eb57602b5",
+      "size": 102394
+    },
+    {
+      "path": "python/pygraph/sdpa_bwd_binding.cpp",
+      "git_blob": "6325b543b52e0ae77040576fcd9a12ab4fbc7a52",
+      "size": 4938
+    },
+    {
+      "path": "python/pygraph/sdpa_dense_binding.cpp",
+      "git_blob": "a0ce864268e8ece7d5553fe8d10804acaf33115a",
+      "size": 34383
+    },
+    {
+      "path": "python/pygraph/sdpa_fixed_binding.h",
+      "git_blob": "43d9c56590e63a8348ac03c8a33fb89d6ed87dde",
+      "size": 4865
+    },
+    {
+      "path": "python/pygraph/sdpa_sm80_binding.cpp",
+      "git_blob": "90895975a75a016d6e0ed0a5ad9c3ce7005dd047",
+      "size": 6171
+    },
+    {
+      "path": "python/pygraph/sdpa_thd_binding.cpp",
+      "git_blob": "c267e8ca3dc4baa1be13c9fbdb415bac8b3db305",
+      "size": 31015
+    },
+    {
+      "path": "python/pygraph/variant_pack.cpp",
+      "git_blob": "9fe132f351313fe2be9e84cd9b66e6aa7656b8f4",
+      "size": 69311
+    },
+    {
+      "path": "python/pygraph/variant_pack.h",
+      "git_blob": "45d10a2880fa0847be8907a05ba28d67c4c2ab66",
+      "size": 2414
+    },
+    {
+      "path": "setup.py",
+      "git_blob": "9eee36972ca420b22056e43e1707faf4208ee9f1",
+      "size": 4754
+    },
+    {
+      "path": "test/AGENTS.md",
+      "git_blob": "5ecfaa2234007d7cda4249fccaad1ccbf8e8574c",
+      "size": 61523
+    },
+    {
+      "path": "test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py",
+      "git_blob": "16bd04a9b63347f19477ba8b917d953b5885c19a",
+      "size": 44588
+    },
+    {
+      "path": "test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+      "git_blob": "e986975c70e7d9a6fb7448af352e1e2336782372",
+      "size": 9189
+    },
+    {
+      "path": "test/python/gemm/cutedsl/test_swiglu_amax_per_call.py",
+      "git_blob": "48bf690fc6e44578d0f5929646c7031f044a0973",
+      "size": 2221
+    },
+    {
+      "path": "test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py",
+      "git_blob": "96556143dbf6bfc2fae6283cf3fcc6bc82d9f593",
+      "size": 3535
+    }
+  ]
+}

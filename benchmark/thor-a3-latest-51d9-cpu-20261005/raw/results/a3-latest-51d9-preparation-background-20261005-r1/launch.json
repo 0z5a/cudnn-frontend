@@ -1,0 +1,33 @@
+{
+  "logger_pid": 3051183,
+  "started_utc": "2026-10-04T16:56:24.262317+00:00",
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_async_policy_20261004/run_logged_observe.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-51d9-native-preparation-20261005-r1",
+    "--cwd",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "--timeout",
+    "4200",
+    "--",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_build_a3_latest_51d9_20261005_r1.py"
+  ],
+  "script_sha256": "65108967bf18a0f5fde7dfcfdfaf1c063ed229eb955371b4d5823126314e4cab",
+  "policy_manifest_sha256": "f4dcac118f614c077af38cbd818d59ef32f738f4c06559ef4825d20e855b6a09",
+  "policy_file_hashes": {
+    "run_logged_observe.py": "80d9eeb5b26095a90095f7e96d63284a84ea478762335f792b014c78069831ce",
+    "a3_no_signal_redirect.py": "74e7c9ad184ca260e6645b77093f67e02122ccc3c62c647c392efa6ea1f7fafe",
+    "sitecustomize.py": "5a3d527356723f7208c85b8d8adbb790afffb29c5991e4a0102361645a42f498"
+  },
+  "cpu_only": true,
+  "compile_threads": 1,
+  "signals_sent": 0,
+  "upstream": "51d9d06b574222378a3d806009accab098e73705",
+  "prior_public_head": "c7841117c988fc09cad1df415f10e3ce7d6fa50e",
+  "native_build": "NOT_YET_TERMINAL",
+  "GPU_tests": "NOT_RUN",
+  "R6_original48_frozen_sources_unchanged": true,
+  "shared_source_or_global_environment_changed": false
+}

@@ -1,0 +1,7 @@
+{
+  "verified_archive_sha256": "b809d1dba60f5b5bdfc798f8b0880fa08eab1324e1d504fe44ff5e56dd82533c",
+  "verified_bundle_sha256": "f68083dea9149d3679b986caaf5e6bdd3a7957ef5f7c8712a9676c252c8fea68",
+  "payloads_verified": 18,
+  "model_cache_engine_pt_binary_excluded": true,
+  "extracted": "/Users/0z5a/Documents/infra/thor-validation-20260930/a3-latest-51d9-cpu-evidence-20261005-r1"
+}

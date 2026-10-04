@@ -1,0 +1,24 @@
+Obtaining file:///home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest51d9_r1
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: nvidia-cudnn-frontend
+  Building editable for nvidia-cudnn-frontend (pyproject.toml): started
+  Building editable for nvidia-cudnn-frontend (pyproject.toml): still running...
+  Building editable for nvidia-cudnn-frontend (pyproject.toml): still running...
+  Building editable for nvidia-cudnn-frontend (pyproject.toml): still running...
+  Building editable for nvidia-cudnn-frontend (pyproject.toml): still running...
+  Building editable for nvidia-cudnn-frontend (pyproject.toml): still running...
+  Building editable for nvidia-cudnn-frontend (pyproject.toml): still running...
+  Building editable for nvidia-cudnn-frontend (pyproject.toml): still running...
+  Building editable for nvidia-cudnn-frontend (pyproject.toml): finished with status 'done'
+  Created wheel for nvidia-cudnn-frontend: filename=nvidia_cudnn_frontend-1.31.0-0.editable-cp312-cp312-linux_aarch64.whl size=14934 sha256=dc667eb00644432ef5d902b79635a4dcc29794deccb5103584ab3303d7018e49
+  Stored in directory: /tmp/pip-ephem-wheel-cache-aag4_zs_/wheels/c1/ab/1a/8d250c27fd84e071845ad508e40e2652feae9252c206c11579
+Successfully built nvidia-cudnn-frontend
+Installing collected packages: nvidia-cudnn-frontend
+  Attempting uninstall: nvidia-cudnn-frontend
+    Found existing installation: nvidia-cudnn-frontend 1.31.0
+    Uninstalling nvidia-cudnn-frontend-1.31.0:
+      Successfully uninstalled nvidia-cudnn-frontend-1.31.0
+Successfully installed nvidia-cudnn-frontend-1.31.0

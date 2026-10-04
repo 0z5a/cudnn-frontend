@@ -1,0 +1,25 @@
+{
+  "files": [
+    {
+      "path": "results/a3-latest-51d9-evidence-export-20261005-r1/run.json",
+      "sha256": "90a60395398f1a2c72c22c8cb1ac99fbf6940d7c94b9ec7a8a04b76e3f26192f"
+    },
+    {
+      "path": "results/a3-latest-51d9-evidence-export-20261005-r1/run.live.json",
+      "sha256": "9e057ce5edd9699821ccf1cec2ca1a8900fda50c96fe7f08b4a79bd24f3046c1"
+    },
+    {
+      "path": "results/a3-latest-51d9-evidence-export-20261005-r1/stdout.log",
+      "sha256": "2fffa7e4394f0887428f9b989c2dc88467203b6b436fc3d2aacfbcff53d9984a"
+    },
+    {
+      "path": "results/a3-latest-51d9-evidence-export-20261005-r1/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tools/export_a3_latest_51d9_cpu_evidence_20261005_r1.py",
+      "sha256": "10ab93979bf51b9176ef18f7775cda72df582db08159295b631f7bb7ba427fb9"
+    }
+  ],
+  "export_RC0_null_no_signals_verified": true
+}

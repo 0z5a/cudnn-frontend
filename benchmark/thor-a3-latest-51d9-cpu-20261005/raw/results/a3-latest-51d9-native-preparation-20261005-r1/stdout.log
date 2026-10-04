@@ -1,0 +1,54 @@
+Merge made by the 'ort' strategy.
+ docs/operations/MoeGroupedMatmul.md                |  79 ++++++-
+ include/cudnn_frontend/graph_properties.h          |   8 +-
+ include/cudnn_frontend/node/moe_grouped_matmul.h   |  27 ++-
+ include/cudnn_frontend_utils.h                     |   6 +-
+ python/cudnn/_gemm_validate.py                     |  27 ++-
+ python/cudnn/_pygraph.py                           |  13 +-
+ python/cudnn/frost/buffers.py                      |  19 ++
+ python/cudnn/gemm/frost/dtypes.py                  |   2 +
+ python/cudnn/gemm/frost/fusion_ir.py               |   3 +-
+ python/cudnn/gemm/frost/graph_analyzer.py          |  53 +++--
+ python/cudnn/gemm/frost/kernel_registry.py         |   2 +
+ python/cudnn/gemm/frost/sm100/compiler.py          | 194 ++++++++++++---
+ python/cudnn/gemm/frost/sm100/epilogue_codegen.py  |  48 ++++
+ .../sm100_moe_grouped_block_scale_matmul_fwd.py    |   2 +
+ ...0_moe_grouped_block_scale_matmul_fwd_swap_ab.py |   1 +
+ .../sm100_moe_grouped_matmul_fwd.py                |   2 +
+ .../sm100_moe_grouped_matmul_fwd_swap_ab.py        |   1 +
+ python/cudnn/gemm/frost/sm120/compiler.py          |   2 +
+ python/cudnn/gemm/frost/tile_helpers.py            |  61 +++++
+ python/properties.cpp                              |   3 +-
+ python/pygraph/pygraph.cpp                         |   8 +-
+ python/pygraph/pygraph.h                           |   3 +-
+ test/python/api_index/api_index.txt                |   1 +
+ .../test_moe_grouped_block_scale_matmul_fwd.py     |  43 +++-
+ .../gemm/frost/test_moe_grouped_matmul_fwd.py      | 259 +++++++++++++++++++++
+ 25 files changed, 800 insertions(+), 67 deletions(-)
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest51d9_r1/bin/python",
+    "-m",
+    "pip",
+    "install",
+    "--no-deps",
+    "--no-build-isolation",
+    "-e",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest51d9_r1"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest51d9_r1",
+  "started_utc": "2026-10-04T16:56:47.772068+00:00",
+  "deadline_seconds": 3600.0,
+  "status": "EXITED",
+  "runner_policy": "OBSERVE_ONLY_NO_SIGNALS",
+  "signals_sent": 0,
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": ""
+  },
+  "pid": 3051537,
+  "returncode": 0,
+  "signal": null,
+  "deadline_observed": false,
+  "elapsed_seconds": 602.412034760986
+}
+{"head": "2fc0bc608c19c75311a405b12cc57374741f9df1", "base": "51d9d06b574222378a3d806009accab098e73705", "fresh_native_build_rc": 0, "binding": {"path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest51d9_r1/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so", "sha256": "b1ce66fa7f7669e026d5d1f68002b510a5970ac8874b8fae8247ba1165ade9b5"}, "GPU_tests": "NOT_RUN"}

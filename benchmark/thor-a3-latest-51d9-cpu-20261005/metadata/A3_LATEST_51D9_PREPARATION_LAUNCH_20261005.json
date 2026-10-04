@@ -1,0 +1,7 @@
+{
+  "utc": "2026-10-04T16:55:47.462699+00:00",
+  "returncode": 2,
+  "stdout": "",
+  "stderr": "  File \"<string>\", line 1\n    import\n          ^\nSyntaxError: invalid syntax\nbash: line 2: from: command not found\nbash: -c: line 3: syntax error near unexpected token `('\nbash: -c: line 3: `R=Path('/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928');payload=json.loads(sys.stdin.read());script=R/'tools/prepare_build_a3_latest_51d9_20261005_r1.py';out=R/'results/a3-latest-51d9-native-preparation-20261005-r1';bg=R/'results/a3-latest-51d9-preparation-background-20261005-r1';policy=R/'tools/a3_async_policy_20261004''\n",
+  "script_sha256": "65108967bf18a0f5fde7dfcfdfaf1c063ed229eb955371b4d5823126314e4cab"
+}

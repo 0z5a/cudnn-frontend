@@ -1,0 +1,112 @@
+{
+  "archive": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-51d9-cpu-evidence-20261005-r1.tar.gz",
+  "archive_sha256": "b809d1dba60f5b5bdfc798f8b0880fa08eab1324e1d504fe44ff5e56dd82533c",
+  "archive_bytes": 16978,
+  "bundle": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-51d9-source-20261005-r1.bundle",
+  "bundle_sha256": "f68083dea9149d3679b986caaf5e6bdd3a7957ef5f7c8712a9676c252c8fea68",
+  "bundle_bytes": 79345,
+  "manifest": {
+    "files": [
+      {
+        "path": "results/a3-latest-51d9-native-provenance-20261005-r1.json",
+        "size": 21561,
+        "sha256": "0117977389a4d79433e62aa8574478e5b35f9fabd22686dc0c5b8b913226d0af"
+      },
+      {
+        "path": "results/a3-latest-51d9-prebuild-20261005-r1.json",
+        "size": 19878,
+        "sha256": "b01aad313fc559e54613f30365266a58a84af2483bf71ef4a0fb345592afe076"
+      },
+      {
+        "path": "tools/prepare_build_a3_latest_51d9_20261005_r1.py",
+        "size": 9726,
+        "sha256": "65108967bf18a0f5fde7dfcfdfaf1c063ed229eb955371b4d5823126314e4cab"
+      },
+      {
+        "path": "results/a3-latest-51d9-native-preparation-20261005-r1/run.json",
+        "size": 634,
+        "sha256": "9e82ae195ebecc9c599120d66bfc613218b8327abd9da26f33118e85f7cc7a7b"
+      },
+      {
+        "path": "results/a3-latest-51d9-native-preparation-20261005-r1/run.live.json",
+        "size": 683,
+        "sha256": "fc327ad2e0bab48b6f2d1b23983b9170869ad9669b17242a6faeba24813c7009"
+      },
+      {
+        "path": "results/a3-latest-51d9-native-preparation-20261005-r1/stdout.log",
+        "size": 2761,
+        "sha256": "15c48ada2b117a104c0e496c104bd68eca9f8b06a67f3dede6a6869ddb245ada"
+      },
+      {
+        "path": "results/a3-latest-51d9-native-preparation-20261005-r1/stderr.log",
+        "size": 350,
+        "sha256": "21be721ba5a2ceff1198bf820264628e8e67c95b31fb5824c95208ad1833a289"
+      },
+      {
+        "path": "results/build-a3-latest-51d9-20261005-r1/run.json",
+        "size": 715,
+        "sha256": "3bed4691aa1fe010aa440058bdac498455192a72cf76d1eb61477eecb799b2af"
+      },
+      {
+        "path": "results/build-a3-latest-51d9-20261005-r1/run.live.json",
+        "size": 764,
+        "sha256": "8ffdb734eb85923a0ef6f2e18081933521f9156131cd6ea145b17f2336ec4eb3"
+      },
+      {
+        "path": "results/build-a3-latest-51d9-20261005-r1/stdout.log",
+        "size": 1846,
+        "sha256": "261581cbe25646f288348be0fc31414381bf5bdb79152d76da4eefb8c8badb28"
+      },
+      {
+        "path": "results/build-a3-latest-51d9-20261005-r1/stderr.log",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "results/a3-latest-51d9-preparation-background-20261005-r1/launch.json",
+        "size": 1595,
+        "sha256": "70dcaf8c92913a30dc5f3be247092163f3b5e53ce73ea4a70937bd66a5480b4d"
+      },
+      {
+        "path": "results/a3-latest-51d9-preparation-background-20261005-r1/policy_manifest.json",
+        "size": 348,
+        "sha256": "f4dcac118f614c077af38cbd818d59ef32f738f4c06559ef4825d20e855b6a09"
+      },
+      {
+        "path": "results/a3-latest-51d9-preparation-background-20261005-r1/driver.log",
+        "size": 634,
+        "sha256": "9e82ae195ebecc9c599120d66bfc613218b8327abd9da26f33118e85f7cc7a7b"
+      },
+      {
+        "path": "tools/a3_async_policy_20261004/manifest.json",
+        "size": 348,
+        "sha256": "f4dcac118f614c077af38cbd818d59ef32f738f4c06559ef4825d20e855b6a09"
+      },
+      {
+        "path": "tools/a3_async_policy_20261004/run_logged_observe.py",
+        "size": 3512,
+        "sha256": "80d9eeb5b26095a90095f7e96d63284a84ea478762335f792b014c78069831ce"
+      },
+      {
+        "path": "tools/a3_async_policy_20261004/a3_no_signal_redirect.py",
+        "size": 2444,
+        "sha256": "74e7c9ad184ca260e6645b77093f67e02122ccc3c62c647c392efa6ea1f7fafe"
+      },
+      {
+        "path": "tools/a3_async_policy_20261004/sitecustomize.py",
+        "size": 273,
+        "sha256": "5a3d527356723f7208c85b8d8adbb790afffb29c5991e4a0102361645a42f498"
+      }
+    ],
+    "excluded": [
+      "model",
+      "cache",
+      "engine",
+      ".pt",
+      "binary"
+    ],
+    "source_head": "2fc0bc608c19c75311a405b12cc57374741f9df1",
+    "upstream": "51d9d06b574222378a3d806009accab098e73705",
+    "binding_hash_only": "b1ce66fa7f7669e026d5d1f68002b510a5970ac8874b8fae8247ba1165ade9b5"
+  }
+}
