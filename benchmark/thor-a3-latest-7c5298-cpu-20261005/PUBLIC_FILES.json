@@ -1,0 +1,103 @@
+{
+  "files": [
+    {
+      "path": "MANIFEST.json",
+      "size": 3439,
+      "sha256": "6949ab589f15259ec668563d56a68fb7cee7a9a91debcd244b4bb4e4ff1edfae"
+    },
+    {
+      "path": "RESULT.md",
+      "size": 2881,
+      "sha256": "4ef18b44c6ef7344a923753470546673ae73a58fa1e913576b0b82fbe356c763"
+    },
+    {
+      "path": "metadata/launch_transport.json",
+      "size": 1388,
+      "sha256": "0fdf9f582843997f28c3827b38e04fecdcd3a8d9d19b497e8bdc13eeb385bef0"
+    },
+    {
+      "path": "metadata/launcher.py",
+      "size": 16865,
+      "sha256": "d9935ba504808618afe21108cbc987ffd6a9c3adb716068f3b36baf39abcaf4c"
+    },
+    {
+      "path": "metadata/upstream_diff.json",
+      "size": 23221,
+      "sha256": "aea3bad175d9361ec3e9ef107cee00d4194bf803288d4cdbcba6e4779b0107ce"
+    },
+    {
+      "path": "results/a3-latest-7c5298-native-preparation-20261005-r1/run.json",
+      "size": 644,
+      "sha256": "fa2c651ef90a79e70a10a2f90b8308696d1e5fcb191a312fbe0ead1a05013bf2"
+    },
+    {
+      "path": "results/a3-latest-7c5298-native-preparation-20261005-r1/run.live.json",
+      "size": 693,
+      "sha256": "06a695796fb6c13059714500220fcf50cdfb5afcb651fadabf260013108fa9ef"
+    },
+    {
+      "path": "results/a3-latest-7c5298-native-preparation-20261005-r1/stderr.log",
+      "size": 328,
+      "sha256": "fb794eeada40cd3bca923e14b0a42246e66f82b3be3d02ec4d95fb8c6bc29a72"
+    },
+    {
+      "path": "results/a3-latest-7c5298-native-preparation-20261005-r1/stdout.log",
+      "size": 3369,
+      "sha256": "d78b53760d2eac0c5d29b4df3fcd059c56f47192da7dd26bd111f876a757fdf1"
+    },
+    {
+      "path": "results/a3-latest-7c5298-native-provenance-20261005-r1.json",
+      "size": 22046,
+      "sha256": "ba7d566c99d18ad645e89f1d1cfc17944a91fcc419ef573305676b951ebbf505"
+    },
+    {
+      "path": "results/a3-latest-7c5298-preparation-background-20261005-r1/driver.log",
+      "size": 644,
+      "sha256": "fa2c651ef90a79e70a10a2f90b8308696d1e5fcb191a312fbe0ead1a05013bf2"
+    },
+    {
+      "path": "results/a3-latest-7c5298-preparation-background-20261005-r1/launch.json",
+      "size": 1205,
+      "sha256": "f2b13a7c3318fb2138fd75b3c38716dd9f675b429d57eb30f3b74dc5b1cad0c2"
+    },
+    {
+      "path": "results/a3-latest-7c5298-preparation-background-20261005-r1/policy_manifest.json",
+      "size": 348,
+      "sha256": "f4dcac118f614c077af38cbd818d59ef32f738f4c06559ef4825d20e855b6a09"
+    },
+    {
+      "path": "tools/a3_async_policy_20261004/a3_no_signal_redirect.py",
+      "size": 2444,
+      "sha256": "74e7c9ad184ca260e6645b77093f67e02122ccc3c62c647c392efa6ea1f7fafe"
+    },
+    {
+      "path": "tools/a3_async_policy_20261004/manifest.json",
+      "size": 348,
+      "sha256": "f4dcac118f614c077af38cbd818d59ef32f738f4c06559ef4825d20e855b6a09"
+    },
+    {
+      "path": "tools/a3_async_policy_20261004/run_logged_observe.py",
+      "size": 3512,
+      "sha256": "80d9eeb5b26095a90095f7e96d63284a84ea478762335f792b014c78069831ce"
+    },
+    {
+      "path": "tools/a3_async_policy_20261004/sitecustomize.py",
+      "size": 273,
+      "sha256": "5a3d527356723f7208c85b8d8adbb790afffb29c5991e4a0102361645a42f498"
+    },
+    {
+      "path": "tools/prepare_a3_latest_7c5298_native_reuse_20261005_r1.py",
+      "size": 8476,
+      "sha256": "6d33ba0e649dc3bf97355de307171ca09878a23a6e668521d30c8d9df7ddcedf"
+    }
+  ],
+  "excluded": [
+    "model",
+    "cache",
+    "engine",
+    ".pt",
+    "binary"
+  ],
+  "head": "6850a911a4e18a5e01dc191b65e341ad33548893",
+  "base": "7c5298ecea940698590b8dd8d55adadc8a02f71e"
+}

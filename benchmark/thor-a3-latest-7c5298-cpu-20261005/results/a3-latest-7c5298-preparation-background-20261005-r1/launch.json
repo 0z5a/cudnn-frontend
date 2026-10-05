@@ -1,0 +1,26 @@
+{
+  "logger_pid": 3519096,
+  "started_utc": "2026-10-05T05:11:54.539779+00:00",
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_async_policy_20261004/run_logged_observe.py",
+    "--out",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-7c5298-native-preparation-20261005-r1",
+    "--cwd",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928",
+    "--timeout",
+    "1200",
+    "--",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_a3_latest_7c5298_native_reuse_20261005_r1.py"
+  ],
+  "script_sha256": "6d33ba0e649dc3bf97355de307171ca09878a23a6e668521d30c8d9df7ddcedf",
+  "bundle_sha256": "a0bc3b900d8ae4feeba422caa91b670afe6c29b680fe9a3fe8dcad0af54d306f",
+  "policy_manifest_sha256": "f4dcac118f614c077af38cbd818d59ef32f738f4c06559ef4825d20e855b6a09",
+  "cpu_only": true,
+  "new_compile_invoked": false,
+  "native_reuse": "PENDING_ALL118_PROOF",
+  "signals_sent": 0,
+  "GPU_tests": "NOT_RUN",
+  "R7_original48_frozen_sources_unchanged": true
+}
