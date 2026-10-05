@@ -1,5 +1,6 @@
 {
   "source_head": "8ab1af4f7beb5ac1e45c10418a52291ef05cb8da",
+  "publication_head": "edba54afb340dc928840db8d3b6ce446e0f4d60a",
   "upstream": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
   "files": [
     {
@@ -9,8 +10,8 @@
     },
     {
       "path": "RESULT.md",
-      "size": 3817,
-      "sha256": "2582d789ba6b926137093c7e69144b34861a040d97cff11b54f6b099f1b2f9a6"
+      "size": 4406,
+      "sha256": "efff20270a412eff45f3d61cbf217804bd946e516de3ea388f21e98dbdf9437d"
     },
     {
       "path": "metadata/closed_state.json",
@@ -31,6 +32,11 @@
       "path": "metadata/local_merge.json",
       "size": 1436,
       "sha256": "43b9ba6d242eeffd8b0d5ebc98c3f4efbccef051a96d21af809eb2bf3aaee70c"
+    },
+    {
+      "path": "metadata/publication_tree_equivalence.json",
+      "size": 1230,
+      "sha256": "9e9de3e1fd930b97d943e3cda85a1c215b1d1b105b582d55a2d0366d7db774ec"
     },
     {
       "path": "metadata/source_github_verified.json",

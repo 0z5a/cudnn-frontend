@@ -1,0 +1,23 @@
+{
+  "utc": "2026-10-05T17:22:46.806318+00:00",
+  "compiled_source_head": "8ab1af4f7beb5ac1e45c10418a52291ef05cb8da",
+  "publication_head": "edba54afb340dc928840db8d3b6ce446e0f4d60a",
+  "full_source_tree_exact": true,
+  "tree": "46ca118a488002ad76912b405f37fa4492a7996d",
+  "changed_source_paths": [],
+  "only_difference": "Commit message trailing LF normalization; no source change. API author/committer offsets verified separately.",
+  "API_author_offset": "+0800",
+  "API_committer_offset": "+0800",
+  "API_commit_message_trailing_LF_count": 0,
+  "original_commit_message_trailing_LF_count": 1,
+  "native_input_count": 118,
+  "native_build_at_publication_commit": "NOT_RERUN_FULL_SOURCE_TREE_EXACT_TO_SUCCESSFUL_FRESH_BUILD",
+  "independent_compiled_binding_sha256": "a0f390bc117f37a6828941bab06a888b6dd22a5d5157a762740bce62f2046a08",
+  "GPU_tests": "NOT_RUN",
+  "public_branch_updated": true,
+  "original_git_push_failure": "rc128, github.com port443 connect failure after75117ms, no force push",
+  "FF_parent": "6850a911a4e18a5e01dc191b65e341ad33548893",
+  "ready_draft_false_preserved": true,
+  "actual_public_head_readback": "edba54afb340dc928840db8d3b6ce446e0f4d60a",
+  "verified_utc": "2026-10-05T17:23:24.786773+00:00"
+}
