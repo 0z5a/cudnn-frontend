@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlatest8e7273_r1/bin/python",
+    "-m",
+    "pip",
+    "install",
+    "--no-deps",
+    "--no-build-isolation",
+    "-e",
+    "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest8e7273_r1"
+  ],
+  "cwd": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest8e7273_r1",
+  "started_utc": "2026-10-05T16:53:42.780175+00:00",
+  "deadline_seconds": 3600.0,
+  "status": "EXITED",
+  "runner_policy": "OBSERVE_ONLY_NO_SIGNALS",
+  "signals_sent": 0,
+  "selected_env": {
+    "CUDA_VISIBLE_DEVICES": ""
+  },
+  "pid": 3963780,
+  "returncode": 0,
+  "signal": null,
+  "deadline_observed": false,
+  "elapsed_seconds": 580.9021598729887
+}
+{"head": "8ab1af4f7beb5ac1e45c10418a52291ef05cb8da", "base": "8e7273662c390603d2d8f2fde31bfad3e4ec259a", "fresh_native_build_rc": 0, "binding": {"path": "/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/a3sfdlatest8e7273_r1/python/cudnn/_compiled_module.cpython-312-aarch64-linux-gnu.so", "sha256": "a0f390bc117f37a6828941bab06a888b6dd22a5d5157a762740bce62f2046a08"}, "GPU_tests": "NOT_RUN"}

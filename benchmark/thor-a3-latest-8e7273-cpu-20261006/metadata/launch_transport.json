@@ -1,0 +1,17 @@
+{
+  "utc": "2026-10-05T16:53:13.772635+00:00",
+  "transport_returncode": 0,
+  "stdout": "{\n  \"logger_pid\": 3963431,\n  \"started_utc\": \"2026-10-05T16:53:16.039259+00:00\",\n  \"argv\": [\n    \"/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python\",\n    \"/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/a3_async_policy_20261004/run_logged_observe.py\",\n    \"--out\",\n    \"/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/results/a3-latest-8e7273-native-preparation-20261006-r1\",\n    \"--cwd\",\n    \"/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928\",\n    \"--timeout\",\n    \"5400\",\n    \"--\",\n    \"/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/venvs/a3sfdlateste491/bin/python\",\n    \"/home/jwipc/experiments/cudnn-sm110-a1-a3-20260928/tools/prepare_build_a3_latest_8e7273_20261006_r1.py\"\n  ],\n  \"script_sha256\": \"8a233e5f46dc40c600ae599b246f9f6a4e1cddd72f862e07cdec36a80dceb545\",\n  \"bundle_sha256\": \"10f969596df40729c4cc4fae77ee30b185afbf020d3e9c351bdb2e6a8021bbd1\",\n  \"policy_manifest_sha256\": \"f4dcac118f614c077af38cbd818d59ef32f738f4c06559ef4825d20e855b6a09\",\n  \"cpu_only\": true,\n  \"new_compile_invoked\": true,\n  \"native_build\": \"PENDING_FRESH_BUILD\",\n  \"signals_sent\": 0,\n  \"GPU_tests\": \"NOT_RUN\",\n  \"R8_original48_frozen_sources_unchanged\": true\n}\n",
+  "stderr": "",
+  "local_preparation": {
+    "head": "8ab1af4f7beb5ac1e45c10418a52291ef05cb8da",
+    "script_sha256": "8a233e5f46dc40c600ae599b246f9f6a4e1cddd72f862e07cdec36a80dceb545",
+    "launcher_sha256": "e9b13ec8ffac7e724398a0d3ca4e2c963ae28b15ee5fcb9368e2464d2daefc19",
+    "bundle_sha256": "10f969596df40729c4cc4fae77ee30b185afbf020d3e9c351bdb2e6a8021bbd1",
+    "native_changed_paths": [
+      "python/pygraph/sdpa_dense_binding.cpp"
+    ],
+    "signals_sent": 0,
+    "GPU_tests": "NOT_RUN"
+  }
+}

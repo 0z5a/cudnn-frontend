@@ -1,0 +1,8 @@
+{
+  "files": {
+    "run_logged_observe.py": "80d9eeb5b26095a90095f7e96d63284a84ea478762335f792b014c78069831ce",
+    "a3_no_signal_redirect.py": "74e7c9ad184ca260e6645b77093f67e02122ccc3c62c647c392efa6ea1f7fafe",
+    "sitecustomize.py": "5a3d527356723f7208c85b8d8adbb790afffb29c5991e4a0102361645a42f498"
+  },
+  "policy": "OBSERVE_ONLY_NO_SIGNALS"
+}

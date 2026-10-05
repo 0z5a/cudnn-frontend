@@ -1,0 +1,28 @@
+{
+  "head": "8ab1af4f7beb5ac1e45c10418a52291ef05cb8da",
+  "upstream": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+  "parent": "6850a911a4e18a5e01dc191b65e341ad33548893",
+  "PR_paths_preserved": [
+    "python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+    "python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+    "test/AGENTS.md",
+    "test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py",
+    "test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+    "test/python/gemm/cutedsl/test_swiglu_amax_per_call.py",
+    "test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py"
+  ],
+  "changed_paths": [
+    "python/cudnn/sdpa/fwd/api_dsl.py",
+    "python/cudnn/sdpa/fwd/kernels/sm100/decode_d128_f16.py",
+    "python/cudnn/sdpa/fwd/kernels/sm100/split_combine.py",
+    "python/cudnn/sdpa/fwd/prepared.py",
+    "python/pygraph/sdpa_dense_binding.cpp",
+    "test/python/sdpa/frost/test_sdpa_native_ragged_decode_binding.py",
+    "test/python/sdpa/frost/test_split_kv_heuristic.py"
+  ],
+  "bundle": "/tmp/a3-latest-8e7273-source-20261006-r1.bundle",
+  "source_transport": "GITHUB_API_BLOB_TREE_SIGNED_COMMIT_SHA_VERIFIED",
+  "published": false,
+  "upstream_test_AGENTS_override": "Exact previous PR path bytes preserved per human instruction; new upstream guide retained separately locally",
+  "prior_transport_failure": "Git HTTPS rc128 connect failure before merge; API exact-object recovery verified"
+}

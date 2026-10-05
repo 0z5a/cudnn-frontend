@@ -1,0 +1,797 @@
+{
+  "local_merged_head": "8ab1af4f7beb5ac1e45c10418a52291ef05cb8da",
+  "published": false,
+  "upstream": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+  "prior_public_head": "6850a911a4e18a5e01dc191b65e341ad33548893",
+  "native_count": 118,
+  "verified_source_blob_count": 131,
+  "verified": true,
+  "records": [
+    {
+      "path": "CMakeLists.txt",
+      "blob": "91f25e4c10b449e3aa3f16fe1f9abc17b9b8a605",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "144508ba4fb9eba78ab5553138063cb1483bc2aecfd2833c026686d3aec07a4a"
+    },
+    {
+      "path": "cmake/cuDNN.cmake",
+      "blob": "bdcd310a6ceabddf7edfd1164a8b7f29f0709b30",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "4acd9dab1b5f098551fc486a28ed313fc3611437e8ac61e9d5fe659005e52d41"
+    },
+    {
+      "path": "include/cudnn_backend_base.h",
+      "blob": "4f79243decbace19df2649723f653c613644fb0f",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "51be4a710c5cee766c55905bddeb9d3e0475aaf790f5344180f237fddb3b7320"
+    },
+    {
+      "path": "include/cudnn_frontend.h",
+      "blob": "ea6cf09b35da955fcce573348987bb7a58bcf958",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "aff8afd260af9fd1fb6f691ec9015ab64ff271a45768bf8da08c98f2d991cf99"
+    },
+    {
+      "path": "include/cudnn_frontend/AGENTS.md",
+      "blob": "77f29af25ca2bbc43f1722f3629950c8eedb5f9b",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "13ccb321c65e4fe40677cb58d463c9e576942d37bc96489a2ecc5a020afd3217"
+    },
+    {
+      "path": "include/cudnn_frontend/backend/backend_descriptor.h",
+      "blob": "8527b1d5213b753fecac4771497a47eb49015e9c",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "1598fc62c6af196eb0ef522b1240e9e5e164cd6440728a0ad42b5252dc57066c"
+    },
+    {
+      "path": "include/cudnn_frontend/backend/device_properties.h",
+      "blob": "702d82ee0b752391d16d14bf2dcd55fd0b34b6dd",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "594e2f6e97b2992fd5514a75a8cf648069a272823c3298cdf6a725846587db1f"
+    },
+    {
+      "path": "include/cudnn_frontend/backend/execution_helpers.h",
+      "blob": "6cebaf86a436ee59e71c994da1cf119008d51e3d",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "2df7bb026c5e795279bb72d2a6473203bd015f5fbb2e84cbe309bd476ed70e89"
+    },
+    {
+      "path": "include/cudnn_frontend/backend/kernel_cache.h",
+      "blob": "9c7431c3a1e222a21ffc302300341d9b194fec0b",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "3ec261ac7b819ee1aac540a4227fa343e9677bdb9524457f0944f61e2dc863be"
+    },
+    {
+      "path": "include/cudnn_frontend/backend/plan_helpers.h",
+      "blob": "cc728b7e1f1984e9b3f09427871283aed7e98c10",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "70c42ddf6c51293f8fa9aeb15992575476c3e1a4ea5354a31acc9161e65d9ba3"
+    },
+    {
+      "path": "include/cudnn_frontend/context.h",
+      "blob": "f462a2c972a8e33df73af1d30ec27198d5ebdc20",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "5784f2bb031e1d6aa4bf45b1c20e9031026b750644e27194a6f9697adf06250f"
+    },
+    {
+      "path": "include/cudnn_frontend/cudnn_interface.h",
+      "blob": "8bd87bec0f2c1a615ead71f6237490da73929926",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "fa22c197bfca47abfc63c912b2c06cc61167f5da0b87ba7e971f812d738893c5"
+    },
+    {
+      "path": "include/cudnn_frontend/experimental/attention_utils.h",
+      "blob": "8322adcaaf195f40b0122bb9cfa2bf6a0acdc1fc",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "6ffee4706a280dcc70707688d28ad056f099b66cf4e80b2e1ab02fab3fdb93a4"
+    },
+    {
+      "path": "include/cudnn_frontend/experimental/nvrtc_shim.h",
+      "blob": "539248650782400856f7cb9bcdb208c56771174e",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "73b2829654452a57b2467398412325df2973bf4a59f07d8e4031f27cee0ea73e"
+    },
+    {
+      "path": "include/cudnn_frontend/experimental/oss_engine_interface.h",
+      "blob": "38befb11533bdde3cf39ffacf5c3b0d5d7528737",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "0036380282f00fd4aeeca7e062a797c2ccd599420d22af01832d256328059760"
+    },
+    {
+      "path": "include/cudnn_frontend/experimental/sm100_rms_norm_silu_engine.h",
+      "blob": "05739bd7c972df921314aad0c25cd8fdcc2052b9",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "056ae1e7d0237ca1e439f34f9c3dbc516712d3f950f0797d530c0c3b5f5f8a49"
+    },
+    {
+      "path": "include/cudnn_frontend/experimental/sm100_rms_norm_silu_knobs.h",
+      "blob": "afbefc94127abe891fe9f8714550c59cb343c1ae",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "16d0d3bc717ddb1c1e2f5c6f0f981f671d15e672bea093d37d71a56a04f6f9d4"
+    },
+    {
+      "path": "include/cudnn_frontend/generated/rms_norm_silu/sm100/ln_fwd_silu_kernel.h",
+      "blob": "17748305941ce040842eacbcf876360f6bedd683",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "29de9274d61cff43b256c0131b4a70e09bfd8e370011376f4c84a072f2666cbc"
+    },
+    {
+      "path": "include/cudnn_frontend/generated/rms_norm_silu/sm100/ln_headers.h",
+      "blob": "6748f2b8b00278ae01e67532a5167548de6f5a76",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "db62c50f21f2e7d67d5c9f3f70beb55107139fd3b43079c4a6e1391202b34046"
+    },
+    {
+      "path": "include/cudnn_frontend/graph_helpers.h",
+      "blob": "f14d46d6d2e69852d63962c4ae3700af236b3d51",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "f40aea57f155f8d6d3a22ef587a08a769c67d4f3b388af600e0ac7358ea7377c"
+    },
+    {
+      "path": "include/cudnn_frontend/graph_interface.h",
+      "blob": "29e28fe123bb062394f4549019f5924b2b7fd165",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "a070500f9bcad4c6478c445d7878d209935f6fa6119e4ca731cfc3f8087eacd6"
+    },
+    {
+      "path": "include/cudnn_frontend/graph_properties.h",
+      "blob": "c86f6e69345be717a68417ed53caea4f914679d3",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "f987bac0770a0b031ddd03a220139149bea81612974078fd9c9f78093b1337a7"
+    },
+    {
+      "path": "include/cudnn_frontend/knobs.h",
+      "blob": "4c37579e3824ef291ee74b899c062f4ecca20a48",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "dd2bcfc6ddfc19ce7343fbe659ac43ed5b32dc737641c29e5a534705644b9333"
+    },
+    {
+      "path": "include/cudnn_frontend/node/adaptive_layernorm.h",
+      "blob": "6062ac926209711d0e6cb1da7ac7c2c02e606840",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "3b760b610972f711d8f27ffad130600921c2946982020e0c07e47bbce1c083c7"
+    },
+    {
+      "path": "include/cudnn_frontend/node/batchnorm.h",
+      "blob": "b39cdd59e8c009d5f1ef90cf1dc259f714b080f4",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "62309217c5753e9062844d9f3eb46a3805a2434143d0de9c9ffb401aa979189d"
+    },
+    {
+      "path": "include/cudnn_frontend/node/batchnorm_inference.h",
+      "blob": "a13034cd7142a6b7f8313e8b9bcd83ac5901333f",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "8b483c2d9074d9f70d9958dbe54d1e042dc4408f366e23b632557d56d180460e"
+    },
+    {
+      "path": "include/cudnn_frontend/node/block_scale_dequantize.h",
+      "blob": "78c9f7eeb7dcb72f52ad0f398f2b432d0d1c854b",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "a04396d4f642fb765c8a095e2ea9bcf12966d4fe4c32e8cdb0802009cd997819"
+    },
+    {
+      "path": "include/cudnn_frontend/node/block_scale_quantize.h",
+      "blob": "e9e9e6561873ddc1991e5460c12817143b9ad132",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "7f2aebee920024d01ecaee678969f29754d97a42ee35ad143c8a1f573f86d41a"
+    },
+    {
+      "path": "include/cudnn_frontend/node/bn_finalize.h",
+      "blob": "288180d7c4a191ea172873d0124c79927192c357",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "2a849aee5ee80d4ad64978edb25031c5b6323c2be544e53e5b87687f1b38f6a1"
+    },
+    {
+      "path": "include/cudnn_frontend/node/concatenate.h",
+      "blob": "e4f7b1c4b8aa3a2fb2cf4bb7171eef96c3e4c136",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "4991b13165987132e85d2dc6c2ff4e7dbe301d42e21348464f606c04716290e6"
+    },
+    {
+      "path": "include/cudnn_frontend/node/conv_dgrad.h",
+      "blob": "1ae4c12413ac369abac44d66e41ca892c1440caf",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "4f4c1c44011807bde4872951578906baa1aa3fba2e8bc183858aa3840f4df3e3"
+    },
+    {
+      "path": "include/cudnn_frontend/node/conv_fprop.h",
+      "blob": "5a929b84560fd4e21db236d6e09553322ed2af4a",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "0889c1f646c48cace8bf60dad167992932c1f0947ba13979ab612e7ff5902eb5"
+    },
+    {
+      "path": "include/cudnn_frontend/node/conv_wgrad.h",
+      "blob": "3833cf5b15a288a15a9ce10b52a0419fe614cb52",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "8dd16189dcccfadd580ba7e29827b895565b04c6b24636242478ec5d8a23e53f"
+    },
+    {
+      "path": "include/cudnn_frontend/node/dbn.h",
+      "blob": "c604b5ef39c8dcd199a0c4ab3176da97b24344f8",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "4997a4cdca40e3aa949757fda91719c6ded47d99d265c0f070abd3729a35d1cc"
+    },
+    {
+      "path": "include/cudnn_frontend/node/dbn_weight.h",
+      "blob": "b2aef8d23b00a180aac27ad45c0533c3eda2d20c",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "0e6f05b48ae2cc91b5b3bb572bab593b4a799173ac68d897f17dd85930fc7f42"
+    },
+    {
+      "path": "include/cudnn_frontend/node/diagonal_band_mask.h",
+      "blob": "122797dd1109357412b3870458e983f0dcb3b4c4",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "d037b5e16b3529b3f3da6233cea560be20d069e30edda843443732f7f3ee35e0"
+    },
+    {
+      "path": "include/cudnn_frontend/node/dln.h",
+      "blob": "11ce93abce7279162980579564c3dcf5998ba9ee",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "f1b5f50bac46151aaee7b582c7380e91562255381ed2e9dff0623538090c0a5f"
+    },
+    {
+      "path": "include/cudnn_frontend/node/genstats.h",
+      "blob": "1835ef74aa872d0275a3b088e32f880c9e9ec0a4",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "2b2da0d4599a53d3f7b2b984ddec4908db1d2851494d64c2cab4164da7f6185c"
+    },
+    {
+      "path": "include/cudnn_frontend/node/instancenorm.h",
+      "blob": "dc0a78c8db525aed57c5983cc831dd0327f28e4b",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "e94009e23da8440cf6399a39e4d1d47c8fc144df388ccc5a894011762d8e24e6"
+    },
+    {
+      "path": "include/cudnn_frontend/node/layernorm.h",
+      "blob": "71cd05394e0b706809f1337b16ff928cf326997e",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "c4f01a1965105dabf4293d3707d08f0fc1f39b0d0f0b4b959e77d4cd4c45c1b2"
+    },
+    {
+      "path": "include/cudnn_frontend/node/matmul.h",
+      "blob": "d93ddd499af1b615db761ff222bb80b24824305c",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "9c4c99a6de13899ed2b4c056199414ca2fcd60517c8148758af427ba2e4bbe07"
+    },
+    {
+      "path": "include/cudnn_frontend/node/matmul_fp8.h",
+      "blob": "2b8aa41260c4fbb8b656687fc7529012193256c2",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "d8d6a1cc3636e19d611b19e9b4f2aba2c88202496a5ae630f03bc98c8266a564"
+    },
+    {
+      "path": "include/cudnn_frontend/node/moe_grouped_matmul.h",
+      "blob": "195bfaaff3e8d903f67365f697c4c790f530cc87",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "2b85e7f9a7721766bf213209b4d76cb8a945007165c80544f1104ebdf79add20"
+    },
+    {
+      "path": "include/cudnn_frontend/node/moe_grouped_matmul_bwd.h",
+      "blob": "bab26c179effe4005e59fb7878798cebce3690db",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "cb2fde11f9e58ae24c8f316436305592468e4a64fa4bf044ba7e7238d283407f"
+    },
+    {
+      "path": "include/cudnn_frontend/node/paged_cache_load.h",
+      "blob": "39c76b92e031c920187aca5f5d48f8503c86b841",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "84ea6f9972812c65a8a8328f3ee7701c29601d2d14c6da5df11d890b8591789d"
+    },
+    {
+      "path": "include/cudnn_frontend/node/pointwise.h",
+      "blob": "d44c75c2135d7f1ae4a9f11add9579f28dffb310",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "9f9da5e1a7fbdc072915d4c0a9b4cb3ce95c67e083a9d4b6aa04d53b641afbcd"
+    },
+    {
+      "path": "include/cudnn_frontend/node/reduction.h",
+      "blob": "4b25be7124f400fe4d40d5742dedfbe5c8dc168a",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "3364141edccbfba7c1c1e485977817ddbd1ea56450ca1f2145fdeb3267495950"
+    },
+    {
+      "path": "include/cudnn_frontend/node/resample.h",
+      "blob": "6fd7599001c70515a191afbbd9adf2eef86df2a6",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "61632926c707917d25613ca55d0ff0307244bc76a2328c8f969e2f6a4bc6a98e"
+    },
+    {
+      "path": "include/cudnn_frontend/node/reshape.h",
+      "blob": "b599daad17b71df6be1a783abd77de02ed940092",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "39b8e7c7031fa7dbf21b0242819ce53a6efdda77dea1b2239aad7dec5a5dcb16"
+    },
+    {
+      "path": "include/cudnn_frontend/node/rmsnorm.h",
+      "blob": "10490c3b54093a7e9111530ba0fe418b7cc1ae54",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "9cb50a4869e106677a0b64f5d97e500400f106569072f6b2aadd7e789469396d"
+    },
+    {
+      "path": "include/cudnn_frontend/node/rng.h",
+      "blob": "66fad38464ee6008da8ea1a2e04a4417ed1003c8",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "4554f36dd425cade6d2bf77a75ffda53627e61ac0ad30cb74e781e71a3ba0bba"
+    },
+    {
+      "path": "include/cudnn_frontend/node/rope.h",
+      "blob": "b3e058165152dfa3657f9153670c3c509167c2b7",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "012eecc5eaae77ba6473a0aa52acdbaf3d56613a3f7c20a3360d56166976c91b"
+    },
+    {
+      "path": "include/cudnn_frontend/node/rope_backward.h",
+      "blob": "16e6a34df2dcee9c2180e6b82655d48ec8b88532",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "dd9203bfeca2ae24c7a04b29bb5f7d62386dacee949079d2c565ab2e8ca0f85b"
+    },
+    {
+      "path": "include/cudnn_frontend/node/scaled_dot_product_flash_attention.h",
+      "blob": "0cd2a933d4af5c99a12eb8ec7591fcb5c253e758",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "306f5fa6ef9a674dc796de6878cffba517b448f8d34aea9661c2d6020d16a0f7"
+    },
+    {
+      "path": "include/cudnn_frontend/node/sdpa_fp8_bwd.h",
+      "blob": "5a9eda86dac78cab35d15fa469259baf1174f676",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "89fb7f03ba28aeee3b579f7ffe4caa2bc9e5e5f4107e8faac170bcfa96ea0782"
+    },
+    {
+      "path": "include/cudnn_frontend/node/sdpa_support_surface.h",
+      "blob": "77100b0b343d90f8cfb1b4803910b381d96a90c4",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "b872878f1c0eda88ad5af60a2cde6ce5f1fe784db2deeced2bed992c33ad3b6b"
+    },
+    {
+      "path": "include/cudnn_frontend/node/slice.h",
+      "blob": "166c522aed986f64afff27e7fbd6dc6bf1b9417e",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "3b2448e9bf5d222a65728f73070b6c7612b05313a6f907debb3cc37118a54d57"
+    },
+    {
+      "path": "include/cudnn_frontend/node/softmax.h",
+      "blob": "72f5240c56ae748da31bd386aca9e104a2e44751",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "8c8f7ff5e135f4001e8c4adcf2de7f0c42d8e5a625b23951455500efa3644bad"
+    },
+    {
+      "path": "include/cudnn_frontend/node/transpose.h",
+      "blob": "ec486370a1436db2ec31b5f6dffa0063794ba9dd",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "f1f7d8fe51057043608a42048a8696af45f1dca6dccd05b2502ada0d25beca9a"
+    },
+    {
+      "path": "include/cudnn_frontend/node_interface.h",
+      "blob": "5be7e5980d6d88e698fa597056dc2f73e1562370",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "6d311ca4b269d102d6c4e0af7d91dc1ba0c184354da58af27826835045570585"
+    },
+    {
+      "path": "include/cudnn_frontend/plans.h",
+      "blob": "9105457311e5cc5af0ec8601df5353e14ec3f406",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "fd114c03488ddcfae60b630cf0c44ebc9b52d982563d8692bf1dc9921e10dbc1"
+    },
+    {
+      "path": "include/cudnn_frontend/thirdparty/nlohmann/LICENSE.MIT",
+      "blob": "1c1f7a690d815db3a79ea3d4c9138a497e2e7702",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "86b998c792894ccb911a1cb7994f7a9652894e7a094c0b5e45be2f553f45cf14"
+    },
+    {
+      "path": "include/cudnn_frontend/thirdparty/nlohmann/json.hpp",
+      "blob": "85b4cdd399c161f1eeb63a2b961dc29201c5645d",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "21efa2f26ffa8b14b87f67ff8371fde142f237dae48bdb1efb5ffc3b364afc4d"
+    },
+    {
+      "path": "include/cudnn_frontend/utils/attn_score_modifiers.h",
+      "blob": "9f8fe441efad5cbe44b210cf9d39d470d2c269ad",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "69d7163c2d0baae684fc2f7b8dd6a17310a7407fc5fd13cd3d1a176add1ae4b8"
+    },
+    {
+      "path": "include/cudnn_frontend/utils/cuda_graph_retention.h",
+      "blob": "13859cd53efb859b0fed766db8173c91f392b8a3",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "ab771fcbd42450000640775450cd84f81bd213815603086a8facb2ed4fdba74d"
+    },
+    {
+      "path": "include/cudnn_frontend/utils/serialize.h",
+      "blob": "9f66c81c85b98d9780f1181fe73412d238a41c82",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "49b3e7025a205687fb1bf6cf5fdabfeac7d59d350a4553f324d59717ae102e16"
+    },
+    {
+      "path": "include/cudnn_frontend_ConvDesc.h",
+      "blob": "738e5b662c11d14c0373a2a5ae9995313f1e9086",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "81cc4ec7f421954900bb3a1f0415d3590de0980e02d691d4e1847584a211ae9f"
+    },
+    {
+      "path": "include/cudnn_frontend_Engine.h",
+      "blob": "fff63ae86b93d992fb6687b6739b9788a44dd926",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "6807ad8d64a848f43d3a813bcb8637c20ec420215df103ed0e73a4a26d30ab05"
+    },
+    {
+      "path": "include/cudnn_frontend_EngineConfig.h",
+      "blob": "5297ee6f3d7a4b392fae7acb123b2b0a0e4b84a1",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "425848a48381ffd07d2f11593f562b5f788da29731d6f35515d877c28d270f21"
+    },
+    {
+      "path": "include/cudnn_frontend_EngineConfigGenerator.h",
+      "blob": "12c91c0e6068ec18969f1edc5df516ee61af10bd",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "fbbcf048c4844d1af80d8e4b09408678b0c572454f555359716da67d067a16cf"
+    },
+    {
+      "path": "include/cudnn_frontend_EngineFallbackList.h",
+      "blob": "613607b300a0c575c7372dea227f32be4ab7d006",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "c453ca6395c5928cddf7e4b9830d4f58dab8b82372db01d0eb2c08c1ec6d2975"
+    },
+    {
+      "path": "include/cudnn_frontend_Errata.h",
+      "blob": "fb54a051495c03be859513b1f0c4fad291945502",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "4b6c55a9613d70c8fc2dae133e5d7e454db8e2e29366bf3c03c3dbcf9ee6bb4b"
+    },
+    {
+      "path": "include/cudnn_frontend_ExecutionPlan.h",
+      "blob": "0737a7f9ea10fd8bbd2cde3aa077288e167d8d5f",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "e8c59046ad8569f0282df7be30da79822c0128c214033a299be6cfffe685f2ca"
+    },
+    {
+      "path": "include/cudnn_frontend_ExecutionPlanCache.h",
+      "blob": "26dc9edd49af89687b3bee7bfe6200e1c437c204",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "4ec35b79bf2635caf5e012bd2db6260263eacf0a73e2f00361080077b7bc38c2"
+    },
+    {
+      "path": "include/cudnn_frontend_Filters.h",
+      "blob": "32f81a1054505fb28b7ca5e597685fe7d280707a",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "128b3eb3753825931ef31d913de80660362f4a71667463de969e458b0b5eb765"
+    },
+    {
+      "path": "include/cudnn_frontend_Heuristics.h",
+      "blob": "7af73306b92428ebdd325a14325479070b3b3073",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "5c7dd31045c61c656c549a7c2eb00587e0fecd0a3a2356ed5dec49c68e3f674c"
+    },
+    {
+      "path": "include/cudnn_frontend_Logging.h",
+      "blob": "d91760cc7e9e355f1682cb7ea391b04632ec8436",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "d7aef788f67e55dfa9949b0f0a6450b9caa479b1f56d73d69f8c5a43ee5debe4"
+    },
+    {
+      "path": "include/cudnn_frontend_MatMulDesc.h",
+      "blob": "e08632c27ca36898f8b95a94f32232524f2d2bb9",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "caf595fab80464a77b7a69f32d21a9673e5a7be50889f5fc13ef32c0297656b1"
+    },
+    {
+      "path": "include/cudnn_frontend_Operation.h",
+      "blob": "e79252ecc45d06bb67deb1daa5e2112be7fbcd18",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "081cfaee17b8724a6c160c3f381b0800b562a7cae011e0b742f0c8a94863f343"
+    },
+    {
+      "path": "include/cudnn_frontend_OperationGraph.h",
+      "blob": "35ba8b97e535d06cfe92c47edbd789903fed5fe2",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "9e8c02cabed24ef170d1037a108c7b4b219c1dc9dbe754a73861bdc25c14c418"
+    },
+    {
+      "path": "include/cudnn_frontend_PointWiseDesc.h",
+      "blob": "72ac3f0519060fedfe2ecf5b3183cb95d1ee8145",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "44fb469c7cd7ff191a5beb384a4b7af51023d1483e620a3f0185243dfa380be1"
+    },
+    {
+      "path": "include/cudnn_frontend_ReductionDesc.h",
+      "blob": "8181da2d6438ecfd877a2dae40478f7aaba7d6bc",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "ca555249f75bce446403eb4a306372ae0f4ddc083e1ec869c2a1fc8fc9d7165d"
+    },
+    {
+      "path": "include/cudnn_frontend_Reorder_Tensor.h",
+      "blob": "8ffc037e7c796bcde7aa30226c819b3e8b20c48c",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "ad4b58b8fd61aa0f352b2082f8fc7e1f4ba6ba5ca99c9e24b0a96171a4d500dd"
+    },
+    {
+      "path": "include/cudnn_frontend_Resample.h",
+      "blob": "6ec42cead4719a52d28148d7a11ce4a5ec5360cc",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "ef837165d4112d452325db457c579ffa66e990bd695998409abb74fdc440bd45"
+    },
+    {
+      "path": "include/cudnn_frontend_Rng.h",
+      "blob": "98ddce2da7d5dbe5f14b332903dd5d6100e1d8b9",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "a70cc0b7b37f82e1c55a980da3ca5708ecb0ce183b3b94479c47e7f2c347703c"
+    },
+    {
+      "path": "include/cudnn_frontend_Tensor.h",
+      "blob": "666c46aab794acbdfcb16d4c9270d4d14570e22a",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "9876db5db0f89d4ed0a99afe8bea7128a3c526d08d6ff59d361e8db3dd8cee1f"
+    },
+    {
+      "path": "include/cudnn_frontend_VariantPack.h",
+      "blob": "5ab4f4dedc97b2f723322318b181a0bcb3f9694a",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "14a1c320a6d1b18594c04e1aa07525f6d1b763f98a5bab98489772ed2de38cdc"
+    },
+    {
+      "path": "include/cudnn_frontend_find_plan.h",
+      "blob": "576f1456aba4d5fdc6af20f434cd3c4e840d6239",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "73372e7bb2e7b20453c9928cafbdfc11b3fc9763650502b207aec532b83428c3"
+    },
+    {
+      "path": "include/cudnn_frontend_get_plan.h",
+      "blob": "120ac0e79c17947b8584da79a6859b6c82c76f47",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "f6ad2eddc5269f4b901b0f037e566999678f1bcdadbd3ce7092ad26002fa66d0"
+    },
+    {
+      "path": "include/cudnn_frontend_shim.h",
+      "blob": "f2d6e70a8d170df81701aa20129655051294b257",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "3b58b9cb7d7f0b28fd5edd69693ce449e2355e436b5017a900103208aa36c3ab"
+    },
+    {
+      "path": "include/cudnn_frontend_utils.h",
+      "blob": "5183e8cc0d135c690ef29f1bb73dc8172dd9563a",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "a32fa8e728dbcde3f3484c98d4d24d28579bf5d84586bce86427620e5142379a"
+    },
+    {
+      "path": "include/cudnn_frontend_version.h",
+      "blob": "3bd1ce9484f70454f23e3175189a1b49b1d4a779",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "203e9d489744dc76611c25e0ce0131e89f1b88854c4f71bb9f829f76f9261e78"
+    },
+    {
+      "path": "pyproject.toml",
+      "blob": "596fe9c9e57e3c2174cecf252935d54af2e3f9ab",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "de55a96f8105b2de47fe0297491b8ecc1a75c00caefca0859dd91644c9bf75fb"
+    },
+    {
+      "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/api.py",
+      "blob": "d97c4144e7b9d43fd36636cde032537a1ac3db61",
+      "github_source_head": "6850a911a4e18a5e01dc191b65e341ad33548893",
+      "sha256": "b3585b89e463712eac8b041ed59a8bb4f342e17a06c7baa4303f2d8d6550880c"
+    },
+    {
+      "path": "python/cudnn/gemm/cutedsl/grouped/swiglu/grouped_gemm_swiglu_quant.py",
+      "blob": "2a9fc819701ef1d7d9a34c6b2729da7a12111145",
+      "github_source_head": "6850a911a4e18a5e01dc191b65e341ad33548893",
+      "sha256": "5fe58b7118d6cd82d822b82b8f01aa96665414d3e6499d4752cd3cb7f4095b1d"
+    },
+    {
+      "path": "python/cudnn/linear_attention/cake/kernels/cake_flashkda_training_c16_aligned_backward_0f8187e742.cu",
+      "blob": "52979f7683335b837002af3555d0f70410c17987",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "a5feca44d6126d8a67b9ec121b1741520693c2618ef776498e8fb71e41f6bbdd"
+    },
+    {
+      "path": "python/cudnn/linear_attention/cake/kernels/cake_flashkda_training_c16_aligned_forward_36075669f2.cu",
+      "blob": "e793975f21dd98a2b685662ac811d15e872c909e",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "fe4c998ba4f9245c96a607325485c5a964e9c740236ad5c56849975f209b1523"
+    },
+    {
+      "path": "python/cudnn/linear_attention/cake/kernels/cake_flashkda_training_c16_aligned_param_reduce_be120a1e72.cu",
+      "blob": "d74ba8c1068ba62306cc11e43e383d6625f62123",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "8c1b09cf093fddcda2eb5e16efd3942f16f4a8101f0cde0be8d3b684067a99ab"
+    },
+    {
+      "path": "python/cudnn/linear_attention/cake/kernels/fe_cake_kda_helpers.cu",
+      "blob": "ecc155986e75a8bd5d1637c70765c976b41336f2",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "2299b7f582bfb6f9cd96f201e37008c5364f0b53a70b72df023edae6eead1d5f"
+    },
+    {
+      "path": "python/cudnn/linear_attention/cake/kernels/flashkda_training_aux.cu",
+      "blob": "c00a3de5882a275e1ed29552ead03ad7dc5d62d0",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "a094eed1b0b80f43d27acd834e779cb19682eef0a6a61632b6925b7b22ea301c"
+    },
+    {
+      "path": "python/cudnn/linear_attention/cake/kernels/flashkda_training_c16.cu",
+      "blob": "8c43b7252b71c67fb3601d072e069e21550eb7e8",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "4ac0003431df8feba49492f5ede371b8f7e6740e06e13cd41d7594b7b72610bd"
+    },
+    {
+      "path": "python/cudnn/linear_attention/hopper/cuda_kernels/kda_bwd_sm90.cu",
+      "blob": "63b87d305c227a472c957a99cfcb481f0bd94c0a",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "47ed19df7f6097838f5fa166bce90ec937a83c29c03828e5f16bb9c8fbb7ca58"
+    },
+    {
+      "path": "python/cudnn/linear_attention/hopper/cuda_kernels/kda_fused_sm90.cu",
+      "blob": "ef3c490e8e1bf04625068b60c1bf66efdb882db2",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "2cfbb7fe28c949ba3ac9f29ca950a866301bb050d98b81189a66fb4d3234f43c"
+    },
+    {
+      "path": "python/cudnn/sdpa/bwd/compact_gqa/csrc/compact_gqa_blas.cpp",
+      "blob": "a58664c826ddd9c0995325534aa39163875f93ab",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "2e2487907ed55870f522ca6d22e8b8592d119d1eb5240d6ecf9e9790953eb79c"
+    },
+    {
+      "path": "python/cudnn/sdpa/fwd/api_dsl.py",
+      "blob": "ff262be8c5b04347f1ad3edd4d13a5334ba0f973",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "96ca092df15d8fb80af530038c5d25734c042a3e684fb33acfb183ffbd8872c9"
+    },
+    {
+      "path": "python/cudnn/sdpa/fwd/kernels/sm100/decode_d128_f16.py",
+      "blob": "cf7a951ef093400144a92d00f10d4fb391063863",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "9f6667721f148f61b17745dde772c413432b3a8147e87f8ed5477a6e07b9896c"
+    },
+    {
+      "path": "python/cudnn/sdpa/fwd/kernels/sm100/split_combine.py",
+      "blob": "f546eef3e8138992cbf9f61ab495e5a11a4fdac3",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "895f98ebfc9c3652e6cebac6b695d91a1a19b2974f793e6eb0018ced1a0ec92d"
+    },
+    {
+      "path": "python/cudnn/sdpa/fwd/prepared.py",
+      "blob": "c110927002aff45ddebb5b7215dbc9d633d043d0",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "5747fb42e8e9cba07b315293b58f557a48eec9dc5cdfd5db824be82cb3d6bf7c"
+    },
+    {
+      "path": "python/gnn.cpp",
+      "blob": "fe2cbf178d3684ad3e6077f8f27021368b105b98",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "e7ee3045b9c4801760d67cb2f667b4d419717f08cd05ecc28db59a98d71d218d"
+    },
+    {
+      "path": "python/properties.cpp",
+      "blob": "6297f4490e200ebe0749b0e39fde40247fc28b77",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "a48dcc38cfe2678acdf401af5f17cfbd3376c63bb2ed7a1bdb7aac68806c1a97"
+    },
+    {
+      "path": "python/pycudnn.cpp",
+      "blob": "c51ff161b1739a76c0a939dd29c5330f3a3be60e",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "b75270d5bc5a2b8a33b7e6a69acc5e590607dfb788c7f8f2a0268bb607d388ce"
+    },
+    {
+      "path": "python/pygraph/norm.cpp",
+      "blob": "14055ebfb634fdc12af10875512b9e7839961a89",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "ee0b034c68db70674e9bc68e3b2fbda0c594952c7c397260b52d3fed0828a9d3"
+    },
+    {
+      "path": "python/pygraph/pointwise.cpp",
+      "blob": "503c0fcd249c9a8ffabc5f5e76c730f019c506dc",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "1fef68137ddafd3fb56c5a2f81212cceccb36355e31bf232a75899e9e8f632c0"
+    },
+    {
+      "path": "python/pygraph/pygraph.cpp",
+      "blob": "3e9b694d7ecb3e7454747e7b35429fbe62958905",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "fb4f7ec8b08718e774d30ef258b15ff0b51880c7172e05485b99cc7db3e0c29b"
+    },
+    {
+      "path": "python/pygraph/pygraph.h",
+      "blob": "2a08b280fcfcf7e05992ae69844277a024e2fd97",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "951a4cafaba16ba9c64cdb5b79f475f176d3f772ddb33919531d5af56529e811"
+    },
+    {
+      "path": "python/pygraph/sdpa.cpp",
+      "blob": "12ec1823a21f59a7406c9794dddd099eb57602b5",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "aa05c51ed51cd3cd4fe381205e29e9eb808e13b4e875925394ac32803a799e37"
+    },
+    {
+      "path": "python/pygraph/sdpa_bwd_binding.cpp",
+      "blob": "6325b543b52e0ae77040576fcd9a12ab4fbc7a52",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "e892aef41070b3ad3a8e153c07f772da9d0c1a89ac735fd50f422d9f48b57880"
+    },
+    {
+      "path": "python/pygraph/sdpa_dense_binding.cpp",
+      "blob": "23fd936beefb6df17cf72ef9a0bd795d8b8f6084",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "5813f0e1d75f6aa9b26657492d29e50880100060cdf571a75822a52ee3762964"
+    },
+    {
+      "path": "python/pygraph/sdpa_fixed_binding.h",
+      "blob": "43d9c56590e63a8348ac03c8a33fb89d6ed87dde",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "b0d5adb2e14787986a6a1ec1a42f6b914bdd841572f0d76558b8fc6a3ab6afcc"
+    },
+    {
+      "path": "python/pygraph/sdpa_sm80_binding.cpp",
+      "blob": "90895975a75a016d6e0ed0a5ad9c3ce7005dd047",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "561fd7f3bdf040fde9bb6cf4e93509c3657f333127534c0a90bf22f3a71b3ec5"
+    },
+    {
+      "path": "python/pygraph/sdpa_thd_binding.cpp",
+      "blob": "c267e8ca3dc4baa1be13c9fbdb415bac8b3db305",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "bc7b191f6c9cf6581d25febd8838668d59951206ae1e4337b2ebe250893511b6"
+    },
+    {
+      "path": "python/pygraph/variant_pack.cpp",
+      "blob": "9fe132f351313fe2be9e84cd9b66e6aa7656b8f4",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "7e5231d4e7dd5dcc20b60a1bd3758efea260bd33890567b877cb3abee42bbeef"
+    },
+    {
+      "path": "python/pygraph/variant_pack.h",
+      "blob": "45d10a2880fa0847be8907a05ba28d67c4c2ab66",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "605d000c39f7f1d6b32f041c6da3a01ab6fa786f51d07937ca5d0a3574c584ca"
+    },
+    {
+      "path": "setup.py",
+      "blob": "9eee36972ca420b22056e43e1707faf4208ee9f1",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "1751eb8280739e6b7be513a36eaaaec357ce406c2a4d0f76290efafe1e615cdd"
+    },
+    {
+      "path": "test/AGENTS.md",
+      "blob": "5ecfaa2234007d7cda4249fccaad1ccbf8e8574c",
+      "github_source_head": "6850a911a4e18a5e01dc191b65e341ad33548893",
+      "sha256": "fe91e704f928704c14ddae70c747ba63ac9f28b0ffdac51944235e055ac31bf5"
+    },
+    {
+      "path": "test/python/gemm/cutedsl/test_grouped_gemm_swiglu_utils.py",
+      "blob": "16bd04a9b63347f19477ba8b917d953b5885c19a",
+      "github_source_head": "6850a911a4e18a5e01dc191b65e341ad33548893",
+      "sha256": "152e36f7e8d659af8865787af2b30b8eec1b3c120265e4abe6ca5c492e880b2c"
+    },
+    {
+      "path": "test/python/gemm/cutedsl/test_grouped_swiglu_sfd_tiles.py",
+      "blob": "e986975c70e7d9a6fb7448af352e1e2336782372",
+      "github_source_head": "6850a911a4e18a5e01dc191b65e341ad33548893",
+      "sha256": "38f60c55058056ccc222ec0699d664e91d6526f2bdd8fce5832c0a89ff2f4a34"
+    },
+    {
+      "path": "test/python/gemm/cutedsl/test_swiglu_amax_per_call.py",
+      "blob": "48bf690fc6e44578d0f5929646c7031f044a0973",
+      "github_source_head": "6850a911a4e18a5e01dc191b65e341ad33548893",
+      "sha256": "1eebe12349c5a88d119d50ca8d85c947ae2e549c73a8d8fced13916a15a385dd"
+    },
+    {
+      "path": "test/python/gemm/cutedsl/test_swiglu_wrapper_launch_stream.py",
+      "blob": "96556143dbf6bfc2fae6283cf3fcc6bc82d9f593",
+      "github_source_head": "6850a911a4e18a5e01dc191b65e341ad33548893",
+      "sha256": "5c9587dea4ffbf8d33e3b7e25197e9c8a5463763a4390b8f113fb3e68e649af7"
+    },
+    {
+      "path": "test/python/sdpa/frost/test_sdpa_native_ragged_decode_binding.py",
+      "blob": "bed4ad9b74f15d9baf5c76a490a9d502d093209f",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "1e6a633bde29381c853d64d2e9869a6d6e53c51ce38fa6bd25014cccae2b9468"
+    },
+    {
+      "path": "test/python/sdpa/frost/test_split_kv_heuristic.py",
+      "blob": "edacb0480668998494142086dcf8e48c101fccaf",
+      "github_source_head": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+      "sha256": "b2153abe0572cb16b76254de2ead96ce79bf25e331ab87ab7e77c8742b67a797"
+    }
+  ]
+}

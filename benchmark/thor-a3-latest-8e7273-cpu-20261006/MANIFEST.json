@@ -1,0 +1,106 @@
+{
+  "utc": "2026-10-05T17:13:25.544949+00:00",
+  "state": "CLOSED_RC0_CPU_NATIVE_BUILD_NO_GPU",
+  "files": [
+    {
+      "path": "results/a3-latest-8e7273-native-preparation-20261006-r1/run.json",
+      "size": 636,
+      "sha256": "cf93a26f2f6f7d96f7de8e8478b525953ad79ad532f638a4262f59a1a96c1f82"
+    },
+    {
+      "path": "results/a3-latest-8e7273-native-preparation-20261006-r1/run.live.json",
+      "size": 685,
+      "sha256": "3654e7b64ffd2c5e61fd25adf2edee68da67c9226cb7971459f0ef4237b7c89a"
+    },
+    {
+      "path": "results/a3-latest-8e7273-native-preparation-20261006-r1/stdout.log",
+      "size": 1116,
+      "sha256": "b1a2fe181c115dca2e481808216f80032648edd610e30bf2361d5bfda52a96b5"
+    },
+    {
+      "path": "results/a3-latest-8e7273-native-preparation-20261006-r1/stderr.log",
+      "size": 332,
+      "sha256": "357973a79f5d56f64a2276370ba26a3239a6dfdad9c9d60ec2eccf2e406381ae"
+    },
+    {
+      "path": "results/build-a3-latest-8e7273-20261006-r1/run.json",
+      "size": 722,
+      "sha256": "9e65693b315bd44dca3173c31ec40d5fc7e4485b91c93a7297304997e1c9599a"
+    },
+    {
+      "path": "results/build-a3-latest-8e7273-20261006-r1/run.live.json",
+      "size": 771,
+      "sha256": "8450c6e75ddfa46797c3a90b6bc5bd7d77bd76ffae75f21af4af8a31fbe526e6"
+    },
+    {
+      "path": "results/build-a3-latest-8e7273-20261006-r1/stdout.log",
+      "size": 1767,
+      "sha256": "055fbfdb698b3719c7e93b6022497c89e8de7f2b57fe190a4c4c8f32e057c377"
+    },
+    {
+      "path": "results/build-a3-latest-8e7273-20261006-r1/stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/a3-latest-8e7273-preparation-background-20261006-r1/launch.json",
+      "size": 1196,
+      "sha256": "3cbdf9af81b6ccb7a3ad5f0f7e2aeb57c2345b69b51d160bfe4a21660d605a61"
+    },
+    {
+      "path": "results/a3-latest-8e7273-preparation-background-20261006-r1/policy_manifest.json",
+      "size": 348,
+      "sha256": "f4dcac118f614c077af38cbd818d59ef32f738f4c06559ef4825d20e855b6a09"
+    },
+    {
+      "path": "results/a3-latest-8e7273-preparation-background-20261006-r1/driver.log",
+      "size": 636,
+      "sha256": "cf93a26f2f6f7d96f7de8e8478b525953ad79ad532f638a4262f59a1a96c1f82"
+    },
+    {
+      "path": "results/a3-latest-8e7273-native-provenance-20261006-r1.json",
+      "size": 21373,
+      "sha256": "978457e19001ac2f721f6f92f39002f3d5d0eec0c970b4837dc6b66e4849e23a"
+    },
+    {
+      "path": "results/a3-latest-8e7273-prebuild-20261006-r1.json",
+      "size": 19677,
+      "sha256": "b0dcb0fc309f0dd570302b80084bc3d7563a2da0acebead32ad66201652ad561"
+    },
+    {
+      "path": "tools/prepare_build_a3_latest_8e7273_20261006_r1.py",
+      "size": 9250,
+      "sha256": "8a233e5f46dc40c600ae599b246f9f6a4e1cddd72f862e07cdec36a80dceb545"
+    },
+    {
+      "path": "tools/a3_async_policy_20261004/manifest.json",
+      "size": 348,
+      "sha256": "f4dcac118f614c077af38cbd818d59ef32f738f4c06559ef4825d20e855b6a09"
+    },
+    {
+      "path": "tools/a3_async_policy_20261004/run_logged_observe.py",
+      "size": 3512,
+      "sha256": "80d9eeb5b26095a90095f7e96d63284a84ea478762335f792b014c78069831ce"
+    },
+    {
+      "path": "tools/a3_async_policy_20261004/a3_no_signal_redirect.py",
+      "size": 2444,
+      "sha256": "74e7c9ad184ca260e6645b77093f67e02122ccc3c62c647c392efa6ea1f7fafe"
+    },
+    {
+      "path": "tools/a3_async_policy_20261004/sitecustomize.py",
+      "size": 273,
+      "sha256": "5a3d527356723f7208c85b8d8adbb790afffb29c5991e4a0102361645a42f498"
+    }
+  ],
+  "excluded": [
+    "models",
+    "cache",
+    "engine",
+    ".pt",
+    "binary"
+  ],
+  "source_head": "8ab1af4f7beb5ac1e45c10418a52291ef05cb8da",
+  "upstream": "8e7273662c390603d2d8f2fde31bfad3e4ec259a",
+  "binding_hash_only": "a0f390bc117f37a6828941bab06a888b6dd22a5d5157a762740bce62f2046a08"
+}
