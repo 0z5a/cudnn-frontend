@@ -36,7 +36,7 @@ import cudnn
 from cudnn.frost.tile_dsl.constants import SCHED_LPT, SCHED_LPT_L2, SCHED_NATURAL
 from cudnn.frost.buffers import CUTEDSL_MIN_VERSION, cutedsl_arch_requirement_error, cutedsl_state, cutedsl_too_old
 from cudnn.sdpa import graph_analyzer as ga
-from cudnn.sdpa.fwd.config_sm100 import SM100_THD_PACK_GQA_SHAPES, pack_gqa_supported, supports_thd_split
+from cudnn.sdpa.fwd.config_sm100 import SM100_THD_PACK_GQA_SHAPES, pack_gqa_supported, supports_paged_prefill_cga1, supports_thd_split
 from cudnn.sdpa.fwd.config_sm107 import SM107_EPILOGUE_GATE_SHAPES, SM107_F16_THD_SHAPES, SM107_FP8_THD_SHAPES
 from cudnn.sdpa.fwd.config_sm120 import D512_FLAVOR
 
@@ -392,6 +392,9 @@ class Capabilities:
     # heads. Empty is fail-closed; the separate ragged-Q decode leg is unchanged.
     # Appended to preserve positional construction of existing capabilities.
     thd_pack_gqa_d_shapes: frozenset[tuple[int, int]] = frozenset()
+    # attn_scale = 0. The SM80/SM100/SM107/SM120 kernels fold the scale into exp2 after an unscaled, -inf-masked
+    # running max, which a zero scale turns into NaN (#1435); SM90 specializes on the scale's sign. Appended last.
+    zero_scale: bool = False
 
 
 def _band_covers_kv_tail(facts: "ga.SdpaGraphFacts") -> bool:
@@ -649,6 +652,15 @@ def effective_cgas(capabilities: Capabilities, facts: "ga.SdpaGraphFacts", split
     """CGA domain of the native flavor and split leg selected by the graph."""
 
     selected = _selected_d_shape(capabilities, facts)
+    if capabilities.sm_lo == 107 and supports_paged_prefill_cga1(
+        (facts.d_qk, facts.d_v),
+        device_cc=facts.device_cc,
+        fp8=facts.is_fp8 or facts.is_mxfp8,
+        thd=facts.thd,
+        paged=facts.has_paged_kv,
+        split_kv=split_kv or 1,
+    ):
+        return frozenset({1, 2})
     if (split_kv or 1) > 1 and thd_split_domain(capabilities, facts):
         return frozenset({1})
     if capabilities.sm_lo == 107 and thd_split_domain(capabilities, facts) and not facts.has_paged_kv and selected == (192, 128):
@@ -886,6 +898,7 @@ def mismatch(capabilities: Capabilities, facts: "ga.SdpaGraphFacts", knobs: Opti
         (facts.has_score_max, capabilities.score_max, "score_max output"),
         (facts.has_score_sum_exp, capabilities.score_sum_exp, "score_sum_exp output"),
         (facts.dynamic_scale, capabilities.dynamic_scale, "tensor attn_scale"),
+        (facts.scale == 0.0, capabilities.zero_scale, "attn_scale = 0"),
         (facts.has_unfuse_fma, capabilities.unfuse_fma, "unfuse_fma"),
         (facts.has_stats_log2, capabilities.stats_log2, "stats_use_log2 (base-2 stats)"),
         (facts.seq_q_trim, capabilities.seq_q_trim, "seq_len_q without padding mask"),
@@ -1295,15 +1308,17 @@ def _sm107_spec() -> EngineSpec:
             # gap; dense itself is neutral. The decay with S is the signature of
             # scheduler imbalance, which is what LPT exists to fix.
             #
-            # Only (256, 256) is claimed: d128 and d512 are unvalidated under
-            # LPT here, and d512 is cga4x1 role-split with a different scheduler
-            # shape. SCHED_LPT_L2 is claimed by NO f16 flavor -- its decode
+            # D128 is also qualified through dense and live-length THD
+            # capture/replay, including the shared paged PackGQA pipeline.
+            # D192 and D512 remain unqualified; D512 is cga4x1 role-split
+            # with a different scheduler shape.
+            # SCHED_LPT_L2 is claimed by NO f16 flavor -- its decode
             # needs `qh_per_kh` and `seqlen_kv` at every call site, which the
             # f16 kernels do not pass (the d128 / d192x128 FP8 and MXFP8
             # kernels do; see those rows), so it raises rather than
             # miscomputes. Both are follow-ups.
             sched_policies=frozenset({SCHED_NATURAL}),
-            sched_policies_by_d_shape=(((256, 256), frozenset({SCHED_NATURAL, SCHED_LPT})),),
+            sched_policies_by_d_shape=(((128, 128), frozenset({SCHED_NATURAL, SCHED_LPT})), ((256, 256), frozenset({SCHED_NATURAL, SCHED_LPT}))),
             tile_ms=frozenset({128}),
             tile_ns=frozenset({128}),
             cgas=frozenset({2}),
@@ -2433,6 +2448,7 @@ def _sm90_spec() -> EngineSpec:
     return EngineSpec(
         name="sdpa_fwd_prefill_sm90",
         capabilities=Capabilities(
+            zero_scale=True,
             sm_lo=90,
             sm_hi=90,
             phase="prefill",

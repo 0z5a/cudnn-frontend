@@ -67,6 +67,7 @@ from cudnn.sdpa.fwd.config_sm100 import (
     decode_d256_q_tile,
     pack_gqa_group_size,
     pack_gqa_supported,
+    supports_paged_prefill_cga1,
 )
 from cudnn.sdpa.fwd.config_sm120 import D512_FLAVOR, FP8_HEAD_TILE_GRANULE, HEAD_TILE_GRANULE, SMEM_CAPACITY_BYTES, pick_flavor, smem_bytes, tile_domain
 from cudnn.sdpa.fwd.engines import (
@@ -847,6 +848,38 @@ def _auto_sched_cga(spec: EngineSpec, facts, *, split_kv: int, sched_policy: int
         # no-split 1.07x -> 1.05x, dense S=2K unchanged.  The split leg keeps
         # cga2 (split_cgas_by_d_shape); the THD and paged legs are cga2-only.
         return sched_policy, 1
+    if supports_paged_prefill_cga1(
+        (facts.d_qk, facts.d_v),
+        device_cc=facts.device_cc,
+        fp8=facts.is_fp8 or facts.is_mxfp8,
+        thd=facts.thd,
+        paged=facts.has_paged_kv,
+        split_kv=split_kv,
+    ):
+        # A packed query fits the two-slab single-CTA tile at 256 rows.
+        # Prefer it only when the two-CTA tile would need another grid wave.
+        # Split/decode keeps its separate 128-row tile and existing choice.
+        sm_count = facts.device_sm_count or 0
+        group = facts.h_q // facts.h_kv if facts.h_kv else 0
+        units = facts.b * facts.h_kv
+        prefer = (
+            pack_gqa is not False
+            and _prefer_thd_pack_gqa(caps, facts)
+            and facts.dtype == cudnn.data_type.BFLOAT16
+            and facts.bottom_right
+            and facts.window_left is None
+            and not facts.right_band_widening
+            and not facts.has_sink
+            and not facts.has_epilogue_gate
+            and group in (4, 8)
+            and 1 < facts.s_q
+            and facts.s_q * group <= 256
+            and 2048 <= facts.s_kv <= 32768
+            and facts.s_kv >= 4 * facts.s_q
+            and sm_count >= 2
+            and _ceil_div(units, sm_count) < _ceil_div(units, sm_count // 2)
+        )
+        return sched_policy, 1 if prefer else 2
     if selected_shape == (128, 128) and domain == frozenset({1, 2}) and not (facts.is_fp8 or facts.is_mxfp8):
         # The f16 SM100 row: cga1 = the decode tile when one of its 128-row
         # tiles covers the head's Q rows, else the cga2 prefill pipeline.
@@ -902,7 +935,7 @@ def _sm100_banded_gqa_packs(caps: Capabilities, facts) -> bool:
     return caps.sm_lo == 100 and caps.sm_hi < 107 and not facts.thd and (facts.causal or facts.window_left is not None) and facts.h_q != facts.h_kv
 
 
-def _pack_gqa_tile_q(caps: Capabilities, facts, tile_m: Optional[int], cga: Optional[int] = None) -> int:
+def _pack_gqa_tile_q(caps: Capabilities, facts, tile_m: Optional[int], cga: Optional[int] = None, *, split_kv: int = 1) -> int:
     """The Q rows one grid tile covers, for :func:`_pack_gqa_wins`.
 
     The SM100 family runs CGA tiles. D192 accepts CGA1 and CGA2, so callers must
@@ -924,8 +957,17 @@ def _pack_gqa_tile_q(caps: Capabilities, facts, tile_m: Optional[int], cga: Opti
             # pack decision is the same either way (S_q x G <= 128 is < 256).
             return cga_tile_m(64, 1 if cga is None else cga)
         if (facts.is_fp8 or facts.is_mxfp8) and cga == 1:
-            # The quantized d128 prefill at cga1 keeps TILES_Q=2 (256 rows); only
-            # the f16 flavor's cga1 is the 128-row decode tile cga_tile_m models.
+            # Quantized d128 prefill at cga1 keeps TILES_Q=2 (256 rows),
+            # unlike the half decode/split tile that cga_tile_m models.
+            return 256
+        if cga == 1 and supports_paged_prefill_cga1(
+            (facts.d_qk, facts.d_v),
+            device_cc=facts.device_cc,
+            fp8=facts.is_fp8 or facts.is_mxfp8,
+            thd=facts.thd,
+            paged=facts.has_paged_kv,
+            split_kv=split_kv,
+        ):
             return 256
         return cga_tile_m(128, cga)
     if facts.d_qk <= 192 and facts.d_v <= 128:
@@ -1016,8 +1058,9 @@ def _pack_gqa_group(caps: Capabilities, facts, tile_m: Optional[int], packed: Op
 
 def _prefer_thd_pack_gqa(caps: Capabilities, facts) -> bool:
     """The measured native-half THD causal family, separate from decode."""
+    native_half = _sm100_f16(caps, facts) or (caps.sm_lo == 107 and facts.has_paged_kv and facts.dtype in (cudnn.data_type.HALF, cudnn.data_type.BFLOAT16))
     return (
-        _sm100_f16(caps, facts)
+        native_half
         and (facts.d_qk, facts.d_v) == (128, 128)
         and facts.thd
         and not _thd_decode_leg(caps, facts)
@@ -1096,11 +1139,11 @@ def _swa_kv_tiles(facts, *, token_span: int, tile_n: int) -> int:
     return longest
 
 
-def _split_launch(caps: Capabilities, facts, tile_m, tile_n, cga, pack_g: int, *, physical: bool = True) -> _SplitKvLaunch:
+def _split_launch(caps: Capabilities, facts, tile_m, tile_n, cga, pack_g: int, *, physical: bool = True, split_kv: int = 1) -> _SplitKvLaunch:
     """The launch the wave-cost model sees. ``physical=False`` counts the MMA
     width per cluster (the count the model's constants were fitted with);
     ``physical=True`` counts every CTA the cluster launches (D512: 4 for 2)."""
-    rows = _pack_gqa_tile_q(caps, facts, tile_m, cga)
+    rows = _pack_gqa_tile_q(caps, facts, tile_m, cga, split_kv=split_kv)
     if (
         _sm100_f16(caps, facts)
         and not facts.thd
@@ -1223,7 +1266,7 @@ def _split_points(
         unsplit_pack_g = _pack_gqa_group(caps, facts, unsplit_knobs.tile_m, unsplit_knobs.pack_gqa)
 
     def _choose(physical: bool) -> int:
-        split_launch = _split_launch(caps, facts, tile_m, tile_n, cga, pack_g, physical=physical)
+        split_launch = _split_launch(caps, facts, tile_m, tile_n, cga, pack_g, physical=physical, split_kv=2)
         unsplit_launch = None
         if unsplit_knobs is not None:
             unsplit_launch = _split_launch(caps, facts, unsplit_knobs.tile_m, unsplit_knobs.tile_n, unsplit_knobs.cga, unsplit_pack_g, physical=physical)
@@ -1276,14 +1319,16 @@ def paged_thd_split_choice(caps: Capabilities, facts) -> Tuple[int, bool]:
     """Measured fixed-graph (split count, packing); one keeps the existing plan.
 
     Include batch in the grid estimate so multi-request chunks do not receive
-    the split budget of an underfilled single request.
+    the split budget of an underfilled single request. Rubin qualification
+    covers larger batches and caches using the same first-wave budget;
+    already-filled grids retain the unsplit candidate.
     """
     if not (
         paged_thd_split_domain(caps, facts)
         and getattr(cudnn._pybind_module._SdpaThdBinder, "supports_paged_packed_split", False)
         and not facts.shape_overrides
         and facts.dtype == cudnn.data_type.BFLOAT16
-        and 1 <= facts.b <= 4
+        and 1 <= facts.b <= (64 if caps.sm_lo == 107 else 4)
         and 4 <= facts.h_q <= 64
         and facts.h_kv > 0
         and facts.h_q % facts.h_kv == 0
@@ -1293,7 +1338,7 @@ def paged_thd_split_choice(caps: Capabilities, facts) -> Tuple[int, bool]:
         and facts.bottom_right
         and facts.window_left is None
         and 64 <= facts.s_q <= 1024
-        and 2048 <= facts.s_kv <= 16384
+        and 2048 <= facts.s_kv <= (32768 if caps.sm_lo == 107 else 16384)
         and facts.k_t is not None
         and facts.k_t.get_stride()[2] < facts.k_t.get_stride()[1]
     ):
@@ -1333,21 +1378,15 @@ def nonpaged_thd_split_choice(caps: Capabilities, facts) -> int:
     envelope; full prefill and other graph features keep their existing policy.
     Bottom-right prefixes are at least three quarters KV, so the unmasked loop
     bounds their work closely. B200 / released cuDNN 9.27 also qualifies exact
-    D128 with integral GQA1/2/4/8 on fixed Blackwell graphs without Stats;
-    the same first-wave budget avoids splitting already-filled/full-prefill grids.
+    D128 FP16/BF16 with integral GQA1..16 on Blackwell, fixed or bounded, with
+    or without packed Stats; the same first-wave budget avoids splitting
+    already-filled/full-prefill grids. Rubin reuses this budget for its native
+    packed D128 and MLA paths, with the device's actual SM count.
     """
     d128 = (facts.d_qk, facts.d_v) == (128, 128)
     if d128:
-        # Reuse the MLA launch budget for measured Blackwell BF16 ragged
-        # prefixes. Packed Stats and overrides remain explicit choices here.
-        if (
-            caps.sm_lo != 100
-            or facts.wants_stats
-            or facts.shape_overrides
-            or facts.h_kv <= 0
-            or facts.h_q % facts.h_kv
-            or facts.h_q // facts.h_kv not in (1, 2, 4, 8)
-        ):
+        # Reuse the MLA launch budget for native half ragged prefixes.
+        if caps.sm_lo not in (100, 107) or facts.h_kv <= 0 or facts.h_q % facts.h_kv or facts.h_q // facts.h_kv not in (1, 2, 4, 8, 16):
             return 1
     elif (facts.d_qk, facts.d_v) != (192, 128) or facts.h_q != facts.h_kv:
         return 1
@@ -1355,7 +1394,7 @@ def nonpaged_thd_split_choice(caps: Capabilities, facts) -> int:
         thd_split_domain(caps, facts)
         and not facts.has_paged_kv
         and getattr(cudnn._pybind_module._SdpaThdBinder, "supports_nonpaged_d128_packed_split" if d128 else "supports_nonpaged_packed_split", False)
-        and facts.dtype == cudnn.data_type.BFLOAT16
+        and (facts.dtype == cudnn.data_type.BFLOAT16 or (d128 and facts.dtype == cudnn.data_type.HALF))
         and 1 <= facts.b <= 4
         and 4 <= facts.h_q <= 64
         and 64 <= facts.s_q <= 1024
