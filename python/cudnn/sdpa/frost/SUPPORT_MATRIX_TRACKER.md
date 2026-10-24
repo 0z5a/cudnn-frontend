@@ -219,6 +219,7 @@ unverified.
 | FP16 / BF16 Q/K/V/O | ✅ / ⚠️ |
 | Dense layouts within `dense_flex`, with native TMA stride alignment | ✅ / ⚠️ |
 | Packed token-major THD Q/K/V/O | ✅ / ⚠️ |
+| Gapped THD (TE's `cu_seqlens_padded`, per side or per port): every port's INT32/INT64 ragged offsets and multiplier read on device | ✅ / ⚠️ |
 | Optional FP32 Stats, natural-log or base-2 (`stats_use_log2`); strided / permuted dense Stats within `dense_flex`; packed THD token-major / head-major Stats | ✅ / ⚠️ |
 | Unmasked / top-left causal / bottom-right causal | ✅ / ⚠️ |
 | Left/right diagonal bands; bottom-right requires a right bound | ✅ / ⚠️ |
@@ -246,7 +247,6 @@ The following are **declined, pending**:
 | THD PackGQA | Shared eligibility; native declaration |
 | Head-major THD data, including `S_max == 1` | Shared eligibility where detectable; native declaration always |
 | THD with `SCHED_LPT` or `SCHED_LPT_L2` | Native declaration at build |
-| Gapped THD sequences | Caller-contract violation; offset values are never read, so this is not detected |
 
 Explicit records stay partial: `{}` exports `{}` before and after build.
 The adapter defaults to unpacked execution. Dense causal and right-widened
@@ -258,18 +258,31 @@ float and string knob keys follow shared integer coercion. Tiles are 64/64,
 CGA and split-KV are 1; split-KV >1 declines. Schedulers are NATURAL, plain
 LPT, and LPT_L2 blocks of a power of two of whole KV groups within 50 MiBʷ.
 
-Dense launches attention with zero workspace. THD launches setup then attention
-with `align128(16*B+16) + 128*(B+3)` bytes: the Int32 metadata, then `B+3`
-tensor maps in SM100's slot order, carved as one plain chunk. The maps need an
+Dense launches attention with zero workspace. THD launches setup then attention.
+A graph plan (`Capabilities.thd_ragged_offsets`) takes `align128(20*B+20) +
+128*(3B+1) + 40*B` bytes: the Int32 metadata, one map per sequence for O, K and
+V (O in slots `0..B-1`, the dead-unit pad at `B`, K at `B+1..2B`, V at
+`2B+1..3B`), then the Int64 `[5, B]` token origins. A direct adapter caller
+without `thd_ragged_offsets` keeps `align128(20*B+20) + 128*(B+3)` bytes: the
+metadata, then `B+3` maps in SM100's slot order. Each is carved as one plain chunk. The maps need an
 absolute 128-byte boundary, so the workspace base must be 128-byte aligned (a
 torch allocation is); the compiled launcher refuses any other base before
 either launch. The shared carver copies a non-view-flattenable rank-2
 workspace, while a 1-D strided workspace reaches the adapter and is refused.
 Capture safety requires a contiguous or view-flattenable workspace.
 
-THD sequences start at packed Q/KV prefixes times each port's token stride.
-Ragged-offset declarations are required for THD Stats, but their values and
-multipliers are never read. Stats packing uses the shared classifier; a
+A graph plan reads **the bound ragged offsets of every port** on device, as the
+SM80 backward does (issue #737): the setup launch places sequence `b` of
+Q/K/V/O/Stats at its own token origin `ro[b] × M / ts` (`M` the port's
+`ragged_offset_multiplier`, `ts` its token stride; Int64 arithmetic), and O,
+K and V each get a map based at that origin and clipped to the sequence, so
+a K/V tile tail is TMA-OOB zeros rather than the gap after it and O stores never
+reach a gap; Stats rows start at the Stats origin. The binder passes each port's
+own token capacity, and every origin is clamped into its buffer and every map
+clipped to it, so an out-of-range offset addresses rows of the bound buffer,
+never memory outside it. Whole-token offsets are a supported-input precondition.
+A direct adapter caller without `thd_ragged_offsets` starts sequences at packed
+Q/KV prefixes times each port's token stride. Stats packing uses the shared classifier; a
 head-major head stride covering the live total is a caller contract, as on the
 sibling adapters (Rule S1). Accessed padded V rows must be finite. O, Stats and
 workspace must not overlap other operands (caller contract, unchecked as on the

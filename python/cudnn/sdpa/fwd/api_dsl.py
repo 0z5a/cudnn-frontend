@@ -44,6 +44,7 @@ from cudnn.sdpa.fwd.config_sm90 import (
     SCALE_ZERO as _SM90_SCALE_ZERO,
     TILE_M as _SM90_TILE_M,
     TILE_N as _SM90_TILE_N,
+    THD_ORIGIN_PORTS as _SM90_THD_ORIGIN_PORTS,
     TemplateParams as Sm90TemplateParams,
     head_dims_mismatch as _sm90_head_dims_mismatch,
 )
@@ -5012,6 +5013,15 @@ class SdpaFwdDslSm90(SdpaFwdDsl):
     mismatches, a THD workspace off the 128-byte tensor-map boundary included.
     """
 
+    def __init__(self, *args, thd_ragged_offsets: Optional[dict] = None, **kwargs):
+        """``thd_ragged_offsets`` (graph lowering only) maps each THD port bound with ragged
+        offsets -- ``q``, ``k``, ``v``, ``o``, ``stats`` -- to the offsets' ``(torch dtype,
+        multiplier)``. The launch then reads and writes every sequence at its origin in the
+        caller's buffer, so padded THD (gaps between sequences) is served; the offset tensors
+        become required operands of the prepared launch. Unset keeps the packed layout."""
+        self._thd_ro_spec = dict(thd_ragged_offsets or {})
+        super().__init__(*args, **kwargs)
+
     def _initialize_implementation(self) -> None:
         """Initialize prepared-launch and packed-Stats plan metadata."""
         self._dense_spec = self._thd_spec = None
@@ -5173,10 +5183,22 @@ class SdpaFwdDslSm90(SdpaFwdDsl):
             self.pack_gqa and not pack_gqa_supported(h_q, h_kv, _SM90_TILE_M), "SM90 D512 PackGQA requires a head ratio dividing tile_m=64"
         )
 
+        ro = self._thd_ro_spec
+        self._value_error_if(bool(ro) and not self.thd, "SM90 SDPA: thd_ragged_offsets requires thd=True")
+        self._value_error_if(
+            not set(ro) <= set(_SM90_THD_ORIGIN_PORTS), f"SM90 SDPA: thd_ragged_offsets ports must be among {_SM90_THD_ORIGIN_PORTS}; got {sorted(ro)}"
+        )
+        self._value_error_if("stats" in ro and self.lse_desc is None, "SM90 SDPA: Stats ragged offsets require a Stats output")
+        for port, (dtype, mult) in ro.items():
+            self._value_error_if(dtype not in (torch.int32, torch.int64), f"SM90 SDPA: {port} ragged offsets must be int32 or int64; got {dtype}")
+            self._value_error_if(int(mult) < 1, f"SM90 SDPA: {port} ragged offset multiplier must be positive; got {mult}")
+        thd_origins = tuple(((32 if ro[p][0] == torch.int32 else 64), int(ro[p][1])) if p in ro else None for p in _SM90_THD_ORIGIN_PORTS) if ro else None
+
         self.params = Sm90TemplateParams(
             dtype_qkv=DTYPE_BF16 if self.q_desc.dtype == torch.bfloat16 else DTYPE_FP16,
             **band,
             thd_varlen=self.thd,
+            thd_origins=thd_origins,
             has_lse=self.lse_desc is not None,
             has_sink=self.has_sink,
             stats_log2=self.stats_log2,
@@ -5223,13 +5245,13 @@ class SdpaFwdDslSm90(SdpaFwdDsl):
         self._logger.debug("compile completed")
 
     def scratch_workspace_bytes(self) -> int:
-        """THD: the metadata, then the ``B + 3`` tensor maps, bound as ``seq_kv_lens``; a dense plan needs none."""
+        """THD: the metadata, then the tensor maps (and caller-buffer origins), bound as ``seq_kv_lens``; a dense plan needs none."""
         self._ensure_support_checked()
         if not self.thd:
             return 0
-        from cudnn.frost.tile_dsl.thd import THD_MAPS_META_WORDS
+        from cudnn.sdpa.fwd.config_sm90 import thd_meta_words
 
-        return THD_MAPS_META_WORDS(self.batch_size) * 4
+        return thd_meta_words(self.batch_size, bool(self._thd_ro_spec)) * 4
 
     def execute(
         self,

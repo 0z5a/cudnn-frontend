@@ -299,13 +299,19 @@ class Capabilities:
     # pre-existing allocation on that path, tracked with its other
     # TemplateParams-conversion follow-ups.
     lse_optional: bool = False
-    # THD forward lowerings assume FULLY-PACKED storage: the packed addressing
-    # is re-derived as prefix(lens) x token stride, and the graph's bound
-    # ragged-offset values are never read. TE-style padded THD (offsets
-    # from cu_seqlens_padded != cu_seqlens, gaps between sequences) is NOT
-    # served — and being runtime data, cannot be declined at plan time.
-    # (The SM80 backward reads them: bwd Capabilities.thd_ragged_offsets.)
+    # THD forward lowerings assume FULLY-PACKED storage unless the row sets
+    # thd_ragged_offsets: the packed addressing is re-derived as prefix(lens)
+    # x token stride, and the graph's bound ragged-offset values are never
+    # read. TE-style padded THD (offsets from cu_seqlens_padded != cu_seqlens,
+    # gaps between sequences) is NOT served there -- and being runtime data,
+    # cannot be declined at plan time.
     thd: bool = False
+    # The THD lowering reads every port's bound ragged offsets on device (each
+    # sequence's token origin in the caller's buffer, whole tokens by
+    # precondition), so padded THD is read and written where the caller put
+    # it. The offsets become operands of the plan. Only the SM90 row sets it;
+    # the SM80 backward has the same capability (bwd Capabilities).
+    thd_ragged_offsets: bool = False
     # cu_seq_len_q / cu_seq_len_kv (B+1,) prefix sums (cuDNN 9.24+). Serving
     # rows consume the form on THD host-side (lens = adjacent differences of
     # the inherent tolist); dense cu graphs stay declined until the kernels
@@ -3113,6 +3119,19 @@ def lower_dsl_prefill(
     api_cls = _adapter(api_type)
     _ctor_params = frozenset(inspect.signature(api_cls.__init__).parameters)
     _exec_params = frozenset(inspect.signature(api_cls.execute).parameters)
+    # Bound ragged offsets, read on device by rows that declare it: per port, the
+    # offset tensor and its (torch dtype, multiplier).
+    _ragged = {}
+    if facts.thd and spec.capabilities.thd_ragged_offsets:
+        import torch
+
+        _ro_dtypes = {cudnn.data_type.INT32: torch.int32, cudnn.data_type.INT64: torch.int64}
+        for port, t in (("q", facts.q_t), ("k", facts.k_t), ("v", facts.v_t), ("o", facts.o_t), ("stats", facts.stats_t)):
+            ro = getattr(t, "ragged_offset", None) if t is not None else None
+            if ro is not None:
+                if ro.get_data_type() not in _ro_dtypes:
+                    raise NotImplementedError(f"{port} ragged offset must be INT32 or INT64; got {ro.get_data_type()}")
+                _ragged[port] = (ro, _ro_dtypes[ro.get_data_type()], int(t.get_ragged_offset_multiplier() or 1))
     api = api_cls(
         sample_q=ga.tensor_desc_from_ir(facts.q_t, name="q"),
         sample_k=ga.tensor_desc_from_ir(facts.k_t, name="k"),
@@ -3154,6 +3173,7 @@ def lower_dsl_prefill(
         # of TMA reach. Only ever tightens (see _thd_declared_total).
         max_total_seq_len_q=facts.max_total_seq_len_q,
         max_total_seq_len_kv=facts.max_total_seq_len_kv,
+        **({"thd_ragged_offsets": {port: (dtype, mult) for port, (_, dtype, mult) in _ragged.items()}} if _ragged else {}),
         # Paged KV: K/V samples are the page pools; the adapter needs the page
         # geometry and the declared KV maximum the masks clamp against.
         paged_page_size=facts.page_size if facts.has_paged_kv else 0,
@@ -3289,6 +3309,9 @@ def lower_dsl_prefill(
         ragged_q=getattr(facts.q_t, "ragged_offset", None) if facts.thd else None,
         ragged_o=getattr(facts.o_t, "ragged_offset", None) if facts.thd else None,
         ragged_stats=getattr(facts.stats_t, "ragged_offset", None) if (facts.thd and facts.stats_t is not None) else None,
+        # ... and every port's, for a row reading caller-buffer origins.
+        ragged_k=_ragged["k"][0] if "k" in _ragged else None,
+        ragged_v=_ragged["v"][0] if "v" in _ragged else None,
     )
     thd_decode_leg = bool(getattr(api, "thd_decode_leg", False))
 
@@ -3690,6 +3713,7 @@ def _sm90_spec() -> EngineSpec:
             lse_optional=True,
             decode=True,  # stated, not inherited: S_q == 1 is served (the sink decode tests pin it)
             thd=True,
+            thd_ragged_offsets=True,
             cu_seq_len=True,
             skv_tile=0,
             layouts=frozenset({"bshd", "dense_flex"}),

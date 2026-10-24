@@ -166,6 +166,12 @@ enum HostSlot : size_t {
     PartialOStrides,
     GatePtr,
     GateStrides,
+    RaggedQPtr,
+    RaggedKPtr,
+    RaggedVPtr,
+    RaggedOPtr,
+    RaggedLSEPtr,
+    ThdPortCaps,
     NumHostSlots
 };
 constexpr std::array<const char *, NumHostSlots> host_slot_names = {"q_ptr",
@@ -195,9 +201,18 @@ constexpr std::array<const char *, NumHostSlots> host_slot_names = {"q_ptr",
                                                                     "lse_partial_ptr",
                                                                     "partial_o_strides",
                                                                     "gate_ptr",
-                                                                    "gate_strides"};
-constexpr std::array<HostSlot, 4> pointer_slots                  = {QPtr, KPtr, VPtr, OPtr};
-constexpr std::array<HostSlot, 4> stride_slots                   = {QStrides, KStrides, VStrides, OStrides};
+                                                                    "gate_strides",
+                                                                    "thd_ro_q_ptr",
+                                                                    "thd_ro_k_ptr",
+                                                                    "thd_ro_v_ptr",
+                                                                    "thd_ro_o_ptr",
+                                                                    "thd_ro_lse_ptr",
+                                                                    "thd_port_caps"};
+// The ports whose bound ragged offsets a caller-origin host reads, in RaggedQPtr.. slot order.
+constexpr size_t NumRaggedPorts                                 = 5;
+constexpr std::array<const char *, NumRaggedPorts> ragged_names = {"q", "k", "v", "o", "stats"};
+constexpr std::array<HostSlot, 4> pointer_slots                 = {QPtr, KPtr, VPtr, OPtr};
+constexpr std::array<HostSlot, 4> stride_slots                  = {QStrides, KStrides, VStrides, OStrides};
 
 struct BoundLaunch {
     py::object frame;
@@ -331,6 +346,23 @@ class SdpaThdBinder {
                 gate_decl_[4] != 1)
                 invalid("invalid native THD gate declaration");
         }
+        // Caller-buffer THD origins (the SM90 forward): per port (Q, K, V, O, Stats), the integer width of a bound
+        // ragged-offset operand, or "" when the port has none. Each offset tensor is a per-call operand outside the
+        // fixed role pack, bound by its own pack index like the gate; the host receives its address in its own slot
+        // and the setup launch derives the token origins on device. Plans without the attribute are unchanged.
+        if (py::hasattr(spec, "ragged_ports") && !spec.attr("ragged_ports").is_none()) {
+            const auto ports = py::cast<std::vector<std::string>>(spec.attr("ragged_ports"));
+            if (ports.size() != NumRaggedPorts) invalid("native THD ragged_ports must describe Q, K, V, O and Stats");
+            for (size_t i = 0; i < NumRaggedPorts; ++i) {
+                if (ports[i] == "int32" || ports[i] == "int64")
+                    ragged_bits_[i] = ports[i] == "int32" ? 32 : 64;
+                else if (!ports[i].empty())
+                    invalid("native THD ragged offsets must be int32 or int64");
+            }
+            if (paged_ || quantized_ || splits_ > 1 || has_gate_)
+                invalid("native THD caller-buffer origins require a nonpaged, unsplit, ungated half plan");
+            if (ragged_bits_[4] && !has_lse_) invalid("Stats ragged offsets require a Stats output");
+        }
         auto order = py::cast<std::vector<std::string>>(spec.attr("order"));
         if (order.size() != template_.size()) invalid("native THD host argument template has the wrong size");
         for (size_t slot = 0; slot < NumHostSlots; ++slot) {
@@ -340,6 +372,9 @@ class SdpaThdBinder {
             // Only a gated plan addresses the gate slots (an ungated gate-capable host keeps the template's None
             // there).
             if (!has_gate_ && (slot == GatePtr || slot == GateStrides)) continue;
+            // Only a port with bound ragged offsets addresses its origin slot.
+            if (slot >= RaggedQPtr && slot <= RaggedLSEPtr && !ragged_bits_[slot - RaggedQPtr]) continue;
+            if (slot == ThdPortCaps && !ragged_plan()) continue;
             auto found = std::find(order.begin(), order.end(), host_slot_names[slot]);
             if (slot == ScaleSoftmaxLog2 && found == order.end())
                 found = std::find(order.begin(), order.end(), "scale_softmax");
@@ -364,8 +399,9 @@ class SdpaThdBinder {
          int64_t workspace,
          py::object stream,
          py::object scale,
-         int64_t gate_index) const {
-        return bind_launch(pack, indices, workspace, std::move(stream), std::move(scale), gate_index).frame;
+         int64_t gate_index,
+         const std::vector<int64_t> &ragged) const {
+        return bind_launch(pack, indices, workspace, std::move(stream), std::move(scale), gate_index, ragged).frame;
     }
 
     py::tuple
@@ -374,7 +410,7 @@ class SdpaThdBinder {
                    int64_t workspace,
                    py::object stream) const {
         if (!quantized_) invalid("bind_quantized requires a per-tensor FP8 plan");
-        auto bound = bind_launch(pack, indices, workspace, std::move(stream), py::none(), -1);
+        auto bound = bind_launch(pack, indices, workspace, std::move(stream), py::none(), -1, {});
         return py::make_tuple(bound.frame, bound.identity, bound.amax);
     }
 
@@ -384,7 +420,8 @@ class SdpaThdBinder {
                 int64_t workspace,
                 py::object stream,
                 py::object scale,
-                int64_t gate_index) const {
+                int64_t gate_index,
+                const std::vector<int64_t> &ragged) const {
         if (indices.size() != (mx_scales_ ? NumRoles : (quantized_ ? PerTensorNumRoles : HalfNumRoles)))
             invalid("native THD binding has the wrong number of role indices");
         const auto facts = read_native_operand_views(pack, indices);
@@ -395,8 +432,15 @@ class SdpaThdBinder {
         if (has_gate_ && !gate.filled)
             invalid("gate is required by this compiled specialization (constructed with sample_gate)");
         if (!has_gate_ && gate.filled) invalid("this specialization was compiled without an epilogue gate");
+        // Ragged offsets: one pack index per port (-1 = none), empty when the caller binds none.
+        std::array<NativeOperandView, NumRaggedPorts> offsets;
+        if (!ragged.empty()) {
+            if (ragged.size() != NumRaggedPorts) invalid("native THD ragged offsets take one index per port");
+            for (size_t i = 0; i < NumRaggedPorts; ++i)
+                if (ragged[i] >= 0) offsets[i] = read_native_operand_views(pack, {ragged[i]})[0];
+        }
         BoundLaunch bound{
-            bind_facts(facts, has_gate_ ? &gate : nullptr, workspace, std::move(stream), std::move(scale))};
+            bind_facts(facts, has_gate_ ? &gate : nullptr, offsets, workspace, std::move(stream), std::move(scale))};
         if (quantized_) bind_quantized_scalars(facts, bound, workspace);
         if (has_lse_ && lse_padded_) bound.padded_lse = facts[LSE].pointer;
         return bound;
@@ -405,6 +449,7 @@ class SdpaThdBinder {
     py::object
     bind_facts(const std::vector<NativeOperandView> &facts,
                const NativeOperandView *gate,
+               const std::array<NativeOperandView, NumRaggedPorts> &offsets,
                int64_t workspace,
                py::object stream,
                py::object scale) const {
@@ -449,6 +494,24 @@ class SdpaThdBinder {
         }
         check_lens(q_lens, "q_lens", add(b, (lens_form_ & 1) ? 1 : 0));
         check_lens(kv_lens, "kv_lens", nk);
+        // A compiled port reads B + 1 offsets on device; the values themselves are runtime data the setup launch
+        // clips to each buffer's capacity, so only presence, width, device and storage are checked here.
+        for (size_t i = 0; i < NumRaggedPorts; ++i) {
+            const auto &f    = offsets[i];
+            const auto label = std::string(ragged_names[i]) + " ragged offsets";
+            if (!ragged_bits_[i]) {
+                if (f.filled) invalid("this specialization reads no " + label);
+                continue;
+            }
+            if (!f.filled) invalid(label + " are required by this compiled specialization");
+            on_device(f, label.c_str());
+            if (!dtype_is(f, kDLInt, ragged_bits_[i]))
+                invalid(label + " must be int" + std::to_string(ragged_bits_[i]) + " as declared");
+            if (!contiguous(f) || numel(f) < add(b, 1)) invalid(label + " must be contiguous with B + 1 entries");
+            if (!f.pointer || f.pointer % (ragged_bits_[i] / 8))
+                invalid(label + " must have a non-null, aligned address");
+            if (span(f) >= 0 && span(f) < add(b, 1)) invalid(label + ": observed storage is too small");
+        }
 
         const auto &lse         = facts[LSE];
         int64_t lse_capacity    = -1;
@@ -531,6 +594,23 @@ class SdpaThdBinder {
         put(frame, QLensPtr, py::int_(q_lens.pointer));
         put(frame, KVLensPtr, py::int_(kv_lens.pointer));
         if (has_lse_) put(frame, LSEPtr, py::int_(lse.pointer));
+        for (size_t i = 0; i < NumRaggedPorts; ++i)
+            if (ragged_bits_[i]) put(frame, static_cast<HostSlot>(RaggedQPtr + i), py::int_(offsets[i].pointer));
+        if (ragged_plan()) {
+            // Sequences sit at their own origins, so each port's view spans its own capacity: the setup launch clamps
+            // every origin and clips every map into it, and the Stats store stops at its end.
+            const int64_t lse_tokens =
+                !has_lse_
+                    ? 0
+                    : (lse_capacity >= 0 ? lse_capacity : (lse_head_major_ && lse_head_stride ? lse_head_stride : tq));
+            put(frame,
+                ThdPortCaps,
+                py::make_tuple(capacity(facts[Q], geometry[Q], "q"),
+                               capacity(facts[K], geometry[K], "k"),
+                               capacity(facts[V], geometry[V], "v"),
+                               capacity(facts[O], geometry[O], "o"),
+                               lse_tokens));
+        }
         if (has_gate_) {
             put(frame, GatePtr, py::int_(gate->pointer));
             put(frame, GateStrides, py::make_tuple(gate_geometry.token, gate_geometry.token, gate_geometry.head));
@@ -576,8 +656,9 @@ class SdpaThdBinder {
             int64_t workspace,
             py::object stream,
             py::object scale,
-            int64_t gate_index) const {
-        auto bound = bind_launch(pack, indices, workspace, stream, std::move(scale), gate_index);
+            int64_t gate_index,
+            const std::vector<int64_t> &ragged) const {
+        auto bound = bind_launch(pack, indices, workspace, stream, std::move(scale), gate_index, ragged);
         // Binding (including all quantized scalars) finishes before any write.
         // The seed is an existing declared operation, including empty Q.
         if (bound.padded_lse)
@@ -839,6 +920,11 @@ class SdpaThdBinder {
         return multiply(kg.pages, page_size_);
     }
 
+    bool
+    ragged_plan() const {
+        return std::any_of(ragged_bits_.begin(), ragged_bits_.end(), [](int bits) { return bits != 0; });
+    }
+
     void
     put(py::list &frame, HostSlot slot, py::object value) const {
         frame[index_[slot]] = std::move(value);
@@ -851,6 +937,7 @@ class SdpaThdBinder {
     std::array<std::array<int64_t, 6>, 4> declarations_;
     std::array<int, 4> dtype_code_, dtype_bits_;
     bool has_gate_ = false;
+    std::array<int, NumRaggedPorts> ragged_bits_{};
     int gate_code_ = kDLBfloat;
     std::array<int64_t, 6> gate_decl_{};
     std::array<size_t, 5> quant_indices_;
@@ -888,14 +975,18 @@ init_sdpa_thd_binding(py::module_ &m) {
         // adapter's paged x gate admission reads this property and declines typed on an older extension, whose
         // constructor above refused a gated paged plan.
         .def_prop_ro_static("supports_paged_epilogue_gate", [](py::object) { return true; })
+        // Per-port ragged offsets as per-call THD operands (the SM90 forward's caller-buffer origins): the Python side
+        // reads this property and declines typed on an older extension instead of addressing the packed prefix.
+        .def_prop_ro_static("supports_thd_ragged_origins", [](py::object) { return true; })
         .def("bind",
              &SdpaThdBinder::bind,
              py::arg("pack"),
              py::arg("indices"),
              py::arg("workspace"),
              py::arg("stream"),
-             py::arg("scale") = py::none(),
-             py::arg("gate")  = -1)
+             py::arg("scale")  = py::none(),
+             py::arg("gate")   = -1,
+             py::arg("ragged") = std::vector<int64_t>{})
         .def("bind_quantized",
              &SdpaThdBinder::bind_quantized,
              py::arg("pack"),
@@ -908,8 +999,9 @@ init_sdpa_thd_binding(py::module_ &m) {
              py::arg("indices"),
              py::arg("workspace"),
              py::arg("stream"),
-             py::arg("scale") = py::none(),
-             py::arg("gate")  = -1);
+             py::arg("scale")  = py::none(),
+             py::arg("gate")   = -1,
+             py::arg("ragged") = std::vector<int64_t>{});
 }
 
 }  // namespace python_bindings

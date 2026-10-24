@@ -206,6 +206,7 @@ class ThdLaunchSpec:
         "split_workspace",
         "neg_inf",
         "device_index",
+        "ragged_ports",
     )
 
 
@@ -213,6 +214,7 @@ class ThdLaunchSpec:
 _FILLED_AT_BUILD = frozenset(
     "q_strides o_strides k_strides v_strides lse_strides lse_ext scale_softmax_log2 scale_softmax thd_max_sq n_thd_units seq_q_lens_addr thd_lens_form o_partial_ptr "
     "block_table_ptr block_table_v_ptr table_strides table_v_strides n_pages gate_ptr gate_strides ragged_q_addr ragged_q_div "
+    "thd_ro_q_ptr thd_ro_k_ptr thd_ro_v_ptr thd_ro_o_ptr thd_ro_lse_ptr thd_port_caps "
     "score_max_ptr score_sum_exp_ptr score_max_strides score_sum_exp_strides "
     # The bias / kv_mask slots of the sm107 f16 d128-file host (dense-only arms; a THD plan never requests them).
     "bias_ptr bias_strides bias_extents kv_mask_ptr kv_mask_batch_stride inv_scale_softmax".split()
@@ -317,6 +319,10 @@ def build_thd_spec(api, *, scale_softmax: Optional[float]) -> ThdLaunchSpec:
     s.split_workspace = getattr(plan, "split_workspace", None)
     s.neg_inf = _buffers.init_word("fp32", float("-inf"))
     s.device_index = int(api.q_desc.device.index or 0)
+    # Caller-buffer origins (the SM90 forward): the integer width of each port's bound ragged offsets, in the
+    # binder's (Q, K, V, O, Stats) order, "" for a port without them; None for every other plan.
+    ro = getattr(api, "_thd_ro_spec", None)
+    s.ragged_ports = tuple(str(ro[p][0]).split(".")[-1] if p in ro else "" for p in _RAGGED_PORTS) if ro else None
     scale = float(api.scale_softmax if scale_softmax is None else scale_softmax)
 
     t: List[Any] = [None] * len(order)
@@ -344,6 +350,9 @@ def build_thd_spec(api, *, scale_softmax: Optional[float]) -> ThdLaunchSpec:
     put("n_thd_units", int(plan.units))
     put("ragged_q_addr", 0)
     put("ragged_q_div", 1)
+    for port in _RAGGED_PORTS:
+        put(f"thd_ro_{'lse' if port == 'stats' else port}_ptr", None)  # the binder fills a bound port's address per call
+    put("thd_port_caps", None)  # and, on a caller-origin plan, each port's token capacity
     put("seq_q_lens_addr", 0)
     put("thd_lens_form", s.lens_form)
     put("o_partial_ptr", None)
@@ -375,6 +384,11 @@ def build_thd_spec(api, *, scale_softmax: Optional[float]) -> ThdLaunchSpec:
     # contract must fail here, never silently choose a Python implementation.
     from cudnn import _pybind_module
 
+    if s.ragged_ports is not None and not getattr(_pybind_module._SdpaThdBinder, "supports_thd_ragged_origins", False):
+        raise NotImplementedError(
+            "cudnn.sdpa: the prepared THD binder of this build has no ragged-offset roles (the pybind extension predates "
+            "caller-buffer THD origins); rebuild the extension"
+        )
     if s.gate_expect is not None and not getattr(_pybind_module._SdpaThdBinder, "supports_epilogue_gate", False):
         # The binder of an older extension has no gate role: a gated THD plan would launch with a null gate pointer.
         raise NotImplementedError(
@@ -403,6 +417,8 @@ def thd_split_workspace(base_bytes: int, splits: int, capacity: int, heads: int,
 
 
 _NATIVE_THD_ROLES = ("q", "k", "v", "o", "q_lens", "kv_lens", "lse", "sinks", "block_table", "block_table_v")
+# The ports whose bound ragged offsets a caller-origin THD plan reads, in the native binder's order.
+_RAGGED_PORTS = ("q", "k", "v", "o", "stats")
 _NATIVE_THD_INDICES = tuple(range(len(_NATIVE_THD_ROLES)))
 
 
@@ -527,6 +543,11 @@ class PreparedThdLaunch:
         self._uids = [uids[r] for r in self._roles]
         self._indices: Optional[List[int]] = None
         self._native_indices = None
+        # Caller-origin plans: each port's bound ragged-offset uid, None for a port without offsets.
+        self._ragged_uids = None
+        if spec.ragged_ports is not None:
+            self._ragged_uids = [getattr(binding, f"ragged_{port}").get_uid() if bits else None for port, bits in zip(_RAGGED_PORTS, spec.ragged_ports)]
+        self._ragged_indices = None
 
     def execute(self, pack, workspace_ptr: int, stream, stream_int: int) -> None:
         indices = self._indices
@@ -539,7 +560,15 @@ class PreparedThdLaunch:
             roles = dict(zip(self._roles, indices))
             native_roles = _NATIVE_THD_ROLES + _native_quant_roles(self.spec.quant)
             self._native_indices = tuple(roles.get(role, -1) for role in native_roles)
-        self.spec.native.execute(pack.native, self._native_indices, workspace_ptr, stream)
+        if self._ragged_uids is None:
+            self.spec.native.execute(pack.native, self._native_indices, workspace_ptr, stream)
+            return
+        if self._ragged_indices is None:
+            try:
+                self._ragged_indices = [-1 if u is None else pack.index_of(u) for u in self._ragged_uids]
+            except KeyError as exc:
+                raise ValueError(f"cudnn.sdpa: ragged-offset uid {exc} is bound by the plan but is not an operand of this graph") from exc
+        self.spec.native.execute(pack.native, self._native_indices, workspace_ptr, stream, ragged=self._ragged_indices)
 
 
 # ---------------------------------------------------------------------------------------------------
@@ -550,6 +579,7 @@ class PreparedThdLaunch:
 _FILLED_AT_BUILD_DENSE = frozenset(
     "lse_strides lse_ext scale_softmax_log2 scale_softmax thd_max_sq n_thd_units seq_q_lens_addr thd_q_lens_ptr thd_kv_lens_ptr thd_lens_form o_partial_ptr "
     "block_table_ptr block_table_v_ptr table_strides table_v_strides n_pages gate_ptr gate_strides ragged_q_addr ragged_q_div "
+    "thd_ro_q_ptr thd_ro_k_ptr thd_ro_v_ptr thd_ro_o_ptr thd_ro_lse_ptr thd_port_caps "
     "score_max_ptr score_sum_exp_ptr score_max_strides score_sum_exp_strides "
     "bias_ptr bias_strides bias_extents kv_mask_ptr kv_mask_batch_stride inv_scale_softmax".split()
 )
@@ -943,6 +973,9 @@ def build_dense_spec(api, *, scale_softmax: Optional[float]) -> DenseLaunchSpec:
     put("gate_strides", (0, 0, 0))
     put("ragged_q_addr", 0)
     put("ragged_q_div", s.ragged_divs[0] if s.ragged else 1)
+    for port in _RAGGED_PORTS:
+        put(f"thd_ro_{'lse' if port == 'stats' else port}_ptr", None)  # THD-only slots of the shared SM90 host
+    put("thd_port_caps", None)
     if s.ragged and "ragged_q_addr" not in s.index:
         raise NotImplementedError(f"{km.__name__}: the ragged-Q decode leg needs the ragged_q_addr host slot")
     unfilled = sorted(set(order) - _FILLED_AT_BUILD_DENSE - _FILLED_PER_CALL_DENSE - _quant_slots(s.quant))
