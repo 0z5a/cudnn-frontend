@@ -1304,6 +1304,11 @@ def _sched_points(caps: Capabilities, facts) -> List[Optional[int]]:
             elif SCHED_LPT in domain and _prefer_paged_d256_lpt(facts):
                 primary = SCHED_LPT
             return [primary] + sorted(domain - {primary})
+        if caps.sm_lo == 90:
+            # SM90 THD: LPT / LPT_L2 decode live units through the work prefix on a flat
+            # grid. Listed for tuning (and for the #1573 re-emit past 65535 heads or
+            # batch); NATURAL stays first.
+            return [SCHED_NATURAL] + sorted(domain - {SCHED_NATURAL})
         return [SCHED_NATURAL]
     causal_ish = facts.causal or facts.right_band_widening
     if caps.sm_hi == 80:

@@ -633,7 +633,10 @@ class SdpaThdBinder {
         // Sum of per-sequence ceil divisions <= ceil(total capacity / tile) + B - 1.
         // Rebind a safe grid without reading device lengths or mutating the plan.
         // min also preserves a persistent kernel's resident-cluster launch cap.
-        const int64_t units = multiply(multiply(add((tq - 1) / cga_tile_m_, b), qh_), splits_);
+        // Caller-origin plans place sequences at their own origins, so the packed-Q bound says nothing about their
+        // total; O's capacity does, because output sequences cannot overlap (caller contract).
+        const int64_t unit_tokens = ragged_plan() ? capacity(facts[O], geometry[O], "o") : tq;
+        const int64_t units       = multiply(multiply(add((unit_tokens - 1) / cga_tile_m_, b), qh_), splits_);
         put(frame, ThdUnits, py::int_(std::min(units_, units)));
         put(frame, SinksPtr, py::int_(has_sink_ ? facts[Sinks].pointer : 0));
         put(frame, MetaPtr, py::int_(workspace));

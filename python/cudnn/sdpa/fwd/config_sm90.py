@@ -131,8 +131,6 @@ def validate_params(params: TemplateParams) -> None:
         raise ValueError("SM90 D512 PackGQA requires a positive head ratio dividing tile_m=64")
     if params.sched_policy not in (SCHED_NATURAL, SCHED_LPT, SCHED_LPT_L2):
         raise ValueError("SM90 D512 supports only NATURAL/LPT/LPT_L2 single-tile scheduling")
-    if params.thd_varlen and params.sched_policy != SCHED_NATURAL:
-        raise ValueError("SM90 D512 THD uses the natural single-tile work decoder")
     if params.scale_mode not in (SCALE_POSITIVE, SCALE_ZERO, SCALE_NEGATIVE):
         raise ValueError("SM90 D512 scale mode must be positive, zero, or negative")
     if params.thd_varlen:

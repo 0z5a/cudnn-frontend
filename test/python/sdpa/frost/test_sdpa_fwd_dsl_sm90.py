@@ -462,7 +462,6 @@ def test_sm90_template_d_envelope_rejects(bad):
         pytest.param(dict(dtype_qkv=0), "uniform FP16 or BF16", id="dtype"),
         pytest.param(dict(pack_gqa=True, qh_per_kh=3), "ratio dividing tile_m=64", id="pack-ratio"),
         pytest.param(dict(sched_policy=SCHED_LPT_L2 + 1), "NATURAL/LPT/LPT_L2", id="sched"),
-        pytest.param(dict(thd_varlen=True, seq_kv_lens_present=True, sched_policy=SCHED_LPT), "natural single-tile work decoder", id="thd-sched"),
         pytest.param(dict(scale_mode=2), "scale mode must be positive, zero, or negative", id="scale-mode"),
         pytest.param(dict(thd_varlen=True), "requires seq_kv_lens_present", id="thd-meta"),
         pytest.param(dict(thd_varlen=True, seq_kv_lens_present=True, seq_q_lens_present=True), "seq_q_lens_present is dense-only", id="thd-seq-q"),
@@ -642,15 +641,17 @@ def test_sm90_is_a_default_row_at_its_shipped_id(monkeypatch):
 
 def test_sm90_every_candidate_is_valid():
     """Every knob set the heuristics offer for the SM90 row is admissible on that row, deduplicated,
-    bounded, and carries its fixed geometry. THD narrows to NATURAL / unpacked: the adapter declines
-    THD under LPT or PackGQA, so offering either would rank a plan that cannot build."""
+    bounded, and carries its fixed geometry. THD narrows to unpacked (the adapter declines THD
+    PackGQA) and leads with NATURAL; LPT / LPT_L2 follow, served by the flat live-unit grid."""
     from cudnn.sdpa.fwd import engines
     from cudnn.sdpa.fwd.heuristics import _MAX_SETS_PER_ENGINE, recommend
 
     shape = dict(h_kv=2, s_q=1024, s_kv=8192, device_sm_count=132)
     dense, thd = _facts(causal=True, **shape), _facts(thd=True, padded=True, **shape)
-    for facts, policies, packs in ((dense, {SCHED_NATURAL, SCHED_LPT, SCHED_LPT_L2}, {False, True}), (thd, {SCHED_NATURAL}, {False})):
+    for facts, policies, packs in ((dense, {SCHED_NATURAL, SCHED_LPT, SCHED_LPT_L2}, {False, True}), (thd, {SCHED_NATURAL, SCHED_LPT, SCHED_LPT_L2}, {False})):
         plans = recommend("A", facts, {_ROW: _offered_id()})
+        if facts is thd:
+            assert plans[0].knobs.sched_policy == SCHED_NATURAL, plans
         assert plans and len(plans) <= _MAX_SETS_PER_ENGINE and len({p.knobs for p in plans}) == len(plans), plans
         for knobs in (p.knobs for p in plans):
             assert engines.mismatch(_caps(_ROW), facts, knobs) is None, knobs

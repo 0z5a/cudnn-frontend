@@ -60,7 +60,7 @@ from cudnn.frost.tile_dsl.mask import compute_kv_loop_bounds
 from cudnn.frost.tile_dsl.pointwise import fp32_to_fp16, opaque_f32_zero
 from cudnn.frost.tile_dsl.regtile import RegTile, vec_concat
 from cudnn.frost.tile_dsl.scheduler import SCHED_LPT_L2, SCHED_NATURAL, lpt_l2_tile_coords, lpt_tile_coords
-from cudnn.frost.tile_dsl.thd import TENSOR_MAP_QWORDS, THD_MAPS_OFF, thd_port_origin
+from cudnn.frost.tile_dsl.thd import TENSOR_MAP_QWORDS, THD_MAPS_OFF, thd_decode_unit_prefix, thd_port_origin
 from cudnn.frost.tile_dsl.tma import tma_load_tile, tma_store_commit, tma_store_tile, tma_store_wait
 from cudnn.sdpa.fwd.config_sm90 import (
     D_TILE,
@@ -199,7 +199,9 @@ class SM90FusedMultiHeadAttentionForward:
         :param is_causal: Apply the causal upper bound to QK (``MASK_CAUSAL``).
         :param sched_policy: CTA order over the (Q tile, head, batch) tiles.
             ``SCHED_NATURAL`` launches the 3-D grid; ``SCHED_LPT`` and ``SCHED_LPT_L2``
-            launch one axis that ``kernel`` unflattens.
+            launch one axis that ``kernel`` unflattens. Under THD both launch one CTA per
+            live unit instead, decoded through the setup launch's work prefix: longest
+            sequences first, a sequence's diagonal tiles first under a causal bound.
         :param bottom_right: Anchor the diagonal at ``delta = kv_len - q_len`` instead
             of 0.
         :param window_size_left: Sliding-window offset ``W``: key ``k`` is visible from
@@ -1352,7 +1354,24 @@ class SM90FusedMultiHeadAttentionForward:
         # One (Q tile, head, batch) work tile per CTA; the LPT policies unflatten the
         # single grid axis they launch.
         tile, head, batch = cute.arch.block_idx()
-        if cutlass.const_expr(self.sched_policy == SCHED_LPT_L2):
+        if cutlass.const_expr(self.thd_varlen and self.sched_policy != SCHED_NATURAL):
+            # THD LPT / LPT_L2: block x is a live-unit id. The setup launch ranked the
+            # sequences by descending Q length and published the remap-ordered unit
+            # prefix over (64-row tile, head) units, the same (tokens_per_tile, heads)
+            # pair passed here and to the binder's unit bound. Within a sequence the
+            # head is the major axis, so consecutive units share a KV head (LPT_L2's
+            # grouping comes for free), and a causal bound walks the diagonal tiles
+            # first. An id past the live total decodes batch == B: a dead CTA. Exactly
+            # one unit per CTA, which the once-per-CTA K/V map acquire relies on.
+            tile, batch, head = thd_decode_unit_prefix(
+                cutlass.make_array_view(seq_kv_lens),
+                cutlass.Int32(self.b),
+                cutlass.Int32(tile),
+                cutlass.Int32(self.heads),
+                cutlass.Int32(self.tokens_per_tile),
+                (self.mask_flags & MASK_CAUSAL) != 0,
+            )
+        elif cutlass.const_expr(self.sched_policy == SCHED_LPT_L2):
             # A block holds a power of two of whole KV groups -- one KV head and the
             # query heads reading it -- within the budget; 0 bytes means one group. That
             # width divides the usual power-of-two group counts, so no short last block
@@ -1375,7 +1394,7 @@ class SM90FusedMultiHeadAttentionForward:
         elif cutlass.const_expr(self.sched_policy != SCHED_NATURAL):
             tile, head, batch = lpt_tile_coords(tile, cutlass.Int32(self.heads), cutlass.Int32(self.b), cutlass.Int32(self.q_tiles))
         wg = cute.arch.make_warp_uniform(cute.arch.warp_idx()) // cute.arch.WARPS_PER_WARPGROUP
-        self._run_unit(
+        unit = (
             tma_q_desc,
             tma_k_desc,
             tma_v_desc,
@@ -1398,6 +1417,13 @@ class SM90FusedMultiHeadAttentionForward:
             head,
             batch,
         )
+        if cutlass.const_expr(self.thd_varlen and self.sched_policy != SCHED_NATURAL):
+            # A dead unit (an id past the live total) exits as a whole CTA: no role has
+            # armed a barrier phase or issued a copy yet.
+            if batch < cutlass.Int32(self.b):
+                self._run_unit(*unit)
+        else:
+            self._run_unit(*unit)
 
     kernel.set_name_prefix("cudnn", remove_cutlass_symbol=True)
 
@@ -1417,6 +1443,7 @@ class SM90FusedMultiHeadAttentionForward:
         thd_q_lens: Optional[cute.Tensor],
         thd_kv_lens: Optional[cute.Tensor],
         thd_lens_form: Optional[cutlass.Int32],
+        thd_units: Optional[cutlass.Int32],
         thd_ro_q: Optional[cute.Tensor],
         thd_ro_k: Optional[cute.Tensor],
         thd_ro_v: Optional[cute.Tensor],
@@ -1453,6 +1480,8 @@ class SM90FusedMultiHeadAttentionForward:
             sums. ``None`` when dense.
         :param thd_kv_lens: THD only: the same for KV.
         :param thd_lens_form: THD only: bit 0: Q is cu, bit 1: KV is cu.
+        :param thd_units: THD only: the binder's bound on the live (64-row tile, head)
+            units, which sizes the flat LPT / LPT_L2 grid.
         :param thd_ro_q: Caller-origin THD only: Q's bound ``(B+1,)`` ragged offsets, or
             ``None`` for a port without them; likewise ``thd_ro_k`` .. ``thd_ro_lse``.
             Each THD view's token extent is then that port's own capacity.
@@ -1478,7 +1507,8 @@ class SM90FusedMultiHeadAttentionForward:
             port_tma_desc(o, self.heads_per_tile, self.Q_TILE, self.tma_orders[3]),
         )
         # The LPT policies launch the same tiles on one axis, which kernel unflattens.
-        # THD is NATURAL, over ceil(thd_max_sq / tokens_per_tile) tiles.
+        # THD NATURAL launches ceil(thd_max_sq / tokens_per_tile) tiles per sequence;
+        # THD LPT / LPT_L2 one CTA per live unit, up to the binder's bound.
         grid = (self.q_tiles, self.heads, self.b)
         if cutlass.const_expr(self.sched_policy != SCHED_NATURAL):
             grid = (self.q_tiles * self.heads * self.b, 1, 1)
@@ -1488,6 +1518,8 @@ class SM90FusedMultiHeadAttentionForward:
                 raise ValueError(f"prefill_d512_f16_sm90: THD seq_kv_lens must be the ({meta_words},) metadata tensor")
             q_tiles = (thd_max_sq + self.tokens_per_tile - 1) // self.tokens_per_tile
             grid = (q_tiles, cutlass.Int32(self.heads), cutlass.Int32(self.b))
+            if cutlass.const_expr(self.sched_policy != SCHED_NATURAL):
+                grid = (cute.math.max(thd_units, cutlass.Int32(1)), cutlass.Int32(1), cutlass.Int32(1))
         if cutlass.const_expr(self.thd_origins is not None):
             # Caller-buffer origins: metadata, the clamped per-port token origins and one
             # map per sequence for O, K and V, released to the tensor-map proxy exactly as
@@ -1527,6 +1559,9 @@ class SM90FusedMultiHeadAttentionForward:
                 token_strides,
                 capacities,
                 self.thd_origins,
+                cutlass.Int32(self.heads),
+                cutlass.Int32(self.tokens_per_tile),
+                self.sched_policy != SCHED_NATURAL,
             ).launch(grid=(1, 1, 1), block=(THD_SETUP_THREADS, 1, 1), stream=stream)
         elif cutlass.const_expr(self.thd_varlen):
             # The shared THD setup launch: one elected thread writes the metadata, the

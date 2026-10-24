@@ -92,7 +92,8 @@ def host(
         for port, ptr in enumerate((thd_ro_q_ptr, thd_ro_k_ptr, thd_ro_v_ptr, thd_ro_o_ptr, thd_ro_lse_ptr)):
             if cutlass.const_expr(kernel.thd_origins[port] is not None):
                 offsets[port] = cute.make_tensor(ptr, cute.make_layout((kernel.b + 1,), stride=(1,)))
-    kernel(q, k, v, o, lse, sinks, q_lens, kv_lens, scale_softmax, thd_max_sq, thd_q_lens, thd_kv_lens, thd_lens_form, *offsets, stream)
+    units = n_thd_units if cutlass.const_expr(kernel.thd_varlen) else None
+    kernel(q, k, v, o, lse, sinks, q_lens, kv_lens, scale_softmax, thd_max_sq, thd_q_lens, thd_kv_lens, thd_lens_form, units, *offsets, stream)
 
 
 def compile_host(kernel, dtype, d_qk, d_v, has_lse, lse_head_major, cache_key, target):

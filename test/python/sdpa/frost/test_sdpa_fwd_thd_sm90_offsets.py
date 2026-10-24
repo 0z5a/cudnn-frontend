@@ -25,6 +25,7 @@ import pytest
 import torch
 
 import cudnn
+from cudnn.frost.tile_dsl.constants import SCHED_LPT, SCHED_LPT_L2
 from cudnn.sdpa.fwd.engines import engine_name
 from frost_test_utils import _SM, requires_dsl
 from frost_test_utils import select_engine as _select_engine
@@ -69,6 +70,7 @@ def _run_padded(
     lead=None,
     slack=0,
     handles=False,
+    sched_policy=None,
 ):
     """Build and execute a padded THD forward graph on the SM90 row; returns the packed Q/K/V,
     the O (and Stats) storage and the per-port geometry. ``stats`` is None, ``"token_major"``
@@ -76,7 +78,8 @@ def _run_padded(
     rewrite a port's offset values after the geometry is laid out; ``lead`` gives a port empty
     rows before its first sequence; ``slack`` adds spare rows to every buffer. ``handles`` also
     returns the graph, its variant pack, workspace, offset and length tensors and token strides,
-    for a caller that re-executes or captures the plan."""
+    for a caller that re-executes or captures the plan. ``sched_policy`` pins that scheduler
+    (None takes the heuristics' first SM90 plan)."""
     dev = "cuda"
     gen = torch.Generator(device=dev).manual_seed(seed)
     b = len(lens_q)
@@ -166,14 +169,14 @@ def _run_padded(
     g.validate()
     g.build_operation_graph()
     g.create_execution_plans([cudnn.heur_mode.A])
-    _select_engine(g, engine_name(arch="sm90"))
+    plan = _select_engine(g, engine_name(arch="sm90"), sched_policy=sched_policy)
     g.check_support()
     g.build_plans()
     workspace = torch.empty(max(g.get_workspace_size(), 1), device=dev, dtype=torch.uint8)
     g.execute(vp, workspace)
     torch.cuda.synchronize()
     if handles:
-        return packed, stor, geom, SimpleNamespace(g=g, vp=vp, workspace=workspace, ro=ro_by_port, ts=ts_by_port, slq=slq, slk=slk)
+        return packed, stor, geom, SimpleNamespace(g=g, vp=vp, workspace=workspace, ro=ro_by_port, ts=ts_by_port, slq=slq, slk=slk, plan=plan)
     return packed, stor, geom
 
 
@@ -294,11 +297,13 @@ def test_sm90_thd_offset_past_the_buffer_stays_inside_it():
     torch.cuda.synchronize()
 
 
-def test_sm90_thd_cuda_graph_replay_reads_new_offsets():
+@pytest.mark.parametrize("sched", [None, SCHED_LPT], ids=["natural", "lpt"])
+def test_sm90_thd_cuda_graph_replay_reads_new_offsets(sched):
     """TE replays one captured graph while ``cu_seqlens_padded`` changes every step: a replay
-    reads the offsets and lengths bound at replay time, not the capture's."""
+    reads the offsets and lengths bound at replay time, not the capture's. Under LPT the live
+    units, their ranking and the unit prefix also come from the replay-time lengths."""
     pads_a = {"q": [5, 0, 9], "o": [5, 0, 9], "k": [3, 11, 0], "v": [3, 11, 0], "stats": [2, 7, 0]}
-    packed, stor, geom, h = _run_padded(_LENS_Q, _LENS_KV, pads_a, gap="nan", stats="token_major", slack=96, handles=True)
+    packed, stor, geom, h = _run_padded(_LENS_Q, _LENS_KV, pads_a, gap="nan", stats="token_major", slack=96, handles=True, sched_policy=sched)
     _check(_LENS_Q, _LENS_KV, packed, stor, geom, "none", stats="token_major")
     graph = torch.cuda.CUDAGraph()
     with torch.cuda.graph(graph):
@@ -334,3 +339,117 @@ def test_sm90_thd_cuda_graph_replay_reads_new_offsets():
     h.slk.copy_(torch.tensor(lens_kv, dtype=torch.int32, device="cuda").view_as(h.slk))
     replay()
     _check(lens_q, lens_kv, packed_b, stor, geom_b, "none", stats="token_major")
+
+
+# --- THD under SCHED_LPT / SCHED_LPT_L2: one CTA per live unit on a flat grid -------
+
+_LPT = pytest.mark.parametrize("sched", [SCHED_LPT, SCHED_LPT_L2], ids=["lpt", "lpt_l2"])
+
+
+@_LPT
+@pytest.mark.parametrize("mask", ["none", "causal", "causal_br"])
+def test_sm90_thd_lpt_padded(sched, mask):
+    pads = {"q": [5, 0, 9], "o": [5, 0, 9], "k": [3, 11, 0], "v": [3, 11, 0], "stats": [2, 7, 0]}
+    packed, stor, geom = _run_padded(_LENS_Q, _LENS_KV, pads, h_q=4, h_kv=2, mask=mask, gap="nan", stats="token_major", sched_policy=sched)
+    _check(_LENS_Q, _LENS_KV, packed, stor, geom, mask, stats="token_major")
+
+
+@_LPT
+def test_sm90_thd_lpt_many_sequences(sched):
+    """40 sequences with empty Q sequences: the unit prefix skips them, and every id past
+    the live total is a dead CTA that writes nothing."""
+    gen = torch.Generator().manual_seed(11)
+    b = 40
+    lens_q = torch.randint(0, 200, (b,), generator=gen).tolist()
+    lens_kv = [max(n, 1) + int(x) for n, x in zip(lens_q, torch.randint(0, 30, (b,), generator=gen))]
+    pads = {port: torch.randint(0, 10, (b,), generator=gen).tolist() for port in ("q", "k", "v", "o")}
+    packed, stor, geom = _run_padded(lens_q, lens_kv, pads, h_q=4, h_kv=2, mask="causal_br", dtype=torch.bfloat16, gap="nan", sched_policy=sched)
+    _check(lens_q, lens_kv, packed, stor, geom, "causal_br")
+
+
+@_LPT
+@pytest.mark.parametrize("case", ["cu_causal_br", "head_major_window"])
+def test_sm90_thd_lpt_suite_cases(monkeypatch, sched, case):
+    """The SM90 suite's own THD harness (``_run_thd_stats_case``) pinned to LPT / LPT_L2."""
+    import functools
+
+    import test_sdpa_fwd_dsl_sm100 as sm100
+
+    monkeypatch.setattr(sm100, "_ARCH", "sm90")
+    monkeypatch.setattr(sm100, "_select_engine", functools.partial(_select_engine, sched_policy=sched))
+    if case == "cu_causal_br":
+        sm100._run_thd_stats_case(seq_lens_q=[130, 0, 64, 7], seq_lens_kv=[130, 5, 200, 7], d=_D, H_q=4, H_kv=2, mask="causal_br", cu_lens=True)
+    else:
+        sm100._run_thd_stats_case(seq_lens_q=[300, 1, 64], seq_lens_kv=[300, 77, 64], d=_D, H_q=2, H_kv=2, mask="swa", stats_layout="head_major")
+
+
+def _run_wide(b, h, units_policy):
+    """``b`` sequences of one token at ``h`` heads, through the heuristics' own first plan."""
+    packed, stor, geom, hdl = _run_padded([1] * b, [1] * b, {}, h_q=h, h_kv=h, gap="finite", handles=True, sched_policy=units_policy)
+    # One key per row: O is V, row for row.
+    torch.testing.assert_close(stor["o"][:b], packed["v"], atol=1e-3, rtol=1e-3)
+    assert (stor["o"][b:] == _SENTINEL).all()
+    return hdl.plan
+
+
+@pytest.mark.parametrize("b,h", [(65536, 1), (1, 65536)], ids=["batch65536", "heads65536"])
+def test_sm90_thd_past_65535_runs_on_the_flat_grid(b, h):
+    """#1573: the NATURAL 3-D grid cannot put 65536 sequences or heads on gridDim.y/z; the
+    heuristics re-emit the plan under LPT, whose flat grid serves it."""
+    plan = _run_wide(b, h, None)
+    assert plan.knobs.sched_policy in (SCHED_LPT, SCHED_LPT_L2)
+
+
+@_LPT
+def test_sm90_thd_lpt_unranked_large_batch(sched):
+    """Past the setup's ranking cap (1024 sequences) the flat grid keeps batch order; every
+    live unit still runs once and no dead CTA writes."""
+    gen = torch.Generator().manual_seed(5)
+    b = 1100
+    lens_q = torch.randint(0, 20, (b,), generator=gen).tolist()
+    lens_kv = [max(n, 1) for n in lens_q]
+    pads = {port: torch.randint(0, 3, (b,), generator=gen).tolist() for port in ("q", "k", "v", "o")}
+    packed, stor, geom = _run_padded(lens_q, lens_kv, pads, mask="causal", gap="nan", sched_policy=sched)
+    _check(lens_q, lens_kv, packed, stor, geom, "causal")
+
+
+def test_sm90_thd_lpt_direct_adapter_packed():
+    """The direct adapter binds no ragged offsets, so its THD launch keeps the shared setup
+    (prefix-based maps) and, under LPT / LPT_L2, decodes live units from that setup's prefix.
+    Every policy gives the same bits, matches the reference, and leaves O's tail alone."""
+    from cudnn.sdpa.fwd.api_dsl import SdpaFwdDslSm90
+
+    lens_q, lens_kv, h_q, h_kv = [70, 0, 33], [100, 5, 64], 4, 2
+    b, s_max = len(lens_q), max(max(lens_q), max(lens_kv))
+    gen = torch.Generator(device="cuda").manual_seed(9)
+
+    def sample(h):
+        return torch.empty(b, s_max, h, _D, device="cuda", dtype=torch.float16).permute(0, 2, 1, 3)
+
+    q, k, v = (torch.randn(sum(n), h, _D, generator=gen, device="cuda", dtype=torch.float16) for n, h in ((lens_q, h_q), (lens_kv, h_kv), (lens_kv, h_kv)))
+    q_lens = torch.tensor(lens_q, dtype=torch.int32, device="cuda")
+    kv_lens = torch.tensor(lens_kv, dtype=torch.int32, device="cuda")
+    outs = {}
+    for name, policy in (("natural", None), ("lpt", SCHED_LPT), ("lpt_l2", SCHED_LPT_L2)):
+        api = SdpaFwdDslSm90(sample(h_q), sample(h_kv), sample(h_kv), sample(h_q), thd=True, is_causal=True, sched_policy=policy)
+        assert api.check_support()
+        api.compile()
+        o = torch.full((sum(lens_q) + 64, h_q, _D), _SENTINEL, device="cuda", dtype=torch.float16)
+        workspace = torch.empty(api.scratch_workspace_bytes(), dtype=torch.uint8, device="cuda")
+        api.execute(q, k, v, o[: sum(lens_q)], seq_q_lens=q_lens, seq_kv_lens=kv_lens, workspace=workspace)
+        torch.cuda.synchronize()
+        assert (o[sum(lens_q) :] == _SENTINEL).all(), name
+        outs[name] = o[: sum(lens_q)]
+    assert torch.equal(outs["lpt"], outs["natural"]) and torch.equal(outs["lpt_l2"], outs["natural"])
+    cu_q = cu_k = 0
+    for nq, nkv in zip(lens_q, lens_kv):
+        if nq:
+            ref = _ref_sdpa_full(
+                q[cu_q : cu_q + nq].permute(1, 0, 2).unsqueeze(0),
+                k[cu_k : cu_k + nkv].permute(1, 0, 2).unsqueeze(0),
+                v[cu_k : cu_k + nkv].permute(1, 0, 2).unsqueeze(0),
+                scale=1.0 / math.sqrt(_D),
+                is_causal=True,
+            )
+            torch.testing.assert_close(outs["natural"][cu_q : cu_q + nq].permute(1, 0, 2).unsqueeze(0), ref, atol=5e-2, rtol=3e-2)
+        cu_q, cu_k = cu_q + nq, cu_k + nkv

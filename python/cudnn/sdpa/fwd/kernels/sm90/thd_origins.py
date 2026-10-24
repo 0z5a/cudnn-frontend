@@ -12,7 +12,9 @@ then TMA-OOB zeros instead of the next sequence's rows or the gap after it, whic
 
 Origins are runtime data, so every one is clamped into its buffer: a bad offset addresses
 garbage rows of the bound buffer, never memory outside it. The SM90 work decode reads only the
-lengths, prefixes, origins and maps; the batch ranking and unit prefix stay unwritten.
+lengths, prefixes, origins and maps, plus, for the flat LPT / LPT_L2 grid, the batch ranking
+(longest first, up to ``RANK_MAX_BATCH`` sequences) and the remap-ordered unit prefix the unit
+decode binary-searches.
 """
 
 from typing import Optional
@@ -25,12 +27,20 @@ from cutlass.experimental.cuda import tensor_map as tmap
 
 from cudnn.frost.tile_dsl.thd import (
     TENSOR_MAP_QWORDS,
+    THD_REMAP_OFF,
     THD_SETUP_THREADS,
     set_tensor_map_bit21,
     thd_port_origin,
+    write_thd_batch_remap,
     write_thd_meta,
     write_thd_prefix_warp,
+    write_thd_work_prefix,
 )
+
+# The flat grid ranks sequences longest-first only up to this many: the shared ranking is
+# O(B^2 / threads) in this one-CTA launch (about 1 s per execute at B = 65535 on GH200),
+# while a larger batch keeps batch order -- its live units, without dead CTAs, either way.
+RANK_MAX_BATCH = 1024
 
 # Origin rows, in TemplateParams.thd_origins order.
 ROW_Q, ROW_K, ROW_V, ROW_O, ROW_STATS = range(5)
@@ -123,6 +133,9 @@ def build_thd_origin_setup_kernel(
     token_strides,
     caps,
     specs: cutlass.Constexpr,
+    n_qh: cutlass.Int32,
+    unit_rows: cutlass.Int32,
+    work_prefix: cutlass.Constexpr[bool],
 ) -> None:
     """Metadata, clamped token origins, then the per-sequence O/K/V maps.
 
@@ -130,7 +143,9 @@ def build_thd_origin_setup_kernel(
     and token capacity. Two warps build the prefixes for B > 1, as in the shared setup launches;
     every thread writes origins; after the block barrier each warp builds disjoint sequences'
     maps and releases them to the tensor-map proxy. Callers launch
-    ``THD_SETUP_THREADS`` threads."""
+    ``THD_SETUP_THREADS`` threads. ``work_prefix`` (the flat grid) also ranks the sequences and
+    publishes the unit prefix over (``unit_rows``, ``n_qh``) units, in the shared launches'
+    order: metadata, barrier, ranking, barrier, prefix."""
     tid = cutlass.Int32(cute.arch.thread_idx()[0])
     warp, lane = tid // 32, tid % 32
     meta = cutlass.make_array_view(meta_t)
@@ -199,6 +214,15 @@ def build_thd_origin_setup_kernel(
         origins,
         origin_row(specs, ROW_V),
     )
+    if cutlass.const_expr(work_prefix):
+        if n_batch <= cutlass.Int32(RANK_MAX_BATCH):
+            write_thd_batch_remap(meta, n_batch, tid, cutlass.Int32(THD_SETUP_THREADS))
+        else:
+            for b in cutlass.range(tid, n_batch, THD_SETUP_THREADS, unroll=1):
+                meta[THD_REMAP_OFF(n_batch) + b] = b
+        cute.arch.barrier()
+        # The claim-counter word is dead here: one unit per CTA, from its block index.
+        write_thd_work_prefix(meta, n_batch, n_qh, unit_rows, cutlass.Int32(0), tid, 1)
     nvvm.fence_proxy_release(nvvm.MemScope.GPU, from_proxy=nvvm.Proxy.GENERIC, to_proxy=nvvm.Proxy.TENSORMAP)
 
 

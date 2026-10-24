@@ -5176,10 +5176,6 @@ class SdpaFwdDslSm90(SdpaFwdDsl):
             sched not in (SCHED_NATURAL, SCHED_LPT, SCHED_LPT_L2), "SM90 SDPA supports only NATURAL/LPT/LPT_L2 single-tile scheduling"
         )
         self._not_implemented_error_if(
-            self.thd and sched != SCHED_NATURAL,
-            "SM90 SDPA: THD walks its live units with the natural single-tile work decoder; SCHED_LPT and SCHED_LPT_L2 are dense-only",
-        )
-        self._not_implemented_error_if(
             self.pack_gqa and not pack_gqa_supported(h_q, h_kv, _SM90_TILE_M), "SM90 D512 PackGQA requires a head ratio dividing tile_m=64"
         )
 

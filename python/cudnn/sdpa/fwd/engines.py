@@ -1033,7 +1033,8 @@ def launch_grid_mismatch(capabilities: Capabilities, facts: "ga.SdpaGraphFacts",
 
     The NATURAL scheduler launches heads and batch x split_kv on y/z; the LPT
     policies and the SM100+/SM120 ragged grids are flat. The d256 decode tile
-    keeps batch on y, the SM80/SM90 ragged grids keep heads and batch on y/z, and
+    keeps batch on y, the SM80 ragged grid and the SM90 one under NATURAL keep heads
+    and batch on y/z (SM90 THD LPT / LPT_L2 is flat), and
     the split-KV combine keeps heads and batch on y/z, under every policy; the
     packed THD split combine keeps only heads on y. Packed
     GQA launches fewer head rows; ``h_q`` bounds them from above because the
@@ -1054,7 +1055,8 @@ def launch_grid_mismatch(capabilities: Capabilities, facts: "ga.SdpaGraphFacts",
             return None
         return f"the d256 decode tile launches batch={facts.b} on gridDim.y, past the CUDA limit of {_GRID_YZ_MAX}"
     if facts.thd:
-        if capabilities.sm_lo not in (80, 90):
+        # SM90 THD under LPT / LPT_L2 launches one CTA per live unit on a flat grid.
+        if capabilities.sm_lo not in (80, 90) or (capabilities.sm_lo == 90 and knobs.sched_policy not in (None, SCHED_NATURAL)):
             return None
         return f"the ragged grid launches heads={heads} and batch={facts.b} on gridDim.y/z, past the CUDA limit of {_GRID_YZ_MAX}"
     if knobs.sched_policy not in (None, SCHED_NATURAL):
