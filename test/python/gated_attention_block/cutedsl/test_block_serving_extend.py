@@ -1461,10 +1461,25 @@ def test_extend_o_slot_is_aliased_by_no_other_stage_scratch():
         assert lay.engine_scratch >= o_hi
 
 
+@contextlib.contextmanager
+def _declined_record(**over):
+    """The sparse adapter's record with a claim DROPPED (``thd_paged_kv=False``: the THD x paged composition the packed sparse EXTEND form
+    needs), so the record-driven rows stay reachable (frost-engine-contract section 2: every row of a table a test can trip)."""
+    import dataclasses
+
+    from cudnn.sdpa.fwd import sparse_gqa_sm107 as S
+
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(S, "SPARSE_CAPABILITIES", dataclasses.replace(S.SPARSE_CAPABILITIES, **over))
+        yield
+
+
 def _declare_dense_sparse_paged():
     """A DENSE paged declaration on a QsaSpec geometry with the bottom-right diagonal CONSTRUCTS (2026-10-14): the block-sparse DECODE /
     extend-with-prefix mode -- stage (4) is the sparse core reading the pools (``test_block_qsa_decode.py``); the serving table's
-    `sparse` row is the PACKED form's (the sparse core serves THD and paged pools one at a time).  Returns the declared block."""
+    `sparse` row is the PACKED form's through a record WITHOUT the THD x paged composition claim (with the claim -- the record's
+    ``thd_paged_kv``, 2026-10-30 -- the packed declaration over the pools constructs too: the packed sparse EXTEND form,
+    ``test_block_qsa_packed_extend.py``).  Returns the declared block."""
     geom = GatedAttentionBlockGeometry(**_SMALL_D256, causal_bottom_right=True, qsa=QsaSpec())
     mk = lambda *shape: torch.empty(*shape, dtype=torch.bfloat16, device=_DEV)  # noqa: E731
     kc, vc = (torch.empty(4, geom.h_kv, 16, geom.d_head, dtype=torch.bfloat16, device=_DEV) for _ in range(2))
@@ -1507,8 +1522,9 @@ def test_extend_typed_declines_match_the_envelope_row_by_row(monkeypatch):
         # unpacked, its widest step) it is the decode_rows row; 160 packed rows (64 / 2 = group 32 at S_q 5) ride the unpacked arm
         "decode_rows": lambda: _make_block(_EXTEND_GEOM, 1, 33, paged_kv_page_size=16, kv_source=KV_SOURCE_PAGED),
         "diagonal": lambda: _declare_extend(2, 128, max_kv_len=128, geom_kw=_SMALL_D256),
-        # the PACKED form over the pools on a QsaSpec geometry (a dense one is the block-sparse decode mode since 2026-10-14: _declare_dense_sparse_paged)
-        "sparse": lambda: _declare_extend(2, 128, max_kv_len=128, geom_kw=dict(_SMALL_D256, qsa=QsaSpec())),
+        # the PACKED form over the pools on a bottom-right QsaSpec geometry through a record WITHOUT the composition claim (with the claim the
+        # declaration constructs: the packed sparse EXTEND form, 2026-10-30; a dense one is the block-sparse decode mode since 2026-10-14)
+        "sparse": lambda: _trip_sparse_row(),
         "window": lambda: _declare_extend(2, 128, max_kv_len=128, geom_kw=dict(_EXTEND_GEOM, window_left=64)),
         "head_dim": lambda: _declare_extend(2, 128, max_kv_len=128, geom_kw=d128),
         "return_lse": lambda: _declare_extend(2, 128, max_kv_len=128, return_lse=True),
@@ -1518,6 +1534,11 @@ def test_extend_typed_declines_match_the_envelope_row_by_row(monkeypatch):
         ),
     }
     assert set(trips) == set(names)
+
+    def _trip_sparse_row():
+        with _declined_record(thd_paged_kv=False):
+            _declare_extend(2, 128, max_kv_len=128, geom_kw=dict(_SMALL_D256, causal_bottom_right=True, qsa=QsaSpec()))
+
     for name, exc, _pred, msg in _EXTEND_DECLINES:
         with pytest.raises(exc, match=re.escape(msg[:80])) as e:
             trips[name]()
@@ -1553,28 +1574,39 @@ def test_extend_typed_declines_match_the_envelope_row_by_row(monkeypatch):
             assert not bad.extend.served and bad.extend.reason == env.extend.declines[row] and bad.forms == (), row
     else:
         assert not env.extend.served and env.forms == () and "served on cc 10.7 (Rubin, SM107: every form) and cc 10.0" in env.extend.reason
-    # a sparse geometry: the block serves the packed sparse stage (the sparse declaration's THD row is record-driven and the record claims
-    # the arm), so the THD-only form reaches the table like the dense one and meets its `sparse` row -- the PACKED form's row since
-    # 2026-10-14 (the sparse core serves THD and paged pools one at a time) -- the envelope says so wherever the device / dtype facts let
-    # it speak (on Rubin: the very message the block raises for that declaration)
+    # a sparse geometry (INVERTED 2026-10-30): the block serves the packed sparse stage AND the THD x paged composition (both record claims), so
+    # a bottom-right QsaSpec packed declaration over the pools CONSTRUCTS -- the packed sparse EXTEND form with caller lists (stage (4) the
+    # sparse core with thd and paged, unsplit, one list per row; test_block_qsa_packed_extend.py) -- while the TOP-LEFT one meets the
+    # `diagonal` row like a dense declaration; the table's `sparse` row is reached through a record without the composition claim -- the
+    # envelope says so wherever the device / dtype facts let it speak (on Rubin: the very message the block raises for that declaration)
+    bottom_right_qsa = dict(_SMALL_D256, causal_bottom_right=True, qsa=QsaSpec())
+    blk, *_ = _declare_extend(2, 128, max_kv_len=128, geom_kw=bottom_right_qsa)
+    assert isinstance(blk._sdpa, _SparseSdpa) and blk._sdpa.thd and blk._sdpa.paged and blk.decode_split_kv == 1 and blk.qsa_list_form == "per_row"
     sparse = GatedAttentionBlockFwd.serving_envelope(GatedAttentionBlockGeometry(**_SMALL_D256, qsa=QsaSpec()), torch.bfloat16, _DEV)
     assert not sparse.extend.served
-    with pytest.raises(NotImplementedError, match="kv_source='paged' with geometry.qsa") as e:
+    with pytest.raises(ValueError, match=re.escape(env.extend.declines["diagonal"][:60])) as e_tl:
         _declare_extend(2, 128, max_kv_len=128, geom_kw=dict(_SMALL_D256, qsa=QsaSpec()))
-    assert str(e.value) == env.extend.declines["sparse"]
+    assert str(e_tl.value) == env.extend.declines["diagonal"]
+    with _declined_record(thd_paged_kv=False):
+        with pytest.raises(NotImplementedError, match="kv_source='paged' with geometry.qsa") as e:
+            _declare_extend(2, 128, max_kv_len=128, geom_kw=bottom_right_qsa)
+        declined = GatedAttentionBlockFwd.serving_envelope(GatedAttentionBlockGeometry(**bottom_right_qsa), torch.bfloat16, _DEV)
+    assert str(e.value) == env.extend.declines["sparse"] and "thd_paged_kv" in str(e.value)
     if cc == (10, 7):
-        assert sparse.extend.reason == str(e.value)
-    # ... and the Rubin reading on ANY host (device_cc=): the EXTEND half says the table's `sparse` row; the DECODE half of a TOP-LEFT
-    # QsaSpec geometry says the `diagonal` row like a dense one (the `sparse` row is no dense-form row any more), and the bottom-right
-    # QsaSpec geometry SERVES the decode form -- the block-sparse decode mode (test_block_qsa_decode.py), stage (4) the sparse core
+        assert sparse.extend.reason == str(e_tl.value) and declined.extend.reason == str(e.value)
+    # ... and the Rubin reading on ANY host (device_cc=): the TOP-LEFT QsaSpec geometry says the `diagonal` row on both forms like a dense one
+    # (the `sparse` row is no dense-form row any more), and the bottom-right QsaSpec geometry SERVES both forms -- the block-sparse decode
+    # mode (test_block_qsa_decode.py) and the packed sparse EXTEND form, stage (4) the sparse core on each
     monkeypatch.setattr(buffers, "_cutedsl_has_sm107", lambda: True)
     rubin = GatedAttentionBlockFwd.serving_envelope(GatedAttentionBlockGeometry(**_SMALL_D256, qsa=QsaSpec()), torch.bfloat16, _DEV, device_cc=(10, 7))
     assert rubin.cutedsl_ok and rubin.forms == ()
-    assert rubin.extend.reason == str(e.value) and rubin.decode.reason == env.decode.declines["diagonal"] and "sparse" not in env.decode.declines
-    served = GatedAttentionBlockFwd.serving_envelope(
-        GatedAttentionBlockGeometry(**_SMALL_D256, causal_bottom_right=True, qsa=QsaSpec()), torch.bfloat16, _DEV, device_cc=(10, 7)
-    )
-    assert served.forms == ("decode",) and served.decode.served and served.decode.sparse_core and served.extend.reason == str(e.value)
+    assert rubin.extend.reason == str(e_tl.value) and rubin.decode.reason == env.decode.declines["diagonal"] and "sparse" not in env.decode.declines
+    served = GatedAttentionBlockFwd.serving_envelope(GatedAttentionBlockGeometry(**bottom_right_qsa), torch.bfloat16, _DEV, device_cc=(10, 7))
+    assert served.forms == ("extend", "decode") and served.decode.served and served.decode.sparse_core
+    assert served.extend.served and served.extend.sparse_core and served.extend.reason is None and served.extend.declines["sparse"] == str(e.value)
+    with _declined_record(thd_paged_kv=False):
+        rubin_declined = GatedAttentionBlockFwd.serving_envelope(GatedAttentionBlockGeometry(**bottom_right_qsa), torch.bfloat16, _DEV, device_cc=(10, 7))
+    assert rubin_declined.forms == ("decode",) and rubin_declined.extend.reason == str(e.value)
     assert isinstance(_declare_dense_sparse_paged(), GatedAttentionBlockFwd)  # the dense QsaSpec declaration over the pools constructs
 
 
@@ -2839,7 +2871,7 @@ _Q38_27B_EXTEND_GEOM = dict(d_model=5120, h_q=24, h_kv=4, d_head=256, rope_dim=6
 
 
 def _sm100_pin_extend(hz):
-    """The compiled stage (4) on cc 10.0: the shared SM100 paged THD body, unsplit, unpacked, no gate epilogue, the gate its own stage."""
+    """The compiled stage (4) on cc 10.0 / 10.3: the shared SM100 paged THD body, unsplit, unpacked, no gate epilogue, the gate its own stage."""
     sd = hz.blk._sdpa
     impl = sd._impl
     assert sd.kv_source == KV_SOURCE_PAGED and sd.thd and not sd.fuse_gate and impl.kernel_template == "prefill_d256_f16", impl.kernel_template
@@ -2910,26 +2942,26 @@ def test_sm100_extend_declines_fuse_gate_and_the_fused_fork_by_name():
     assert gated.gate_fused, "the declaration records the fused gate; the part speaks at check_support"
     with pytest.raises(NotImplementedError, match="fuse_gate=True is not served by the f16/bf16 SM100 SDPA engine row") as e:
         gated.check_support()
-    assert "cc 10.0" in str(e.value) and "fuse_gate=False" in str(e.value)
+    assert f"cc {_cc()[0]}.{_cc()[1]}" in str(e.value) and "fuse_gate=False" in str(e.value)
     fork, *_ = _declare_extend(2, 128, max_kv_len=128, fuse_norm_rope=True)
     assert fork.fuse_norm_rope_effective
-    with pytest.raises(NotImplementedError, match=r"rendered for sm_107a \(Rubin\); this device is SM100"):
+    with pytest.raises(NotImplementedError, match=rf"rendered for sm_107a \(Rubin\); this device is SM{_cc()[0]}{_cc()[1]}"):
         fork.check_support()
     plain, *_ = _declare_extend(2, 128, max_kv_len=128)
     plain._check_declaration()
     plain._check_part_support()
     env = GatedAttentionBlockFwd.serving_envelope(plain.geom, torch.bfloat16, _DEV)
-    assert env.device_cc == (10, 0) and env.forms == ("extend", "decode")
-    # the FP8-projection + bf16-attention mode ON the part: served iff FP8_PROJ_BF16_ATTENTION_CCS holds cc 10.0 (its cells below run then),
+    assert env.device_cc == _cc() and env.forms == ("extend", "decode")
+    # the FP8-projection + bf16-attention mode ON the part: served iff FP8_PROJ_BF16_ATTENTION_CCS holds this part (its cells below run then),
     # else the mode's part statement at check_support and no spelling in the envelope's quant_modes
     mode, mode_inp, _ = _declare_extend(2, 128, max_kv_len=128, quant=True)[:3]
     mode_env = GatedAttentionBlockFwd.serving_envelope(mode.geom, torch.float8_e4m3fn, _DEV, quant=mode_inp["quant"])
-    if (10, 0) in FP8_PROJ_BF16_ATTENTION_CCS:
+    if _cc() in FP8_PROJ_BF16_ATTENTION_CCS:
         mode._check_declaration()
         mode._check_part_support()
         assert mode_env.forms == ("extend", "decode") and mode_env.extend.quant_modes == (QUANT_MODE_FP8_PROJ_BF16_ATTENTION,) == env.extend.quant_modes
     else:
-        with pytest.raises(NotImplementedError, match=r"QuantSpec\(attention_dtype=torch.bfloat16\) on cc 10.0") as e:
+        with pytest.raises(NotImplementedError, match=rf"QuantSpec\(attention_dtype=torch.bfloat16\) on cc {_cc()[0]}\.{_cc()[1]}") as e:
             mode.check_support()
         assert "FP8_PROJ_BF16_ATTENTION_CCS" in str(e.value) and mode_env.forms == () and mode_env.extend.reason == str(e.value)
         assert mode_env.extend.quant_modes == () == env.extend.quant_modes
@@ -2973,12 +3005,12 @@ def test_extend_packed_kv_rows_of_a_serving_stack_bind_as_two_half_views(dtype, 
     64 at 32), a 128-token sequence with an empty prefix, a PADDED entry (the NULL block), a 100-token step over a 5-row prefix (kv_len 105, a
     tail tile) -- ``T_live`` 376; the suite's ``check`` (the oracle over every live sequence, the rows read back through both halves, the stale
     rows untouched in both halves, the NULL page zero), two launches bitwise, bitwise the HND-compact twin on the same histories and pages; on
-    cc 10.0 the stage pinned on the shared SM100 paged THD body."""
+    cc 10.0 / 10.3 the stage pinned on the shared SM100 paged THD body."""
     hz = _harness(4, 512, max_kv_len=2048, page=page, layout="unified", dtype=dtype, slot_dtype=torch.int64, geom_kw=_PACKED_KV_GEOM, seed=29)
     what = f"packed K|V rows 24/4 {dtype} p{page}"
     kv = _assert_one_packed_tensor(hz, what)
     assert hz.geom.h_kv == 4 and hz.geom.d_head == 256 and tuple(kv.shape[1:]) == (4, page, 512) and hz.slot.dtype == torch.int64
-    if tuple(torch.cuda.get_device_capability()) == (10, 0):
+    if tuple(torch.cuda.get_device_capability()) in ((10, 0), (10, 3)):
         _sm100_pin_extend(hz)
     rec = hz.step(_PACKED_KV_STEP["q_lens"], prefix_lens=_PACKED_KV_STEP["prefix_lens"], prefill="reference")
     assert rec["kv_lens"] == [2048, 128, 0, 105] and rec["t_live"] == 376

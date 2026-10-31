@@ -5,12 +5,12 @@
 between table-decided and hand-rule graphs."""
 
 import math
-from types import SimpleNamespace
 
 import pytest
 
 import cudnn
 from cudnn.sdpa import placement_table as pt
+from cudnn.sdpa.graph_analyzer import SdpaGraphFacts
 
 
 def _facts(**over):
@@ -36,7 +36,7 @@ def _facts(**over):
         right_band_widening=False,
     )
     base.update(over)
-    return SimpleNamespace(**base)
+    return SdpaGraphFacts(**base)
 
 
 @pytest.mark.L0
@@ -50,7 +50,7 @@ def test_entries_are_well_formed_and_name_known_rows():
         assert row in rows, key
         assert isinstance(cc, tuple) and len(cc) == 2 and dtype in ("bf16", "f16") and len(heads) == 2
         assert phase in ("q1", "mtp", "prefill") and layout in ("dense", "paged", "thd", "thd_ragged")
-        assert mask in ("none", "window", "causal_br", "causal_tl") and isinstance(sink, bool) and group in ("mha", "gqa")
+        assert mask in ("none", "window", "causal_br", "causal_tl") and isinstance(sink, bool) and group in ("mha", "gqa", "gqa_unpacked")
         assert isinstance(kv_off_tile, bool)
         assert entry.direction in ("always", "never", "ge", "le") and entry.study
         assert (entry.log2_work is None) == (entry.direction in ("always", "never"))
@@ -83,7 +83,7 @@ def test_threshold_entries_split_on_log2_work():
     low, high = _facts(h_q=16, b=1, s_kv=2048), _facts(h_q=128, b=128, s_kv=131072)
     assert pt.log2_work(low) < entry.log2_work < pt.log2_work(high)
     assert pt.lookup(row, low) is False and pt.lookup(row, high) is True
-    assert pt.lookup(row, _facts(device_cc=(10, 3))) is None  # another part: no study, hand rules decide
+    assert pt.lookup(row, _facts(device_cc=(10, 1))) is None  # another part: no study, hand rules decide
 
 
 @pytest.mark.L0
@@ -122,3 +122,53 @@ def test_off_tile_dense_d256_decode_reads_parallel_tiles():
         assert pt.lookup(row, _facts(s_kv=s_kv, b=16, **d256)) is False
         assert pt.lookup(row, _facts(s_kv=s_kv, b=64, **d256)) is True
         assert pt.lookup(row, _facts(s_kv=s_kv, b=40, **d256)) is True  # 33-63 tiles measured on 9.28 and 9.26 (review on #1957)
+
+
+@pytest.mark.L0
+def test_off_tile_dense_d576_decode_reads_query_rows():
+    """Off the KV tile the unsplit tile runs every head of a request, so dense D576 decode follows the query rows b * h_q,
+    not the cost: 256 rows lose (1.13-1.25 on the training grid) and 384 win (0.86-0.90), for any b / h_q split."""
+    row = "sdpa_fwd_prefill_sm100"
+    dense = dict(has_paged_kv=False, d_qk=576, d_v=512, h_kv=1, s_kv=32765)
+    assert pt.TABLE[pt.class_key(row, _facts(b=1, h_q=8, **dense))].feature == "rows"
+    for b, h_q in ((8, 32), (2, 128), (32, 8)):
+        assert pt.lookup(row, _facts(b=b, h_q=h_q, **dense)) is False
+    for b, h_q in ((4, 96), (3, 128), (48, 8)):
+        assert pt.lookup(row, _facts(b=b, h_q=h_q, **dense)) is True
+
+
+@pytest.mark.L0
+def test_decode_the_row_cannot_pack_is_its_own_group():
+    """A decode-shaped GQA graph the FROST row cannot pack re-reads K/V per query head -- another kernel regime (paged d512
+    at G = 12-96: 5-21x slower than packed neighbours). The row's own pack decision splits the class, so the packed study
+    never answers for it; a flavor that packs a partial group (D576 at G = 96 packs 32) keeps the packed class."""
+    row = "sdpa_fwd_prefill_sm100"
+    d512 = dict(d_qk=512, d_v=512, h_kv=1, b=8, s_kv=65536, page_size=64, padded=True)
+    assert pt.class_key(row, _facts(h_q=96, **d512))[8] == "gqa_unpacked"
+    assert pt.lookup(row, _facts(h_q=96, **d512)) is None  # no study measured it: the hand rule decides
+    assert pt.class_key(row, _facts(h_q=64, **d512))[8] == "gqa"
+    assert pt.lookup(row, _facts(h_q=64, **d512)) is True
+    assert pt.class_key(row, _facts(h_q=96, page_size=64, padded=True))[8] == "gqa"  # D576 packs 32 of 96
+    assert pt.class_key(row, _facts(h_q=96, s_q=1024, **d512))[8] == "gqa"  # prefill: s_q fills the tile, no packing regime
+
+
+@pytest.mark.L0
+def test_cc103_borrows_only_the_studies_its_transfer_check_named(monkeypatch):
+    """cc 10.3 has no studies of its own; it answers with a cc 10.0 entry only when that entry's study is in
+    PART_TRANSFERS[(10, 3)] (study sm103_transfer_20261031) -- never a later cc 10.0 study by default."""
+    row = "sdpa_fwd_prefill_sm100"
+    base, studies = pt.PART_TRANSFERS[(10, 3)]
+    assert base == (10, 0)
+    cases = (
+        dict(),  # paged D576 decode
+        dict(d_qk=512, d_v=512, b=8, s_kv=65536, page_size=64, padded=True),  # paged d512 decode
+        dict(d_qk=576, d_v=512, has_paged_kv=False, b=1, h_q=96, s_kv=131072),  # dense D576 decode
+        dict(d_qk=256, d_v=256, h_q=32, h_kv=2, s_q=2048, s_kv=65536, causal=True, bottom_right=True),  # paged d256 context
+    )
+    for kw in cases:
+        on_100, on_103 = pt.lookup(row, _facts(**kw)), pt.lookup(row, _facts(device_cc=(10, 3), **kw))
+        assert on_100 is not None and on_103 == on_100, kw
+    key = pt.class_key(row, _facts())
+    monkeypatch.setitem(pt.TABLE, key, pt.Entry("always", None, "a_later_cc100_study"))
+    assert pt.lookup(row, _facts()) is True
+    assert pt.lookup(row, _facts(device_cc=(10, 3))) is None
