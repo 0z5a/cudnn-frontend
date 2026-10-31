@@ -2256,6 +2256,38 @@ def test_sm107_gate_declines_the_interactions():
     assert why is not None and "virtual O" in why, why
 
 
+@pytest.mark.parametrize("h,h_kv,token_pitch", [(24, 4, 13312), (32, 2, 17408)])
+def test_gate_check_support_admits_the_slab_column_gate_at_batch_one_token(monkeypatch, h, h_kv, token_pitch):
+    """The decode form of a gated block at batch 1 x one query token: Q and G are column bands of ONE projection slab, so both
+    singleton axes carry the slab's token pitch ((13312, 256, 13312, 1) for 24 heads).  Canonicalized, the gate is BSHD-compact:
+    the engine row admits the graph (``graph_analyzer.gate_layout_ok``), so the adapter's twin must admit the same G (rule 8b) --
+    split, the plan rides the decode tile with the gate in its combine; unsplit, the prefill kernel's fused epilogue.  A head
+    pitch that is not a 16-byte multiple on the same geometry stays the typed ValueError."""
+    import torch
+
+    from cudnn.sdpa.fwd.api_dsl import SdpaFwdDslSm100
+
+    _fake_cc(monkeypatch, (10, 7))
+    d, s_kv = 256, 4096
+    band = (token_pitch, d, token_pitch, 1)
+
+    def plan(gate_stride, split_kv):
+        q = _desc((1, h, 1, d), torch.bfloat16, "q", stride=band)
+        k = _desc((1, h_kv, s_kv, d), torch.bfloat16, "k")
+        v = _desc((1, h_kv, s_kv, d), torch.bfloat16, "v")
+        o = _desc((1, h, 1, d), torch.bfloat16, "o")
+        gate = _desc((1, h, 1, d), torch.bfloat16, "gate", stride=gate_stride)
+        return SdpaFwdDslSm100(q, k, v, o, None, sample_gate=gate, split_kv=split_kv)
+
+    for split in (4, 8, 16):
+        api = plan(band, split)
+        assert api.check_support(), split
+        assert api._gate_in_combine() is True, split
+    assert plan(band, 1).check_support()
+    with pytest.raises(ValueError, match="TMA-expressible"):
+        plan((token_pitch, 260, token_pitch, 1), 4).check_support()
+
+
 def test_epilogue_gate_is_not_a_knob():
     """The gate is a graph FACT (the tail is there or it is not), never a tuning
     axis: the knob vocabulary has no such field and the heuristics cannot
@@ -3477,13 +3509,15 @@ def test_sm107_thd_gate_keyless_sequence_is_exactly_zero_and_a_zero_length_seque
 # Re-recorded after #1922: the BF16 causal dense case now uses fused correction/P1. The shared body's dense cubins
 # change on both compile targets; all eight THD / paged / gated records stay byte-identical. This direct-template
 # probe does not select the separate native SM107 dense body.
+# Re-recorded after #2064: fused dense P1 register math overlaps the previous PV. Both dense cubins change;
+# the eight THD / paged / gated renderings remain byte-identical.
 _PAGED_GATE_CUBIN_RECORD = {
     "nvidia-cutlass-dsl": "4.8.0",
-    "sm_100a_dense": "8550fc4d4eb48f233f7bba50e53cc434",
+    "sm_100a_dense": "89b5cba5c546804bc16ca9934226111c",
     "sm_100a_thd": "d10d4f3814461e315a33778705e1920c",
     "sm_100a_paged_thd": "066bb542a059b0c1c1083f85f60fddcb",
     "sm_100a_paged_thd_pack": "a812d2551488e2b3b19177b470003278",
-    "sm_107a_dense": "22cfb3e0850bc20c2e23a4f86a02f9fd",
+    "sm_107a_dense": "48b8f362d864ec60c670ef51ba88f588",
     "sm_107a_thd": "38403df53e25b064f21b0e0eb3471af3",
     "sm_107a_paged_thd": "3c106cb810219e1d3f1eab0433049b80",
     "sm_107a_paged_thd_pack": "cb43d702cddfa33ef699cfbe22441edb",
@@ -8626,6 +8660,11 @@ def test_packed_sink_combine_counts_virtual_key_once(dtype_name, stats):
                 total.data_ptr(),
                 torch.cuda.current_stream().cuda_stream,
                 sinks.data_ptr(),
+                # The packed host's physical-origin slots (paged THD): compact partials carry none, so the compiled frame's two
+                # None operands, then n_batch -- the one batch the packed entry serves, as the prepared split host passes B.
+                None,
+                None,
+                b,
             )
 
         run()

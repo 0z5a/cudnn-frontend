@@ -63,7 +63,7 @@ from cudnn.frost.tile_dsl.constants import (
 
 # The engine-contract record is deliberately SHARED: one lowering builds it, and
 # an arch-specific copy would let the two drift in ways the loader cannot see.
-from cudnn.sdpa.fwd.config_sm100 import TemplateParams, bshd_compact, bshd_zero_copy_stride
+from cudnn.sdpa.fwd.config_sm100 import TemplateParams, dense_bind_strides
 
 # The d512 2x2-DATAPATH record is shared with the SM100 line too (CfgD512X2 + its arch-neutral geometry checks); this
 # module adds only the Rubin arch facts to it (3-deep sub-chunk rings, DESC_VERSION derived from the layout, the 320 KiB
@@ -1470,23 +1470,30 @@ SM107_SCALE_PREFOLDED_FLAVORS = frozenset(
 
 def epilogue_gate_layout_declarable(shape_bhsd: tuple, stride_bhsd: tuple, elem_bytes: int = 2) -> bool:
     """Whether a logical BHSD gate ``G`` binds ZERO-COPY on the Rubin d256 gated
-    kernels: BSHD-compact, or a token-major declaration TMA can express
-    (``config_sm100.bshd_zero_copy_stride``: D innermost-contiguous, then heads,
-    then tokens; seq/head strides 16-byte multiples; covering).
+    kernels: the native dense layout contract, ``config_sm100.dense_bind_strides``
+    -- the singleton axes canonicalized first, then BSHD-compact or an aligned
+    covering B/H/S permutation (D innermost-contiguous; every stepped batch, seq
+    and head byte stride a 16-byte multiple).
 
     The gate has NO normalisation-copy fallback (a hidden per-execute repack is
     what the engine contract forbids), so this predicate is STRICTER than
-    ``graph_analyzer.dense_layout_ok`` -- which admits any B/H/S stride order
-    and any 16-byte-unaligned stride because the Q/K/V/O path copies those.  It
-    is the ONE rule both sides of rule 8b consume: ``engines.mismatch`` applies
-    it to G before admitting a gated graph, and
-    ``api_dsl.SdpaFwdDslSm100.check_support`` raises on exactly the layouts it
-    rejects, so a plan that entered the ranked list can never die on G's layout
-    in the lowering.  ``elem_bytes`` defaults to the 2 B every Rubin gate kernel
+    ``layout.dense_layout_ok``, which admits any alignment.  It is the ONE rule
+    every consumer of G's layout makes the same call for (rule 8b lockstep): the
+    graph half ``graph_analyzer.gate_layout_ok`` (the engine rows decline a G it
+    refuses), ``api_dsl.SdpaFwdDslSm100.check_support`` (raises on exactly that
+    G, so a plan that entered the ranked list can never die on G's layout in the
+    lowering) and the binder (``prepared._dense_role_layout`` admits the
+    epilogue-gate port through the same call; the gate-in-combine binds the raw
+    BSHD strides, where a singleton axis is never stepped).  Canonicalizing FIRST
+    is what makes the three agree: a gate sliced out of a fused projection slab at
+    batch 1 x one query token keeps the slab's token pitch on both singleton axes
+    (``(13312, 256, 13312, 1)`` for 24 heads) and is BSHD-compact once they are
+    normalized -- a compactness test on the raw strides refused it while the graph
+    half admitted it.  ``elem_bytes`` defaults to the 2 B every Rubin gate kernel
     stores (``_CfgSm107.GATE_BPE``: Q-dtype on the half kernels, bf16 on the
     quantized one).
     """
-    return bshd_compact(shape_bhsd, stride_bhsd) or bshd_zero_copy_stride(shape_bhsd, stride_bhsd, elem_bytes) is not None
+    return dense_bind_strides(tuple(int(x) for x in shape_bhsd), tuple(int(x) for x in stride_bhsd), int(elem_bytes)) is not None
 
 
 # ---------------------------------------------------------------------------
@@ -2996,11 +3003,15 @@ _REG_FILE_PER_CTA = 65536
 # "epilogue_gate": the item's gate tile (O's shape, the token's G heads) aliased into its freed Q^T slot after the item's last
 # BMM1 (GATE_TX_BYTES = the box), O gated in place after the dead-row SELECT, the LSE untouched; it touches the Q^T slot ring
 # and the epilogue only, so it composes with either of the two arms above (the gate is O-shaped on every arm).
-# The THD and paged arms are wired ONE AT A TIME: a record asking for both is refused by the validator below (the packed
-# sequence's K / V row offset cu_k[b] composes with a dense [1, T_kv, H_kv, D] tensor only, never with a page pool) until a
-# serving stack asks for the combination -- it then lands with its own accept cells.
+# The THD and paged arms COMPOSE with "bottom_right" only (2026-10-30: the packed EXTEND form over the pools -- a THD x PAGED x
+# BOTTOM_RIGHT record): under THD the paged arm's gather row comes from the block table's row of the sequence the THD decode found
+# (cu_k[b], the dense arm's row term, is unread there) and the row's position from the per-sequence KV lengths the setup launch stores
+# (meta[b] = the serving kv_lens[b]).  THD x PAGED on the TOP-LEFT diagonal is refused by the validator below (a packed self-attention
+# over a page pool has no serving meaning), as is THD x BOTTOM_RIGHT over the dense [1, T_kv, H_kv, D] K / V (there the position is
+# the token's offset in its sequence).
 # "bottom_right": the row's key-space position is tok + (eff_seqlen_kv_b - eff_seqlen_q_b) (the dense tiles' bottom-right
-# diagonal); the Q / O / LSE coordinate stays the row index; pos < 0 is a dead row.  Dense BSHD only (not under THD).
+# diagonal); the Q / O / LSE coordinate stays the row index; pos < 0 is a dead row.  Dense BSHD, paged pools, and under THD over
+# paged pools (the packed EXTEND form); never under THD over the dense K / V.
 # "list_per_sequence": the decode / MTP form -- block_ids [B, BLOCK_TOPK] and block_lens [B], ONE list per sequence read by every
 # item of the sequence (every KV head, split and token), the count and the appended tail anchored at the STEP-0 position
 # pos_0 = eff_seqlen_kv_b - eff_seqlen_q_b (0, 1 or 2 tail ids at S_q <= 4: every token from the step-0 tail start to the row's
@@ -3429,17 +3440,21 @@ def _validate_cfg_d256_sparse(cfg: CfgD256Sparse, flavor: str = _SPARSE_FLAVOR) 
                 f"form); a top-left per-sequence list has no serving meaning",
             ),
             (
-                not (cfg.BOTTOM_RIGHT and cfg.THD_VARLEN),
-                f"{flavor}: bottom_right under THD is not served -- the packed form's position is the token's offset in its sequence (top-left)",
+                not (cfg.BOTTOM_RIGHT and cfg.THD_VARLEN) or cfg.PAGED_KV == 1,
+                f"{flavor}: bottom_right under THD is not served on the DENSE packed form -- there the position is the token's offset in its sequence "
+                f"(top-left); the composition is served over PAGED pools only (THD x PAGED x BOTTOM_RIGHT: the packed EXTEND form over a cached prefix, "
+                f"the position tok + (kv_len_b - q_len_b) from the per-sequence KV lengths)",
             ),
             (
                 not cfg.THD_VARLEN or cfg.SEQ_KV_LENS_PRESENT == 1,
                 f"{flavor}: THD/varlen must force SEQ_KV_LENS_PRESENT=1, or every sequence attends the whole pack",
             ),
             (
-                not (cfg.THD_VARLEN and cfg.PAGED_KV),
-                f"{flavor}: THD x paged is not served -- the packed sequence's K / V row offset (cu_k[b]) composes with a dense [1, T_kv, H_kv, D] "
-                f"tensor only, never with a page pool; one of THD_VARLEN / PAGED_KV per record (the adapter declines the combination by name)",
+                not (cfg.THD_VARLEN and cfg.PAGED_KV) or cfg.BOTTOM_RIGHT == 1,
+                f"{flavor}: THD x paged is not served on the TOP-LEFT diagonal -- a packed self-attention over a page pool has no serving meaning "
+                f"(the dense arm's row term cu_k[b] is what a top-left packed form addresses K / V by); the composition is served with BOTTOM_RIGHT "
+                f"(THD x PAGED x BOTTOM_RIGHT: the packed EXTEND form over a cached prefix -- the K / V rows through the page table, the position "
+                f"from the per-sequence KV lengths; the adapter declines the top-left composition by name)",
             ),
             (not cfg.SEQ_Q_LENS_PRESENT or cfg.SEQ_KV_LENS_PRESENT == 1, f"{flavor}: SEQ_Q_LENS_PRESENT requires SEQ_KV_LENS_PRESENT"),
             (cfg.SCHEDULER_POLICY == SCHED_NATURAL, f"{flavor}: the item scheduler is NATURAL in v1 (LPT needs per-item costs)"),
