@@ -236,11 +236,59 @@ def test_tracing_ignores_unrelated_cuda_devices(monkeypatch):
     assert options == ["--gpu-arch=sm_100a"] * 2
 
 
+def _record_targets(monkeypatch, capabilities):
+    """Model the visible GPUs' compute capabilities by ordinal and record the compile options of every build."""
+    from cudnn.frost import device
+    from cudnn.norm import jax_api
+
+    monkeypatch.setattr(device, "compute_capability", lambda ordinal: capabilities[ordinal % len(capabilities)])
+    options = []
+
+    def bridge(launch, *, output_shape_dtype, compile_options, **kwargs):
+        options.append(compile_options)
+        return lambda *args: jax.tree.map(lambda spec: jnp.zeros(spec.shape, spec.dtype), output_shape_dtype)
+
+    monkeypatch.setattr(jax_api, "call", bridge)
+    monkeypatch.setattr(jax_api, "_forward_call", jax_api._forward_call.__wrapped__)
+    monkeypatch.setattr(jax_api, "_backward_call", jax_api._backward_call.__wrapped__)
+    return options
+
+
+@pytest.mark.parametrize("part,target", [((10, 0), "sm_100a"), ((10, 3), "sm_103a")])
+def test_compiles_for_the_device_target(part, target, monkeypatch):
+    """Each SM100-family part compiles for its own arch-specific target: an sm_100a cubin does not load on cc 10.3."""
+    options = _record_targets(monkeypatch, [part])
+    weight = jnp.ones((8,), jnp.float32)
+    jax.jit(jax.value_and_grad(lambda x: layer_norm_forward_jax(x, weight)[0].sum())).lower(jax.ShapeDtypeStruct((2, 8), jnp.float32))
+    assert options == [f"--gpu-arch={target}"] * 2
+
+
+def test_traced_call_refuses_mixed_sm100_and_sm103(monkeypatch):
+    """A traced call compiles before XLA places it, so with both parts visible it has no single right target and refuses;
+    a committed array names its device, and that device's target is used."""
+    if len([d for d in jax.local_devices() if d.platform == "gpu"]) < 2:
+        pytest.skip("needs two visible GPUs to model a mixed SM100 / SM103 host")
+    selected = jax.config.jax_default_device.local_hardware_id
+    capabilities = [(10, 3) if ordinal != selected else (10, 0) for ordinal in range(len(jax.local_devices()))]
+    options = _record_targets(monkeypatch, capabilities)
+    weight = jnp.ones((8,), jnp.float32)
+    with pytest.raises(NotImplementedError, match="both SM100 and SM103"):
+        jax.jit(lambda x: layer_norm_forward_jax(x, weight)[0]).lower(jax.ShapeDtypeStruct((2, 8), jnp.float32))
+    captured = jnp.ones((2, 8), jnp.float32)
+    with pytest.raises(NotImplementedError, match="both SM100 and SM103"):  # every operand captured: still a traced call
+        jax.jit(lambda: layer_norm_forward_jax(captured, weight)[0]).lower()
+    other = next(d for d in jax.local_devices() if d.platform == "gpu" and d.local_hardware_id != selected)
+    x, w = jax.device_put((jnp.ones((2, 8), jnp.float32), weight), other)
+    layer_norm_forward_jax(x, w)
+    assert options == ["--gpu-arch=sm_103a"]
+
+
 @pytest.mark.parametrize("kind", ["layer", "rms"])
 def test_multiple_gpus_preserve_placement_and_reuse_compilation(kind):
-    devices = [d for d in jax.local_devices() if d.platform == "gpu" and str(getattr(d, "compute_capability", "")) == "10.0"]
+    family = str(jax.config.jax_default_device.compute_capability)
+    devices = [d for d in jax.local_devices() if d.platform == "gpu" and str(getattr(d, "compute_capability", "")) == family]
     if len(devices) < 2:
-        pytest.skip("needs two visible SM100 GPUs")
+        pytest.skip("needs two visible GPUs of one SM100-family part")
     shape = (8, 4096)
     forward = jax.jit(lambda args: invoke(kind, args))
     gradients = jax.grad(lambda args, cotangent: jnp.sum(invoke(kind, args) * cotangent))
@@ -299,7 +347,7 @@ sys.meta_path.insert(0, RejectTorch())
 import jax
 import jax.numpy as jnp
 from cudnn.ops import layer_norm_forward_jax, rms_norm_forward_jax
-target = next(device for device in jax.local_devices() if device.platform == "gpu" and str(getattr(device, "compute_capability", "")) == "10.0")
+target = next(device for device in jax.local_devices() if device.platform == "gpu" and str(getattr(device, "compute_capability", "")) in ("10.0", "10.3"))
 with jax.default_device(target):
     for rows, cols in ((3, 31), (2, 16384)):
         x = jnp.arange(rows * cols, dtype=jnp.float32).reshape(rows, cols) / (rows * cols)
