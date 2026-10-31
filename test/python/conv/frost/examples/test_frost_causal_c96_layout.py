@@ -9,7 +9,7 @@ import torch
 pytest.importorskip("triton")
 from causal_c96_layout import pack, unpack_bias
 
-pytestmark = [pytest.mark.L1, pytest.mark.skipif(torch.cuda.get_device_capability() != (10, 0), reason="qualified on SM100")]
+pytestmark = [pytest.mark.L1, pytest.mark.skipif(torch.cuda.get_device_capability() not in ((10, 0), (10, 3)), reason="local SM103 run")]
 
 
 def _equal_values(a, b):

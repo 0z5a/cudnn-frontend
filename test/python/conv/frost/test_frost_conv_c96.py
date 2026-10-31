@@ -11,7 +11,7 @@ from utils import make_input, requires_dense_cutedsl, _active_sm, select_and_bui
 
 pytestmark = [
     pytest.mark.L1,
-    pytest.mark.skipif(_active_sm() != 100, reason="FROST convolution requires SM100"),
+    pytest.mark.skipif(_active_sm() not in (100, 103), reason="FROST convolution requires SM100 or SM103 (local SM103 run)"),
     requires_dense_cutedsl,
 ]
 
