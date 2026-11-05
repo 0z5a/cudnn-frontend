@@ -104,9 +104,11 @@ def _emit_reduction_atomic(
     *,
     col_bound: str = "N",
     chunk_elems: int | None = None,
+    scalar_index: int | None = None,
+    n_scalar: int = 0,
 ) -> list[str]:
     """A reduction is an atomic RMW, so an out-of-extent element cannot be clamped onto a valid one -- it has to be SKIPPED."""
-    body = _emit_reduction_atomic_body(tap_idx, red_idx, red, source_var, chain, vsize)
+    body = _emit_reduction_atomic_body(tap_idx, red_idx, red, source_var, chain, vsize, scalar_index=scalar_index, n_scalar=n_scalar)
     if row_pred is None:
         return body
     width = chunk_elems or vsize
@@ -116,7 +118,9 @@ def _emit_reduction_atomic(
     lines.append(f"elif {row_pred}:")
     for start in range(0, vsize, width):
         src = f"{source_var}[{start}:{start + width}]"
-        body = _emit_reduction_atomic_body(tap_idx, red_idx, red, src, chain, width, col_offset=start)
+        body = _emit_reduction_atomic_body(
+            tap_idx, red_idx, red, src, chain, width, col_offset=start, scalar_index=scalar_index, n_scalar=n_scalar
+        )
         lines.append(f"    if col_j + {start + width} <= {col_bound}:")
         lines.extend(f"        {ln}" for ln in body)
     return lines
@@ -136,15 +140,30 @@ def _emit_reduction_atomic_body(
     vsize: int,
     *,
     col_offset: int = 0,
+    scalar_index: int | None = None,
+    n_scalar: int = 0,
 ) -> list[str]:
-    """Generate one SM100 reduction contribution."""
+    """Generate one SM100 reduction contribution.
+
+    ``scalar_index`` selects the deterministic split-K scalar path: the thread stores its partial in the
+    reducer scratch instead of atomically adding it onto the output, and the finalize pass sums the slots
+    in order."""
     src = f"_red_{red_idx}_src"
     lines = [f"{src} = ({source_var}).to({DTYPE_TO_CUTLASS[red.compute_dtype]})"]
-    if red.mode == "avg":
+    if red.mode == "avg" and scalar_index is None:
         lines.extend(_emit_reduction_avg_inverse(red_idx, red, chain, token_extent=_MOE_USED_ROWS))
     if red.dim[2] == 1:
         combine_lines, acc = _emit_reduction_local_combine(red_idx, red, src, vsize)
         lines.extend(combine_lines)
+        if scalar_index is not None:
+            slot = (
+                "(((cutlass.Int64(cute.arch.block_idx()[2]) * cutlass.Int64(cute.arch.grid_dim()[1])"
+                " + cutlass.Int64(cute.arch.block_idx()[1])) * cutlass.Int64(cute.arch.grid_dim()[0])"
+                " + cutlass.Int64(cute.arch.block_idx()[0])) * 128 + cutlass.Int64(cute.arch.thread_idx()[0]))"
+            )
+            lines.append(f"_scalar_slot = {slot}")
+            lines.append(f"(gC_scalar_ptr + _scalar_slot * {n_scalar} + {scalar_index}).store(cutlass.Float64({acc}))")
+            return lines
         offset = _reduction_output_offset_expr(red_idx, red, "0")
         ptr = f"gC_tap_{tap_idx}_ptr + {offset}"
         if red.compute_dtype == "int32":
@@ -470,6 +489,7 @@ def generate(
     tma_slots: "frozenset[int]" = frozenset(),
     packed_lanes: bool = False,
     workspace_split_k: bool = False,
+    scalar_scratch: "dict[int, int] | None" = None,
 ) -> EpilogueSnippets:
     """Produce the two hook-site snippets, the extra kernel param list, and all per-tap plumbing."""
     vsize = vec_bytes_epi // output_elem_bytes
@@ -583,7 +603,17 @@ def generate(
         red_source = _parent_value(red.source_ref)
         body_lines.extend(
             _emit_reduction_atomic(
-                _tap_of[len(specs) + red_idx], red_idx, red, red_source, chain, vsize, store_row_pred, col_bound=col_bound, chunk_elems=red_chunk
+                _tap_of[len(specs) + red_idx],
+                red_idx,
+                red,
+                red_source,
+                chain,
+                vsize,
+                store_row_pred,
+                col_bound=col_bound,
+                chunk_elems=red_chunk,
+                scalar_index=(scalar_scratch or {}).get(red_idx),
+                n_scalar=len(scalar_scratch or {}),
             )
         )
 

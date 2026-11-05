@@ -237,12 +237,14 @@ def _reduction_stride_host_pass(chain: FusionChain) -> str:
     return ",\n".join(args) + "," if args else ""
 
 
-def _splitk_epilogue_bindings(chain: FusionChain, n_taps: int) -> str:
+def _splitk_epilogue_bindings(chain: FusionChain, n_taps: int, scalar: bool = False) -> str:
     """Bind split-K reducer arguments to epilogue names."""
     lines = []
     for i in range(n_taps):
         lines.append(f"gC_tap_{i}_ptr = taps[{i}].iterator.raw_ptr()")
         lines.append(f"VEC_BYTES_TAP_{i} = vec_bytes_tap_{i}")
+    if scalar:
+        lines.append(f"gC_scalar_ptr = taps[{n_taps}].iterator.raw_ptr()")
     for i, name in enumerate(_reduction_stride_names(chain)):
         lines.append(f"{name} = strides[{i}]")
     for i, aux in enumerate(chain.aux_tensors):
@@ -977,11 +979,14 @@ class _CompiledFusedGemm(_CompiledRuntime, Generic[_ConfigT, _BindingT]):
     workspace_bytes: int = 0
 
     def workspace_bytes_for(self, batch: int, m: int, n: int) -> int:
-        """workspace for a given shape."""
+        """workspace for a given shape: the fp32 partials, then the scalar-reduction scratch."""
         backend = self._compiler
         if not self.config.workspace_split_k:
             return 0
-        return backend.align_up(self.config.split_k_slices * batch * m * n * 4)
+        partials = backend.align_up(self.config.split_k_slices * batch * m * n * 4)
+        scratch_for = getattr(backend, "_splitk_scalar_scratch_bytes", None)
+        scratch = scratch_for(self.chain, self.config, batch, m, n) if scratch_for is not None else 0
+        return partials + backend.align_up(scratch)
 
     # The partials span the call's M and N, which the launch path reads off A and B.
     # Output 0 is no stand-in: a graph whose only outputs are reductions has a reduction there.
@@ -1214,7 +1219,17 @@ class _CompiledFusedGemm(_CompiledRuntime, Generic[_ConfigT, _BindingT]):
                     raise ValueError(
                         "cudnn.frost gemm: this plan needs a workspace; allocate graph.get_workspace_size() bytes and pass the buffer to execute()"
                     )
-                extra = (workspace.view(0, "float32", (split_k_slices * batch * m * n,)),)
+                partials_view = workspace.view(0, "float32", (split_k_slices * batch * m * n,))
+                scratch_for = getattr(backend, "_splitk_scalar_scratch_bytes", None)
+                scratch_bytes = scratch_for(self.chain, self.config, batch, m, n) if scratch_for is not None else 0
+                if scratch_bytes:
+                    scratch_view = workspace.view(
+                        backend.align_up(split_k_slices * batch * m * n * 4), "float64", (scratch_bytes // 8,)
+                    )
+                    backend.buffers.memset_zero_async(scratch_view.data_ptr(), scratch_bytes, backend._as_custream(stream))
+                    extra = (partials_view, scratch_view)
+                else:
+                    extra = (partials_view,)
             if seeds:
                 fills = []
                 for idx, word, elem_bytes in seeds:

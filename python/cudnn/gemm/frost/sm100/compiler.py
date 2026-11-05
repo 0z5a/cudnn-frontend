@@ -59,6 +59,8 @@ from ..dtypes import (
     tensor_alignment,
 )
 from .epilogue_codegen import EpilogueSnippets, generate, tma_out_ready_marker, tma_out_value
+from ..epilogue_codegen import _emit_reduction_avg_inverse, _reduction_output_offset_expr
+from ..kernel_templates.split_k_reduction_epilogue_fusion import SPLITK_REDUCE_THREADS, SPLITK_REDUCE_TILE_M, splitk_reduce_tile_n
 from ..fusion_ir import (
     ZERO_PRESERVING_OPS,
     FusionChain,
@@ -520,6 +522,7 @@ def _splitk_reduce_snippets(chain: FusionChain, config: TileConfig) -> EpilogueS
         output_elem_bytes=DTYPE_BYTES[chain.output_dtype],
         tma_slots=frozenset(),
         packed_lanes=False,
+        scalar_scratch=_splitk_scalar_reds(chain, config),
     )
 
 
@@ -1718,9 +1721,20 @@ def _render_template(
         "INJECT_EPILOGUE": snippets.epilogue,
     }
     if splitk:
-        replacements["INJECT_SPLITK_EPILOGUE_BINDINGS"] = _splitk_epilogue_bindings(chain, len(plumb.tap_kernel_params))
+        _scalar_reds = _splitk_scalar_reds(chain, config)
+        replacements["INJECT_SPLITK_EPILOGUE_BINDINGS"] = _splitk_epilogue_bindings(chain, len(plumb.tap_kernel_params), scalar=bool(_scalar_reds))
         replacements["INJECT_REDUCE_AUX_VIEWS"] = plumb.aux_views
         replacements["INJECT_REDUCE_EPILOGUE"] = plumb.epilogue
+        if _scalar_reds:
+            replacements["INJECT_SPLITK_SCALAR_TAP_PASS"] = _splitk_scalar_tap_pass(chain, config)
+            replacements["INJECT_SPLITK_FINALIZE_BINDINGS"] = _splitk_finalize_bindings(chain, len(plumb.tap_kernel_params))
+            replacements["INJECT_SPLITK_FINALIZE_BODY"] = _splitk_finalize_body(chain, config)
+            replacements["INJECT_SPLITK_FINALIZE_LAUNCH"] = _splitk_finalize_launch(chain, config)
+            replacements["INJECT_SPLITK_SCALAR_PARAM"] = "scalar_scratch: cute.Tensor,"
+            replacements["INJECT_SPLITK_SCALAR_FAKE"] = (
+                "fake_scalar_scratch = make_fake_tensor(cutlass.Float64, (cute.sym_int64(),), stride=(1,), assumed_align=16)"
+            )
+            replacements["INJECT_SPLITK_SCALAR_FAKE_PASS"] = "fake_scalar_scratch,"
     for marker, replacement in (
         ("INJECT_KERNEL_REDUCTION_STRIDE_PARAMS", red_kernel_stride_params),
         ("INJECT_HOST_REDUCTION_STRIDES", red_host_stride_unpack),
@@ -1960,9 +1974,20 @@ def _render_block_scale_template(
         "INJECT_EPILOGUE": snippets.epilogue,
     }
     if splitk:
-        replacements["INJECT_SPLITK_EPILOGUE_BINDINGS"] = _splitk_epilogue_bindings(chain, len(plumb.tap_kernel_params))
+        _scalar_reds = _splitk_scalar_reds(chain, config)
+        replacements["INJECT_SPLITK_EPILOGUE_BINDINGS"] = _splitk_epilogue_bindings(chain, len(plumb.tap_kernel_params), scalar=bool(_scalar_reds))
         replacements["INJECT_REDUCE_AUX_VIEWS"] = plumb.aux_views
         replacements["INJECT_REDUCE_EPILOGUE"] = plumb.epilogue
+        if _scalar_reds:
+            replacements["INJECT_SPLITK_SCALAR_TAP_PASS"] = _splitk_scalar_tap_pass(chain, config)
+            replacements["INJECT_SPLITK_FINALIZE_BINDINGS"] = _splitk_finalize_bindings(chain, len(plumb.tap_kernel_params))
+            replacements["INJECT_SPLITK_FINALIZE_BODY"] = _splitk_finalize_body(chain, config)
+            replacements["INJECT_SPLITK_FINALIZE_LAUNCH"] = _splitk_finalize_launch(chain, config)
+            replacements["INJECT_SPLITK_SCALAR_PARAM"] = "scalar_scratch: cute.Tensor,"
+            replacements["INJECT_SPLITK_SCALAR_FAKE"] = (
+                "fake_scalar_scratch = make_fake_tensor(cutlass.Float64, (cute.sym_int64(),), stride=(1,), assumed_align=16)"
+            )
+            replacements["INJECT_SPLITK_SCALAR_FAKE_PASS"] = "fake_scalar_scratch,"
     for marker, replacement in (
         ("INJECT_KERNEL_REDUCTION_STRIDE_PARAMS", red_kernel_stride_params),
         ("INJECT_HOST_REDUCTION_STRIDES", red_host_stride_unpack),
@@ -2703,10 +2728,83 @@ def _cluster_split_k_smem_bytes(chain: FusionChain, config: TileConfig) -> int:
 
 
 def _splitk_workspace_bytes(chain: FusionChain, config: TileConfig) -> int:
-    """fp32 partials: split_k_slices * B * M * N * 4B."""
+    """fp32 partials (: split_k_slices * B * M * N * 4B) then the scalar-reduction scratch."""
     if not config.workspace_split_k:
         return 0
-    return align_up(config.split_k_slices * chain.matmul.batch * chain.matmul.M * chain.matmul.N * 4)
+    mm = chain.matmul
+    partials = align_up(config.split_k_slices * mm.batch * mm.M * mm.N * 4)
+    return partials + _splitk_scalar_scratch_bytes(chain, config, mm.batch, mm.M, mm.N)
+
+
+def _splitk_scalar_reds(chain: FusionChain, config: TileConfig) -> "dict[int, int]":
+    """Global reduction index -> compact scratch index for the fp32 sums the atomics drift on.
+
+    Only the plain (non block-scale) templates carry the per-thread scratch and the finalize pass;
+    the block-scale ones keep the old rejection until they are wired the same way."""
+    if not config.workspace_split_k or config.split_k_slices == 1 or chain.has_block_scale:
+        return {}
+    return {red_idx: k for k, red_idx in enumerate(i for i, red in enumerate(chain.reductions) if _splitk_reduction_drifts(red))}
+
+
+def _splitk_scalar_slots(chain: FusionChain, config: TileConfig, batch: int, m: int, n: int) -> int:
+    """One scratch slot per reducer thread; the finalize pass sums them in slot order."""
+    tile_n = splitk_reduce_tile_n(config.split_k_slices, _splitk_reduce_elems(chain))
+    return -(-m // SPLITK_REDUCE_TILE_M) * -(-n // tile_n) * batch * SPLITK_REDUCE_THREADS
+
+
+def _splitk_scalar_scratch_bytes(chain: FusionChain, config: TileConfig, batch: int, m: int, n: int) -> int:
+    n_reds = len(_splitk_scalar_reds(chain, config))
+    if not n_reds:
+        return 0
+    return align_up(_splitk_scalar_slots(chain, config, batch, m, n) * n_reds * 8)
+
+
+def _splitk_scalar_tap_pass(chain: FusionChain, config: TileConfig) -> str:
+    """The scratch rides the reducer's tap tuple as the last element."""
+    return "scalar_scratch," if _splitk_scalar_reds(chain, config) else ""
+
+
+def _splitk_finalize_bindings(chain: FusionChain, n_taps: int) -> str:
+    lines = [f"gC_tap_{i}_ptr = taps[{i}].iterator.raw_ptr()" for i in range(n_taps)]
+    lines.extend(f"{name} = strides[{i}]" for i, name in enumerate(_reduction_stride_names(chain)))
+    return "\n".join(lines) if lines else "pass"
+
+
+def _splitk_finalize_body(chain: FusionChain, config: TileConfig) -> str:
+    """Sum each scalar reduction's slots in order and store the (AVG-scaled) result."""
+    reds = _splitk_scalar_reds(chain, config)
+    if not reds:
+        return "pass"
+    dense = len(chain.output_specs)
+    lines = []
+    for red_idx, k in sorted(reds.items()):
+        red = chain.reductions[red_idx]
+        tap = dense + red_idx
+        offset = _reduction_output_offset_expr(red_idx, red, "0").replace("tile_l", "_b")
+        lines.append(f"if _ri == {k}:")
+        if red.mode == "avg":
+            lines.extend("    " + ln for ln in _emit_reduction_avg_inverse(red_idx, red, chain))
+            scale = f"_red_{red_idx}_inv"
+        else:
+            scale = "cutlass.Float32(1.0)"
+        lines.append(f"    _v = cutlass.Float32(_sum) * {scale}")
+        lines.append(f"    (gC_tap_{tap}_ptr + {offset}).store(_v)")
+    return "\n".join(lines)
+
+
+def _splitk_finalize_launch(chain: FusionChain, config: TileConfig) -> str:
+    reds = _splitk_scalar_reds(chain, config)
+    if not reds:
+        return "pass"
+    tile_n = splitk_reduce_tile_n(config.split_k_slices, _splitk_reduce_elems(chain))
+    return (
+        f"_n_scalar_slots = ((m + {SPLITK_REDUCE_TILE_M - 1}) // {SPLITK_REDUCE_TILE_M})"
+        f" * ((n + {tile_n - 1}) // {tile_n}) * batch * {SPLITK_REDUCE_THREADS}\n"
+        "_splitk_scalar_finalize(\n"
+        "    m, n, batch, _splitk_taps, _splitk_strides, _n_scalar_slots, "
+        f"{len(reds)}, USE_PDL,\n"
+        ").launch(grid=(1, 1, 1), block=(128, 1, 1), use_pdl=USE_PDL, stream=stream)"
+    )
 
 
 def _splitk_reduction_drifts(red) -> bool:
@@ -3022,8 +3120,10 @@ def _splitk_reject_reason(chain: FusionChain, config: TileConfig) -> "str | None
     if chain.matmul.accum_dtype != "fp32":
         reasons.append(f"{chain.matmul.accum_dtype} accumulation (fp32 partials only)")
     # The automatic pick and every explicit path (a config, a replayed SPLIT_K_SLC knob) share this numerics gate.
+    # A plain chain routes these sums through the per-thread scratch and the finalize pass instead; the
+    # block-scale templates still decline them until they carry the same path.
     drifting = sorted({red.mode for red in chain.reductions if _splitk_reduction_drifts(red)})
-    if drifting:
+    if drifting and chain.has_block_scale:
         reasons.append(f"fp32 {'/'.join(drifting)} reduction over all of M and N (the reducer adds it with one same-address atomic per vector, which drifts)")
     if chain.matmul.batch * config.split_k_slices > 65535:
         reasons.append(f"grid.z={chain.matmul.batch * config.split_k_slices} exceeds CUDA's 65535 limit")

@@ -89,6 +89,35 @@ def _splitk_epilogue(vec_f32, row, col_j, tile_l, M, N, vsize, taps, strides, au
     # @@INJECT_REDUCE_EPILOGUE@@
 
 
+@cute.kernel
+def _splitk_scalar_finalize(m, n, batch, taps, strides, n_slots, n_reds, use_pdl):
+    """Deterministic scalar reduction: sum the reducer scratch slots in order, then store the result."""
+    if cutlass.const_expr(use_pdl):
+        nvvm.griddepcontrol("wait")
+    tid = cute.arch.thread_idx()[0]
+    M = cutlass.Int32(m)
+    N = cutlass.Int32(n)
+    _sp = taps[-1].iterator.raw_ptr()
+    # @@INJECT_SPLITK_FINALIZE_BINDINGS@@
+
+    _item = tid
+    _total = cutlass.Int32(batch) * cutlass.Int32(n_reds)
+    while _item < _total:
+        _b = cutlass.Int64(_item // n_reds)
+        _ri = cutlass.Int32(_item % n_reds)
+        _sum = cutlass.Float64(0.0)
+        _s = cutlass.Int64(0)
+        while _s < n_slots:
+            _sum = _sum + (_sp + _s * n_reds + _ri).load()
+            _s = _s + 1
+        # @@INJECT_SPLITK_FINALIZE_BODY@@
+        pass
+        _item = _item + 128
+
+
+_splitk_scalar_finalize.set_name_prefix("cudnn", remove_cutlass_symbol=True)
+
+
 # @@SPLITK_ONLY:END@@
 
 
@@ -1486,6 +1515,7 @@ def _host(
     # @@TMA_STORE_ONLY:END@@
     # @@SPLITK_ONLY:BEGIN@@
     splitk_partials: cute.Tensor,
+    # @@INJECT_SPLITK_SCALAR_PARAM@@
     # @@SPLITK_ONLY:END@@
     stream: _cuda.CUstream,
 ) -> None:
@@ -1621,17 +1651,20 @@ def _host(
         )
 
     # @@SPLITK_ONLY:BEGIN@@
+    _splitk_taps = (
+        # @@INJECT_HOST_TAP_PASS@@
+        # @@INJECT_SPLITK_SCALAR_TAP_PASS@@
+    )
+    _splitk_strides = (
+        # @@INJECT_HOST_REDUCTION_STRIDE_PASS@@
+    )
     _splitk_reduce_kernel(
         m,
         n,
         batch,
         splitk_partials,
-        (
-            # @@INJECT_HOST_TAP_PASS@@
-        ),
-        (
-            # @@INJECT_HOST_REDUCTION_STRIDE_PASS@@
-        ),
+        _splitk_taps,
+        _splitk_strides,
         (
             # @@INJECT_HOST_AUX_PASS@@
         ),
@@ -1649,6 +1682,7 @@ def _host(
         use_pdl=USE_PDL,
         stream=stream,
     )
+    # @@INJECT_SPLITK_FINALIZE_LAUNCH@@
     # @@SPLITK_ONLY:END@@
 
 
@@ -1718,6 +1752,8 @@ def compile() -> Callable:
     # @@SPLITK_ONLY:BEGIN@@
     sym_partials_elems = cute.sym_int64()
     fake_splitk_partials = make_fake_tensor(cutlass.Float32, (sym_partials_elems,), stride=(1,), assumed_align=16)
+    sym_scratch_elems = cute.sym_int64()
+    # @@INJECT_SPLITK_SCALAR_FAKE@@
     # @@SPLITK_ONLY:END@@
     _fake_stream = make_fake_stream(use_tvm_ffi_env_stream=False)
     return _compile_cached(
@@ -1731,6 +1767,7 @@ def compile() -> Callable:
         # @@TMA_STORE_ONLY:END@@
         # @@SPLITK_ONLY:BEGIN@@
         fake_splitk_partials,
+        # @@INJECT_SPLITK_SCALAR_FAKE_PASS@@
         # @@SPLITK_ONLY:END@@
         stream=_fake_stream,
         options=frost_compile_options,

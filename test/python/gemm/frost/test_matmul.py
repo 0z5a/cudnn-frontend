@@ -4471,26 +4471,58 @@ def _splitk_tile_reduction_graph(batch, mode):
 @requires_matmul_gpu
 @pytest.mark.parametrize("batch", (1, 2), ids=("scalar", "per_batch"))
 @pytest.mark.parametrize("mode", ("ADD", "AVG", "NORM1"))
-def test_splitk_declines_tile_invariant_fp32_sum(monkeypatch, mode, batch):
-    """An explicit split-K config declines an fp32 sum over all of M and N, as the automatic pick does.
+def test_splitk_tile_invariant_fp32_sum(monkeypatch, mode, batch):
+    """A scalar fp32 sum over all of M and N either keeps split-K or is declined, per family.
 
-    The reducer adds such a sum with one same-address atomic per output vector, so its rounding drifts
-    with the vector count: a constant-input AVG at 3000x3000x1024 came back 2.8% low at split 2 on both
-    families (SM120 1.5e-5 unsplit). AMAX is exact under atomics and keeps the explicit split."""
+    On SM100 the reducer now writes one fp64 partial per thread and a finalize pass sums them in order,
+    so the explicit and the automatic split are both served (the numerics are pinned by
+    test_splitk_scalar_fp32_sum_does_not_drift). On SM120, whose templates are not wired to that path,
+    the same sum is still declined: the reducer adds it with one same-address atomic per output vector,
+    so its rounding drifts with the vector count. AMAX is exact under atomics and keeps the split."""
     from dataclasses import replace
 
     from cudnn.gemm.frost import compiler
 
-    def no_render(src):
-        pytest.fail("a declined split-K config must not render a kernel")
-
-    monkeypatch.setattr(compiler, "_import_kernel", no_render)
-    with pytest.raises(NotImplementedError, match=f"fp32 {mode.lower()} reduction over all of M and N"):
-        _jit_splitk(_splitk_tile_reduction_graph(batch, getattr(cudnn.reduction_mode, mode)), 2)
     summed = analyze(_splitk_tile_reduction_graph(batch, getattr(cudnn.reduction_mode, mode)))
-    assert compiler._auto_split_k(summed, _splitk_cfg(), sm_count=188).split_k_slices == 1
+    if _current_arch() == 120:
+
+        def no_render(src):
+            pytest.fail("a declined split-K config must not render a kernel")
+
+        monkeypatch.setattr(compiler, "_import_kernel", no_render)
+        with pytest.raises(NotImplementedError, match=f"fp32 {mode.lower()} reduction over all of M and N"):
+            _jit_splitk(_splitk_tile_reduction_graph(batch, getattr(cudnn.reduction_mode, mode)), 2)
+        assert compiler._auto_split_k(summed, _splitk_cfg(), sm_count=188).split_k_slices == 1
+    else:
+        compiler.probe_chain(summed, replace(_splitk_cfg(), split_k_slices=2))
+        assert compiler._auto_split_k(summed, _splitk_cfg(), sm_count=188).split_k_slices > 1
     amax = analyze(_splitk_tile_reduction_graph(batch, cudnn.reduction_mode.AMAX))
     compiler.probe_chain(amax, replace(_splitk_cfg(), split_k_slices=2))
+
+
+@requires_sm100
+@pytest.mark.parametrize("mode", ("ADD", "AVG", "NORM1"))
+def test_splitk_scalar_fp32_sum_does_not_drift(mode):
+    """The reducer's per-thread fp64 scratch and the finalize pass keep a scalar sum exact.
+
+    With A = 1 and B = 0.125 every product is 0.125, so each row of the K = 1024 dot product is exactly
+    128: a 3000x3000 AVG must return 128. The same-address fp32 atomics returned 124.379 at split 2."""
+    M = N = 3000
+    K = 1024
+    g = cudnn.pygraph(io_data_type=_BF16, intermediate_data_type=cudnn.data_type.FLOAT, compute_data_type=cudnn.data_type.FLOAT)
+    A = g.tensor(name="A", dim=[1, M, K], stride=[M * K, K, 1])
+    B = g.tensor(name="B", dim=[1, K, N], stride=[K * N, 1, K])
+    red = g.reduction(input=g.relu(input=g.matmul(A=A, B=B, name="mm"), name="r"), mode=getattr(cudnn.reduction_mode, mode), name="red")
+    red.set_dim([1, 1, 1]).set_stride([1, 1, 1])
+    red.set_output(True).set_data_type(cudnn.data_type.FLOAT)
+    compiled = _jit_splitk(g, 2, base_cfg=_splitk_cfg())
+    a = torch.full((1, M, K), 1.0, dtype=torch.bfloat16, device="cuda")
+    b = torch.full((1, N, K), 0.125, dtype=torch.bfloat16, device="cuda")
+    out = torch.full((1, 1, 1), -12345.0, dtype=torch.float32, device="cuda")
+    _run_splitk(compiled, _vp(compiled, a, b, [out]))
+    value = float(M) * float(N) * 128.0
+    expected = 128.0 if mode == "AVG" else value
+    torch.testing.assert_close(out, torch.full_like(out, expected), atol=0, rtol=0)
 
 
 def test_splitk_auto_select():
