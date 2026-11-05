@@ -485,11 +485,11 @@ def test_frost_gemm_declines_a_split_k_record_for_a_tile_invariant_fp32_sum(monk
     [("sm100", "CONFIG_sm100_128x128x128_128x128x32_cluster1x1"), ("sm120", "CONFIG_sm120_128x128x128_16x16x32_cluster1x1_warps4x2")],
     ids=("sm100", "sm120"),
 )
-def test_split_k_gate_declines_tile_invariant_fp32_sums(family, config_name, swapped):
-    """Host-only (no kernel, no GPU work): each family's split-K gate that explicit configs, replayed records and the
-    automatic pick share declines an fp32 sum over all of M and N, per batch or over the batch too, also under
-    swap-AB (``swap_ab`` swaps a reduction's M and N extents). Modes exact under atomics (AMAX, an int32 ADD)
-    and per-row / per-column sums keep the split."""
+def test_split_k_gate_tile_invariant_fp32_sums(family, config_name, swapped):
+    """Host-only (no kernel, no GPU work): the split-K gate that explicit configs, replayed records and the automatic
+    pick share serves an fp32 sum over all of M and N on SM100 (the deterministic scratch + finalize path) and still
+    declines it on SM120, per batch or over the batch too, also under swap-AB (``swap_ab`` swaps a reduction's M and
+    N extents). Modes exact under atomics (AMAX, an int32 ADD) and per-row / per-column sums keep the split."""
     from dataclasses import replace
 
     from importlib import import_module
@@ -514,7 +514,11 @@ def test_split_k_gate_declines_tile_invariant_fp32_sums(family, config_name, swa
 
     for mode in ("ADD", "AVG", "NORM1", "NORM2"):
         for batch, dim in ((1, [1, 1, 1]), (2, [2, 1, 1]), (2, [1, 1, 1])):
-            assert f"fp32 {mode.lower()} reduction over all of M and N" in (reason(mode, dim, batch) or ""), (mode, dim)
+            found = reason(mode, dim, batch)
+            if family == "sm100":
+                assert found is None, (mode, dim, found)
+            else:
+                assert f"fp32 {mode.lower()} reduction over all of M and N" in (found or ""), (mode, dim)
     assert reason("AMAX", [1, 1, 1]) is None
     assert reason("ADD", [1, 1, 1], dtype=cudnn.data_type.INT32) is None
     for mode in ("ADD", "AVG"):
