@@ -91,7 +91,7 @@ def _splitk_epilogue(vec_f32, row, col_j, tile_l, M, N, vsize, taps, strides, au
 
 
 @cute.kernel
-def _splitk_scalar_finalize(m, n, batch, taps, strides, n_slots, n_reds, use_pdl):
+def _splitk_scalar_finalize(m, n, batch, taps, strides, n_slots, n_reds: cutlass.Constexpr, use_pdl: cutlass.Constexpr):
     """Deterministic scalar reduction: sum the reducer scratch slots in order, then store the result."""
     if cutlass.const_expr(use_pdl):
         nvvm.griddepcontrol("wait")
@@ -106,11 +106,6 @@ def _splitk_scalar_finalize(m, n, batch, taps, strides, n_slots, n_reds, use_pdl
     while _item < _total:
         _b = cutlass.Int64(_item // n_reds)
         _ri = cutlass.Int32(_item % n_reds)
-        _sum = cutlass.Float64(0.0)
-        _s = cutlass.Int64(0)
-        while _s < n_slots:
-            _sum = _sum + (_sp + _s * n_reds + _ri).load()
-            _s = _s + 1
         # @@INJECT_SPLITK_FINALIZE_BODY@@
         pass
         _item = _item + 128

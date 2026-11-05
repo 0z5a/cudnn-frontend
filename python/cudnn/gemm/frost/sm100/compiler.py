@@ -2771,7 +2771,10 @@ def _splitk_finalize_bindings(chain: FusionChain, n_taps: int) -> str:
 
 
 def _splitk_finalize_body(chain: FusionChain, config: TileConfig) -> str:
-    """Sum each scalar reduction's slots in order and store the (AVG-scaled) result."""
+    """Sum each scalar reduction's slot range in order and store the (AVG-scaled) result.
+
+    A per-batch reduction reads only its own batch's slots; an all-batch scalar reads the whole buffer
+    from one writer. The slot order (batch, row tile, col tile, thread) is the reducer's write order."""
     reds = _splitk_scalar_reds(chain, config)
     if not reds:
         return "pass"
@@ -2781,14 +2784,39 @@ def _splitk_finalize_body(chain: FusionChain, config: TileConfig) -> str:
         red = chain.reductions[red_idx]
         tap = dense + red_idx
         offset = _reduction_output_offset_expr(red_idx, red, "0").replace("tile_l", "_b")
-        lines.append(f"if _ri == {k}:")
+        per_batch = red.dim[0] != 1
+        inner = []
+        if per_batch:
+            inner += [
+                "_lo = _b * (n_slots // batch)",
+                "_hi = _lo + (n_slots // batch)",
+            ]
+            pad = ""
+        else:
+            inner += [
+                "if _b == 0:",
+                "    _lo = cutlass.Int64(0)",
+                "    _hi = n_slots",
+            ]
+            pad = "    "
+        inner += [
+            f"{pad}_sum = cutlass.Float64(0.0)",
+            f"{pad}_s = _lo",
+            f"{pad}while _s < _hi:",
+            f"{pad}    _sum = _sum + (_sp + _s * n_reds + {k}).load()",
+            f"{pad}    _s = _s + 1",
+        ]
         if red.mode == "avg":
-            lines.extend("    " + ln for ln in _emit_reduction_avg_inverse(red_idx, red, chain))
+            inner += [pad + ln for ln in _emit_reduction_avg_inverse(red_idx, red, chain)]
             scale = f"_red_{red_idx}_inv"
         else:
             scale = "cutlass.Float32(1.0)"
-        lines.append(f"    _v = cutlass.Float32(_sum) * {scale}")
-        lines.append(f"    (gC_tap_{tap}_ptr + {offset}).store(_v)")
+        inner += [
+            f"{pad}_v = cutlass.Float32(_sum) * {scale}",
+            f"{pad}(gC_tap_{tap}_ptr + {offset}).store(_v)",
+        ]
+        lines.append(f"if _ri == {k}:")
+        lines.extend("    " + ln for ln in inner)
     return "\n".join(lines)
 
 

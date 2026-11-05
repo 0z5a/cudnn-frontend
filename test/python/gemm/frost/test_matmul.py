@@ -4525,6 +4525,33 @@ def test_splitk_scalar_fp32_sum_does_not_drift(mode):
     torch.testing.assert_close(out, torch.full_like(out, expected), atol=0, rtol=0)
 
 
+@requires_sm100
+@pytest.mark.parametrize("mode", ("ADD", "AVG", "NORM1"))
+def test_splitk_scalar_fp32_sum_per_batch_keeps_batches_separate(mode):
+    """A per-batch scalar reduction reads only its own batch's scratch slots.
+
+    A = 1 with B = 0.25 on batch 0 and 0.5 on batch 1 makes every row 64 and 128; an AVG over M and N
+    must return 64 and 128. A finalizer that scanned the whole scratch for both outputs would return
+    192 for each."""
+    B, M, N, K = 2, 128, 128, 256
+    g = cudnn.pygraph(io_data_type=_BF16, intermediate_data_type=cudnn.data_type.FLOAT, compute_data_type=cudnn.data_type.FLOAT)
+    A = g.tensor(name="A", dim=[B, M, K], stride=[M * K, K, 1])
+    Bt = g.tensor(name="B", dim=[B, K, N], stride=[K * N, 1, K])
+    red = g.reduction(input=g.relu(input=g.matmul(A=A, B=Bt, name="mm"), name="r"), mode=getattr(cudnn.reduction_mode, mode), name="red")
+    red.set_dim([B, 1, 1]).set_stride([1, 1, 1])
+    red.set_output(True).set_data_type(cudnn.data_type.FLOAT)
+    compiled = _jit_splitk(g, 2, base_cfg=_splitk_cfg())
+    a = torch.full((B, M, K), 1.0, dtype=torch.bfloat16, device="cuda")
+    b = torch.empty((B, N, K), dtype=torch.bfloat16, device="cuda")
+    b[0].fill_(0.25)
+    b[1].fill_(0.5)
+    out = torch.full((B, 1, 1), -12345.0, dtype=torch.float32, device="cuda")
+    _run_splitk(compiled, _vp(compiled, a, b, [out]))
+    rows = torch.tensor([64.0, 128.0], dtype=torch.float32, device="cuda").reshape(B, 1, 1)
+    expected = rows if mode == "AVG" else rows * (float(M) * float(N))
+    torch.testing.assert_close(out, expected, atol=0, rtol=0)
+
+
 def test_splitk_auto_select():
     """Pure-function checks of the auto-split heuristic (fixed sm_count so no
     GPU work is issued)."""
