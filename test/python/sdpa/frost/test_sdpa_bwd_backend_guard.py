@@ -19,7 +19,7 @@ def _facts(**overrides):
     return replace(facts, **overrides)
 
 
-@pytest.mark.parametrize("version,excluded", [(92301, False), (92400, True), (92500, True), (92501, False), (92700, False)])
+@pytest.mark.parametrize("version,excluded", [(91801, True), (92302, True), (92400, True), (92500, True), (92501, False), (92700, False)])
 @pytest.mark.parametrize("dtype", [cudnn.data_type.HALF, cudnn.data_type.BFLOAT16])
 def test_ragged_backward_guard_version_bounds(monkeypatch, version, excluded, dtype):
     monkeypatch.setattr(cudnn, "backend_version", lambda: version)
@@ -97,8 +97,8 @@ def test_ragged_backward_explicit_replay_declines_before_lowering(monkeypatch, k
 def test_ragged_backward_default_has_no_unsafe_plan(mode):
     import torch
 
-    if torch.cuda.get_device_capability() != (9, 0) or not 92400 <= cudnn.backend_version() < 92501:
-        pytest.skip("requires native SM90 with the affected cuDNN 9.24/9.25.0 backend")
+    if torch.cuda.get_device_capability() != (9, 0) or cudnn.backend_version() >= guard.RAGGED_TILE_MAPPING_FIXED_IN:
+        pytest.skip("requires native SM90 with an affected cuDNN backend (before 9.25.1)")
     g = _graph()
     try:
         g.create_execution_plans([mode, cudnn.heur_mode.FALLBACK])
@@ -125,8 +125,8 @@ def test_ragged_backward_fix_version_detector(monkeypatch, request, cudnn_handle
     from sdpa.fp16 import exec_sdpa
     from sdpa.random_config import ExecConfig
 
-    if torch.cuda.get_device_capability() != (9, 0) or cudnn.backend_version() < 92400:
-        pytest.skip("requires native SM90 and cuDNN >= 9.24")
+    if torch.cuda.get_device_capability() != (9, 0):
+        pytest.skip("requires native SM90")
     affected = cudnn.backend_version() < guard.RAGGED_TILE_MAPPING_FIXED_IN
     monkeypatch.setattr(guard, "RAGGED_TILE_MAPPING_FIXED_IN", 0)
     original_plans = cudnn.pygraph.create_execution_plans
